@@ -15,7 +15,7 @@ export const getLanguage = () => {
 };
 
 export const buildStrings = (lang: languages):stringsType => {
-    console.log("building strings...");
+    // Remove this line entirely
     const strings : stringsType = {};
     for (const component in stringsAll) {
         console.log(component);
