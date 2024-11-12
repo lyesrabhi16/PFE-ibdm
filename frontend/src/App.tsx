@@ -1,14 +1,15 @@
-import './App.css'
-import { Button } from 'antd'
+import '#static/css/App.css';
+import { Flex } from 'antd';
+import LoginPage from '#pages/LoginPage';
 
 function App() {
 
   return (
-    <>
-      <div className="App">
-        <Button type="primary">Hi</Button>
-      </div>
-    </>
+    <div className='w-full h-full'>
+      <Flex justify='center' gap="large" align='center' wrap="nowrap" className="App">
+          <LoginPage/>
+      </Flex>
+    </div>
   )
 }
 
