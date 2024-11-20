@@ -9,7 +9,7 @@ services:
     volumes:
       - site2_shard_1:/data/db
     networks:
-      - mongo-cluster
+      - ibdm-mongo-cluster
       
   site2_shard_2:
     container_name: site2_shard_2
@@ -20,7 +20,7 @@ services:
     volumes:
       - site2_shard_2:/data/db
     networks:
-      - mongo-cluster
+      - ibdm-mongo-cluster
       
   site2_shard_3:
     container_name: site2_shard_3
@@ -31,7 +31,7 @@ services:
     volumes:
       - site2_shard_3:/data/db
     networks:
-      - mongo-cluster
+      - ibdm-mongo-cluster
 
 volumes:
   site2_shard_1: {}
@@ -39,6 +39,6 @@ volumes:
   site2_shard_3: {}
 
 networks:
-  mongo-cluster:
+  ibdm-mongo-cluster:
     driver: bridge
-    name: mongo-cluster
+    name: ibdm-mongo-cluster

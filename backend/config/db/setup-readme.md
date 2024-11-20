@@ -1,7 +1,7 @@
 ## Set up Sharding using Docker Containers
 ### Create network
 ```
-docker network create mongo-cluster
+docker network create ibdm-mongo-cluster
 ```
 
 ### Config servers

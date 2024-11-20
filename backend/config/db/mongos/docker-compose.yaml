@@ -6,9 +6,9 @@ services:
     ports:
       - 30000:27017
     networks:
-      - mongo-cluster
+      - ibdm-mongo-cluster
 
 networks:
-  mongo-cluster:
+  ibdm-mongo-cluster:
     driver: bridge
-    name: mongo-cluster
+    name: ibdm-mongo-cluster

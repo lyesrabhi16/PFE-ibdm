@@ -8,7 +8,7 @@ services:
     volumes:
       - cfg-svr-1:/data/db
     networks:
-      - mongo-cluster
+      - ibdm-mongo-cluster
 
   config-server-2:
     container_name: cfg-svr-2
@@ -19,7 +19,7 @@ services:
     volumes:
       - cfg-svr-2:/data/db
     networks:
-      - mongo-cluster
+      - ibdm-mongo-cluster
 
   config-server-3:
     container_name: cfg-svr-3
@@ -30,7 +30,7 @@ services:
     volumes:
       - cfg-svr-3:/data/db
     networks:
-      - mongo-cluster
+      - ibdm-mongo-cluster
 
 volumes:
   cfg-svr-1: {}
@@ -38,6 +38,6 @@ volumes:
   cfg-svr-3: {}
 
 networks:
-  mongo-cluster:
+  ibdm-mongo-cluster:
     driver: bridge
-    name: mongo-cluster
+    name: ibdm-mongo-cluster
