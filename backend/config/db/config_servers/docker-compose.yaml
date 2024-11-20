@@ -1,0 +1,43 @@
+services:
+  config-server-1:
+    container_name: cfg-svr-1
+    image: mongo
+    command: mongod --configsvr --replSet cfgrs --port 27017 --dbpath /data/db
+    ports:
+      - 60001:27017
+    volumes:
+      - cfg-svr-1:/data/db
+    networks:
+      - mongo-cluster
+
+  config-server-2:
+    container_name: cfg-svr-2
+    image: mongo
+    command: mongod --configsvr --replSet cfgrs --port 27017 --dbpath /data/db
+    ports:
+      - 60002:27017
+    volumes:
+      - cfg-svr-2:/data/db
+    networks:
+      - mongo-cluster
+
+  config-server-3:
+    container_name: cfg-svr-3
+    image: mongo
+    command: mongod --configsvr --replSet cfgrs --port 27017 --dbpath /data/db
+    ports:
+      - 60003:27017
+    volumes:
+      - cfg-svr-3:/data/db
+    networks:
+      - mongo-cluster
+
+volumes:
+  cfg-svr-1: {}
+  cfg-svr-2: {}
+  cfg-svr-3: {}
+
+networks:
+  mongo-cluster:
+    driver: bridge
+    name: mongo-cluster
