@@ -8,7 +8,7 @@ type Store = {
   strings: stringsType,
 }
 
-export const useStore = create<Store>((set) => ({
+export const useAppStore = create<Store>((set) => ({
     language: getLanguage(),
     strings: buildStrings(getLanguage()),
     setLanguage: (lang) => {

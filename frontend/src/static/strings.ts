@@ -54,5 +54,22 @@ export const stringsAll:stringsTranslationsType = {
         },
 
     },
+    "MESSAGES": {
+        "login_loading": {
+            "en": "Attempting Login...",
+            "fr": "Tentative de connexion...",
+            "ar": "محاولة تسجيل الدخول..."
+        },
+        "login_success": {
+            "en": "Login Successful",
+            "fr": "Connexion réussie",
+            "ar": "تسجيل الدخول بنجاح"
+        },
+        "login_failed": {
+            "en": "Login Failed, ",
+            "fr": "Échec de la connexion, ",
+            "ar": "فشل تسجيل الدخول، "
+        },
+    }
 }
 

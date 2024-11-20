@@ -1,31 +1,16 @@
-import { useStore } from '#/store';
+import { useAppStore } from '#/store';
+import { LoginFormViewProps } from '#/types';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Flex, message } from 'antd';
-const LoginForm = () => {
-  const { strings } = useStore();
-  const onFinish = (values: {
-    username: string;
-    password: string;
-    remember: boolean;
-  }) => {
-    message.loading({
-      key: 'login',
-      type: 'loading',
-      content: 'Attempt Login...',
-    });
-    setTimeout(() => {
-      message.destroy('login');
-      message.success('Login successful', 2.5);
-    }, 2500);
-    console.log('Received values of form: ', values);
-  };
+import { Button, Checkbox, Form, Input, Flex } from 'antd';
 
+const LoginForm = (props: LoginFormViewProps) => {
+  const { strings } = useAppStore();
   return (
     <Form
       name="login"
       initialValues={{ remember: true }}
       style={{ maxWidth: 360 }}
-      onFinish={onFinish}
+      onFinish={props.onSubmit}
       size='large'
     >
       <Form.Item
