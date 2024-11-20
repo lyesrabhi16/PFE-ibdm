@@ -1,7 +1,20 @@
 {
-  "files": [],
+  "types": ["node"],
+  "allowSyntheticDefaultImports": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "#/*": ["src/*"],
+      "#pages/*": ["src/pages/*"],
+      "#components/*": ["src/components/*"],
+      "#assets/*": ["src/assets/*"],
+      "#static/*": ["src/static/*"],
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"],
   "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+      { "path": "./tsconfig.app.json" },
+      { "path": "./tsconfig.node.json" }
+    ],
 }
