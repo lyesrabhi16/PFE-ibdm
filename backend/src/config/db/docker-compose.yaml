@@ -1,0 +1,37 @@
+services:
+  db:
+    container_name: mongo_test_db
+    image: mongo
+    networks:
+      - mongo_cluster
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+    volumes:
+      - ./data:/data/db
+
+  mongo-express:
+    container_name: mongo_express_test
+    image: mongo-express
+    networks:
+      - mongo_cluster
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      ME_CONFIG_MONGODB_URL: mongodb://mongo_test_db:27017
+      ME_CONFIG_BASICAUTH: true
+
+    depends_on:
+      - db
+
+networks:
+  mongo_cluster:
+    name: mongo_cluster
+
+volumes:
+  mongo_test_db: {}
