@@ -1,8 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import connectDB from "./config/db";
-import authRoutes from "./routes/authRoutes";
+import { connectDB, connectDB2 } from "#config/db/db";
+import { authRoutes } from "#routes";
 
 dotenv.config();
 
@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Connect to MongoDB
 connectDB();
-
+//connectDB2();
 // Routes
 app.use("/api/auth", authRoutes);
 
