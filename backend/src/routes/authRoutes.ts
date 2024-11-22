@@ -1,6 +1,6 @@
+import User from "#models/user";
+import { generateToken } from "#utils/generateToken";
 import express from "express";
-import User from "../models/user";
-import { generateToken } from "../utils/generateToken";
 
 const router = express.Router();
 
