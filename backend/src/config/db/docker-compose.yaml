@@ -6,28 +6,63 @@ services:
       - mongo_cluster
     ports:
       - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
-      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+    env_file:
+      - .env
+    entrypoint:
+      - bash
+      - -c
+      - |
+          cp /keyfile /mongo_keyfile
+          chmod 400 /mongo_keyfile
+          chown 999:999 /mongo_keyfile
+          exec docker-entrypoint.sh $$@
+    command: mongod --bind_ip 0.0.0.0 --port 27017 --replSet rs0 --keyFile /mongo_keyfile 
     volumes:
       - ./data:/data/db
+      - ./scripts/db_init_script.js:/docker-entrypoint-initdb.d/db_init_script.js
+      - ./files/keyfile:/keyfile
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh admin -u "${MONGO_INITDB_ROOT_USERNAME}" -p "${MONGO_INITDB_ROOT_PASSWORD}" --quiet
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
-  mongo-express:
-    container_name: mongo_express_test
-    image: mongo-express
+  db_setup_rs:
+    container_name: mongo_test_db_setup_rs
+    image: mongo
     networks:
       - mongo_cluster
-    restart: always
-    ports:
-      - 8081:8081
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: root
-      ME_CONFIG_MONGODB_URL: mongodb://mongo_test_db:27017
-      ME_CONFIG_BASICAUTH: true
-
     depends_on:
-      - db
+      db:
+          condition: service_healthy
+    env_file:
+      - .env
+
+    command: /usr/bin/mongosh --host mongo_test_db --port 27017 -u "${MONGO_INITDB_ROOT_USERNAME}" -p "${MONGO_INITDB_ROOT_PASSWORD}" --authenticationDatabase admin /etc/mongo/db_init_replSet.js
+    volumes:
+      - ./scripts/db_init_replSet.js:/etc/mongo/db_init_replSet.js
+      
+  mongo-express:
+    container_name: mongo_express
+    image: mongo-express
+    restart: always
+    networks:
+      - mongo_cluster
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo_test_db
+      ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
+      ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+      ME_CONFIG_BASICAUTH_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
+      ME_CONFIG_BASICAUTH_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+    depends_on:
+      db:
+        condition: service_healthy
+      db_setup_rs:
+        condition: service_completed_successfully
+    
 
 networks:
   mongo_cluster:
