@@ -14,8 +14,8 @@ const userSchema = new Schema<IUser>({
 });
 
 // Comparer les mots de passe
-userSchema.methods.comparePassword = async function (password: string): Promise<boolean> {
-  return bcryptjs.compare(password, this.password);
+export const comparePassword = async function (user_pass:string, password: string): Promise<boolean> {
+  return bcryptjs.compare(user_pass, password);
 };
 
 // Hasher le mot de passe avant de l'enregistrer
