@@ -13,7 +13,7 @@ const LoginFormController = () => {
     message.loading({
       key: "login",
       type: "loading",
-      content: strings.MESSAGES.logging_loading,
+      content: strings.MESSAGES.login_loading,
     });
     Request_Login(values.username, values.password, values.remember)
       .then((res) => {
