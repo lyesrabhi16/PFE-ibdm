@@ -39,7 +39,7 @@ docker ps
 
 3. run the shards setup
 ```
-docker compose -f shards_setup.yaml
+docker compose -f shards_setup.yaml up -d
 ```
 
 4. check if the setup containers exited with 0
