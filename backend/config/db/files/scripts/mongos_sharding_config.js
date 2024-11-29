@@ -1,6 +1,6 @@
 sh.addShard("site1rs/site1_shard_1:27017,site1_shard_2:27017,site1_shard_3:27017,site1_shard_4:27017");
-sh.addShard("site2rs/site2_shard_1:27017,site2_shard_2:27017,site2_shard_3:27017","site2_shard_4:27017");
-sh.addShard("site3rs/site3_shard_1:27017,site3_shard_2:27017,site3_shard_3:27017","site3_shard_4:27017");
+sh.addShard("site2rs/site2_shard_1:27017,site2_shard_2:27017,site2_shard_3:27017,site2_shard_4:27017");
+sh.addShard("site3rs/site3_shard_1:27017,site3_shard_2:27017,site3_shard_3:27017,site3_shard_4:27017");
 
 sh.enableSharding("ibdm");
 sh.shardCollection("ibdm.machines", { site: 1, _id: 1 });

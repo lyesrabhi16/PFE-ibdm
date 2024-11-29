@@ -82,7 +82,7 @@ services:
       site3_shard_3:
         condition: service_healthy
     healthcheck:
-      test: "mongosh -u ${SITE3_LOCAL_ADMIN_USER} -p ${SITE3_LOCAL_ADMIN_USER} --eval 'rs.status()' site3_shard_1:27017"
+      test: "mongosh -u ${SITE3_LOCAL_ADMIN_USER} -p ${SITE3_LOCAL_ADMIN_PASS} --eval 'rs.status()' site3_shard_1:27017"
       interval: 10s
       timeout: 10s
       retries: 2
