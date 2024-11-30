@@ -5,18 +5,18 @@
 
 For linux
 ```
-openssl rand --base64 786 > files/keyfile
+openssl rand --base64 756 > files/keyfile
 ```
 
 For Windows (if OpenSSL is installed):
 ```
-openssl rand -base64 786 | Out-File -Encoding default files\keyfile
+openssl rand -base64 756 | Out-File -Encoding default files\keyfile
 ```
 Note: OpenSSL is not installed by default on Windows. You may need to install it separately or use a different method to generate the keyfile.
 
 For Windows (using PowerShell):
 ```
-$randomBytes = [byte[]]::new(786)
+$randomBytes = [byte[]]::new(756)
 [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($randomBytes)
 [Convert]::ToBase64String($randomBytes) | Out-File -Encoding default files\keyfile
 ```
