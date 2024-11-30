@@ -24,7 +24,7 @@ print("Creating Users For DB: ", process.env.MONGO_DB)
 use(process.env.MONGO_DB)
 print("users_to_create string: ", process.env.MONGO_USERS.replaceAll(" ", ''))
 let users_to_create = process.env.MONGO_USERS? JSON.parse(process.env.MONGO_USERS): []
-let existing_users = show("users").value || []
+let existing_users = db.getUsers().users || []
 if (users_to_create.length == 0) {
     print("No users to create")
 }else{
