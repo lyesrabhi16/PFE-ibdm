@@ -130,3 +130,6 @@ dist
 .pnp.*
 
 node_modules
+keyfile
+
+.vscode
