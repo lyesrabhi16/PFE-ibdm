@@ -1,0 +1,100 @@
+name: config-servers
+services:
+  config-server-1:
+    container_name: cfg-svr-1
+    image: mongo
+    env_file: .env
+    entrypoint:
+                  - bash 
+                  - -c
+                  - |
+                    chmod 400 /etc/mongo/keyfile;
+                    chown 999:999 /etc/mongo/keyfile ;
+                    mongod --logpath container.log --keyFile /etc/mongo/keyfile --replSet cfgrs --configsvr --bind_ip 0.0.0.0 --port 27017 --dbpath /data/db &
+                    echo "Waiting 10s";
+                    sleep 10;
+                    echo "Initiating replica set";
+                    mongosh --eval 'rs.initiate({_id: "cfgrs", configsvr: true, members: [{ _id: 0, host: "cfg-svr-1:27017", priority:1 }, { _id: 1, host: "cfg-svr-2:27017" }, { _id: 2, host: "cfg-svr-3:27017" }]});'
+                    mongosh --eval 'rs.initiate({_id: "cfgrs", configsvr: true, members: [{ _id: 0, host: "cfg-svr-1:27017", priority:1 }, { _id: 1, host: "cfg-svr-2:27017" }, { _id: 2, host: "cfg-svr-3:27017" }]});'
+                    echo "Replica set initiated";
+                    mongosh --eval 'rs.status();'
+                    tail -f container.log
+                    
+    depends_on:
+      config-server-2:
+        condition: service_healthy
+      config-server-3:
+        condition: service_healthy
+    healthcheck:
+      test: "mongosh -u ${MONGO_ADMIN_USER} -p ${MONGO_ADMIN_PASS} --eval 'rs.status()' | grep 'ok'"
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    ports:
+      - 60001:27017
+    volumes:
+      - cfg-svr-1:/data/db
+      - ./files:/etc/mongo
+
+    networks:
+      - ibdm-mongo-cluster
+
+  config-server-2:
+    container_name: cfg-svr-2
+    image: mongo
+    env_file: .env
+    entrypoint:
+                  - bash 
+                  - -c
+                  - |
+                    chmod 400 /etc/mongo/keyfile
+                    chown 999:999 /etc/mongo/keyfile
+                    mongod --keyFile /etc/mongo/keyfile --configsvr --replSet cfgrs --bind_ip 0.0.0.0 --port 27017 --dbpath /data/db;
+    healthcheck:
+      test: "mongosh --eval 'db.runCommand({ ping: 1 })'"
+      interval: 10s
+      timeout: 10s
+      retries: 2          
+    ports:
+      - 60002:27017
+    volumes:
+      - cfg-svr-2:/data/db
+      - ./files:/etc/mongo
+    networks:
+      - ibdm-mongo-cluster
+
+  config-server-3:
+    container_name: cfg-svr-3
+    image: mongo
+    env_file: .env
+    entrypoint:
+                  - bash 
+                  - -c
+                  - |
+                    chmod 400 /etc/mongo/keyfile
+                    chown 999:999 /etc/mongo/keyfile
+                    mongod --keyFile /etc/mongo/keyfile --configsvr --replSet cfgrs --bind_ip 0.0.0.0 --port 27017 --dbpath /data/db
+    healthcheck:
+      test: "mongosh --eval 'db.runCommand({ ping: 1 })'"
+      interval: 10s
+      timeout: 10s
+      retries: 2
+    ports:
+      - 60003:27017
+    volumes:
+      - cfg-svr-3:/data/db
+      - ./files:/etc/mongo
+    networks:
+      - ibdm-mongo-cluster
+
+volumes:
+  cfg-svr-1: {}
+  cfg-svr-2: {}
+  cfg-svr-3: {}
+
+networks:
+  ibdm-mongo-cluster:
+    driver: bridge
+    name: ibdm-mongo-cluster
+
+
