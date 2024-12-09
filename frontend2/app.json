@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "IBDM",
+    "slug": "IBDM",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icons/logoImageSet",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/logo/logoImageSet/android/drawable-hdpi/logo.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.ifri.ibdm"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/icons/logo/logoImageSet/android/drawable-hdpi/logo.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icons/logo/logoImageSet/android/drawable-hdpi/logo.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "ff84471f-6744-4336-9482-76c8877af551"
+      }
+    }
+  }
+}
