@@ -49,7 +49,7 @@ export const connectDB = async () => {
   try {
     logger.log({ level:LOGLEVELS.INFO, message: "Connecting to MongoDB...", label: "MongoDB_Normal" });
     // Connexion à MongoDB
-    const conn = await mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/ibdm", {
+    const conn = await mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/PFE_DB", {
       connectTimeoutMS: 5000,
     });
     logger.log({ level:LOGLEVELS.INFO, message: `MongoDB Connected: ${conn.connection.db?.databaseName}@${conn.connection.host}`, label: "MongoDB_Normal", database: conn.connection.db?.databaseName, host: conn.connection.host });

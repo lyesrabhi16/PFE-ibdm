@@ -5,7 +5,7 @@ services:
     networks:
       - mongo_cluster
     ports:
-      - "27017:27017"
+      - "27018:27018"
     env_file:
       - .env
     entrypoint:
@@ -16,7 +16,7 @@ services:
           chmod 400 /mongo_keyfile
           chown 999:999 /mongo_keyfile
           exec docker-entrypoint.sh $$@
-    command: mongod --bind_ip 0.0.0.0 --port 27017 --replSet rs0 --keyFile /mongo_keyfile 
+    command: mongod --bind_ip 0.0.0.0 --port 27018 --replSet rs0 --keyFile /mongo_keyfile 
     volumes:
       - ./data:/data/db
       - ./scripts/db_init_script.js:/docker-entrypoint-initdb.d/db_init_script.js
@@ -39,7 +39,7 @@ services:
     env_file:
       - .env
 
-    command: /usr/bin/mongosh --host mongo_test_db --port 27017 -u "${MONGO_INITDB_ROOT_USERNAME}" -p "${MONGO_INITDB_ROOT_PASSWORD}" --authenticationDatabase admin /etc/mongo/db_init_replSet.js
+    command: /usr/bin/mongosh --host mongo_test_db --port 27018 -u "${MONGO_INITDB_ROOT_USERNAME}" -p "${MONGO_INITDB_ROOT_PASSWORD}" --authenticationDatabase admin /etc/mongo/db_init_replSet.js
     volumes:
       - ./scripts/db_init_replSet.js:/etc/mongo/db_init_replSet.js
       
@@ -52,7 +52,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      ME_CONFIG_MONGODB_SERVER: mongo_test_db
+      ME_CONFIG_MONGODB_SERVER: "mongo_test_db:27018"
       ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
       ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
       ME_CONFIG_BASICAUTH_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"

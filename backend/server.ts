@@ -1,6 +1,8 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 import { connectDB, connectDB2 } from "#config/db/db";
 import { authRoutes } from "#routes";
 import { AddressInfo } from "net";
@@ -16,7 +18,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(requestLogger)
+app.use(requestLogger);
+
+// Configuration de la session
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "default_ secret_key",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: "sessions",
+    }),
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000, // 1 jour
+    },
+  })
+);
 // Connect to MongoDB
 connectDB();
 connectDB2();
