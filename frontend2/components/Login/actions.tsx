@@ -1,6 +1,6 @@
-import { durations } from "@/constants/durations";
-import toasts from "@/constants/toasts";
-import { deleteAllToastsExceptSome } from "@/utils/utils";
+import { durations } from "#/constants/durations";
+import toasts from "#/constants/toasts";
+import { deleteAllToastsExceptSome } from "#/utils/utils";
 import toast from "react-hot-toast/headless";
 import { GestureResponderEvent } from "react-native";
 import { MD3Theme } from "react-native-paper";

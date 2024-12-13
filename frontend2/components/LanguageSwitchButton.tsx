@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import DropdownButton from '@/components/DropdownButton'
+import DropdownButton from '#/components/DropdownButton'
 import { Menu } from 'react-native-paper'
 
 const LanguageSwitchButton = () => {

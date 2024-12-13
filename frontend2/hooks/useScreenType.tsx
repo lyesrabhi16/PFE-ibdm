@@ -1,4 +1,4 @@
-import { getScreenType } from "@/utils/utils";
+import { getScreenType } from "#/utils/utils";
 import { useEffect, useState } from "react";
 import { Dimensions } from "react-native";
 

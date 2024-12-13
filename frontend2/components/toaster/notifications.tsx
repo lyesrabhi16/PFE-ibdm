@@ -1,6 +1,6 @@
-import Toast from "@/components/toaster/toast";
-import { sizes } from "@/constants/sizes";
-import { Theme } from "@/global";
+import Toast from "#/components/toaster/toast";
+import { sizes } from "#/constants/sizes";
+import { Theme } from "#/global";
 import { useToaster } from "react-hot-toast/headless";
 import { ActivityIndicator, Icon, Surface, useTheme } from "react-native-paper";
 

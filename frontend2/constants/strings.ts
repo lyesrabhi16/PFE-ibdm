@@ -1,4 +1,4 @@
-import { stringsTranslationsType } from "#/types";
+import { stringsTranslationsType } from "#types";
 
 export const stringsAll:stringsTranslationsType = {
     'login': {

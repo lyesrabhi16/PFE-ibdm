@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 import { TextInput, TextInputProps } from 'react-native-paper'
-import { getFillColor } from '@/utils/utils'
+import { getFillColor } from '#/utils/utils'
 
 type props = {
     left_icon?: string,

@@ -1,5 +1,5 @@
-import { View, Image, Dimensions } from "react-native";
-import React, { useEffect } from "react";
+import { View, Image, Dimensions, GestureResponderEvent } from "react-native";
+import React, { useEffect, useState } from "react";
 import {
 	Button,
 	Text,
@@ -9,25 +9,24 @@ import {
 	useTheme,
 	Surface,
 } from "react-native-paper";
-import { sizes } from "@/constants/sizes";
-import CustomTextInput from "@/components/CustomTextInput";
-import PasswordTextInput from "@/components/PasswordTextInput";
+import { sizes } from "#/constants/sizes";
+import CustomTextInput from "#/components/CustomTextInput";
+import PasswordTextInput from "#/components/PasswordTextInput";
 import toast from "react-hot-toast/headless";
-import LanguageSwitchButton from "@/components/LanguageSwitchButton";
+import LanguageSwitchButton from "#/components/LanguageSwitchButton";
+import actions from "#/components/Login/actions";
 
 const LoginFormSmallScreen = () => {
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
 	const [RememberMe, setRememberMe] = React.useState(true);
-
-	const signIn = () => {
-		console.log("clicked");
-	};
+	const [InProgress_SignIn, setInProgress_SignIn] = useState(false);
 	const theme = useTheme();
-	useEffect(() => {
-		toast("Using Small Screen Login Form");
-		toast.success("Using Small Screen Login Form");
-	});
+
+	const signIn = (e: GestureResponderEvent) => {
+		actions.signIn(e, InProgress_SignIn, setInProgress_SignIn, theme);
+	};
+
 	return (
 		<Surface
 			mode="flat"
@@ -51,7 +50,7 @@ const LoginFormSmallScreen = () => {
 				}}
 			>
 				<Image
-					source={require("@/assets/images/react-logo.png")}
+					source={require("#/assets/images/react-logo.png")}
 					style={{
 						width: 100,
 						height: 100,
@@ -142,6 +141,8 @@ const LoginFormSmallScreen = () => {
 					icon={{ source: "login", direction: "ltr" }}
 					mode="contained"
 					onPress={signIn}
+					loading={InProgress_SignIn}
+					disabled={InProgress_SignIn}
 				>
 					Sign In
 				</Button>

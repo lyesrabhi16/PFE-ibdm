@@ -9,9 +9,9 @@ import {
   useTheme,
   Icon,
 } from "react-native-paper";
-import { sizes } from "@/constants/sizes";
-import CustomTextInput from "@/components/CustomTextInput";
-import PasswordTextInput from "@/components/PasswordTextInput";
+import { sizes } from "#/constants/sizes";
+import CustomTextInput from "#/components/CustomTextInput";
+import PasswordTextInput from "#/components/PasswordTextInput";
 import actions from "./actions";
 import toast from "react-hot-toast/headless";
 
@@ -38,7 +38,7 @@ const LoginFormWideScreen = () => {
         }}
       >
         <Image
-          source={require("@/assets/images/react-logo.png")}
+          source={require("#/assets/images/react-logo.png")}
           style={{
             width: 100,
             height: 100,
@@ -117,6 +117,7 @@ const LoginFormWideScreen = () => {
               actions.signIn(e, InProgress_SignIn, setInProgress_SignIn, theme)
             }
             loading={InProgress_SignIn}
+            disabled={InProgress_SignIn}
           >
             Sign In
           </Button>

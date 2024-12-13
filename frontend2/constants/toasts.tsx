@@ -1,4 +1,4 @@
-import { durations } from "@/constants/durations";
+import { durations } from "#/constants/durations";
 import { ActivityIndicator } from "react-native-paper";
 
 export const toasts = {
