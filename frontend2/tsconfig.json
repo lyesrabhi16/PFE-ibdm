@@ -4,9 +4,15 @@
     "jsx": "react-native",
     "strict": true,
     "paths": {
-      "@/*": [
+      "#/*": [
         "./*"
-      ]
+      ],
+      "#types/*": [
+        "./types/*"
+      ],
+      "#types": [
+        "./types"
+      ],
     }
   },
   "include": [

@@ -1,5 +1,5 @@
-import { ScreenTypes } from "@/constants/sizes";
-import toasts from "@/constants/toasts";
+import { ScreenTypes } from "#/constants/sizes";
+import toasts from "#/constants/toasts";
 import toast from "react-hot-toast/headless";
 import { Dimensions } from "react-native";
 import { useTheme } from "react-native-paper";

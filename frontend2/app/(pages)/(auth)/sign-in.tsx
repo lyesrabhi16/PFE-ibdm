@@ -1,10 +1,8 @@
 import React from "react";
-import Container from "@/components/Container";
-import LoginForm from "@/components/Login/LoginForm";
-import LanguageSwitchButton from "@/components/LanguageSwitchButton";
+import Container from "#/components/Container";
+import LoginForm from "#/components/Login/LoginForm";
+import LanguageSwitchButton from "#/components/LanguageSwitchButton";
 import { Surface, useTheme } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { sizes } from "@/constants/sizes";
 
 const SignIn = () => {
 	const theme = useTheme();

@@ -1,8 +1,8 @@
 import { View, Text } from 'react-native'
 import React, { useEffect } from 'react'
-import { getSystemTheme } from '@/utils/themePicker'
+import { getSystemTheme } from '#/utils/themePicker'
 import { PaperProvider } from 'react-native-paper'
-import useAppStore from '@/store'
+import useAppStore from '#/store'
 
 type props = {
     children: React.ReactNode[] | React.ReactNode,

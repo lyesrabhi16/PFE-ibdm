@@ -1,6 +1,5 @@
-import Container from "@/components/Container";
+import Container from "#/components/Container";
 import { Link } from "expo-router";
-import { View } from "react-native";
 import { ActivityIndicator, Surface, Text } from "react-native-paper";
 
 export default function Index() {
