@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import {
 	Button,
 	Text,
-	Card,
 	Checkbox,
 	Divider,
 	useTheme,
@@ -12,8 +11,6 @@ import {
 import { sizes } from "#/constants/sizes";
 import CustomTextInput from "#/components/CustomTextInput";
 import PasswordTextInput from "#/components/PasswordTextInput";
-import toast from "react-hot-toast/headless";
-import LanguageSwitchButton from "#/components/LanguageSwitchButton";
 import actions from "#/components/Login/actions";
 
 const LoginFormSmallScreen = () => {
