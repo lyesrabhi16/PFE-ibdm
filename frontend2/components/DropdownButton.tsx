@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 import {
   Button,
   Text,
@@ -31,6 +31,9 @@ const DropdownButton = (props: props) => {
 
   const [menu_visible, setMenuVisible] = React.useState(MenuVisible);
   const [selected_key, setSelectedKey] = React.useState(selectedKey);
+  useEffect(() => {
+    setSelectedKey(selectedKey);
+  })
   return (
     <Surface
       style={{

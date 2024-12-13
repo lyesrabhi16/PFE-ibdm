@@ -1,15 +1,9 @@
-import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SplashScreen, Stack } from "expo-router";
-import Container from "#/components/Container";
 import Notifications from "#/components/toaster/notifications";
 import { StatusBar } from "expo-status-bar";
 import { useTheme } from "react-native-paper";
-import { useFonts } from "expo-font";
 import StartUpLoadingScreen from "#/app/_startup_loading_screen";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import toast from "react-hot-toast/headless";
 import Screens from "#/app/_screens";
 import { startup_load_resources } from "#/utils/actions";
 

@@ -1,130 +1,151 @@
-import { Image, View } from "react-native";
+import { GestureResponderEvent, Image, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
-  Button,
-  Text,
-  Card,
-  Checkbox,
-  Divider,
-  useTheme,
-  Icon,
+	Button,
+	Text,
+	Card,
+	Checkbox,
+	Divider,
+	useTheme,
+	Icon,
+	Headline,
 } from "react-native-paper";
 import { sizes } from "#/constants/sizes";
 import CustomTextInput from "#/components/CustomTextInput";
 import PasswordTextInput from "#/components/PasswordTextInput";
 import actions from "./actions";
 import toast from "react-hot-toast/headless";
+import useAppStore from "#/store";
+import useToasts from "#/hooks/toasts";
 
 const LoginFormWideScreen = () => {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [RememberMe, setRememberMe] = React.useState(true);
+	const [email, setEmail] = React.useState("");
+	const [password, setPassword] = React.useState("");
+	const [RememberMe, setRememberMe] = React.useState(true);
 
-  const [InProgress_SignIn, setInProgress_SignIn] = useState(false);
- 
-  const theme = useTheme();
-  return (
-    <>
-      <Card
-        style={{
-          margin: sizes.lg,
-          padding: sizes.lg,
-          backgroundColor: theme.colors.background,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          flexWrap: "nowrap",
-        }}
-      >
-        <Image
-          source={require("#/assets/images/react-logo.png")}
-          style={{
-            width: 100,
-            height: 100,
-            margin: "auto",
-          }}
-        />
-        <Card.Title
-          style={{
-            margin: "auto",
-          }}
-          title="Sign In"
-          leftStyle={{
-            width: "20%",
-          }}
-          rightStyle={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          titleVariant="headlineLarge"
-        />
-        <Divider
-          horizontalInset
-          style={{
-            marginVertical: sizes.md,
-          }}
-        />
-        <Card.Content>
-          <CustomTextInput
-            style={{
-              marginVertical: sizes.sm,
-            }}
-            label="Email"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-            left_icon="account-circle-outline"
-          />
+	const [InProgress_SignIn, setInProgress_SignIn] = useState(false);
+	const { strings } = useAppStore();
+	const theme = useTheme();
+	const toasts = useToasts(strings);
 
-          <PasswordTextInput password={password} setPassword={setPassword} />
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center", 
-              marginVertical: sizes.sm,
-            }}
-          >
-            <Checkbox
-              status={RememberMe ? "checked" : "unchecked"}
-              onPress={() => {
-                setRememberMe((r) => !r);
-              }}
-            />
-            <Text>Remember me</Text>
-          </View>
-        </Card.Content>
-        <Card.Actions
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Button
-            style={{
-              margin: "auto",
-              marginTop: sizes.lg,
-              width: "60%",
-            }}
-            icon={{ source: "login", direction: "ltr" }}
-            mode="contained"
-            onPress={(e) =>
-              actions.signIn(e, InProgress_SignIn, setInProgress_SignIn, theme)
-            }
-            loading={InProgress_SignIn}
-            disabled={InProgress_SignIn}
-          >
-            Sign In
-          </Button>
-        </Card.Actions>
-      </Card>
-    </>
-  );
+	const signIn = (e:GestureResponderEvent) => {
+		actions.signIn(e,InProgress_SignIn, setInProgress_SignIn, theme, toasts);
+	}
+
+	return (
+		<>
+			<Card
+				style={{
+					margin: sizes.lg,
+					padding: sizes.lg,
+					backgroundColor: theme.colors.background,
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+					alignItems: "center",
+					flexWrap: "nowrap",
+				}}
+			>
+				<Image
+					source={require("#/assets/icons/logo/logoImageSet/android/drawable-mdpi/logo.png")}
+					style={{
+						width: 100,
+						height: 100,
+						margin: "auto",
+					}}
+				/>
+				<Card.Title
+					style={{
+						margin: "auto",
+					}}
+					title={strings.login.title}
+					leftStyle={{
+						width: "20%",
+					}}
+					rightStyle={{
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+					titleVariant="headlineLarge"
+				/>
+				<Headline
+					style={{
+						textAlign: "center",
+					}}
+				>
+					{strings.login.welcome_message}
+				</Headline>
+				<Text
+					style={{
+						textAlign: "center",
+					}}
+				>
+					{strings.login.login_message}
+				</Text>
+				<Divider
+					horizontalInset
+					style={{
+						marginVertical: sizes.md,
+					}}
+				/>
+				<Card.Content>
+					<CustomTextInput
+						style={{
+							marginVertical: sizes.sm,
+						}}
+						label={strings.login.email}
+						value={email}
+						onChangeText={(text) => setEmail(text)}
+						left_icon="account-circle-outline"
+					/>
+
+					<PasswordTextInput password={password} setPassword={setPassword} />
+					<View
+						style={{
+							display: "flex",
+							flexDirection: "row",
+							justifyContent: "flex-start",
+							alignItems: "center",
+							marginVertical: sizes.sm,
+						}}
+					>
+						<Checkbox
+							status={RememberMe ? "checked" : "unchecked"}
+							onPress={() => {
+								setRememberMe((r) => !r);
+							}}
+						/>
+						<Text>{strings.login.remember_me}</Text>
+					</View>
+				</Card.Content>
+				<Card.Actions
+					style={{
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<Button
+						style={{
+							margin: "auto",
+							marginTop: sizes.lg,
+							width: "60%",
+						}}
+						icon={{ source: "login", direction: "ltr" }}
+						mode="contained"
+						onPress={signIn}
+						loading={InProgress_SignIn}
+						disabled={InProgress_SignIn}
+					>
+						{strings.login.login}
+					</Button>
+				</Card.Actions>
+			</Card>
+		</>
+	);
 };
 
 export default LoginFormWideScreen;

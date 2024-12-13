@@ -1,30 +1,39 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import DropdownButton from '#/components/DropdownButton'
-import { Menu } from 'react-native-paper'
+import React, { useEffect, useMemo, useState } from "react";
+import DropdownButton from "#/components/DropdownButton";
+import { languages } from "#/types";
+import useAppStore from "#/store";
+import { MenuItemProps } from "react-native-paper";
 
 const LanguageSwitchButton = () => {
-  return (
-    <DropdownButton 
-        
-        selectedKey={0}
-        MenuItems={[
-            {
-                title: "EN",
-                onPress: () => console.log("EN"),            
-            },
-            {
-                title: "FR",
-                onPress: () => console.log("FR"),            
-            },
-            {
-                title: "AR",
-                onPress: () => console.log("AR"),            
-            }
-        ]}
-    
-    />
-  )
-}
+	const [SelectIndex, setSelectIndex] = useState(0);
+	const { language, setLanguage } = useAppStore();
+	const MenuItems: MenuItemProps[] = [];
 
-export default LanguageSwitchButton
+	// fill the menu items with the languages available in languages enum
+        Object.values(languages).forEach((lang, index) => {
+            MenuItems.push({
+                title: lang,
+                onPress: () => {
+					setSelectIndex(index);
+                },
+            });
+        });
+    
+
+	useEffect(() => {
+        setLanguage(Object.values(languages)[SelectIndex]);
+	}, [language, SelectIndex]);
+    
+	return (
+		<DropdownButton
+			onPress={() => {
+                const newIndex = (SelectIndex + 1) % MenuItems.length;
+                setSelectIndex(newIndex);
+            }}
+			selectedKey={SelectIndex}
+			MenuItems={MenuItems}
+		/>
+	);
+};
+
+export default LanguageSwitchButton;
