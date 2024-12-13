@@ -21,11 +21,7 @@ const LoginFormWideScreen = () => {
   const [RememberMe, setRememberMe] = React.useState(true);
 
   const [InProgress_SignIn, setInProgress_SignIn] = useState(false);
-  useEffect(() => {
-    toast("Using Wide Screen Login Form", {
-      icon: <Icon source="information"  size={24}/>,
-    })
-  })
+ 
   const theme = useTheme();
   return (
     <>
@@ -121,7 +117,6 @@ const LoginFormWideScreen = () => {
               actions.signIn(e, InProgress_SignIn, setInProgress_SignIn, theme)
             }
             loading={InProgress_SignIn}
-            disabled={InProgress_SignIn}
           >
             Sign In
           </Button>
