@@ -1,33 +1,38 @@
 import { durations } from "@/constants/durations";
+import toasts from "@/constants/toasts";
+import { deleteAllToastsExceptSome } from "@/utils/utils";
 import toast from "react-hot-toast/headless";
 import { GestureResponderEvent } from "react-native";
-import { ActivityIndicator, Icon, MD3Theme } from "react-native-paper";
+import { MD3Theme } from "react-native-paper";
 
 const signIn = (
-  e: GestureResponderEvent,
-  InProgress_SignIn: boolean,
-  setInProgress_SignIn: CallableFunction,
-  theme: MD3Theme
+	e: GestureResponderEvent,
+	InProgress_SignIn: boolean,
+	setInProgress_SignIn: CallableFunction,
+	theme: MD3Theme
 ) => {
-  if (InProgress_SignIn) {
-    toast.error("Please wait, sign in is in progress...", {
-      duration: durations.LONG,
-      icon: <ActivityIndicator size={16}/>,
-    });
-  }
-  toast.loading("Please wait...", {
-    id: "SignIn",
-  });
-  setInProgress_SignIn(true);
-  setTimeout(() => {
-    setInProgress_SignIn(false);
-    toast.dismiss("SignIn");
-    toast.success("Sign in successful", {
-      duration: durations.SHORT,
-    });
-  }, durations.LONG);
+	if (InProgress_SignIn) {
+		toast.dismiss(toasts.Error_SignIn_InProgress.options.id);
+		toast.error(
+			toasts.Error_SignIn_InProgress.message,
+			toasts.Error_SignIn_InProgress.options
+		);
+		return;
+	}
+
+	const loginPromise = new Promise((resolve, reject) => {
+		setTimeout(() => {
+			deleteAllToastsExceptSome([toasts.SignIn]);
+
+			setInProgress_SignIn(false);
+			resolve(toasts.SignIn.options.success);
+		}, durations.LONG);
+	});
+
+	toast.promise(loginPromise, toasts.SignIn.options);
+	setInProgress_SignIn(true);
 };
 
 export default {
-  signIn,
+	signIn,
 };
