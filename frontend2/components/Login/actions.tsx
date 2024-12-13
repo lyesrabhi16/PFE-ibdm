@@ -1,5 +1,5 @@
 import { durations } from "#/constants/durations";
-import toasts from "#/constants/toasts";
+import { useToasts } from "#/hooks/toasts";
 import { deleteAllToastsExceptSome } from "#/utils/utils";
 import toast from "react-hot-toast/headless";
 import { GestureResponderEvent } from "react-native";
@@ -9,8 +9,10 @@ const signIn = (
 	e: GestureResponderEvent,
 	InProgress_SignIn: boolean,
 	setInProgress_SignIn: CallableFunction,
-	theme: MD3Theme
+	theme: MD3Theme,
+	toasts: ReturnType<typeof useToasts>
 ) => {
+	
 	if (InProgress_SignIn) {
 		toast.dismiss(toasts.Error_SignIn_InProgress.options.id);
 		toast.error(

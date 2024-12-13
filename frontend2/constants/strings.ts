@@ -1,4 +1,6 @@
-import { stringsTranslationsType } from "#types";
+import { languages, stringsTranslationsType } from "#types";
+
+export const defaultLanguage:languages = 'en' as languages;
 
 export const stringsAll:stringsTranslationsType = {
     'login': {
@@ -7,15 +9,15 @@ export const stringsAll:stringsTranslationsType = {
             'fr': "S'identifier",
             'ar': 'تسجيل الدخول',
         },
-        'username': {
-            'en': 'Username',
-            'fr': 'Nom d’utilisateur',
-            'ar': 'اسم المستخدم',
+        'email': {
+            'en': 'Email',
+            'fr': 'Email',
+            'ar': 'البريد الإلكتروني',
         },
-        'username_empty_message': {
-            'en': 'Please input your Username!',
-            'fr': 'Veuillez saisir votre nom d’utilisateur!',
-            'ar': 'الرجاء إدخال اسم المستخدم الخاص بك!',
+        'email_empty_message': {
+            'en': 'Please input your Email!',
+            'fr': 'Veuillez saisir votre email!',
+            'ar': 'الرجاء إدخال بريدك الإلكتروني!',
         },
         'password': {
             'en': 'Password',
@@ -32,12 +34,12 @@ export const stringsAll:stringsTranslationsType = {
             'fr': 'S’identifier',
             'ar': 'تسجيل الدخول',
         },
-        'welcomeMessage': {
+        'welcome_message': {
             'en': 'Welcome to our app',
             'fr': 'Bienvenue sur notre app',
             'ar': 'مرحبًا بك في تطبيقنا',
         },
-        'loginMessage': {
+        'login_message': {
             'en': 'Login to continue',
             'fr': 'identifier vous pour continuer',
             'ar': 'سجل الدخول للمتابعة',
@@ -54,5 +56,53 @@ export const stringsAll:stringsTranslationsType = {
         },
 
     },
+    'startup': {
+        'loading':{
+            "en": "Loading...",
+            "fr": "Chargement...",
+            "ar": "...جار التحميل",
+        }
+    },
+    'notfound': {
+        'text': {
+            'en': 'Page not found',
+            'fr': 'Page non trouvée',
+            'ar': 'الصفحة غير موجودة',
+        }
+    },
+    'index': {
+        'text1': {
+            'en': 'Welcome to our app',
+            'fr': 'Bienvenue sur notre app',
+            'ar': 'مرحبًا بك في تطبيقنا',
+        },
+        'text2': {
+            'en': 'Sign in',
+            'fr': "S'identifier",
+            'ar': 'تسجيل الدخول',
+        }
+    },
+    'toasts': {
+        'Error_SignIn_InProgress': {
+            'en': 'Please wait, sign in is in progress...',
+            'fr': 'Veuillez patienter, l\'authentification est en cours...',
+            'ar': '...الرجاء الانتظار، تسجيل الدخول قيد التقدم',
+        },
+        'SignIn_successful': {
+            'en': 'Sign in successful',
+            'fr': 'Authentification réussie',
+            'ar': 'تم تسجيل الدخول بنجاح',
+        },
+        'please_wait': {
+            'en': 'Please wait...',
+            'fr': 'Veuillez patienter...',
+            'ar': '...الرجاء الانتظار',
+        },
+        'SignIn_failed': {
+            'en': 'Sign in failed',
+            'fr': 'Échec de l\'Authentification',
+            'ar': 'فشل تسجيل الدخول',
+        },
+    }
 }
 

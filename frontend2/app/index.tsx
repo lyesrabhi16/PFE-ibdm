@@ -1,8 +1,10 @@
 import Container from "#/components/Container";
+import useAppStore from "#/store";
 import { Link } from "expo-router";
 import { ActivityIndicator, Surface, Text } from "react-native-paper";
 
 export default function Index() {
+  const {strings} = useAppStore();
   return (
     <Container>
       <Surface
@@ -13,9 +15,9 @@ export default function Index() {
           alignItems: "center",
         }}
       >
-        <Text>Edit app/index.tsx to edit this screen.</Text>
+        <Text>{strings.index.text1}</Text>
         <Link href="/sign-in">
-          <Text>Go to Signin</Text>
+          <Text>{strings.index.text2}</Text>
         </Link>
         <ActivityIndicator animating={true} />
       </Surface>

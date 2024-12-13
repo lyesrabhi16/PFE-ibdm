@@ -3,9 +3,11 @@ import { ActivityIndicator, Surface, Text } from 'react-native-paper'
 import { sizes } from '#/constants/sizes'
 import Container from '#/components/Container'
 import { Image } from 'react-native'
+import useAppStore from '#/store'
 
 const StartUpLoadingScreen = () => {
   const loading_image = require("#/assets/icons/logo/logoImageSet/android/drawable-hdpi/logo.png");
+  const { strings } = useAppStore();
   return (
     <Surface mode='flat' style={
         {
@@ -18,7 +20,7 @@ const StartUpLoadingScreen = () => {
         }
     }>
       <Image source={loading_image} />
-      <Text>Loading...</Text>
+      <Text>{strings.startup.loading}</Text>
       <ActivityIndicator style={{
         margin: sizes.lg
       }} size={sizes.xl} />
