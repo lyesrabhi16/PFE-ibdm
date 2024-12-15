@@ -1,10 +1,12 @@
+import { LOGLEVELS } from "#types/logger.types";
+import { logger } from "#utils";
 import { NextFunction, Request, Response } from "express";
 
 const loginValidator = (req:Request, res:Response, next:NextFunction) => {
-    const { username, password } = req.body;
-    
-    if (!username || !password) {
-        return res.status(400).json({ message: "username and password are required" });
+    const { email, password } = req.body;
+    logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: "loginValidator started"+req.body });
+    if (!email || !password) {
+        return res.status(400).json({ message: "email and password are required" });
     }
     
     next();
