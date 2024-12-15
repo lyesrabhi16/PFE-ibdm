@@ -4,10 +4,10 @@ services:
     image: mongo
     networks:
       - mongo_cluster
-    ports:
-      - "27018:27018"
     env_file:
       - .env
+    ports:
+      - "${DB_HOST_PORT}:27017"
     entrypoint:
       - bash
       - -c
