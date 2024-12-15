@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import session from "express-session";
 import MongoStore from "connect-mongo";
-import { connectDB, connectDB2 } from "#config/db/db";
+import { connectDB } from "#config/db/db";
 import { authRoutes } from "#routes";
 import { AddressInfo } from "net";
 import { logger } from "#utils";
@@ -39,7 +39,6 @@ app.use(
 );
 // Connect to MongoDB
 connectDB();
-connectDB2();
 // Routes
 app.use("/api/auth", authRoutes);
 

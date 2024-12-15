@@ -46,23 +46,6 @@ db_client.$on("warn", (e) => {
 
 
 export const connectDB = async () => {
-  try {
-    logger.log({ level:LOGLEVELS.INFO, message: "Connecting to MongoDB...", label: "MongoDB_Normal" });
-    // Connexion à MongoDB
-    const conn = await mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/PFE_DB", {
-      connectTimeoutMS: 5000,
-    });
-    logger.log({ level:LOGLEVELS.INFO, message: `MongoDB Connected: ${conn.connection.db?.databaseName}@${conn.connection.host}`, label: "MongoDB_Normal", database: conn.connection.db?.databaseName, host: conn.connection.host });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      logger.log({ level:LOGLEVELS.ERROR, message: `MongoDB Connection Error: ${error.message}`, label: "MongoDB_Normal", error: error.message, stack: error.stack, });
-    } else {
-      logger.log({ level:LOGLEVELS.ERROR, message: "An unknown error occurred", label: "MongoDB_Normal", error: error });
-    }
-  }
-};
-
-export const connectDB2 = async () => {
   logger.log({ level:LOGLEVELS.INFO, message: "Connecting Databases Client Prisma...", label: "Prisma", url: process.env.DATABASE_URL });
   await db_client.$connect().catch(() => {
     logger.log({ level:LOGLEVELS.ERROR, message: "Prisma Failed to connect to Database", label: "Prisma" });
