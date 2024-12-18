@@ -1,6 +1,6 @@
 # Database Configuration with Docker Compose
 
-This guide will help you set up and run the database using the `docker compose.yml` file present in this directory.
+This guide will help you set up and run the database using the `docker-compose.yml` file present in this directory.
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ This guide will help you set up and run the database using the `docker compose.y
         openssl rand -base64 756 > files/keyfile
         ```
 
-        This keyfile will be used for MongoDB replica set authentication. it is required.
+        This keyfile will be used for MongoDB replica set authentication. It is required.
     
     2. copy `.env.example` in the config/db directory, paste and rename to `.env`, change this if you need to, it is the file holding the environment
     variables that will be used in the containers, like user, password..etc.

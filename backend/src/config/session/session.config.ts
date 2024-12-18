@@ -2,7 +2,7 @@ import MongoStore from "connect-mongo";
 import { SessionOptions } from "express-session";
 
 const SessionConfig:SessionOptions ={
-    secret: process.env.SESSION_SECRET || "default_ secret_key",
+    secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({

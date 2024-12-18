@@ -25,3 +25,5 @@ build/
 Thumbs.db
 
 keyfile
+
+generateHash.js
