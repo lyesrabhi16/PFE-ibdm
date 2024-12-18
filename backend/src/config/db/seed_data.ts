@@ -3,6 +3,15 @@ import { generateHash } from "#utils/generateHash";
 export const seed_data = [
     {
         model: "user",
+        id: "675ed2ea1164d1a1bae8ab0a",
+        data: {
+            email: "lyes@test.test",
+            password: async () => await generateHash("lyes"),
+            name: "Lyes",
+        }
+    },
+    {
+        model: "user",
         id: "675ed2ea1164d1a1bae8ab1a",
         data: {
             email: "user1@test.com",
