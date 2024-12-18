@@ -11,7 +11,7 @@
     npm install
     ```
 
-3. Configure and run the database as stated in `src/config/db/README.md`.
+3. Configure and run MongoDB database as stated in `src/config/db/README.md`.
 
 4. Copy `.env.example` to `.env`:
     ```sh

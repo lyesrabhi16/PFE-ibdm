@@ -27,7 +27,7 @@ This guide will help you set up and run the database using the `docker-compose.y
     2. copy `.env.example` in the config/db directory, paste and rename to `.env`, change this if you need to, it is the file holding the environment
     variables that will be used in the containers, like user, password..etc.
 
-2. **Start the Services:**
+3. **Start the Services:**
 
     Run the following command to start the services defined in the `docker-compose.yml` file:
     ```sh
