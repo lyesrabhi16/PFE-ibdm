@@ -23,11 +23,11 @@ const format_dev = format.combine(
         console.log(`${timestamp} ${level} ${label}: ${message}`);
         return `${timestamp} ${level} ${label}: ${message}`;
     }),
+    format.prettyPrint(),
 );
 const format_prod = format.combine(
     format.timestamp(),
     format.json(),
-    format.prettyPrint(),
 );
 
 const levels_ranked: ranked_levels_type = Object.keys(LOGLEVELS).reduce((acc: ranked_levels_type, level, index) => {

@@ -3,7 +3,6 @@ import { comparePassword } from "#models/user";
 import { LOGLEVELS } from "#types/logger.types";
 import { logger } from "#utils";
 import { Request, Response } from "express";
-import { log } from 'console';
 
 const db_client = new PrismaClient();
 
