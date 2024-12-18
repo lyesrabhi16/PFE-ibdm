@@ -2,6 +2,8 @@ import LanguageSwitchButton from "#/Components/LanguageSwitchButton";
 import LoginForm from "#/Components/LoginForm";
 import { useStore } from "#/store";
 import { Card, Flex, Space } from "antd";
+import Navbar from '../Components/Navbar';
+
 
 const LoginPage = () => {
   const { strings } = useStore();
@@ -10,6 +12,7 @@ const LoginPage = () => {
 
   return (
     <div className="w-screen h-screen flex flex-col flex-nowrap">
+      <Navbar isLoggedIn={false} />
       <div className="flex flex-row flex-nowrap justify-end">
         <LanguageSwitchButton/>
       </div>
