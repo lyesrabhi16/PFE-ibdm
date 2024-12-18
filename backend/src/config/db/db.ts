@@ -51,37 +51,4 @@ export const connectDB = async () => {
     logger.log({ level:LOGLEVELS.ERROR, message: "Prisma Failed to connect to Database", label: "Prisma" });
   });
   logger.log({ level:LOGLEVELS.INFO, message: "Connected to Databases Client Prisma", label: "Prisma" });
-  test_addUser(
-    "test_lyes@gmail.com",
-    "test_lyes",
-  );
 }
-
-const test_addUser = async (username: string, password: string) => {
-  logger.log({ level:LOGLEVELS.DEBUG, message: "Creating user", label: "Prisma", username: username });
-  const user =db_client.user.create({
-    data: {
-      email: username,
-      password: await generateHash(password),
-    }}).then(user => {
-      logger.log({ level:LOGLEVELS.DEBUG, message: "User created", label: "Prisma", user: user });
-    }).catch((e) => {
-      if (e instanceof PrismaClientKnownRequestError){
-        // PRISMA ERROR CODE P2002 : UNIQUE CONSTRAINT FAILED 
-        if (e.code === "P2002"){
-          if (e.meta?.target === "User_email_key"){
-            logger.log({ level:LOGLEVELS.DEBUG, message: "user exists already, skipping...", label: "Prisma", error: e.message });
-          }else{
-            logger.log({ level:LOGLEVELS.WARN, message: "Failed to create user, UNCAUGHT Unique Constraint Error", label: "Prisma", error: e });
-
-          }
-        }else{
-          logger.log({ level:LOGLEVELS.WARN, message: "Failed to create user, UNCAUGHT Error", label: "Prisma", error: e });
-        }
-      }else{
-        logger.log({ level:LOGLEVELS.ERROR, message: "Failed to create user, UNKNOWN Error", label: "Prisma", error: e });
-      }
-
-    }
-  );
-};
