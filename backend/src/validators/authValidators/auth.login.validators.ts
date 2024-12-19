@@ -15,16 +15,20 @@ const loginValidator = async (req: Request, res: Response, next: NextFunction) =
     }
     catch (error) {
         // check if the error is a validation error
-        if (error instanceof errors.E_VALIDATION_ERROR) {
-            // if it is, log it and return a 400 error
-            logger.log({ level: LOGLEVELS.WARN, label: "LOGIN", message: "loginValidator error", error: error });
-            console.log(error);
-            
-            res.status(400).json({ message: "Validation error", error: error.messages});
-            return
-        }
+        // if it is, log it and return a 400 error
         // if the error is not a validation error, log it and return a 500 error
-        logger.log({ level: LOGLEVELS.ERROR, label: "LOGIN", message: "loginValidator unknown error", error: error });
+        const status = error instanceof errors.E_VALIDATION_ERROR ? 400 : 500;
+        const loglevel = error instanceof errors.E_VALIDATION_ERROR ? LOGLEVELS.WARN : LOGLEVELS.ERROR;
+        const logMessage = error instanceof errors.E_VALIDATION_ERROR ? "loginValidator validation error" : "loginValidator unknown error";
+        const message = error instanceof errors.E_VALIDATION_ERROR ? {
+            message: "Validation error",
+            error: error.messages
+        } : {
+            message: "Internal Server error",
+            error: (error as Error).message
+        };
+        logger.log({ level: loglevel, label: "LOGIN", message: logMessage, error: error });
+        res.status(status).json(message);
     }
 
 };
