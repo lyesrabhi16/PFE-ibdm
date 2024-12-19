@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { db_client } from "#config/db/db";
 import { Request, Response, NextFunction } from "express";
 
 // Middleware pour vérifier si l'utilisateur est connecté avec une session
@@ -8,14 +8,13 @@ export const isAuthenticated = async (
   next: NextFunction
 ) => {
   try {
-    const db = new PrismaClient();
     // Vérifie si la session contient un ID utilisateur
     if (!req.session || !req.session.userId) {
       return res.status(401).json({ message: "Non autorisé, veuillez vous connecter." });
     }
 
     // Récupère l'utilisateur à partir de l'ID stocké dans la session
-    const user = await db.user.findUnique({
+    const user = await db_client.user.findUnique({
       where: { id: req.session.userId },
       omit: {
         password: true,
