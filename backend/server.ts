@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import session from "express-session";
-import MongoStore from "connect-mongo";
 import { connectDB } from "#config/db/db";
 import { authRoutes } from "#routes";
 import { AddressInfo } from "net";
@@ -12,9 +11,7 @@ import requestLogger from "#middlewares/logger.express";
 import SessionConfig from "#config/session/session.config";
 
 dotenv.config();
-
 const app = express();
-
 // Middleware
 app.use(cors());
 app.use(express.json());

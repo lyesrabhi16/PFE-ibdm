@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { comparePassword } from "#models/user";
+import { comparePassword } from "#models/user_actions";
 import { LOGLEVELS } from "#types/logger.types";
 import { logger } from "#utils";
 import { Request, Response } from "express";
