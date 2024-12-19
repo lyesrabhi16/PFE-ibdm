@@ -17,18 +17,26 @@ const loginValidator = async (req: Request, res: Response, next: NextFunction) =
         // check if the error is a validation error
         // if it is, log it and return a 400 error
         // if the error is not a validation error, log it and return a 500 error
-        const status = error instanceof errors.E_VALIDATION_ERROR ? 400 : 500;
-        const loglevel = error instanceof errors.E_VALIDATION_ERROR ? LOGLEVELS.WARN : LOGLEVELS.ERROR;
-        const logMessage = error instanceof errors.E_VALIDATION_ERROR ? "loginValidator validation error" : "loginValidator unknown error";
-        const message = error instanceof errors.E_VALIDATION_ERROR ? {
-            message: "Validation error",
-            error: error.messages
+        const errorResponse = error instanceof errors.E_VALIDATION_ERROR ? {
+            status: 400,
+            message: {
+                message: "Validation error",
+                error: error.messages
+            },
+            loglevel: LOGLEVELS.WARN,
+            logMessage: "loginValidator validation error",
         } : {
-            message: "Internal Server error",
-            error: (error as Error).message
+            status: 500,
+            message: {
+                message: "Internal Server error",
+                error: (error as Error).message
+            },
+            loglevel: LOGLEVELS.ERROR,
+            logMessage: "loginValidator unknown error",
         };
-        logger.log({ level: loglevel, label: "LOGIN", message: logMessage, error: error });
-        res.status(status).json(message);
+
+        logger.log({ level: errorResponse.loglevel, label: "LOGIN", message: errorResponse.logMessage, error: error });
+        res.status(errorResponse.status).json(errorResponse.message);
     }
 
 };
