@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "#config/*": ["src/config/*"],
+      "#controllers/*": ["src/controllers/*"],
+      "#middlewares/*": ["src/middlewares/*"],
+      "#models": ["src/models"],
+      "#models/*": ["src/models/*"],
+      "#routes": ["src/routes"],
+      "#routes/*": ["src/routes/*"],
+      "#services/*": ["src/services/*"],
+      "#utils": ["src/utils"],
+      "#utils/*": ["src/utils/*"],
+      "#types": ["src/types"],
+      "#types/*": ["src/types/*"],
+      "#validators": ["src/validators"],
+      "#validators/*": ["src/validators/*"],
+      "#/*": ["src/*"]
+    }
+  },
+  "include": ["src", "server.ts"],
+  "exclude": ["node_modules"]
+}
