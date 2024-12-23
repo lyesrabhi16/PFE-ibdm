@@ -1,10 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { comparePassword } from "#models/user";
+import { db_client } from "#config/db/db";
+import { comparePassword } from "#models/user_actions";
 import { LOGLEVELS } from "#types/logger.types";
 import { logger } from "#utils";
 import { Request, Response } from "express";
 
-const db_client = new PrismaClient();
 
 // Fonction de login avec sessions
 export const loginUser = async (req: Request, res: Response) => {
