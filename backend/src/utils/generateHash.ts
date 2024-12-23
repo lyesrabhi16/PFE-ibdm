@@ -1,7 +1,6 @@
 import * as bcryptjs from "bcryptjs";
 
 
-const password = "Hashira.";  
 
 // Fonction asynchrone pour générer le mot de passe haché
 export const generateHash = async (password:string) => {
@@ -10,4 +9,6 @@ export const generateHash = async (password:string) => {
 
 };
 
+// for use when testing by executing the file
+const password = "Hashira.";  
 generateHash(password);

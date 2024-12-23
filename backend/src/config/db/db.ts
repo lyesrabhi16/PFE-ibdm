@@ -1,11 +1,7 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import { logger } from "#utils";
 import { LOGLEVELS as LOGLEVELS } from "#types/logger.types";
-import { level } from "winston";
-import { generateHash } from "#utils/generateHash";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 // Charger les variables d'environnement
 dotenv.config();
