@@ -1,4 +1,4 @@
-import vine_instance from "#config/validation/vine_config";
+import vine_instance from "#config/validation/vine.config";
 
 
 const LoginInputSchema = vine_instance.object({
