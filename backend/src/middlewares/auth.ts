@@ -16,8 +16,10 @@ export const isAuthenticated = async (
     // Récupère l'utilisateur à partir de l'ID stocké dans la session
     const user = await db_client.user.findUnique({
       where: { id: req.session.userId },
-      omit: { password: true },
-    })
+      omit: {
+        password: true,
+      }
+    });
 
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });

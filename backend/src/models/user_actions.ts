@@ -6,4 +6,3 @@ import bcryptjs from "bcryptjs";
 export const comparePassword = async function (user_pass:string, password: string): Promise<boolean> {
   return bcryptjs.compare(user_pass, password);
 };
-
