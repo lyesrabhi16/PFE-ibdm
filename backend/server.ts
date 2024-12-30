@@ -10,13 +10,22 @@ import { logger } from "#utils";
 import { LOGLEVELS } from "#types/logger.types";
 import requestLogger from "#middlewares/logger.express";
 import SessionConfig from "#config/session/session.config";
+import fs from "fs";
+import https from "https";
+import http from "http";
+
 
 dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors(
+  {
+    credentials: true,
+    origin: true,
+  }
+));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
@@ -29,10 +38,24 @@ connectDB();
 app.use("/api/auth", authRoutes);
 
 
+app.get("/",(req, res) => {
+  res.status(200).json({ message: "IBDM-SERVER" });
+})
+
+
 
 // Start server
-const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
+const httpPORT = 8080;
+const httpsPORT = 8443;
+
+
+const httpsOptions = {
+  key: fs.readFileSync("./config/certificates/ibdm.key"),
+  cert: fs.readFileSync("./config/certificates/ibdm.crt"),
+}
+const httpServer = http.createServer(app).listen(httpPORT);
+const server = https.createServer(httpsOptions, app);
+server.listen(httpsPORT, () => {
   const address = server.address() as AddressInfo;
   const protocol = "protocol" in address ? address.protocol : "http";
   const host = "address" in address && address.address !== "::" ? address.address : "localhost";

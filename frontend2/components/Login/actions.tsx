@@ -1,6 +1,9 @@
+import APIClient from "#/api_client/api_client";
 import { durations } from "#/constants/durations";
 import { useToasts } from "#/hooks/toasts";
+import { SignInRequestData } from "#/types";
 import { deleteAllToastsExceptSome } from "#/utils/utils";
+import { AxiosError } from "axios";
 import toast from "react-hot-toast/headless";
 import { GestureResponderEvent } from "react-native";
 import { MD3Theme } from "react-native-paper";
@@ -10,7 +13,8 @@ const signIn = (
 	InProgress_SignIn: boolean,
 	setInProgress_SignIn: CallableFunction,
 	theme: MD3Theme,
-	toasts: ReturnType<typeof useToasts>
+	toasts: ReturnType<typeof useToasts>,
+	data:SignInRequestData
 ) => {
 	
 	if (InProgress_SignIn) {
@@ -22,13 +26,18 @@ const signIn = (
 		return;
 	}
 
-	const loginPromise = new Promise((resolve, reject) => {
-		setTimeout(() => {
-			deleteAllToastsExceptSome([toasts.SignIn]);
-
+	const loginPromise = APIClient.signIn(data, {
+		onSuccess: () => {
 			setInProgress_SignIn(false);
-			resolve(toasts.SignIn.options.success);
-		}, durations.LONG);
+		},
+		onFail: (error:any)=> {
+			setInProgress_SignIn(false);
+			if(error?.response?.data?.message){
+				toast.error(error?.response?.data?.message, toasts.signInFailed.options);
+				return;
+			}
+			toast.error(toasts.signInFailed.message, toasts.signInFailed.options);
+		},
 	});
 
 	toast.promise(loginPromise, toasts.SignIn.options);

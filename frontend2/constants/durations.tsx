@@ -4,3 +4,5 @@ export const durations = {
     MEDIUM: 2500,
     LONG: 5000,
 };
+
+export const requestTimeout = 5000;

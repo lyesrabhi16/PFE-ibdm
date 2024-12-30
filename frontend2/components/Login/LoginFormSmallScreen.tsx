@@ -15,6 +15,8 @@ import PasswordTextInput from "#/components/PasswordTextInput";
 import actions from "#/components/Login/actions";
 import useAppStore from "#/store";
 import useToasts from "#/hooks/toasts";
+import APIClient from "#/api_client/api_client";
+import toast from "react-hot-toast/headless";
 
 const LoginFormSmallScreen = () => {
 	const [email, setEmail] = React.useState("");
@@ -26,7 +28,10 @@ const LoginFormSmallScreen = () => {
 	const theme = useTheme();
 
 	const signIn = (e: GestureResponderEvent) => {
-		actions.signIn(e, InProgress_SignIn, setInProgress_SignIn, theme, toasts);
+		actions.signIn(e, InProgress_SignIn, setInProgress_SignIn, theme, toasts, {
+			email,
+			password,
+		});
 	};
 
 	return (
@@ -143,7 +148,7 @@ const LoginFormSmallScreen = () => {
 			<View
 				style={{
 					display: "flex",
-					flexDirection: "row",
+					flexDirection: "column",
 					justifyContent: "center",
 					alignItems: "center",
 				}}
@@ -161,6 +166,26 @@ const LoginFormSmallScreen = () => {
 					disabled={InProgress_SignIn}
 				>
 					{strings.login.login}
+				</Button>
+				<Button
+					style={{
+						marginTop: sizes.lg,
+						width: "60%",
+						minWidth: 180,
+						backgroundColor: theme.colors.secondary,
+					}}
+					mode="contained"
+					onPress={() => {
+						APIClient.getDashboard().then((res) => {
+							console.log("then:", res);
+							toast.success("Success");
+						}).catch((err) => {
+							console.log("catch:", err);
+							toast.error("entire Error:"+ JSON.stringify(err) || "Unknown Error");
+						});
+					}}
+				>
+					test
 				</Button>
 			</View>
 		</Surface>

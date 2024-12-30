@@ -7,6 +7,7 @@ import { useScreenType } from "#/hooks/useScreenType";
 const LoginForm = () => {
   const ScreenType = useScreenType();
 
+  
   return ScreenType > ScreenTypes.sm ? (
     <LoginFormWideScreen />
   ) : (
