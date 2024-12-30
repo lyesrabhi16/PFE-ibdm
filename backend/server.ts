@@ -15,6 +15,7 @@ import dotenv from "dotenv";
 import env, { EnvSchema } from "#config/env.config";
 import { log } from "console";
 import forceHttps from "#middlewares/forceHttps";
+import { startServer } from "#utils/server.utils";
 
 
 
@@ -71,7 +72,6 @@ app.get("/", (req, res) => {
 
 // Start server
 
-
 const httpsOptions = {
   key: fs.readFileSync("./config/certificates/ibdm.key"),
   cert: fs.readFileSync("./config/certificates/ibdm.crt"),
@@ -80,18 +80,6 @@ const httpsOptions = {
 const httpServer = http.createServer(app);
 const server = https.createServer(httpsOptions, app);
 
-httpServer.listen(httpPORT, () => {
-  const address = httpServer.address() as AddressInfo;
-  const protocol = "protocol" in address ? address.protocol : "http";
-  const host = "address" in address && address.address !== "::" ? address.address : "localhost";
-  const { port } = address;
-  logger.log({ level: LOGLEVELS.INFO, message: `Server running in ${protocol}://${host}:${port}`, label: "Server-HTTP", host: host, protocol: protocol, port: port, url: `${protocol}://${host}:${port}` });
-});
-server.listen(httpsPORT, () => {
-  const address = server.address() as AddressInfo;
-  const protocol = "protocol" in address ? address.protocol : "https";
-  const host = "address" in address && address.address !== "::" ? address.address : "localhost";
-  const { port } = address;
-  logger.log({ level: LOGLEVELS.INFO, message: `Server running in ${protocol}://${host}:${port}`, label: "Server-HTTPS", host: host, protocol: protocol, port: port, url: `${protocol}://${host}:${port}` });
-});
+startServer(httpServer, httpPORT, "Server-HTTP");
+startServer(server, httpsPORT, "Server-HTTPS");
 
