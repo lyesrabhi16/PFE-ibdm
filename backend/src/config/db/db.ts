@@ -6,6 +6,7 @@ import { LOGLEVELS as LOGLEVELS } from "#types/logger.types";
 import { level } from "winston";
 import { generateHash } from "#utils/generateHash";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { rejects } from "assert";
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -47,8 +48,13 @@ db_client.$on("warn", (e) => {
 
 export const connectDB = async () => {
   logger.log({ level:LOGLEVELS.INFO, message: "Connecting Databases Client Prisma...", label: "Prisma", url: process.env.DATABASE_URL });
-  await db_client.$connect().catch(() => {
-    logger.log({ level:LOGLEVELS.ERROR, message: "Prisma Failed to connect to Database", label: "Prisma" });
-  });
-  logger.log({ level:LOGLEVELS.INFO, message: "Connected to Databases Client Prisma", label: "Prisma" });
+  const isConnected = await new Promise((resolve, reject) => {
+    db_client.user.findFirst({}).then(( con )=>{
+        resolve(true);
+        logger.log({ level:LOGLEVELS.INFO, message: "Connected to Databases Client Prisma", label: "Prisma" });  
+      }).catch(() => {
+      reject(false);
+      logger.log({ level:LOGLEVELS.ERROR, message: "Prisma Failed to connect to Database", label: "Prisma" });
+    });
+  })
 }

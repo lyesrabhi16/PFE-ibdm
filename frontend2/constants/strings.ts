@@ -83,6 +83,11 @@ export const stringsAll:stringsTranslationsType = {
         }
     },
     'toasts': {
+        'error': {
+            'en': 'Error:',
+            'fr': 'Erreur:',
+            'ar': ':خطأ',
+        },
         'Error_SignIn_InProgress': {
             'en': 'Please wait, sign in is in progress...',
             'fr': 'Veuillez patienter, l\'authentification est en cours...',

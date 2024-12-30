@@ -17,6 +17,8 @@ import actions from "./actions";
 import toast from "react-hot-toast/headless";
 import useAppStore from "#/store";
 import useToasts from "#/hooks/toasts";
+import APIClient from "#/api_client/api_client";
+import { AxiosError, AxiosResponse } from "axios";
 
 const LoginFormWideScreen = () => {
 	const [email, setEmail] = React.useState("");
@@ -29,7 +31,10 @@ const LoginFormWideScreen = () => {
 	const toasts = useToasts(strings);
 
 	const signIn = (e:GestureResponderEvent) => {
-		actions.signIn(e,InProgress_SignIn, setInProgress_SignIn, theme, toasts);
+		actions.signIn(e,InProgress_SignIn, setInProgress_SignIn, theme, toasts, {
+			email,
+			password,
+		});
 	}
 
 	return (
@@ -123,7 +128,7 @@ const LoginFormWideScreen = () => {
 				<Card.Actions
 					style={{
 						display: "flex",
-						flexDirection: "row",
+						flexDirection: "column",
 						justifyContent: "center",
 						alignItems: "center",
 					}}
@@ -142,6 +147,26 @@ const LoginFormWideScreen = () => {
 					>
 						{strings.login.login}
 					</Button>
+					<Button
+					style={{
+						marginTop: sizes.lg,
+						width: "60%",
+						minWidth: 180,
+						backgroundColor: theme.colors.secondary,
+					}}
+					mode="contained"
+					onPress={() => {
+						APIClient.getDashboard().then((res) => {
+							console.log("then:", res);
+							toast.success("Success");
+						}).catch((err) => {
+							console.log("catch:", err);
+							toast.error("Error:"+ err?.response?.data?.message || "Unknown Error");
+						});
+					}}
+				>
+					test
+				</Button>
 				</Card.Actions>
 			</Card>
 		</>

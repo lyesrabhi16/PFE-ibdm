@@ -22,7 +22,8 @@ export const loginUser = async (req: Request, res: Response) => {
 
     if (!user) {
       logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: `User ${email} not found` });
-      return res.status(401).json({ message: "Invalid username or password" });
+      res.status(401).json({ message: "Invalid username or password" });
+      return;
     }
 
     // Comparer les mots de passe
@@ -40,8 +41,8 @@ export const loginUser = async (req: Request, res: Response) => {
 
     logger.log({ level: LOGLEVELS.INFO, label: "LOGIN", message: `Session created for user ${email}` });
 
-    // Répondre avec un message de succèsi
-    res.status(200).json({ message: "Login successful" });
+    // Répondre avec un message de succès
+    res.status(200).json({ message: "Login successful", user: { email: user.email, id: user.id }, sid: req.sessionID });
   } catch (error) {
     logger.log({ level: LOGLEVELS.ERROR, label: "LOGIN", message: "loginUser error", error: error });
 

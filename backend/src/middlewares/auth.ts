@@ -1,5 +1,5 @@
+import { db_client } from "#config/db/db";
 import { Request, Response, NextFunction } from "express";
-import User from "#models/user";
 
 // Middleware pour vérifier si l'utilisateur est connecté avec une session
 export const isAuthenticated = async (
@@ -14,7 +14,10 @@ export const isAuthenticated = async (
     }
 
     // Récupère l'utilisateur à partir de l'ID stocké dans la session
-    const user = await User.findById(req.session.userId).select("-password");
+    const user = await db_client.user.findUnique({
+      where: { id: req.session.userId },
+      omit: { password: true },
+    })
 
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });

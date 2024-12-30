@@ -21,6 +21,13 @@ export const useToasts = (strings: stringsType) => {
                 loading: strings.toasts.please_wait,
                 error: strings.toasts.SignIn_failed, 
             }
+        },
+        signInFailed: {
+            message: strings.toasts.error,
+            options: {
+                id: "signInFailed",
+                duration: durations.MEDIUM,
+            }
         }
     }
 }

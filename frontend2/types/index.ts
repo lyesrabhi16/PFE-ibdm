@@ -18,3 +18,8 @@ export enum languages{
     fr = 'fr',
     ar = 'ar',
 }
+
+export interface SignInRequestData {
+    email: string;
+    password: string;
+}
