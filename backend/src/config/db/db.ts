@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import { logger } from "#utils";
 import { LOGLEVELS as LOGLEVELS } from "#types/logger.types";
+import env from "#config/env.config";
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -42,8 +43,8 @@ db_client.$on("warn", (e) => {
 
 
 export const connectDB = async () => {
-  logger.log({ level:LOGLEVELS.INFO, message: "Connecting Databases Client Prisma...", label: "Prisma", url: process.env.DATABASE_URL });
-  const isConnected = await new Promise((resolve, reject) => {
+  logger.log({ level:LOGLEVELS.INFO, message: "Connecting Databases Client Prisma...", label: "Prisma", url: env.DATABASE_URL });
+  return new Promise((resolve, reject) => {
     db_client.user.findFirst({}).then(( con )=>{
         resolve(true);
         logger.log({ level:LOGLEVELS.INFO, message: "Connected to Databases Client Prisma", label: "Prisma" });  
