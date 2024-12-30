@@ -1,18 +1,17 @@
+import { db_client } from "#config/db/db";
 import { seed_data as sd } from "#config/db/seed_data";
-import { PrismaClient } from "@prisma/client"
 
-const db = new PrismaClient();
 const seed = async (seed_data: typeof sd) => {
     return new Promise(async (resolve, reject) => {
         console.log("Connecting to database...");
-        await db.$connect().catch((err: Error) => {
+        await db_client.$connect().catch((err: Error) => {
             console.log("Error connecting to database", err);
             reject(err);
         });
 
         console.log("Seeding database...");
         for (const data of seed_data) {
-            await (db as any)[`${data.model}`].upsert({
+            await (db_client as any)[`${data.model}`].upsert({
                 where: { id: data.id },
                 update: {},
                 create: {
@@ -38,11 +37,11 @@ console.log("Seed starting");
 seed(sd).then((res) => {
 
     console.log("Seed completed", res);
-    db.$disconnect();
+    db_client.$disconnect();
 }).catch((err) => {
     console.log("Seed failed", err);
 
-    db.$disconnect();
+    db_client.$disconnect();
 });
 
 export default seed;
