@@ -1,0 +1,195 @@
+import { View, Image, Dimensions, GestureResponderEvent } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+	Button,
+	Text,
+	Checkbox,
+	Divider,
+	useTheme,
+	Surface,
+	Headline,
+} from "react-native-paper";
+import { sizes } from "#/constants/sizes";
+import CustomTextInput from "#/components/CustomTextInput";
+import PasswordTextInput from "#/components/PasswordTextInput";
+import actions from "#/components/Login/actions";
+import useAppStore from "#/store";
+import useToasts from "#/hooks/toasts";
+import APIClient from "#/api_client/api_client";
+import toast from "react-hot-toast/headless";
+
+const LoginFormSmallScreen = () => {
+	const [email, setEmail] = React.useState("");
+	const [password, setPassword] = React.useState("");
+	const [RememberMe, setRememberMe] = React.useState(true);
+	const [InProgress_SignIn, setInProgress_SignIn] = useState(false);
+	const { strings } = useAppStore();
+	const toasts = useToasts(strings);
+	const theme = useTheme();
+
+	const signIn = (e: GestureResponderEvent) => {
+		actions.signIn(e, InProgress_SignIn, setInProgress_SignIn, theme, toasts, {
+			email,
+			password,
+		});
+	};
+
+	return (
+		<Surface
+			mode="flat"
+			style={{
+				height: "100%",
+				width: "100%",
+				margin: "auto",
+				padding: sizes.lg,
+				backgroundColor: theme.colors.background,
+				display: "flex",
+				flexDirection: "column",
+				justifyContent: "center",
+				alignItems: "center",
+				flexWrap: "nowrap",
+			}}
+		>
+			<Surface
+				mode="flat"
+				style={{
+					backgroundColor: theme.colors.background,
+				}}
+			>
+				<Image
+					source={require("#/assets/images/react-logo.png")}
+					style={{
+						width: 100,
+						height: 100,
+						marginHorizontal: "auto",
+						marginVertical: sizes.sm,
+					}}
+				/>
+
+				<Text
+					style={{
+						textAlign: "center",
+						fontSize: 30,
+						fontWeight: "bold",
+					}}
+				>
+					{strings.login.title}
+				</Text>
+				<Headline
+					style={{
+						textAlign: "center",
+					}}
+				>
+					{strings.login.welcome_message}
+				</Headline>
+				<Text
+					style={{
+						textAlign: "center",
+					}}
+				>
+					{strings.login.login_message}
+				</Text>
+			</Surface>
+			<Divider
+				horizontalInset
+				style={{
+					marginVertical: sizes.lg,
+				}}
+			/>
+			<Surface
+				mode="flat"
+				style={{
+					padding: sizes.md,
+					backgroundColor: theme.colors.background,
+					width: "95%",
+				}}
+			>
+				<CustomTextInput
+					style={{
+						marginVertical: sizes.sm,
+					}}
+					label={strings.login.email}
+					value={email}
+					onChangeText={(text) => setEmail(text)}
+					left_icon="account-circle-outline"
+				/>
+
+				<PasswordTextInput
+					style={{
+						marginVertical: sizes.sm,
+					}}
+					password={password}
+					setPassword={setPassword}
+				/>
+				<View
+					style={{
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "flex-start",
+						alignItems: "center",
+						marginVertical: sizes.sm,
+					}}
+				>
+					<Checkbox
+						status={RememberMe ? "checked" : "unchecked"}
+						onPress={() => {
+							setRememberMe((r) => !r);
+						}}
+					/>
+					<Text>{strings.login.remember_me}</Text>
+				</View>
+			</Surface>
+			<Divider
+				horizontalInset
+				style={{
+					marginVertical: sizes.sm,
+				}}
+			/>
+			<View
+				style={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				<Button
+					style={{
+						marginTop: sizes.lg,
+						width: "60%",
+						minWidth: 180,
+					}}
+					icon={{ source: "login", direction: "ltr" }}
+					mode="contained"
+					onPress={signIn}
+					loading={InProgress_SignIn}
+					disabled={InProgress_SignIn}
+				>
+					{strings.login.login}
+				</Button>
+				<Button
+					style={{
+						marginTop: sizes.lg,
+						width: "60%",
+						minWidth: 180,
+						backgroundColor: theme.colors.secondary,
+					}}
+					mode="contained"
+					onPress={() => {
+						APIClient.getDashboard().then((res) => {
+							console.log("then:", res);
+							toast.success("Success");
+						}).catch((err) => {
+							console.log("catch:", err);
+							toast.error("entire Error:"+ JSON.stringify(err) || "Unknown Error");
+						});
+					}}
+				>
+					test
+				</Button>
+			</View>
+		</Surface>
+	);
+};
+
+export default LoginFormSmallScreen;
