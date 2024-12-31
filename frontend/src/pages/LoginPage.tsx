@@ -1,14 +1,13 @@
-import LanguageSwitchButton from "#/Components/LanguageSwitchButton";
-import LoginForm from "#/Components/LoginForm";
-import { useStore } from "#/store";
+import { LanguageSwitchButton } from "#/Components/LanguageSwitchButton";
+import { LoginForm } from "#/Components/LoginForm";
+import { useAppStore } from "#/store";
 import { Card, Flex, Space } from "antd";
 import Navbar from '../Components/Navbar';
 
+import Logo from '#assets/logo.svg';
 
 const LoginPage = () => {
-  const { strings } = useStore();
-
-  
+  const { strings } = useAppStore();
 
   return (
     <div className="w-screen h-screen flex flex-col flex-nowrap">
@@ -29,6 +28,7 @@ const LoginPage = () => {
               wrap="nowrap"
               gap="1"
             >
+              <img className="mb-4 w-16" src={Logo} alt="logo"/>
               <p className="m-0 p-0 font-bold">
                 {strings.login.welcomeMessage}
               </p>
