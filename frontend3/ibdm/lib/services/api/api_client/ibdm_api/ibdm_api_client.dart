@@ -1,0 +1,38 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, unused_import
+
+import 'package:dio/dio.dart';
+import 'package:retrofit/retrofit.dart';
+
+import '../models/login_request.dart';
+import '../models/login_response.dart';
+import '../models/logout_response.dart';
+
+part 'ibdm_api_client.g.dart';
+
+@RestApi()
+abstract class IbdmApiClient {
+  factory IbdmApiClient(Dio dio, {String? baseUrl}) = _IbdmApiClient;
+
+  /// Login.
+  ///
+  /// Login.
+  @FormUrlEncoded()
+  @POST('/api/auth/login')
+  Future<LoginResponse> login({
+    @Body() required LoginRequest body,
+  });
+
+  /// Logout.
+  ///
+  /// Logout.
+  @POST('/api/auth/logout')
+  Future<LogoutResponse> logout();
+
+  /// Dashboard.
+  ///
+  /// Dashboard.
+  @GET('/api/auth/dashboard')
+  Future<LoginResponse> dashboard();
+}

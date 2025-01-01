@@ -1,18 +1,17 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'dashboard_serializer.dart';
+part of 'logout_response.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-DashboardSerializer _$DashboardSerializerFromJson(Map<String, dynamic> json) =>
-    DashboardSerializer(
-      message: json['message'] as String?,
+LogoutResponse _$LogoutResponseFromJson(Map<String, dynamic> json) =>
+    LogoutResponse(
+      message: json['message'] as String,
     );
 
-Map<String, dynamic> _$DashboardSerializerToJson(
-        DashboardSerializer instance) =>
+Map<String, dynamic> _$LogoutResponseToJson(LogoutResponse instance) =>
     <String, dynamic>{
       'message': instance.message,
     };
