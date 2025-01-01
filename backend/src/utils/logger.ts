@@ -1,6 +1,7 @@
+import env from '#config/env.config';
 import { colors_of_levels_type, LOGLEVELS, ranked_levels_type } from '#types/logger.types';
-import path from 'path';
 import { createLogger, format, level, transports } from 'winston';
+
 
 
 const colors: colors_of_levels_type = {};
@@ -38,7 +39,7 @@ const levels_ranked: ranked_levels_type = Object.keys(LOGLEVELS).reduce((acc: ra
 
 const logger = createLogger({
     levels: levels_ranked,
-    format: process.env.NODE_ENV === 'development' ? format_dev : format_prod,
+    format: env.NODE_ENV === 'development' ? format_dev : format_prod,
     transports: [
         new transports.Console(),
         new transports.File({ level: LOGLEVELS.ERROR, format: format_prod, filename: `logs/${LOGLEVELS.ERROR}.log`, }),
