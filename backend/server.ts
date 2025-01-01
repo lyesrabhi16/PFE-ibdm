@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import session from "express-session";
 import { connectDB } from "#config/db/db";
-import { authRoutes } from "#routes";
 import { logger } from "#utils";
 import { LOGLEVELS } from "#types/logger.types";
 import requestLogger from "#middlewares/logger.express";
@@ -14,9 +13,7 @@ import dotenv from "dotenv";
 import env, { EnvSchema } from "#config/env.config";
 import forceHttps from "#middlewares/forceHttps";
 import { startServer } from "#utils/server.utils";
-import swaggerJSDoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
-import path from "path";
+import { authRoutes, documentationRoutes } from "#routes";
 
 logger.log({ level: LOGLEVELS.INFO, message: "Starting server...", label: "Server" });
 
@@ -43,23 +40,6 @@ const httpsPORT = env.HTTPS_PORT || 8443;
 
 const app = express();
 
-// create openapi specification
-const openapiSpecification = swaggerJSDoc({
-  failOnError: true,
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "IBDM API",
-      version: "1.0.0",
-      description: "API for the IBDM project",
-    },
-  },
-  apis: ["./src/routes/**/*.ts", "./src/routes/**/*.js", "./src/routes/**/*.yaml", "./src/routes/**/*.yml"],
-});
-// write the openapi specification to a file
-fs.writeFileSync("openapi.json", JSON.stringify(openapiSpecification, null, 2));
-
-app.use('/api/documentation', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
 // Middleware
 app.use(cors(
@@ -86,6 +66,9 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "IBDM-SERVER" });
 })
 
+
+// documentation
+app.use("/api/documentation", documentationRoutes);
 
 
 
