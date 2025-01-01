@@ -34,3 +34,22 @@
 ```bash
 pnpm run generate:api-client
 ```
+
+# Api Documentation
+### see the documentation
+1. run the backend server
+```bash
+pnpm run dev
+```
+
+2. open your browser and navigate to: [`Docs`](https://localhost:8443/api/documentation). url: https://localhost:8443/api/documentation
+
+3. you can checkout the [`openapi.json`](./backend/openapi.json) file.
+
+### write the documentation
+check out this: [`OpenApi Specifications`](https://spec.openapis.org/oas/v3.0.0.html)
+1. you can write them directly inside the files in [`routes`](./backend/src/routes/) folder as comments with the decorator `@openapi`.
+example: [`Documentation Routes`](./backend/src/routes/documentation/documentation.routes.ts)
+
+2. or inside .spec.yml files.
+example: [`Auth Routes Spec File`](./backend/src/routes/authRoutes.spec.yml).
