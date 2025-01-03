@@ -15,6 +15,16 @@ part 'ibdm_api_client.g.dart';
 abstract class IbdmApiClient {
   factory IbdmApiClient(Dio dio, {String? baseUrl}) = _IbdmApiClient;
 
+  /// Get the OpenAPI specification in json format.
+  ///
+  /// Get the OpenAPI specification.
+  @GET('/api/documentation/openapi.json')
+  Future<dynamic> getOpenApiSpecificationJson();
+
+  /// Get the Swagger UI
+  @GET('/api/documentation')
+  Future<String> getDocumentationUi();
+
   /// Login.
   ///
   /// Login.

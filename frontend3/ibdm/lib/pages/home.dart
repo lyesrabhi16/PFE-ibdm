@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
@@ -56,6 +57,13 @@ class ActionsRow extends StatelessWidget {
       children: <Widget>[
         ThemeModeSwitchButton(),
         LanguageSwitchButton(),
+        FilledButton(
+          child: Text('Logout'),
+          onPressed: () {
+            Get.find<UserController>().logoutUser();
+            Get.offAllNamed(Routes.login);
+          },
+        )
       ],
     );
   }

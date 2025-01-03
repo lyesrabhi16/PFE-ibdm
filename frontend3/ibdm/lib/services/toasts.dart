@@ -30,6 +30,54 @@ class Toasts {
     );
   }
 
+  static ToastificationItem showErrorToast({
+    required BuildContext context,
+    required String message,
+  }) {
+    return toastification.show(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+      borderSide:
+          BorderSide(color: Theme.of(context).colorScheme.surfaceContainer),
+      title: Center(child: Text(message)),
+      alignment: Alignment.topCenter,
+      icon: Icon(Icons.close, color: errorColor),
+      closeButtonShowType: CloseButtonShowType.onHover,
+      showProgressBar: true,
+      progressBarTheme: ProgressIndicatorThemeData(
+        color: errorColor,
+      ),
+      dragToClose: true,
+      style: ToastificationStyle.flat,
+      showIcon: true,
+      autoCloseDuration: Duration(seconds: 5),
+    );
+  }
+
+  static ToastificationItem showSuccessToast({
+    required BuildContext context,
+    required String message,
+  }) {
+    return toastification.show(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+      borderSide:
+          BorderSide(color: Theme.of(context).colorScheme.surfaceContainer),
+      title: Center(child: Text(message)),
+      alignment: Alignment.topCenter,
+      icon: Icon(Icons.check, color: successColor),
+      closeButtonShowType: CloseButtonShowType.onHover,
+      showProgressBar: true,
+      progressBarTheme: ProgressIndicatorThemeData(
+        color: successColor,
+      ),
+      dragToClose: true,
+      style: ToastificationStyle.flat,
+      showIcon: true,
+      autoCloseDuration: Duration(seconds: 5),
+    );
+  }
+
   static ElegantNotification showErrorToastNotification({
     required BuildContext context,
     required String message,

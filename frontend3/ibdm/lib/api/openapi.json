@@ -6,6 +6,50 @@
     "description": "API for the IBDM project"
   },
   "paths": {
+    "/api/documentation/openapi.json": {
+      "get": {
+        "operationId": "getOpenApiSpecificationJson",
+        "summary": "Get the OpenAPI specification in json format",
+        "tags": [
+          "Documentation"
+        ],
+        "description": "Get the OpenAPI specification",
+        "responses": {
+          "200": {
+            "description": "OpenAPI specification",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/documentation": {
+      "get": {
+        "operationId": "getDocumentationUi",
+        "summary": "Get the Swagger UI",
+        "tags": [
+          "Documentation"
+        ],
+        "responses": {
+          "200": {
+            "description": "Swagger UI page",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "<!DOCTYPE html>..."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/login": {
       "post": {
         "summary": "Login",
@@ -235,6 +279,10 @@
     }
   },
   "tags": [
+    {
+      "name": "Documentation",
+      "description": "Documentation routes"
+    },
     {
       "name": "Auth",
       "description": "Auth routes"

@@ -4,10 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ibdm/services/api/api_client/api_client.dart';
 import 'package:ibdm/services/api/api_client/export.dart';
 
 class ApiClientInstance {
+  ApiClientInstance._();
   static Future<IbdmApiClient> getApiClient() async {
     // create Dio instance
     Dio dio = Dio();
