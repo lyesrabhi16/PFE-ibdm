@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
@@ -58,6 +59,10 @@ class LoginActions {
       Future.delayed(Duration(seconds: 2), () {
         toastification.dismiss(loginInProgressToast);
       });
+      // save user
+      UserController userController = Get.find<UserController>();
+      userController.setUser(response.user);
+
       // show success toast
       Toasts.showSuccessToastNotification(
         context: context,
