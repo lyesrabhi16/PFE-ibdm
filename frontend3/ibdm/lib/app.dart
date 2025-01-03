@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/controllers/locale_controller.dart';
-import 'package:ibdm/controllers/theme_mode_controller.dart';
+import 'package:ibdm/common/controllers/locale_controller.dart';
+import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
 import 'package:ibdm/utils/constants/routes.dart';
