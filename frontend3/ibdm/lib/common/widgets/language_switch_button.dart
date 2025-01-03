@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/controllers/locale_controller.dart';
+import 'package:ibdm/common/controllers/locale_controller.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:popover/popover.dart';
 
