@@ -62,3 +62,11 @@ export const logoutUser = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Déconnexion réussie." });
   });
 };
+
+export const getAuthenticatedUser = async (req: Request, res: Response) => {
+  if (req.session.isAuthenticated) {
+    return res.status(200).json({ message: "retrieved Authenticated User information", user: req.user });
+  } else {
+    return res.status(401).json({ message: "User is not authenticated" });
+  }
+};

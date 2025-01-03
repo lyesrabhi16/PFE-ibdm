@@ -1,6 +1,6 @@
 import express from "express";
 import { loginValidator } from "#validators";
-import { loginUser, logoutUser } from "#controllers/authController";
+import { getAuthenticatedUser, loginUser, logoutUser } from "#controllers/authController";
 import { isAuthenticated } from "#middlewares/auth";
 
 const router = express.Router();
@@ -13,4 +13,5 @@ router.get("/dashboard", isAuthenticated, (req, res) => {
 });
 router.post("/logout", isAuthenticated, logoutUser);
 
+router.get("/user/me", isAuthenticated, getAuthenticatedUser);
 export default router;

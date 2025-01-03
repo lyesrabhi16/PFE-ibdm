@@ -27,6 +27,9 @@
       "#/*": ["src/*"]
     }
   },
+  "files": [
+    "global.d.ts",
+  ],
   "include": ["src", "server.ts"],
   "exclude": ["node_modules"]
 }
