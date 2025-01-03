@@ -1,5 +1,5 @@
 # PFE-ibdm
-test 2
+
 # START BACKEND:
 1. Change directory to `backend`:
     ```sh
