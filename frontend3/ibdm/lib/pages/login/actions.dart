@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/services/api/api_client.dart';
-import 'package:ibdm/services/api/serializers/LoginRequest/login_request_body.dart';
-import 'package:ibdm/services/api/serializers/LoginRequest/login_request_response.dart';
+import 'package:ibdm/services/api/api_client/export.dart';
+import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
@@ -44,13 +43,14 @@ class LoginActions {
     // make api request
     try {
       logger.d("Creating Api Client...");
-      ApiClient apiClient = await ApiClient.getApiClient();
       logger.d("Requesting Login...");
-      LoginRequestResponse response = await apiClient.login(LoginRequestBody(
-        email: emailController.text,
-        password: passwordController.text,
-      ));
 
+      IbdmApiClient apiClient = await ApiClientInstance.getApiClient();
+
+      final response = await apiClient.login(
+        body: LoginRequest(
+            email: emailController.text, password: passwordController.text),
+      );
       logger.d("Login Response: $response");
       // set login progress to success
       loginProgress.value = FutureState.success;
