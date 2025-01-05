@@ -26,7 +26,7 @@ export const isAuthenticated = async (
     }
 
     // Ajoute l'utilisateur à l'objet `req` pour un accès ultérieur dans les routes
-    (req as any).user = user;
+    req.user = user;
     next();
   } catch (error) {
     console.error("Erreur dans le middleware isAuthenticated :", error);

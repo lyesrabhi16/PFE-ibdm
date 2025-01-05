@@ -2,8 +2,6 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import session from "express-session";
 import { connectDB } from "#config/db/db";
-import { authRoutes } from "#routes";
-import { AddressInfo } from "net";
 import { logger } from "#utils";
 import { LOGLEVELS } from "#types/logger.types";
 import requestLogger from "#middlewares/logger.express";
@@ -13,11 +11,9 @@ import https from "https";
 import http from "http";
 import dotenv from "dotenv";
 import env, { EnvSchema } from "#config/env.config";
-import { log } from "console";
 import forceHttps from "#middlewares/forceHttps";
 import { startServer } from "#utils/server.utils";
-
-
+import { authRoutes, documentationRoutes } from "#routes";
 
 logger.log({ level: LOGLEVELS.INFO, message: "Starting server...", label: "Server" });
 
@@ -43,6 +39,8 @@ const httpsPORT = env.HTTPS_PORT || 8443;
 
 
 const app = express();
+
+
 // Middleware
 app.use(cors(
   {
@@ -67,6 +65,10 @@ app.use("/api/auth", authRoutes);
 app.get("/", (req, res) => {
   res.status(200).json({ message: "IBDM-SERVER" });
 })
+
+
+// documentation
+app.use("/api/documentation", documentationRoutes);
 
 
 

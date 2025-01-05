@@ -9,6 +9,16 @@ const seed = async (seed_data: typeof sd) => {
             reject(err);
         });
 
+        console.log("Clearing database...");
+        await db_client.user.deleteMany({}).catch((err: Error) => {
+            console.log("Error clearing user table", err);
+            reject(err);
+        });
+        await db_client.machine.deleteMany({}).catch((err: Error) => {
+            console.log("Error clearing machine table", err);
+            reject(err);
+        });
+        
         console.log("Seeding database...");
         for (const data of seed_data) {
             await (db_client as any)[`${data.model}`].upsert({
