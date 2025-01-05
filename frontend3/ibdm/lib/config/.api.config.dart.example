@@ -1,0 +1,5 @@
+class ApiConfig {
+  ApiConfig._();
+
+  static String base_url = "https://172.16.103.41:8443";
+}

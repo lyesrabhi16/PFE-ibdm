@@ -33,6 +33,7 @@ class Toasts {
   static ToastificationItem showErrorToast({
     required BuildContext context,
     required String message,
+    ToastificationCallbacks? callbacks,
   }) {
     return toastification.show(
       context: context,
@@ -51,6 +52,7 @@ class Toasts {
       style: ToastificationStyle.flat,
       showIcon: true,
       autoCloseDuration: Duration(seconds: 5),
+      callbacks: callbacks ?? ToastificationCallbacks(),
     );
   }
 

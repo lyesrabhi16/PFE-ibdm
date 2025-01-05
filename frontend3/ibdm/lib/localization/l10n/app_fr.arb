@@ -34,6 +34,8 @@
     "timeOutError": "Délai d'attente de la demande dépassé, veuillez réessayer plus tard",
     "cancelMessage": "Demande annulée",
     "uknownError": "Une erreur inconnue s'est produite, veuillez réessayer plus tard",
-    "connectionFailed": "Échec de la connexion"
-
+    "connectionFailed": "Échec de la connexion",
+    "accessDenied": "Accès refusé",
+    "loginRequired": "Authentification requise",
+    "logoutRequired": "Déconnexion requise"
 }

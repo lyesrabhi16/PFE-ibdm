@@ -5,6 +5,7 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
+import '../models/get_user_response.dart';
 import '../models/login_request.dart';
 import '../models/login_response.dart';
 import '../models/logout_response.dart';
@@ -45,4 +46,10 @@ abstract class IbdmApiClient {
   /// Dashboard.
   @GET('/api/auth/dashboard')
   Future<LoginResponse> dashboard();
+
+  /// Get user.
+  ///
+  /// Get user.
+  @GET('/api/auth/user/me')
+  Future<GetUserResponse> getUser();
 }

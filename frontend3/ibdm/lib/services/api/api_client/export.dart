@@ -9,6 +9,7 @@ export 'models/user.dart';
 export 'models/login_request.dart';
 export 'models/login_response.dart';
 export 'models/logout_response.dart';
+export 'models/get_user_response.dart';
 export 'models/error.dart';
 // Root client
 export 'api_client.dart';

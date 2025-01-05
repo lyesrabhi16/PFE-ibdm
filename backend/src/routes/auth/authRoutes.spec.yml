@@ -44,6 +44,14 @@ components:
         message:
           type: string
           example: 'Logout successful'
+    getUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'User found'
+        user:
+          $ref: '#/components/schemas/User'
     Error:
       type: object
       properties:
@@ -185,7 +193,7 @@ components:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/getUserResponse'
       '401':
         description: Unauthorized
         content:
@@ -203,4 +211,4 @@ components:
         content:
           application/json:
             schema:
-              $ref: '#/components/scomponents/schemas/Error'
+              $ref: '#/components/schemas/Error'

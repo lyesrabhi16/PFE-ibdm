@@ -39,6 +39,20 @@ class Home extends StatelessWidget {
               },
             ),
             SizedBox(height: AppSizes.md),
+            FilledButton(
+              child: Text(strings.value.logout),
+              onPressed: () {
+                Get.find<UserController>().logoutUser();
+                Get.offAllNamed(Routes.login);
+              },
+            ),
+            FilledButton(
+              child: Text("protected"),
+              onPressed: () {
+                Get.toNamed("/protected");
+              },
+            ),
+            SizedBox(height: AppSizes.md),
             ActionsRow(),
           ],
         ),
@@ -57,13 +71,6 @@ class ActionsRow extends StatelessWidget {
       children: <Widget>[
         ThemeModeSwitchButton(),
         LanguageSwitchButton(),
-        FilledButton(
-          child: Text('Logout'),
-          onPressed: () {
-            Get.find<UserController>().logoutUser();
-            Get.offAllNamed(Routes.login);
-          },
-        )
       ],
     );
   }

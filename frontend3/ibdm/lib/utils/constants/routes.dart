@@ -1,9 +1,9 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/common/widgets/RouteGuards/protected_route.dart';
-import 'package:ibdm/common/widgets/RouteGuards/unauthenticated_only_route.dart';
+import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
+import 'package:ibdm/common/middlewares/protected_route_middleware.dart';
 
 class Routes {
   Routes._();
@@ -14,23 +14,28 @@ class Routes {
   static final router = [
     GetPage(
       name: Routes.home,
-      page: () => ProtectedRoute(
-        message: "You need to login to access this page",
-        child: Home(),
-      ),
+      page: () => Home(),
+      middlewares: [ProtectedRouteMiddleware()],
     ),
     GetPage(
       name: Routes.login,
-      page: () => UnauthenticatedOnlyRoute(
-          message: "You are already logged in", child: LoginPage()),
+      page: () => LoginPage(),
+      middlewares: [RequireUnAuthenticatedRouteMiddleware()],
     ),
     GetPage(
       name: "/protected",
-      page: () => ProtectedRoute(
-        message: "You need to login to access this page",
-        child: Center(
-          child: Text("This Should Be Protected"),
-        ),
+      middlewares: [ProtectedRouteMiddleware()],
+      page: () => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("Protected Route"),
+          ElevatedButton(
+            onPressed: () {
+              Get.toNamed(Routes.home);
+            },
+            child: Text("Home"),
+          )
+        ],
       ),
     ),
   ];
