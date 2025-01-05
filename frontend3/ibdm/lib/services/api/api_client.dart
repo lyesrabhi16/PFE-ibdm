@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client/export.dart';
 
 class ApiClientInstance {
@@ -29,6 +30,6 @@ class ApiClientInstance {
       });
     }
 
-    return ApiClient(dio, baseUrl: "https://10.2.60.9:8443").ibdmApi;
+    return ApiClient(dio, baseUrl: ApiConfig.base_url).ibdmApi;
   }
 }

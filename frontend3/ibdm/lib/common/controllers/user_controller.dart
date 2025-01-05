@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:ibdm/services/api/api_client.dart';
-import 'package:ibdm/services/api/api_client/ibdm_api/ibdm_api_client.dart';
-import 'package:ibdm/services/api/api_client/models/user.dart';
+import 'package:ibdm/services/api/api_client/export.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
 
 class UserController extends GetxController {
@@ -10,7 +9,7 @@ class UserController extends GetxController {
   User? get user => _user.value;
   set user(User? value) => _user.value = value;
 
-  get isAuthenticated => () {
+  bool get isAuthenticated => () {
         print(
             "Checking if user is authenticated: ${user != null} ${user?.email}");
         return user != null;
@@ -42,9 +41,14 @@ class UserController extends GetxController {
     this.user = user;
   }
 
-  void fetchUserFromApi() async {
+  void fetchUserFromApi({Function(dynamic e)? onFail}) async {
     // fetch user from api
     IbdmApiClient apiClient = await ApiClientInstance.getApiClient();
-    // TODO!: implement fetchUserFromApi for refreching user data
+    try {
+      GetUserResponse response = await apiClient.getUser();
+      setUser(response.user);
+    } catch (e) {
+      onFail?.call(e);
+    }
   }
 }

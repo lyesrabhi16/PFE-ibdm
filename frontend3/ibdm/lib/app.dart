@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           initialRoute: Routes.home,
           getPages: Routes.router,
+          textDirection: TextDirection.ltr,
           onUnknownRoute: (settings) {
             return GetPageRoute(
               page: () => Scaffold(
