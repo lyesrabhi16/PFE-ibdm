@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/controllers/theme_mode_controller.dart';
+import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 
 class ThemeModeSwitchButton extends StatelessWidget {
   ThemeModeSwitchButton({super.key});

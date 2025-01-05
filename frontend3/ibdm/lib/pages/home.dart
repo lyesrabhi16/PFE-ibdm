@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
-import 'package:ibdm/controllers/locale_controller.dart';
+import 'package:ibdm/common/controllers/locale_controller.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
@@ -35,6 +36,20 @@ class Home extends StatelessWidget {
               onPressed: () {
                 // go to login page
                 Get.toNamed(Routes.login);
+              },
+            ),
+            SizedBox(height: AppSizes.md),
+            FilledButton(
+              child: Text(strings.value.logout),
+              onPressed: () {
+                Get.find<UserController>().logoutUser();
+                Get.offAllNamed(Routes.login);
+              },
+            ),
+            FilledButton(
+              child: Text("protected"),
+              onPressed: () {
+                Get.toNamed("/protected");
               },
             ),
             SizedBox(height: AppSizes.md),

@@ -221,3 +221,6 @@ app.*.map.json
 # certificates
 *.crt
 *.pem
+
+# api config
+api.config.dart

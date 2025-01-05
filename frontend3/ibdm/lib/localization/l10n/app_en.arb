@@ -34,6 +34,9 @@
     "timeOutError": "Request Timed Out, please try again later",
     "cancelMessage": "Request Cancelled",
     "uknownError": "An unknown error occurred, please try again later",
-    "connectionFailed": "Connection Failed"
+    "connectionFailed": "Connection Failed",
+    "accessDenied": "Access Denied",
+    "loginRequired": "You must be Logged In",
+    "logoutRequired": "You must be Logged Out"
 
 }

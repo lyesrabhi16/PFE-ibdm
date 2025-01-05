@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
-import 'package:ibdm/login/wide_login_page.dart';
+import 'package:ibdm/pages/login/wide_login_page.dart';
 import 'package:ibdm/pages/login/small_login_page.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
