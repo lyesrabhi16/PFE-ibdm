@@ -6,6 +6,7 @@
 	"scripts": {
 		"start": "cd backend && tsx server.ts --host 0.0.0.0",
 		"dev": "cd backend && tsx watch server.ts --host 0.0.0.0",
+		"generateHash": "tsx ./backend/src/utils/generateHash.ts",
 		"prisma:migrate": "cd backend && prisma migrate dev",
 		"prisma:generate": "cd backend && prisma generate",
 		"prisma:push": "cd backend && prisma db push",
@@ -24,7 +25,7 @@
 		"@types/swagger-jsdoc": "^6.0.4",
 		"@types/swagger-ui-express": "^4.1.7",
 		"@vinejs/vine": "^3.0.0",
-		"bcrypt": "^5.1.1",
+		"argon2": "^0.41.1",
 		"bcryptjs": "^2.4.3",
 		"body-parser": "^1.20.3",
 		"connect-mongo": "^5.1.0",
