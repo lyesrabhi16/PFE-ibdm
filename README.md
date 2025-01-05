@@ -47,7 +47,7 @@ pnpm run dev
 3. you can checkout the [`openapi.json`](./backend/openapi.json) file.
 
 ### write the documentation
-check out this: [`OpenApi Specifications`](https://spec.openapis.org/oas/v3.0.0.html)
+check out this: [`OpenAPI Specifications`](https://spec.openapis.org/oas/v3.0.0.html)
 1. you can write them directly inside the files in [`routes`](./backend/src/routes/) folder as comments with the decorator `@openapi`.
 example: [`Documentation Routes`](./backend/src/routes/documentation/documentation.routes.ts)
 
