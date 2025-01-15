@@ -17,7 +17,6 @@ import { authRoutes, documentationRoutes } from "#routes";
 
 logger.log({ level: LOGLEVELS.INFO, message: "Starting server...", label: "Server" });
 
-dotenv.config();
 logger.log({ level: LOGLEVELS.INFO, message: "Loading environment variables...", label: "Environment" });
 EnvSchema.parse(process.env);
 logger.log({ level: LOGLEVELS.INFO, message: "Environment variables loaded", label: "Environment" });
