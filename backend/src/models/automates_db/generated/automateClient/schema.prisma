@@ -1,0 +1,19 @@
+generator automateClient {
+  provider = "prisma-client-js"
+  output   = "./generated/automateClient"
+}
+
+datasource automate_db {
+  provider = "sqlserver"
+  url      = env("SQLSERVER_DATABASE_URL")
+}
+
+model Table_date {
+  id   Int       @id
+  date DateTime?
+}
+
+model test_table {
+  id             Int     @id
+  test_table_str String? @automate_db.NChar(10)
+}

@@ -45,7 +45,7 @@ check this [article]('https://support.google.com/pixelphone/answer/2844832?hl=en
 #### create project certificate and sign it using the CA
 1. cd into backend/config/certificates/
 
-2. add your ip to ibdm.ext
+2. add your ip to [ibdm.ext](./certificates/ibdm.ext)
     
 3. create and sign certificate
 
