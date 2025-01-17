@@ -29,8 +29,8 @@
 		"prisma:automate:studio": "cd backend && prisma studio  --schema ./src/models/automates_db/schema.prisma",
 		
 
-		"bulid:android": "cd frontend3/ibdm && flutter build apk",
 		"build:windows": "cd frontend3/ibdm && flutter build windows",
+		"bulid:android": "cd frontend3/ibdm && flutter build apk",
 		"build:web": "cd frontend3/ibdm && flutter build web",
 		"build:ios": "cd frontend3/ibdm && flutter build ios",
 		"build:macos": "cd frontend3/ibdm && flutter build macos",
