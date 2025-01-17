@@ -78,12 +78,15 @@ export const connectDB = async () => {
     let failed = false;
 
 
-    for (let db in db_client) {
-      const result = await db_client.ibdm.user.findFirst({}).catch(() => {
-        logger.log({ level:LOGLEVELS.ERROR, message: "Failed to connect to Database "+db, label: "Prisma-"+db});
+      const result_ibdm = await db_client.ibdm.user.findFirst({}).catch(() => {
+        logger.log({ level:LOGLEVELS.ERROR, message: "Failed to connect to Database ibdm", label: "Prisma-ibdm"});
         failed = true;
       });
-    }
+
+      const result_automate = await db_client.automate.test_table.findFirst({}).catch(() => {
+        logger.log({ level:LOGLEVELS.ERROR, message: "Failed to connect to Database automate", label: "Prisma-automate"});
+        failed = true;
+      });
         
     if (!failed) {
       logger.log({ level:LOGLEVELS.INFO, message: "Connected to Databases", label: "Prisma" });

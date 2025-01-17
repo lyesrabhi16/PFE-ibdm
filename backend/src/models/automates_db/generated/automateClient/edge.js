@@ -31,11 +31,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.1.0
+ * Prisma Client JS version: 6.2.1
  * Query Engine version: 4123509d24aa4dede1e864b46351bf2790323b69
  */
 Prisma.prismaVersion = {
-  client: "6.1.0",
+  client: "6.2.1",
   engine: "4123509d24aa4dede1e864b46351bf2790323b69"
 }
 
@@ -136,6 +136,10 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -147,7 +151,7 @@ const config = {
     "schemaEnvPath": "../../../../../.env"
   },
   "relativePath": "../..",
-  "clientVersion": "6.1.0",
+  "clientVersion": "6.2.1",
   "engineVersion": "4123509d24aa4dede1e864b46351bf2790323b69",
   "datasourceNames": [
     "automate_db"
@@ -161,13 +165,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator automateClient {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/automateClient\"\n}\n\ndatasource automate_db {\n  provider = \"sqlserver\"\n  url      = env(\"SQLSERVER_DATABASE_URL\")\n}\n\nmodel Table_date {\n  id   Int       @id\n  date DateTime?\n}\n\nmodel test_table {\n  id             Int     @id\n  test_table_str String? @automate_db.NChar(10)\n}\n",
-  "inlineSchemaHash": "9d5ae1548925c0a96327b0a3735f7cd389a1f2c923af5a5f40c55a3e24a37016",
+  "inlineSchema": "generator automateClient {\n  provider      = \"prisma-client-js\"\n  output        = \"./generated/automateClient\"\n  binaryTargets = [\"native\", \"debian-openssl-3.0.x\"]\n}\n\ndatasource automate_db {\n  provider = \"sqlserver\"\n  url      = env(\"SQLSERVER_DATABASE_URL\")\n}\n\nmodel Table_date {\n  id   Int       @id(map: \"PK_table_date\") @default(dbgenerated()) @automate_db.Int\n  date DateTime?\n}\n\nmodel test_table {\n  id             Int     @id(map: \"PK_test_table\") @default(autoincrement()) @automate_db.Int\n  test_table_str String? @automate_db.NChar(10)\n}\n",
+  "inlineSchemaHash": "ed8a21a5e9f64fa592529bf65661054ff7bff48bbae7fec65d7b1ee93ae286bf",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Table_date\":{\"dbName\":null,\"schema\":null,\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"Int\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"date\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"DateTime\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false},\"test_table\":{\"dbName\":null,\"schema\":null,\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"Int\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"test_table_str\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"NChar\",[\"10\"]],\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Table_date\":{\"dbName\":null,\"schema\":null,\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"Int\",\"nativeType\":[\"Int\",[]],\"default\":{\"name\":\"dbgenerated\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"date\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"DateTime\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false},\"test_table\":{\"dbName\":null,\"schema\":null,\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"Int\",\"nativeType\":[\"Int\",[]],\"default\":{\"name\":\"autoincrement\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"test_table_str\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"NChar\",[\"10\"]],\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = undefined
 
