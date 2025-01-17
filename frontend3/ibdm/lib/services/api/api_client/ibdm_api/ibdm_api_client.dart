@@ -9,6 +9,7 @@ import '../models/get_user_response.dart';
 import '../models/login_request.dart';
 import '../models/login_response.dart';
 import '../models/logout_response.dart';
+import '../models/user.dart';
 
 part 'ibdm_api_client.g.dart';
 
@@ -52,4 +53,15 @@ abstract class IbdmApiClient {
   /// Get user.
   @GET('/api/auth/user/me')
   Future<GetUserResponse> getUser();
+
+  /// get users.
+  ///
+  /// [page] - page number, default 1.
+  ///
+  /// [perPage] - number of items per page, default 10.
+  @GET('/api/users')
+  Future<List<User>> getApiUsers({
+    @Query('page') num? page,
+    @Query('perPage') num? perPage,
+  });
 }

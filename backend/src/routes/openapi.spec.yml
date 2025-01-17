@@ -1,0 +1,260 @@
+#openapi: 3.0.0
+tags:
+  - name: Auth
+    description: Auth routes
+  - name: Documentation
+    description: Documentation routes
+  - name: Users
+    description: User routes
+
+# Components
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '1'
+        email:
+          type: string
+          example: 'example@example.com'
+        name:
+          type: string
+          example: 'bob'
+        role: 
+          type: string
+          example: 'USER'
+        phone_number:
+          type: string
+          example: "0549267381"        
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          example: 'email@example.com'
+        password:
+          type: string
+          example: 'password'
+      required:
+        - email
+        - password
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Login successful'
+        user:
+          $ref: '#/components/schemas/User'
+        sid:
+          type: string
+          example: 'DZ2DZk645..'
+    LogoutResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Logout successful'
+    getUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'User found'
+        user:
+          $ref: '#/components/schemas/User'
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Error message'
+  responses:
+    ServerError:
+      description: 'Internal Server Error'
+      content:
+        application/json:
+          schema: 
+            $ref: '#/components/schemas/Error'
+    UnauthenticatedError:
+      description: 'Unauthenticated'
+      content:
+        application/json:
+          schema: 
+            $ref: '#/components/schemas/Error'
+    ForbiddenError:
+      description: 'Forbidden'
+      content:
+        application/json:
+          schema: 
+            $ref: '#/components/schemas/Error'
+    BadRequestError:
+      description: 'Bad Request'
+      content:
+        application/json:
+          schema: 
+            $ref: '#/components/schemas/Error'
+    NotFoundError:
+      description: 'Not Found'
+      content:
+        application/json:
+          schema: 
+            $ref: '#/components/schemas/Error'
+  parameters:
+    page:
+      name: page
+      in: query
+      required: false
+      description: 'page number, default 1'
+      schema:
+        type: number
+        example: 1
+    perPage:
+      name: perPage
+      in: query
+      required: false
+      description: 'number of items per page, default 10'
+      schema:
+        type: number
+        example: 10
+    
+
+paths:
+  # AUTH APIs
+  /api/auth/login:
+    post:
+      summary: Login
+      description: Login
+      operationId: login
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/LoginRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            Set-Cookie:
+              description: Set sid cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: "#/components/responses/BadRequestError"
+        '401':
+          $ref: "#/components/responses/UnauthenticatedError"
+        '404':
+          $ref: "#/components/responses/NotFoundError"
+        '500':
+          $ref: "#/components/responses/ServerError"
+
+  /api/auth/logout:
+    post:
+      summary: Logout
+      description: Logout
+      operationId: logout
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+        
+        '401':
+          $ref: "#/components/responses/UnauthenticatedError"
+        '404':
+          $ref: "#/components/responses/NotFoundError"
+        '500':
+          $ref: "#/components/responses/ServerError"
+
+  /api/auth/dashboard:
+    get:
+      summary: Dashboard
+      description: Dashboard
+      operationId: dashboard
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: "#/components/responses/BadRequestError"
+        '401':
+          $ref: "#/components/responses/UnauthenticatedError"
+        '404':
+          $ref: "#/components/responses/NotFoundError"
+        '500':
+          $ref: "#/components/responses/ServerError"
+
+
+  /api/auth/user/me:
+    get:
+      summary: Get user
+      description: Get user
+      operationId: getUser
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserResponse'
+        '400':
+          $ref: "#/components/responses/BadRequestError"
+        '401':
+          $ref: "#/components/responses/UnauthenticatedError"
+        '404':
+          $ref: "#/components/responses/NotFoundError"
+        '500':
+          $ref: "#/components/responses/ServerError"
+  
+  # USERS APIs
+  /api/users:
+    get:
+      tags:
+        - Users
+      description: 'get users'
+      parameters: 
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+        
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          $ref: "#/components/responses/BadRequestError"
+        '401':
+          $ref: "#/components/responses/UnauthenticatedError"
+        '403':
+          $ref: "#/components/responses/ForbiddenError"
+        '404':
+          $ref: "#/components/responses/NotFoundError"
+        '500':
+          $ref: "#/components/responses/ServerError"
