@@ -26,7 +26,7 @@ export type test_table = $Result.DefaultSelection<Prisma.$test_tablePayload>
 
 /**
  * ##  Prisma Client ʲˢ
- * 
+ *
  * Type-safe database client for TypeScript & Node.js
  * @example
  * ```
@@ -35,7 +35,7 @@ export type test_table = $Result.DefaultSelection<Prisma.$test_tablePayload>
  * const table_dates = await prisma.table_date.findMany()
  * ```
  *
- * 
+ *
  * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
  */
 export class PrismaClient<
@@ -47,7 +47,7 @@ export class PrismaClient<
 
     /**
    * ##  Prisma Client ʲˢ
-   * 
+   *
    * Type-safe database client for TypeScript & Node.js
    * @example
    * ```
@@ -56,7 +56,7 @@ export class PrismaClient<
    * const table_dates = await prisma.table_date.findMany()
    * ```
    *
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
    */
 
@@ -86,7 +86,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
@@ -98,7 +98,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
@@ -109,7 +109,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
@@ -121,7 +121,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
@@ -145,7 +145,9 @@ export class PrismaClient<
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<R>
 
 
-  $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb, ExtArgs>
+  $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb, ExtArgs, $Utils.Call<Prisma.TypeMapCb, {
+    extArgs: ExtArgs
+  }>, ClientOptions>
 
       /**
    * `prisma.table_date`: Exposes CRUD operations for the **Table_date** model.
@@ -155,7 +157,7 @@ export class PrismaClient<
     * const table_dates = await prisma.table_date.findMany()
     * ```
     */
-  get table_date(): Prisma.Table_dateDelegate<ExtArgs>;
+  get table_date(): Prisma.Table_dateDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.test_table`: Exposes CRUD operations for the **test_table** model.
@@ -165,7 +167,7 @@ export class PrismaClient<
     * const test_tables = await prisma.test_table.findMany()
     * ```
     */
-  get test_table(): Prisma.test_tableDelegate<ExtArgs>;
+  get test_table(): Prisma.test_tableDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -224,7 +226,7 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.1.0
+   * Prisma Client JS version: 6.2.1
    * Query Engine version: 4123509d24aa4dede1e864b46351bf2790323b69
    */
   export type PrismaVersion = {
@@ -826,8 +828,26 @@ export namespace Prisma {
       timeout?: number
       isolationLevel?: Prisma.TransactionIsolationLevel
     }
+    /**
+     * Global configuration for omitting model fields by default.
+     * 
+     * @example
+     * ```
+     * const prisma = new PrismaClient({
+     *   omit: {
+     *     user: {
+     *       password: true
+     *     }
+     *   }
+     * })
+     * ```
+     */
+    omit?: Prisma.GlobalOmitConfig
   }
-
+  export type GlobalOmitConfig = {
+    table_date?: Table_dateOmit
+    test_table?: test_tableOmit
+  }
 
   /* Types for Logging */
   export type LogLevel = 'info' | 'query' | 'warn' | 'error'
@@ -868,6 +888,7 @@ export namespace Prisma {
     | 'createManyAndReturn'
     | 'update'
     | 'updateMany'
+    | 'updateManyAndReturn'
     | 'upsert'
     | 'delete'
     | 'deleteMany'
@@ -1097,11 +1118,13 @@ export namespace Prisma {
   }, ExtArgs["result"]["table_date"]>
 
 
+
   export type Table_dateSelectScalar = {
     id?: boolean
     date?: boolean
   }
 
+  export type Table_dateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "date", ExtArgs["result"]["table_date"]>
 
   export type $Table_datePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Table_date"
@@ -1115,12 +1138,12 @@ export namespace Prisma {
 
   type Table_dateGetPayload<S extends boolean | null | undefined | Table_dateDefaultArgs> = $Result.GetResult<Prisma.$Table_datePayload, S>
 
-  type Table_dateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<Table_dateFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type Table_dateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<Table_dateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: Table_dateCountAggregateInputType | true
     }
 
-  export interface Table_dateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface Table_dateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Table_date'], meta: { name: 'Table_date' } }
     /**
      * Find zero or one Table_date that matches the filter.
@@ -1133,10 +1156,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends Table_dateFindUniqueArgs>(args: SelectSubset<T, Table_dateFindUniqueArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends Table_dateFindUniqueArgs>(args: SelectSubset<T, Table_dateFindUniqueArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
 
     /**
-     * Find one Table_date that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one Table_date that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {Table_dateFindUniqueOrThrowArgs} args - Arguments to find a Table_date
      * @example
@@ -1147,7 +1170,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends Table_dateFindUniqueOrThrowArgs>(args: SelectSubset<T, Table_dateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends Table_dateFindUniqueOrThrowArgs>(args: SelectSubset<T, Table_dateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Find the first Table_date that matches the filter.
@@ -1162,7 +1185,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends Table_dateFindFirstArgs>(args?: SelectSubset<T, Table_dateFindFirstArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends Table_dateFindFirstArgs>(args?: SelectSubset<T, Table_dateFindFirstArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
 
     /**
      * Find the first Table_date that matches the filter or
@@ -1178,7 +1201,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends Table_dateFindFirstOrThrowArgs>(args?: SelectSubset<T, Table_dateFindFirstOrThrowArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends Table_dateFindFirstOrThrowArgs>(args?: SelectSubset<T, Table_dateFindFirstOrThrowArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Find zero or more Table_dates that matches the filter.
@@ -1196,7 +1219,7 @@ export namespace Prisma {
      * const table_dateWithIdOnly = await prisma.table_date.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends Table_dateFindManyArgs>(args?: SelectSubset<T, Table_dateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "findMany">>
+    findMany<T extends Table_dateFindManyArgs>(args?: SelectSubset<T, Table_dateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "findMany", ClientOptions>>
 
     /**
      * Create a Table_date.
@@ -1210,7 +1233,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends Table_dateCreateArgs>(args: SelectSubset<T, Table_dateCreateArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends Table_dateCreateArgs>(args: SelectSubset<T, Table_dateCreateArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Create many Table_dates.
@@ -1238,7 +1261,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends Table_dateDeleteArgs>(args: SelectSubset<T, Table_dateDeleteArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends Table_dateDeleteArgs>(args: SelectSubset<T, Table_dateDeleteArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Update one Table_date.
@@ -1255,7 +1278,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends Table_dateUpdateArgs>(args: SelectSubset<T, Table_dateUpdateArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends Table_dateUpdateArgs>(args: SelectSubset<T, Table_dateUpdateArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Delete zero or more Table_dates.
@@ -1307,7 +1330,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends Table_dateUpsertArgs>(args: SelectSubset<T, Table_dateUpsertArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends Table_dateUpsertArgs>(args: SelectSubset<T, Table_dateUpsertArgs<ExtArgs>>): Prisma__Table_dateClient<$Result.GetResult<Prisma.$Table_datePayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
 
 
     /**
@@ -1447,7 +1470,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__Table_dateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__Table_dateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1493,6 +1516,10 @@ export namespace Prisma {
      */
     select?: Table_dateSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Table_date
+     */
+    omit?: Table_dateOmit<ExtArgs> | null
+    /**
      * Filter, which Table_date to fetch.
      */
     where: Table_dateWhereUniqueInput
@@ -1507,6 +1534,10 @@ export namespace Prisma {
      */
     select?: Table_dateSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Table_date
+     */
+    omit?: Table_dateOmit<ExtArgs> | null
+    /**
      * Filter, which Table_date to fetch.
      */
     where: Table_dateWhereUniqueInput
@@ -1520,6 +1551,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Table_date
      */
     select?: Table_dateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table_date
+     */
+    omit?: Table_dateOmit<ExtArgs> | null
     /**
      * Filter, which Table_date to fetch.
      */
@@ -1565,6 +1600,10 @@ export namespace Prisma {
      */
     select?: Table_dateSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Table_date
+     */
+    omit?: Table_dateOmit<ExtArgs> | null
+    /**
      * Filter, which Table_date to fetch.
      */
     where?: Table_dateWhereInput
@@ -1609,6 +1648,10 @@ export namespace Prisma {
      */
     select?: Table_dateSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Table_date
+     */
+    omit?: Table_dateOmit<ExtArgs> | null
+    /**
      * Filter, which Table_dates to fetch.
      */
     where?: Table_dateWhereInput
@@ -1648,9 +1691,13 @@ export namespace Prisma {
      */
     select?: Table_dateSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Table_date
+     */
+    omit?: Table_dateOmit<ExtArgs> | null
+    /**
      * The data needed to create a Table_date.
      */
-    data: XOR<Table_dateCreateInput, Table_dateUncheckedCreateInput>
+    data?: XOR<Table_dateCreateInput, Table_dateUncheckedCreateInput>
   }
 
   /**
@@ -1671,6 +1718,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Table_date
      */
     select?: Table_dateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table_date
+     */
+    omit?: Table_dateOmit<ExtArgs> | null
     /**
      * The data needed to update a Table_date.
      */
@@ -1704,6 +1755,10 @@ export namespace Prisma {
      */
     select?: Table_dateSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Table_date
+     */
+    omit?: Table_dateOmit<ExtArgs> | null
+    /**
      * The filter to search for the Table_date to update in case it exists.
      */
     where: Table_dateWhereUniqueInput
@@ -1725,6 +1780,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Table_date
      */
     select?: Table_dateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table_date
+     */
+    omit?: Table_dateOmit<ExtArgs> | null
     /**
      * Filter which Table_date to delete.
      */
@@ -1749,6 +1808,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Table_date
      */
     select?: Table_dateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Table_date
+     */
+    omit?: Table_dateOmit<ExtArgs> | null
   }
 
 
@@ -1929,11 +1992,13 @@ export namespace Prisma {
   }, ExtArgs["result"]["test_table"]>
 
 
+
   export type test_tableSelectScalar = {
     id?: boolean
     test_table_str?: boolean
   }
 
+  export type test_tableOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "test_table_str", ExtArgs["result"]["test_table"]>
 
   export type $test_tablePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "test_table"
@@ -1947,12 +2012,12 @@ export namespace Prisma {
 
   type test_tableGetPayload<S extends boolean | null | undefined | test_tableDefaultArgs> = $Result.GetResult<Prisma.$test_tablePayload, S>
 
-  type test_tableCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<test_tableFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type test_tableCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<test_tableFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: Test_tableCountAggregateInputType | true
     }
 
-  export interface test_tableDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface test_tableDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['test_table'], meta: { name: 'test_table' } }
     /**
      * Find zero or one Test_table that matches the filter.
@@ -1965,10 +2030,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends test_tableFindUniqueArgs>(args: SelectSubset<T, test_tableFindUniqueArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends test_tableFindUniqueArgs>(args: SelectSubset<T, test_tableFindUniqueArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
 
     /**
-     * Find one Test_table that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one Test_table that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {test_tableFindUniqueOrThrowArgs} args - Arguments to find a Test_table
      * @example
@@ -1979,7 +2044,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends test_tableFindUniqueOrThrowArgs>(args: SelectSubset<T, test_tableFindUniqueOrThrowArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends test_tableFindUniqueOrThrowArgs>(args: SelectSubset<T, test_tableFindUniqueOrThrowArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Find the first Test_table that matches the filter.
@@ -1994,7 +2059,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends test_tableFindFirstArgs>(args?: SelectSubset<T, test_tableFindFirstArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends test_tableFindFirstArgs>(args?: SelectSubset<T, test_tableFindFirstArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
 
     /**
      * Find the first Test_table that matches the filter or
@@ -2010,7 +2075,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends test_tableFindFirstOrThrowArgs>(args?: SelectSubset<T, test_tableFindFirstOrThrowArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends test_tableFindFirstOrThrowArgs>(args?: SelectSubset<T, test_tableFindFirstOrThrowArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Find zero or more Test_tables that matches the filter.
@@ -2028,7 +2093,7 @@ export namespace Prisma {
      * const test_tableWithIdOnly = await prisma.test_table.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends test_tableFindManyArgs>(args?: SelectSubset<T, test_tableFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "findMany">>
+    findMany<T extends test_tableFindManyArgs>(args?: SelectSubset<T, test_tableFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "findMany", ClientOptions>>
 
     /**
      * Create a Test_table.
@@ -2042,7 +2107,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends test_tableCreateArgs>(args: SelectSubset<T, test_tableCreateArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends test_tableCreateArgs>(args: SelectSubset<T, test_tableCreateArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Create many Test_tables.
@@ -2070,7 +2135,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends test_tableDeleteArgs>(args: SelectSubset<T, test_tableDeleteArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends test_tableDeleteArgs>(args: SelectSubset<T, test_tableDeleteArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Update one Test_table.
@@ -2087,7 +2152,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends test_tableUpdateArgs>(args: SelectSubset<T, test_tableUpdateArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends test_tableUpdateArgs>(args: SelectSubset<T, test_tableUpdateArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
 
     /**
      * Delete zero or more Test_tables.
@@ -2139,7 +2204,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends test_tableUpsertArgs>(args: SelectSubset<T, test_tableUpsertArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends test_tableUpsertArgs>(args: SelectSubset<T, test_tableUpsertArgs<ExtArgs>>): Prisma__test_tableClient<$Result.GetResult<Prisma.$test_tablePayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
 
 
     /**
@@ -2279,7 +2344,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__test_tableClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__test_tableClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2325,6 +2390,10 @@ export namespace Prisma {
      */
     select?: test_tableSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the test_table
+     */
+    omit?: test_tableOmit<ExtArgs> | null
+    /**
      * Filter, which test_table to fetch.
      */
     where: test_tableWhereUniqueInput
@@ -2339,6 +2408,10 @@ export namespace Prisma {
      */
     select?: test_tableSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the test_table
+     */
+    omit?: test_tableOmit<ExtArgs> | null
+    /**
      * Filter, which test_table to fetch.
      */
     where: test_tableWhereUniqueInput
@@ -2352,6 +2425,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the test_table
      */
     select?: test_tableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the test_table
+     */
+    omit?: test_tableOmit<ExtArgs> | null
     /**
      * Filter, which test_table to fetch.
      */
@@ -2397,6 +2474,10 @@ export namespace Prisma {
      */
     select?: test_tableSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the test_table
+     */
+    omit?: test_tableOmit<ExtArgs> | null
+    /**
      * Filter, which test_table to fetch.
      */
     where?: test_tableWhereInput
@@ -2441,6 +2522,10 @@ export namespace Prisma {
      */
     select?: test_tableSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the test_table
+     */
+    omit?: test_tableOmit<ExtArgs> | null
+    /**
      * Filter, which test_tables to fetch.
      */
     where?: test_tableWhereInput
@@ -2480,9 +2565,13 @@ export namespace Prisma {
      */
     select?: test_tableSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the test_table
+     */
+    omit?: test_tableOmit<ExtArgs> | null
+    /**
      * The data needed to create a test_table.
      */
-    data: XOR<test_tableCreateInput, test_tableUncheckedCreateInput>
+    data?: XOR<test_tableCreateInput, test_tableUncheckedCreateInput>
   }
 
   /**
@@ -2503,6 +2592,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the test_table
      */
     select?: test_tableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the test_table
+     */
+    omit?: test_tableOmit<ExtArgs> | null
     /**
      * The data needed to update a test_table.
      */
@@ -2536,6 +2629,10 @@ export namespace Prisma {
      */
     select?: test_tableSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the test_table
+     */
+    omit?: test_tableOmit<ExtArgs> | null
+    /**
      * The filter to search for the test_table to update in case it exists.
      */
     where: test_tableWhereUniqueInput
@@ -2557,6 +2654,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the test_table
      */
     select?: test_tableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the test_table
+     */
+    omit?: test_tableOmit<ExtArgs> | null
     /**
      * Filter which test_table to delete.
      */
@@ -2581,6 +2682,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the test_table
      */
     select?: test_tableSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the test_table
+     */
+    omit?: test_tableOmit<ExtArgs> | null
   }
 
 
@@ -2746,12 +2851,12 @@ export namespace Prisma {
   }
 
   export type Table_dateCreateInput = {
-    id: number
+    id?: number
     date?: Date | string | null
   }
 
   export type Table_dateUncheckedCreateInput = {
-    id: number
+    id?: number
     date?: Date | string | null
   }
 
@@ -2766,7 +2871,7 @@ export namespace Prisma {
   }
 
   export type Table_dateCreateManyInput = {
-    id: number
+    id?: number
     date?: Date | string | null
   }
 
@@ -2781,17 +2886,15 @@ export namespace Prisma {
   }
 
   export type test_tableCreateInput = {
-    id: number
     test_table_str?: string | null
   }
 
   export type test_tableUncheckedCreateInput = {
-    id: number
+    id?: number
     test_table_str?: string | null
   }
 
   export type test_tableUpdateInput = {
-    id?: IntFieldUpdateOperationsInput | number
     test_table_str?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -2801,12 +2904,10 @@ export namespace Prisma {
   }
 
   export type test_tableCreateManyInput = {
-    id: number
     test_table_str?: string | null
   }
 
   export type test_tableUpdateManyMutationInput = {
-    id?: IntFieldUpdateOperationsInput | number
     test_table_str?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
