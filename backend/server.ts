@@ -13,7 +13,8 @@ import dotenv from "dotenv";
 import env, { EnvSchema } from "#config/env.config";
 import forceHttps from "#middlewares/forceHttps";
 import { startServer } from "#utils/server.utils";
-import { authRoutes, documentationRoutes } from "#routes";
+import { authRoutes, documentationRoutes, notFoundRoutes, userRoutes } from "#routes";
+import { pagination } from "#middlewares/pagination.middelware";
 
 logger.log({ level: LOGLEVELS.INFO, message: "Starting server...", label: "Server" });
 
@@ -57,9 +58,11 @@ app.use((req, res, next) => forceHttps(req, res, next, { httpsPORT }));
 // Configuration de la session
 app.use(session(SessionConfig));
 
+app.use(pagination);
+
 // Routes
 app.use("/api/auth", authRoutes);
-
+app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "IBDM-SERVER" });
@@ -70,6 +73,8 @@ app.get("/", (req, res) => {
 app.use("/api/documentation", documentationRoutes);
 
 
+// not found
+app.use("*", notFoundRoutes)
 
 // Start server
 
