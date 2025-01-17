@@ -5,11 +5,14 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
+import '../models/delete_api_users_id_response.dart';
+import '../models/delete_api_users_response.dart';
 import '../models/get_user_response.dart';
 import '../models/login_request.dart';
 import '../models/login_response.dart';
 import '../models/logout_response.dart';
 import '../models/user.dart';
+import '../models/user_ids_array.dart';
 
 part 'ibdm_api_client.g.dart';
 
@@ -52,7 +55,7 @@ abstract class IbdmApiClient {
   ///
   /// Get user.
   @GET('/api/auth/user/me')
-  Future<GetUserResponse> getUser();
+  Future<GetUserResponse> getCurrentUser();
 
   /// get users.
   ///
@@ -60,8 +63,37 @@ abstract class IbdmApiClient {
   ///
   /// [perPage] - number of items per page, default 10.
   @GET('/api/users')
-  Future<List<User>> getApiUsers({
+  Future<List<User>> getUsers({
     @Query('page') num? page,
     @Query('perPage') num? perPage,
+  });
+
+  /// delete many users.
+  ///
+  /// delete many users.
+  ///
+  /// [userIds] - an array of user ids (strings).
+  @DELETE('/api/users')
+  Future<DeleteApiUsersResponse> deleteUsers({
+    @Query('userIds') required UserIdsArray userIds,
+  });
+
+  /// get the info of a user
+  @GET('/api/users/{id}')
+  Future<User> getUser({
+    @Path('id') required String id,
+  });
+
+  /// delete a user
+  @DELETE('/api/users/{id}')
+  Future<DeleteApiUsersIdResponse> deleteUser({
+    @Path('id') required String id,
+  });
+
+  /// update a user
+  @PUT('/api/users/{id}')
+  Future<User> updateUser({
+    @Path('id') required String id,
+    @Body() User? body,
   });
 }

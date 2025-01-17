@@ -9,6 +9,7 @@ export const seed_data = {
                 email: "lyes@test.test",
                 password: async () => await generateHash("lyes"),
                 name: "Lyes",
+                role: "ADMIN",
             }
         },
         {

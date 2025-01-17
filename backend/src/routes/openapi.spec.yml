@@ -71,6 +71,14 @@ components:
         message:
           type: string
           example: 'Error message'
+    userIdsArray:
+      type: array
+      properties:
+        property:
+          type: string
+          example: "675ed2ea1164d1a1bae8ab1a"
+          minItems: 1
+
   responses:
     ServerError:
       description: 'Internal Server Error'
@@ -119,6 +127,13 @@ components:
       schema:
         type: number
         example: 10
+    userIds:
+      name: userIds
+      in: query
+      required: true
+      description: 'an array of user ids (strings)'
+      schema:
+        $ref: "#/components/schemas/userIdsArray"
     
 
 paths:
@@ -210,7 +225,7 @@ paths:
     get:
       summary: Get user
       description: Get user
-      operationId: getUser
+      operationId: getCurrentUser
       tags:
         - Auth
       responses:
@@ -235,6 +250,7 @@ paths:
       tags:
         - Users
       description: 'get users'
+      operationId: getUsers
       parameters: 
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/perPage'
@@ -258,3 +274,127 @@ paths:
           $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/ServerError"
+    
+    delete:
+      summary: delete many users
+      operationId: deleteUsers
+      description: delete many users
+      tags: 
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/userIds"
+      responses:
+        "200":
+              description: Users Deleted
+              content:
+                application/json:
+                    schema:
+                      type: object
+                      properties:
+                        message:
+                            type: string
+                            example: "Users Deleted"
+        '400':
+          $ref: "#/components/responses/BadRequestError"
+        '401':
+          $ref: "#/components/responses/UnauthenticatedError"
+        '403':
+          $ref: "#/components/responses/ForbiddenError"
+        '404':
+          $ref: "#/components/responses/NotFoundError"
+        '500':
+          $ref: "#/components/responses/ServerError"
+  /api/users/{id}:
+    get:
+      description: 'get the info of a user'
+      operationId: getUser
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            example: "234531324863"
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+                application/json:
+                    schema:
+                      $ref: "#/components/schemas/User"
+        '400':
+          $ref: "#/components/responses/BadRequestError"
+        '401':
+          $ref: "#/components/responses/UnauthenticatedError"
+        '403':
+          $ref: "#/components/responses/ForbiddenError"
+        '404':
+          $ref: "#/components/responses/NotFoundError"
+        '500':
+          $ref: "#/components/responses/ServerError"
+        
+    delete:
+        description: 'delete a user'
+        operationId: deleteUser
+        parameters:
+          - in: path
+            name: id
+            schema:
+              type: string
+              example: "234531324863"
+            required: true
+        responses:
+          '200':
+            description: Deleted
+            content:
+                  application/json:
+                      schema:
+                        type: object
+                        properties:
+                          message:
+                              type: string
+                              example: "User Deleted"
+          '400':
+            $ref: "#/components/responses/BadRequestError"
+          '401':
+            $ref: "#/components/responses/UnauthenticatedError"
+          '403':
+            $ref: "#/components/responses/ForbiddenError"
+          '404':
+            $ref: "#/components/responses/NotFoundError"
+          '500':
+            $ref: "#/components/responses/ServerError"
+    
+    put:
+        description: update a user
+        operationId: updateUser
+        parameters:
+          - in: path
+            name: id
+            schema:
+              type: string
+              example: "234531324863"
+            required: true
+        
+        requestBody:
+            content:
+                application/json:
+                    schema:
+                      $ref: "#/components/schemas/User"
+        responses:
+          '200':
+            description: Updated
+            content:
+                  application/json:
+                      schema:
+                        $ref: "#/components/schemas/User"
+          '400':
+            $ref: "#/components/responses/BadRequestError"
+          '401':
+            $ref: "#/components/responses/UnauthenticatedError"
+          '403':
+            $ref: "#/components/responses/ForbiddenError"
+          '404':
+            $ref: "#/components/responses/NotFoundError"
+          '500':
+            $ref: "#/components/responses/ServerError"
