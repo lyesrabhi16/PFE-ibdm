@@ -21,13 +21,15 @@ components:
           example: 'example@example.com'
         name:
           type: string
+          nullable: true
           example: 'bob'
         role: 
           type: string
           example: 'USER'
         phone_number:
           type: string
-          example: "0549267381"        
+          nullable: true
+          example: "0549267381"    
     LoginRequest:
       type: object
       properties:

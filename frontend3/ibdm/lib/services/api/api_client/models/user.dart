@@ -11,19 +11,19 @@ class User {
   const User({
     required this.id,
     required this.email,
-    required this.name,
     required this.role,
-    required this.phoneNumber,
+    this.name,
+    this.phoneNumber,
   });
   
   factory User.fromJson(Map<String, Object?> json) => _$UserFromJson(json);
   
   final String id;
   final String email;
-  final String name;
+  final String? name;
   final String role;
   @JsonKey(name: 'phone_number')
-  final String phoneNumber;
+  final String? phoneNumber;
 
   Map<String, Object?> toJson() => _$UserToJson(this);
 }
