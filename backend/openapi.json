@@ -458,6 +458,7 @@
           },
           "name": {
             "type": "string",
+            "nullable": true,
             "example": "bob"
           },
           "role": {
@@ -466,6 +467,7 @@
           },
           "phone_number": {
             "type": "string",
+            "nullable": true,
             "example": "0549267381"
           }
         }

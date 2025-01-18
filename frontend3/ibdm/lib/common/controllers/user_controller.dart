@@ -45,7 +45,7 @@ class UserController extends GetxController {
     // fetch user from api
     IbdmApiClient apiClient = await ApiClientInstance.getApiClient();
     try {
-      GetUserResponse response = await apiClient.getUser();
+      GetUserResponse response = await apiClient.getCurrentUser();
       setUser(response.user);
     } catch (e) {
       onFail?.call(e);

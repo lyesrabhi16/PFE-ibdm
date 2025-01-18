@@ -42,7 +42,7 @@ export const loginUser = async (req: Request, res: Response) => {
     logger.log({ level: LOGLEVELS.INFO, label: "LOGIN", message: `Session created for user ${email}` });
 
     // Répondre avec un message de succès
-    res.status(200).json({ message: "Login successful", user: { email: user.email, id: user.id }, sid: req.sessionID });
+    res.status(200).json({ message: "Login successful", user: { ...user, password:undefined }, sid: req.sessionID });
   } catch (error) {
     logger.log({ level: LOGLEVELS.ERROR, label: "LOGIN", message: "loginUser error", error: error });
 
