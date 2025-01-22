@@ -1,0 +1,15 @@
+$TTL 2d
+
+$ORIGIN local.ifri.
+@                       IN      SOA     ns.local.ifri.  info.local.ifri. (
+                                        2025012103      ;serial
+                                        12h             ;refresh
+                                        15m             ;retry
+                                        3w              ;expire
+                                        2h              ;min ttl
+                                        )
+                        IN      NS      ns.local.ifri.
+
+ns                      IN      A       172.16.103.46
+
+*                    IN      A       172.16.103.46
