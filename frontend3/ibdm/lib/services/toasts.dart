@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 
 class Toasts {
@@ -93,6 +94,7 @@ class Toasts {
       title: title != null ? Text(title) : null,
       position: Alignment.bottomRight,
       animation: AnimationType.fromRight,
+      toastDuration: Duration(seconds: 5),
     );
     toast.show(context);
     return toast;
