@@ -53,6 +53,8 @@ dependencies:
   popover: ^0.3.1
   dio: ^5.7.0
   swagger_parser: ^1.20.1
+  shadcn_ui: ^0.18.0
+  easy_sidemenu: ^0.6.0
 
 dev_dependencies:
   flutter_test:
@@ -87,7 +89,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/certificates/
-    #- assets/certificates/ibdm.pem
+    - assets/certificates/myCA.pem
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

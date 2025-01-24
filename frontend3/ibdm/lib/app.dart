@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/theme/theme.dart';
 import 'package:ibdm/utils/theme/util.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
@@ -23,10 +24,9 @@ class MyApp extends StatelessWidget {
 
     MaterialTheme theme = MaterialTheme(textTheme);
 
-    return Obx(
-      () {
-        logger.i('App Rerender');
-        return GetMaterialApp(
+    return ShadApp.custom(
+      appBuilder: (context, shadTheme) => Obx(
+        () => GetMaterialApp(
           title: 'IBDM - Ifri Base de Données Machines',
           locale: localeController.locale.value,
           themeMode: themeModeController.themeMode.value,
@@ -47,8 +47,8 @@ class MyApp extends StatelessWidget {
               ),
             );
           },
-        );
-      },
+        ),
+      ),
     );
   }
 }
