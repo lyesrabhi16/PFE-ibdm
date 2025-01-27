@@ -15,6 +15,7 @@ import forceHttps from "#middlewares/forceHttps";
 import { startServer } from "#utils/server.utils";
 import { authRoutes, documentationRoutes, notFoundRoutes, userRoutes } from "#routes";
 import { pagination } from "#middlewares/pagination.middelware";
+import { cors_config } from "#config/cors/cors.config";
 
 logger.log({ level: LOGLEVELS.INFO, message: "Starting server...", label: "Server" });
 
@@ -42,18 +43,13 @@ const app = express();
 
 
 // Middleware
-app.use(cors(
-  {
-    credentials: true,
-    origin: true,
-  }
-));
+app.use(cors(cors_config));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
 
 // force https
-app.use((req, res, next) => forceHttps(req, res, next, { httpsPORT }));
+//app.use((req, res, next) => forceHttps(req, res, next, { httpsPORT }));
 
 // Configuration de la session
 app.use(session(SessionConfig));
@@ -66,7 +62,7 @@ app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "IBDM-SERVER" });
-})
+});
 
 
 // documentation
@@ -74,7 +70,7 @@ app.use("/api/documentation", documentationRoutes);
 
 
 // not found
-app.use("*", notFoundRoutes)
+app.use("*", notFoundRoutes);
 
 // Start server
 

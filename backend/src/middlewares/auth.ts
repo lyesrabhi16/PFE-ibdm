@@ -10,6 +10,14 @@ export const isAuthenticated = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("cookie: ",req.session.cookie);
+  console.log("session:" ,req.session);
+  console.log("sessionid:", req.sessionID);
+  console.log("userid:", req.session.userId);
+  
+  
+  
+  
   logger.log({level:LOGLEVELS.INFO, message:"checking isAuthenticated Permission", label: "isAuthenticated"})
   try {
     // Vérifie si la session contient un ID utilisateur
