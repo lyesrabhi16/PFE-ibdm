@@ -55,6 +55,7 @@ dependencies:
   swagger_parser: ^1.20.1
   shadcn_ui: ^0.18.0
   easy_sidemenu: ^0.6.0
+  dio_cookie_manager: ^3.1.1
 
 dev_dependencies:
   flutter_test:
