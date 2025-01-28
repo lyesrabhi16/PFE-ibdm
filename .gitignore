@@ -132,6 +132,7 @@ dist
 
 node_modules
 keyfile
+keyfile.*
 
 .vscode
 data
