@@ -7,7 +7,11 @@ export const cors_config: CorsOptions =
     origin: (origin, callback) => {
 
         if (origin === undefined) {
-            callback(new Error("Not allowed by CORS because origin is not defined"));
+            let allow = false;
+            if(env.NODE_ENV === "development") {
+                allow = true;
+            }
+            callback(null, allow);
             return;
         }
         // check for wild card

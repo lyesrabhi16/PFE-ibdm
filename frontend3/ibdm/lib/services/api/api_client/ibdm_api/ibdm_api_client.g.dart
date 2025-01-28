@@ -216,7 +216,7 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<List<User>> getUsers({
+  Future<GetApiUsersResponse> getUsers({
     num? page,
     num? perPage,
   }) async {
@@ -228,7 +228,7 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<List<User>>(Options(
+    final _options = _setStreamType<GetApiUsersResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -244,12 +244,10 @@ class _IbdmApiClient implements IbdmApiClient {
           _dio.options.baseUrl,
           baseUrl,
         )));
-    final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<User> _value;
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetApiUsersResponse _value;
     try {
-      _value = _result.data!
-          .map((dynamic i) => User.fromJson(i as Map<String, dynamic>))
-          .toList();
+      _value = GetApiUsersResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
