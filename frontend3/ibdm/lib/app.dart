@@ -4,6 +4,7 @@ import 'package:ibdm/controllers/locale_controller.dart';
 import 'package:ibdm/controllers/theme_mode_controller.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
+//import 'package:ibdm/pages/login/loading_page.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
@@ -16,11 +17,9 @@ class MyApp extends StatelessWidget {
   final ThemeModeController themeModeController =
       Get.put(ThemeModeController());
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = createTextTheme(context, "Poppins", "Poppins");
-
     MaterialTheme theme = MaterialTheme(textTheme);
 
     final routes = [
@@ -32,7 +31,11 @@ class MyApp extends StatelessWidget {
         name: Routes.login,
         page: () => LoginPage(),
       ),
-    ];
+    //  GetPage(
+     //   name: Routes.loading,
+     //   page: () => LoadingPage(),
+     // ),
+    ]; 
 
     return Obx(
       () {
@@ -46,7 +49,8 @@ class MyApp extends StatelessWidget {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           debugShowCheckedModeBanner: false,
-          initialRoute: Routes.home,
+          initialRoute:
+              Routes.home, // Définir LoadingPage comme route initiale
           getPages: routes,
           onUnknownRoute: (settings) {
             return GetPageRoute(
