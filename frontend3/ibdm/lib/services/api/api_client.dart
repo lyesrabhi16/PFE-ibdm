@@ -2,26 +2,14 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
-import 'package:ibdm/services/api/serializers/LoginRequest/login_request_body.dart';
-import 'package:ibdm/services/api/serializers/LoginRequest/login_request_response.dart';
-import 'package:ibdm/services/api/serializers/dashboard_serializer.dart';
-import 'package:retrofit/retrofit.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:ibdm/config/api.config.dart';
+import 'package:ibdm/services/api/api_client/export.dart';
 
-part 'api_client.g.dart';
-
-@RestApi(baseUrl: 'https://10.2.60.9:8443')
-abstract class ApiClient {
-  factory ApiClient(Dio dio, {String baseUrl}) = _ApiClient;
-
-  @GET('/api/auth/dashboard')
-  Future<DashboardSerializer> getDashboard();
-
-  @POST('/api/auth/login')
-  Future<LoginRequestResponse> login(@Body() LoginRequestBody body);
-
-  static Future<ApiClient> getApiClient() async {
+class ApiClientInstance {
+  ApiClientInstance._();
+  static Future<IbdmApiClient> getApiClient() async {
     // create Dio instance
     Dio dio = Dio();
 
@@ -42,6 +30,6 @@ abstract class ApiClient {
       });
     }
 
-    return ApiClient(dio);
+    return ApiClient(dio, baseUrl: ApiConfig.base_url).ibdmApi;
   }
 }

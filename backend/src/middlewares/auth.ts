@@ -14,11 +14,12 @@ export const isAuthenticated = async (
     }
 
     // Récupère l'utilisateur à partir de l'ID stocké dans la session
-    const user = await db_client.user.findUnique({
-      where: { id: req.session.userId },
+    const user = await db_client.ibdm.user.findUnique({
+      where: { id: req.session.userId, },
       omit: {
         password: true,
-      }
+      },
+      
     });
 
     if (!user) {
@@ -26,7 +27,7 @@ export const isAuthenticated = async (
     }
 
     // Ajoute l'utilisateur à l'objet `req` pour un accès ultérieur dans les routes
-    (req as any).user = user;
+    req.user = user;
     next();
   } catch (error) {
     console.error("Erreur dans le middleware isAuthenticated :", error);

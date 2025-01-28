@@ -6,7 +6,7 @@ import winston from 'winston';
 // Express middleware to log requests
 const requestLogger = (req: Request, res: Response, next: NextFunction) => {
     res.on('finish', () => {
-        logger.log({ level: LOGLEVELS.HTTP, label:"REQUEST",message:`${req.method} ${req.url} ${res.statusCode}` });
+        logger.log({ level: LOGLEVELS.HTTP, label:`REQUEST-${req.protocol}`,message:`${req.method} ${req.url} ${res.statusCode}` });
     })
     next();
 };
