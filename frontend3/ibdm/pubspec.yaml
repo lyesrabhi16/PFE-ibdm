@@ -87,7 +87,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/certificates/
-    - assets/certificates/ibdm.pem
+    #- assets/certificates/ibdm.pem
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
