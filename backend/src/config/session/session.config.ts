@@ -1,18 +1,32 @@
+import env from "#config/env.config";
+import { LOGLEVELS } from "#types/logger.types";
+import { logger } from "#utils";
 import MongoStore from "connect-mongo";
 import { SessionOptions } from "express-session";
 
+
+const mongo_store = MongoStore.create({
+    mongoUrl: env.DATABASE_URL,
+    collectionName: "sessions",
+});
+
+
+
+mongo_store.on("error", (error) => {
+    logger.log({ level: LOGLEVELS.ERROR, message: "Failed to connect to MongoDB", label: "Session", error: error });
+    process.exit(1); 
+});
+
+
 const SessionConfig:SessionOptions ={
-    secret: process.env.SESSION_SECRET!,
+    secret: env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: process.env.DATABASE_URL,
-        collectionName: "sessions",
-    }),
+    store: mongo_store,
     cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production"? "strict": undefined,
+        secure: true,
+        sameSite: env.NODE_ENV === "production"? "strict": undefined,
         maxAge: 24 * 60 * 60 * 1000, // 1 jour
     },
     name: "sid",

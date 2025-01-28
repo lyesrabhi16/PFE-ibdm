@@ -7,5 +7,8 @@ subjectAltName = @alt_names
 [alt_names]
 IP.1  = 10.2.60.9
 IP.2 = 192.168.57.83
+IP.3 = 172.16.103.41
+IP.4 = 192.168.136.83
+IP.5 = 192.168.4.83
 DNS.1 = ibdm.local
 DNS.2 = localhost

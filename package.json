@@ -1,15 +1,84 @@
 {
-	"name": "PFE-ibdm",
+	"name": "backend",
 	"version": "1.0.0",
-	"description": "",
 	"main": "index.js",
+	"type": "module",
 	"scripts": {
-		"dev:server": "cd backend && pnpm run dev",
+		"start": "cd backend && tsx server.ts --host 0.0.0.0",
+
+		"dev:server": "cd backend && tsx watch server.ts --host 0.0.0.0",
+		"dev:app": "cd frontend3/ibdm && flutter run",
+		"dev:web": "cd frontend3/ibdm && flutter run -d chrome",
+		"dev:windows": "cd frontend3/ibdm && flutter run -d windows",
+		"dev:macos": "cd frontend3/ibdm && flutter run -d macos",
+		"dev:linux": "cd frontend3/ibdm && flutter run -d linux",
 		"dev:build:android": "cd frontend3/ibdm/android && ./gradlew clean build && echo 'Build Done' && echo 'You can start the app now'",
-		"bulid:android": "cd frontend3/ibdm && flutter build apk"
+
+		"generateHash": "tsx ./backend/src/utils/generateHash.ts",
+
+		"prisma:ibdm:migrate": "cd backend && prisma migrate dev --schema ./src/models/ibdm_db/",
+		"prisma:ibdm:generate": "cd backend && prisma generate  --schema ./src/models/ibdm_db/",
+		"prisma:ibdm:push": "cd backend && prisma db push  --schema ./src/models/ibdm_db/",
+		"prisma:ibdm:seed": "cd backend && prisma db seed  --schema ./src/models/ibdm_db/",
+		"prisma:ibdm:studio": "cd backend && prisma studio  --schema ./src/models/ibdm_db/",
+
+		"prisma:automate:migrate": "cd backend && prisma migrate dev --schema ./src/models/automates_db/schema.prisma",
+		"prisma:automate:generate": "cd backend && prisma generate  --schema ./src/models/automates_db/schema.prisma",
+		"prisma:automate:push": "cd backend && prisma db push  --schema ./src/models/automates_db/schema.prisma",
+		"prisma:automate:seed": "cd backend && prisma db seed  --schema ./src/models/automates_db/schema.prisma",
+		"prisma:automate:studio": "cd backend && prisma studio  --schema ./src/models/automates_db/schema.prisma",
+		
+
+		"build:windows": "cd frontend3/ibdm && flutter build windows",
+		"bulid:android": "cd frontend3/ibdm && flutter build apk",
+		"build:web": "cd frontend3/ibdm && flutter build web",
+		"build:ios": "cd frontend3/ibdm && flutter build ios",
+		"build:macos": "cd frontend3/ibdm && flutter build macos",
+		"build:linux": "cd frontend3/ibdm && flutter build linux",
+
+		"generate:api-client": "cp backend/openapi.json frontend3/ibdm/lib/api && cd frontend3/ibdm && dart run swagger_parser && dart run build_runner build",
+
+		"mongo_test_db:up": "cd backend/src/config/db && docker compose down && docker compose up -d",
+		"mongo_test_db:down": "cd backend/src/config/db && docker compose down -v && rmdir /S /Q data"
+
+
 	},
 	"keywords": [],
 	"author": "",
-	"license": "ISC",
+	"license": "Apache-2.0",
+	"description": "",
+	"dependencies": {
+		"@prisma/client": "^6.2.1",
+		"@types/swagger-jsdoc": "^6.0.4",
+		"@types/swagger-ui-express": "^4.1.7",
+		"@vinejs/vine": "^3.0.0",
+		"argon2": "^0.41.1",
+		"bcryptjs": "^2.4.3",
+		"body-parser": "^1.20.3",
+		"connect-mongo": "^5.1.0",
+		"cors": "^2.8.5",
+		"dotenv": "^16.4.5",
+		"express": "^4.21.1",
+		"express-session": "^1.18.1",
+		"swagger-jsdoc": "^6.2.8",
+		"swagger-ui-express": "^5.0.1",
+		"winston": "^3.17.0",
+		"zod": "^3.24.1"
+	},
+	"devDependencies": {
+		"@openapitools/openapi-generator-cli": "^2.15.3",
+		"@types/bcryptjs": "^2.4.6",
+		"@types/cors": "^2.8.17",
+		"@types/express": "^4.17.21",
+		"@types/express-session": "^1.18.1",
+		"@types/node": "^22.9.0",
+		"prisma": "^6.2.1",
+		"tsx": "^4.19.2",
+		"typescript": "^5.6.3"
+	},
+	"prisma": {
+		"schema": "./backend/src/models/ibdm_db/",
+		"seed": "tsx src/models/seed.ts"
+	},
 	"packageManager": "pnpm@9.14.4+sha512.c8180b3fbe4e4bca02c94234717896b5529740a6cbadf19fa78254270403ea2f27d4e1d46a08a0f56c89b63dc8ebfd3ee53326da720273794e6200fcf0d184ab"
 }

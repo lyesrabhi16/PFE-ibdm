@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "module": "ES6",
+    "target": "ES2022",
+    "module": "ES2022",
     "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
@@ -27,6 +27,9 @@
       "#/*": ["src/*"]
     }
   },
+  "files": [
+    "global.d.ts",
+  ],
   "include": ["src", "server.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,6 +1,6 @@
 # Database Configuration with Docker Compose
 
-This guide will help you set up and run the database using the `docker-compose.yml` file present in this directory.
+This guide will help you set up and run the database using the [`docker-compose.yml`](./docker-compose.yaml) file present in this directory.
 
 ## Prerequisites
 
@@ -10,7 +10,7 @@ This guide will help you set up and run the database using the `docker-compose.y
 
 1. **Navigate to the Directory:**
 
-    Open a terminal and navigate to the directory containing the `docker-compose.yml` file:
+    Open a terminal and navigate to the directory containing the [`docker-compose.yml`](./docker-compose.yaml) file:
     ```sh
     cd ./backend/src/config/db
     ```
@@ -24,12 +24,12 @@ This guide will help you set up and run the database using the `docker-compose.y
 
         This keyfile will be used for MongoDB replica set authentication. It is required.
     
-    2. copy `.env.example` in the config/db directory, paste and rename to `.env`, change this if you need to, it is the file holding the environment
-    variables that will be used in the containers, like user, password..etc.
+    2. copy [`.env.example`](./.env.example) in the config/db directory, paste and rename to `.env`, change this if you need to, it is the file holding the environment
+    variables that will be used in the containers, like user, password, etc
 
 3. **Start the Services:**
 
-    Run the following command to start the services defined in the `docker-compose.yml` file:
+    Run the following command to start the services defined in the [`docker-compose.yml`](./docker-compose.yaml) file:
     ```sh
     docker compose up -d
     ```
@@ -61,7 +61,7 @@ This guide will help you set up and run the database using the `docker-compose.y
 
 ## Configuration
 
-You can modify the `docker-compose.yml` file to change the database configuration, such as the database name, user, and password directly or modify the `.env` file to do so.
+You can modify the [`docker-compose.yml`](./docker-compose.yaml) file to change the database configuration, such as the database name, user, and password directly or modify the [`.env`](.env) file to do so.
 
 ## Troubleshooting
 
