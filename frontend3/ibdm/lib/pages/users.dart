@@ -24,11 +24,12 @@ class UsersPage extends StatelessWidget {
     "role": false,
   }.obs;
 
+  final RxMap<String, bool> _hovered = new Map<String, bool>().obs;
+
   @override
   Widget build(BuildContext context) {
-    List<User> usersData = [
-      User(email: "email1", id: "11", role: "ADMIN", name: "lyes"),
-    ];
+    List<User> usersData = [];
+    _loaded.value = false;
 
     int nbrTotalUsers = 20;
     int nbrUsersShown = usersData.length;
@@ -36,7 +37,8 @@ class UsersPage extends StatelessWidget {
     int currentPage = 1;
 
     ApiClientInstance.getApiClient().then((apiClient) async {
-      usersData = await apiClient.getUsers();
+      GetApiUsersResponse res = await apiClient.getUsers();
+      usersData = res.users;
       _loaded.value = true;
     }).catchError((err) {
       _loaded.value = true;
@@ -231,7 +233,7 @@ class UsersPage extends StatelessWidget {
                   ),
                   SizedBox(height: AppSizes.sm),
 
-                  _loaded.value || true
+                  _loaded.value
                       ?
                       // data table
                       Expanded(
@@ -308,10 +310,28 @@ class UsersPage extends StatelessWidget {
                                       ),
                                 ))),
                               ],
-                              rows: usersData
-                                  .map((user) => DataRow(cells: [
-                                        DataCell(
-                                          Padding(
+                              rows: usersData.map((user) {
+                                if (_hovered[user.id] == null) {
+                                  _hovered[user.id] = false;
+                                }
+
+                                return DataRow(
+                                    color: _hovered[user.id] ?? false
+                                        ? WidgetStatePropertyAll(
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primaryContainer)
+                                        : null,
+                                    cells: [
+                                      DataCell(
+                                        MouseRegion(
+                                          onHover: (_) => {
+                                            _hovered[user.id] = true,
+                                          },
+                                          onExit: (_) {
+                                            _hovered[user.id] = false;
+                                          },
+                                          child: Padding(
                                             padding:
                                                 EdgeInsets.all(AppSizes.sm),
                                             child: ShadAvatar(
@@ -327,32 +347,73 @@ class UsersPage extends StatelessWidget {
                                             ),
                                           ),
                                         ),
-                                        DataCell(Text(
-                                          user.id,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        )),
-                                        DataCell(Text(
-                                          user.email,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        )),
-                                        DataCell(Text(
-                                          user.name ?? "",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        )),
-                                        DataCell(Text(
-                                          user.role,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        )),
-                                      ]))
-                                  .toList(),
+                                      ),
+                                      DataCell(
+                                        MouseRegion(
+                                          onHover: (_) => {
+                                            _hovered[user.id] = true,
+                                          },
+                                          onExit: (_) {
+                                            _hovered[user.id] = false;
+                                          },
+                                          child: Text(
+                                            user.id,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                        ),
+                                      ),
+                                      DataCell(
+                                        MouseRegion(
+                                          onHover: (_) => {
+                                            _hovered[user.id] = true,
+                                          },
+                                          onExit: (_) {
+                                            _hovered[user.id] = false;
+                                          },
+                                          child: Text(
+                                            user.email,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                        ),
+                                      ),
+                                      DataCell(
+                                        MouseRegion(
+                                          onHover: (_) => {
+                                            _hovered[user.id] = true,
+                                          },
+                                          onExit: (_) {
+                                            _hovered[user.id] = false;
+                                          },
+                                          child: Text(
+                                            user.name ?? "",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                        ),
+                                      ),
+                                      DataCell(
+                                        MouseRegion(
+                                          onHover: (_) => {
+                                            _hovered[user.id] = true,
+                                          },
+                                          onExit: (_) {
+                                            _hovered[user.id] = false;
+                                          },
+                                          child: Text(
+                                            user.role,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                        ),
+                                      ),
+                                    ]);
+                              }).toList(),
                             ),
                           ),
                         )

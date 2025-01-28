@@ -7,6 +7,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../models/delete_api_users_id_response.dart';
 import '../models/delete_api_users_response.dart';
+import '../models/get_api_users_response.dart';
 import '../models/get_user_response.dart';
 import '../models/login_request.dart';
 import '../models/login_response.dart';
@@ -63,7 +64,7 @@ abstract class IbdmApiClient {
   ///
   /// [perPage] - number of items per page, default 10.
   @GET('/api/users')
-  Future<List<User>> getUsers({
+  Future<GetApiUsersResponse> getUsers({
     @Query('page') num? page,
     @Query('perPage') num? perPage,
   });

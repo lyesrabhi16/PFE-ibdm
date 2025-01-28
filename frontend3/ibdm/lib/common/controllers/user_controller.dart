@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api/api_client/export.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 
 class UserController extends GetxController {
   final Rx<User?> _user = (null as User?).obs;
@@ -24,6 +25,11 @@ class UserController extends GetxController {
   void logoutUser() {
     LocalStorage.removeUser();
     _user.value = null;
+    ApiClientInstance.getApiClient().then((apiClient) {
+      apiClient.logout();
+    }).catchError((e) {
+      logger.e("Error logging out user: $e");
+    });
   }
 
   void setUser(User user) {

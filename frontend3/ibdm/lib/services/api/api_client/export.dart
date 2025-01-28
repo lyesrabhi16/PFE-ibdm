@@ -12,6 +12,7 @@ export 'models/logout_response.dart';
 export 'models/get_user_response.dart';
 export 'models/error.dart';
 export 'models/user_ids_array.dart';
+export 'models/get_api_users_response.dart';
 export 'models/delete_api_users_response.dart';
 export 'models/delete_api_users_id_response.dart';
 // Root client

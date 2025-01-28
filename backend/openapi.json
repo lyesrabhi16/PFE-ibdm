@@ -227,9 +227,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User"
+                  "type": "object",
+                  "properties": {
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
                   }
                 }
               }
