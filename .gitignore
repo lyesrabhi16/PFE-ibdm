@@ -224,3 +224,6 @@ app.*.map.json
 
 # api config
 api.config.dart
+
+# migrations
+migrations

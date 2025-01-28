@@ -14,11 +14,12 @@ export const isAuthenticated = async (
     }
 
     // Récupère l'utilisateur à partir de l'ID stocké dans la session
-    const user = await db_client.user.findUnique({
-      where: { id: req.session.userId },
+    const user = await db_client.ibdm.user.findUnique({
+      where: { id: req.session.userId, },
       omit: {
         password: true,
-      }
+      },
+      
     });
 
     if (!user) {

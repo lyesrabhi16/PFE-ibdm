@@ -15,8 +15,9 @@ export const loginUser = async (req: Request, res: Response) => {
     logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: `User ${email} is trying to log in` });
 
     // Recherche l'utilisateur par son email
-    const user = await db_client.user.findUnique({
+    const user = await db_client.ibdm.user.findUnique({
       where: { email: email },
+      
     });
 
     if (!user) {
