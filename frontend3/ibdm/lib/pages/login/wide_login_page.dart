@@ -62,6 +62,8 @@ class WideLoginPage extends StatelessWidget {
                       validator: FormBuilderValidators.email(
                         errorText: strings.value.invalidEmail,
                       ),
+                      keyboardType: TextInputType.emailAddress,
+                      autofillHints: [AutofillHints.email],
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.person,
                             color: Theme.of(context).colorScheme.primary),
@@ -76,6 +78,7 @@ class WideLoginPage extends StatelessWidget {
                       validator: FormBuilderValidators.required(
                         errorText: strings.value.requiredPassword,
                       ),
+                      autofillHints: [AutofillHints.password],
                       autocorrect: false,
                       obscureText: true,
                       decoration: InputDecoration(

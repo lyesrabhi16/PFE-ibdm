@@ -216,7 +216,7 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<GetApiUsersResponse> getUsers({
+  Future<GetUsersResponse> getUsers({
     num? page,
     num? perPage,
   }) async {
@@ -228,7 +228,7 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<GetApiUsersResponse>(Options(
+    final _options = _setStreamType<GetUsersResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -245,9 +245,45 @@ class _IbdmApiClient implements IbdmApiClient {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late GetApiUsersResponse _value;
+    late GetUsersResponse _value;
     try {
-      _value = GetApiUsersResponse.fromJson(_result.data!);
+      _value = GetUsersResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PostApiUsersResponse> addUser({AddUserInput? body}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    final _options = _setStreamType<PostApiUsersResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+        .compose(
+          _dio.options,
+          '/api/users',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PostApiUsersResponse _value;
+    try {
+      _value = PostApiUsersResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

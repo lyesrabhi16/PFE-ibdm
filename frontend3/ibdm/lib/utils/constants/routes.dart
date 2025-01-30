@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
-import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
 import 'package:ibdm/common/middlewares/protected_route_middleware.dart';

@@ -1,8 +1,9 @@
 import vine_instance from "#config/validation/vine.config";
+import { parse_json } from "#utils/server.utils";
+import { password_validator } from "#validators/userValidators/schemas/createUser.validator.schema";
 import { $Enums } from "@prisma/client";
 
 
-export const password_validator = vine_instance.string().minLength(8).maxLength(200).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/);
 
 const UpdateUserSchema = vine_instance.object({
     email: vine_instance.string().email().normalizeEmail().optional(),
@@ -10,6 +11,7 @@ const UpdateUserSchema = vine_instance.object({
     password: password_validator.clone().optional(),
     role: vine_instance.enum($Enums.Role).optional(),
     phone_number: vine_instance.string().mobile().optional(),
+    superior_ids: vine_instance.array(vine_instance.string()).minLength(1).parse(parse_json).optional(),
 })
 
 const UpdateUserValidator = vine_instance.compile(UpdateUserSchema);

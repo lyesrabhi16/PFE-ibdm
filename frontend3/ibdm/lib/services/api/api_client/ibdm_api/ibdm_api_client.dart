@@ -5,13 +5,15 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
+import '../models/add_user_input.dart';
 import '../models/delete_api_users_id_response.dart';
 import '../models/delete_api_users_response.dart';
-import '../models/get_api_users_response.dart';
 import '../models/get_user_response.dart';
+import '../models/get_users_response.dart';
 import '../models/login_request.dart';
 import '../models/login_response.dart';
 import '../models/logout_response.dart';
+import '../models/post_api_users_response.dart';
 import '../models/user.dart';
 import '../models/user_ids_array.dart';
 
@@ -60,13 +62,24 @@ abstract class IbdmApiClient {
 
   /// get users.
   ///
+  /// get users.
+  ///
   /// [page] - page number, default 1.
   ///
   /// [perPage] - number of items per page, default 10.
   @GET('/api/users')
-  Future<GetApiUsersResponse> getUsers({
+  Future<GetUsersResponse> getUsers({
     @Query('page') num? page,
     @Query('perPage') num? perPage,
+  });
+
+  /// add a user.
+  ///
+  /// add a user.
+  @FormUrlEncoded()
+  @POST('/api/users')
+  Future<PostApiUsersResponse> addUser({
+    @Body() AddUserInput? body,
   });
 
   /// delete many users.
@@ -79,19 +92,25 @@ abstract class IbdmApiClient {
     @Query('userIds') required UserIdsArray userIds,
   });
 
-  /// get the info of a user
+  /// get the info of a user.
+  ///
+  /// get the info of a user.
   @GET('/api/users/{id}')
   Future<User> getUser({
     @Path('id') required String id,
   });
 
-  /// delete a user
+  /// delete a user.
+  ///
+  /// delete a user.
   @DELETE('/api/users/{id}')
   Future<DeleteApiUsersIdResponse> deleteUser({
     @Path('id') required String id,
   });
 
-  /// update a user
+  /// update a user.
+  ///
+  /// update a user.
   @PUT('/api/users/{id}')
   Future<User> updateUser({
     @Path('id') required String id,
