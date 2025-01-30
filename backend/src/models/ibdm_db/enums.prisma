@@ -1,4 +1,6 @@
 enum Role {
-  USER
+  OPERATEUR
+  SUPERVISOR
   ADMIN
+  ADMIN_SYSTEM
 }

@@ -67,6 +67,8 @@ app.get("/", (req, res) => {
 
 // documentation
 app.use("/api/documentation", documentationRoutes);
+app.use("/api/docs", documentationRoutes);
+
 
 
 // not found

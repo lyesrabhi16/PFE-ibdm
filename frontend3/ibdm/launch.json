@@ -1,0 +1,6 @@
+{
+    "name": "Launch flutter",
+    "request": "launch",
+    "type": "dart",
+    "args": ["--web-port", "8001"]
+}

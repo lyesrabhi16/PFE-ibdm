@@ -211,6 +211,7 @@
         "tags": [
           "Users"
         ],
+        "summary": "get users",
         "description": "get users",
         "operationId": "getUsers",
         "parameters": [
@@ -227,15 +228,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "users": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/User"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetUsersResponse"
                 }
               }
             }
@@ -251,6 +244,61 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "summary": "add a user",
+        "description": "add a user",
+        "operationId": "addUser",
+        "tags": [
+          "Users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserInput"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "user added successfully"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthenticatedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
           },
           "500": {
             "$ref": "#/components/responses/ServerError"
@@ -306,8 +354,12 @@
     },
     "/api/users/{id}": {
       "get": {
+        "summary": "get the info of a user",
         "description": "get the info of a user",
         "operationId": "getUser",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -348,8 +400,12 @@
         }
       },
       "delete": {
+        "summary": "delete a user",
         "description": "delete a user",
         "operationId": "deleteUser",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -396,8 +452,12 @@
         }
       },
       "put": {
+        "summary": "update a user",
         "description": "update a user",
         "operationId": "updateUser",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -450,6 +510,45 @@
   },
   "components": {
     "schemas": {
+      "Role": {
+        "type": "string",
+        "enum": [
+          "ADMIN_SYSTEM",
+          "ADMIN",
+          "SUPERVISOR",
+          "OPERATEUR"
+        ],
+        "example": "OPERATEUR"
+      },
+      "SuperiorAndSubordinate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "1"
+          },
+          "superior_id": {
+            "type": "string",
+            "example": "1"
+          },
+          "subordinate_id": {
+            "type": "string",
+            "example": "1"
+          },
+          "subordinate": {
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "superior": {
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        }
+      },
       "User": {
         "type": "object",
         "properties": {
@@ -467,13 +566,59 @@
             "example": "bob"
           },
           "role": {
-            "type": "string",
-            "example": "USER"
+            "$ref": "#/components/schemas/Role"
           },
           "phone_number": {
             "type": "string",
             "nullable": true,
             "example": "0549267381"
+          },
+          "superiors": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperiorAndSubordinate"
+            },
+            "example": "1"
+          },
+          "subordinates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperiorAndSubordinate"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "AddUserInput": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "example@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "example@example.com"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "example": "bob"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role",
+            "required": true
+          },
+          "phone_number": {
+            "type": "string",
+            "nullable": true,
+            "example": "0549267381"
+          },
+          "superior_id": {
+            "type": "string",
+            "nullable": true,
+            "example": "1"
           }
         }
       },
@@ -516,6 +661,34 @@
           "message": {
             "type": "string",
             "example": "Logout successful"
+          }
+        }
+      },
+      "GetUsersResponse": {
+        "description": "response of getUsers",
+        "type": "object",
+        "properties": {
+          "perPage": {
+            "type": "integer",
+            "example": 10
+          },
+          "currentPage": {
+            "type": "integer",
+            "example": 1
+          },
+          "nbrTotalPages": {
+            "type": "integer",
+            "example": 2
+          },
+          "nbrTotalUsers": {
+            "type": "integer",
+            "example": 15
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
           }
         }
       },

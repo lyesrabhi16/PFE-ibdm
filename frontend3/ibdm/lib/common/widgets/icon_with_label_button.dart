@@ -35,7 +35,6 @@ class IconWithLabelButton extends StatelessWidget {
       onHoverChange: (value) => active ? null : _hover.value = value,
       onPressed: () {
         if (onTap != null) {
-          Navigator.of(context).pop();
           onTap!();
         }
       },

@@ -19,4 +19,14 @@ export const startServer = (server: http.Server | https.Server, port: number, la
         url: `${protocol}://${host}:${port}`  
       });  
     });  
-  };  
+};
+
+
+export const parse_json = (v:string) => {
+  try{
+      return JSON.parse(v);
+  }catch(e) {
+      logger.log({ level:LOGLEVELS.ERROR, message:"json parse failed: "+v+ " error: "+(e as Error).message, label:"parse_json" })
+      return undefined;
+  }
+} 

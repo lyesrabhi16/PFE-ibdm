@@ -1,14 +1,27 @@
 import 'dart:io';
-
-import 'package:dio/browser.dart';
-import 'package:dio/dio.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:flutter/services.dart';
-import 'package:dio/io.dart';
-import 'package:flutter/foundation.dart';
-import 'package:ibdm/config/api.config.dart';
-import 'package:ibdm/services/api/api_client/export.dart';
-import 'package:cookie_jar/cookie_jar.dart';
+// import 'package:dio/browser.dart'; //! fails on non-web platforms
+import 'package:dio/dio.dart'
+    show
+        Dio,
+        DioException,
+        ErrorInterceptorHandler,
+        Interceptor,
+        RequestInterceptorHandler,
+        RequestOptions,
+        Response,
+        ResponseInterceptorHandler;
+import 'package:dio_cookie_manager/dio_cookie_manager.dart' show CookieManager;
+import 'package:flutter/services.dart'
+    show ByteData, TargetPlatform, Uint8List, rootBundle;
+import 'package:dio/io.dart' show IOHttpClientAdapter;
+import 'package:flutter/foundation.dart'
+    show ByteData, TargetPlatform, Uint8List, defaultTargetPlatform, kIsWeb;
+import 'package:ibdm/config/api.config.dart' show ApiConfig;
+import 'package:ibdm/services/api/api_client/export.dart'
+    show ApiClient, IbdmApiClient;
+import 'package:cookie_jar/cookie_jar.dart' show FileStorage, PersistCookieJar;
+import 'package:path_provider/path_provider.dart'
+    show getApplicationDocumentsDirectory;
 
 class ApiClientInstance {
   ApiClientInstance._();
@@ -24,13 +37,12 @@ class ApiClientInstance {
     dio.interceptors.add(TestInterceptor());
 
     if (kIsWeb) {
-      BrowserHttpClientAdapter browserHttpClientAdapter =
-          BrowserHttpClientAdapter();
-
-      dio.httpClientAdapter = browserHttpClientAdapter;
+      (dio.httpClientAdapter as dynamic).withCredentials = true;
     } else {
       final persistentCookieJar = PersistCookieJar(
-        ignoreExpires: true,
+        storage: FileStorage(
+          "${(await getApplicationDocumentsDirectory()).path}/.cookies/",
+        ),
       );
       dio.interceptors.add(CookieManager(persistentCookieJar));
 
@@ -66,7 +78,7 @@ class TestInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     print("Interceptor Error: ${err.message}");
     super.onError(err, handler);
   }

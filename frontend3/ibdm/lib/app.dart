@@ -5,7 +5,6 @@ import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/theme/theme.dart';
 import 'package:ibdm/utils/theme/util.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -38,6 +37,9 @@ class MyApp extends StatelessWidget {
           initialRoute: Routes.home,
           getPages: Routes.router,
           textDirection: TextDirection.ltr,
+          builder: (context, child) {
+            return ShadToaster(child: child!);
+          },
           onUnknownRoute: (settings) {
             return GetPageRoute(
               page: () => Scaffold(
