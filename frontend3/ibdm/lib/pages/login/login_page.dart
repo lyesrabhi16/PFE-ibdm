@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'; // Pour vérifier la plateforme
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
@@ -15,17 +16,22 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool isLoading = true; // État pour afficher le chargement
+  bool isLoading = !kIsWeb;
 
   @override
   void initState() {
     super.initState();
-    // Attendre 10 secondes avant d'afficher la page de connexion
-    Future.delayed(const Duration(seconds: 10), () {
-      setState(() {
-        isLoading = false; // Désactiver le chargement après 10s
+    if (!kIsWeb) {
+      Future.delayed(const Duration(seconds: 10), () {
+        setState(() {
+          isLoading = false;
+        });
       });
-    });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -37,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/logo.png', // Remplace par ton logo
+                'assets/images/logo.png',
                 height: 150.0,
               ),
               const SizedBox(height: 20),
@@ -49,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              const CircularProgressIndicator(), // Cercle de chargement
+              const CircularProgressIndicator(),
             ],
           ),
         ),
