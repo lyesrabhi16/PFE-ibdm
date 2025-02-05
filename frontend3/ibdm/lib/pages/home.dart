@@ -41,7 +41,6 @@ class Home extends StatelessWidget {
           ),
           SizedBox(height: AppSizes.md),
           FilledButton(
-            child: Text(strings.value.logout),
             style: ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(errorColor),
             ),
@@ -49,6 +48,7 @@ class Home extends StatelessWidget {
               Get.find<UserController>().logoutUser();
               Get.offAllNamed(Routes.login);
             },
+            child: Text(strings.value.logout),
           ),
           SizedBox(height: AppSizes.md),
           FilledButton(

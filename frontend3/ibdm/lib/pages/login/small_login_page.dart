@@ -68,6 +68,7 @@ class SmallLoginPage extends StatelessWidget {
                         validator: FormBuilderValidators.email(
                           errorText: strings.value.invalidEmail,
                         ),
+                        autofillHints: [AutofillHints.email],
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.person,
                               color: Theme.of(context).colorScheme.primary),
@@ -82,6 +83,7 @@ class SmallLoginPage extends StatelessWidget {
                         validator: FormBuilderValidators.required(
                           errorText: strings.value.requiredPassword,
                         ),
+                        autofillHints: [AutofillHints.password],
                         autocorrect: false,
                         obscureText: true,
                         decoration: InputDecoration(

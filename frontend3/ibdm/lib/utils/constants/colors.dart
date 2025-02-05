@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ibdm/services/api/api_client/export.dart';
 
 class AppColors {
   AppColors._();
@@ -20,4 +21,25 @@ class AppColors {
   static const Color transparent = Color(0x00000000);
   static const Color grey = Color(0xFF9E9E9E);
   static const Color lightGrey = Color(0xFFE0E0E0);
+
+  // gold color in hex
+  static const Color roleAdminSystemColor = Color(0xFFD4AF37);
+  static const Color roleAdminColor = Colors.deepPurple;
+  static const Color roleSupervisorColor = Colors.green;
+  static const Color roleOperateurColor = Colors.blue;
+
+  static Color getRoleColor(Role role) {
+    switch (role) {
+      case Role.adminSystem:
+        return roleAdminSystemColor;
+      case Role.admin:
+        return roleAdminColor;
+      case Role.supervisor:
+        return roleSupervisorColor;
+      case Role.operateur:
+        return roleOperateurColor;
+      default:
+        return Colors.transparent;
+    }
+  }
 }

@@ -1,6 +1,6 @@
 import { LOGLEVELS } from "#types/logger.types";
 import { logger } from "#utils";
-import UpdateUserValidator from "#validators/userValidators/schemas/updateUser.Validator.shcema";
+import UpdateUserValidator from "#validators/userValidators/schemas/updateUser.validator.schema";
 import { errors } from "@vinejs/vine";
 import { NextFunction, Request, Response } from "express";
 

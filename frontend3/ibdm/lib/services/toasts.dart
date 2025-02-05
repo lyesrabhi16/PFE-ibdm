@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 
 class Toasts {

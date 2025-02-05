@@ -211,6 +211,7 @@
         "tags": [
           "Users"
         ],
+        "summary": "get users",
         "description": "get users",
         "operationId": "getUsers",
         "parameters": [
@@ -219,6 +220,9 @@
           },
           {
             "$ref": "#/components/parameters/perPage"
+          },
+          {
+            "$ref": "#/components/parameters/enablePagination"
           }
         ],
         "responses": {
@@ -227,15 +231,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "users": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/User"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetUsersResponse"
                 }
               }
             }
@@ -251,6 +247,66 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "summary": "add a user",
+        "description": "add a user",
+        "operationId": "addUser",
+        "tags": [
+          "Users"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserInput"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserInput"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "user added successfully"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthenticatedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
           },
           "500": {
             "$ref": "#/components/responses/ServerError"
@@ -306,8 +362,12 @@
     },
     "/api/users/{id}": {
       "get": {
+        "summary": "get the info of a user",
         "description": "get the info of a user",
         "operationId": "getUser",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -325,7 +385,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
                 }
               }
             }
@@ -348,8 +413,12 @@
         }
       },
       "delete": {
+        "summary": "delete a user",
         "description": "delete a user",
         "operationId": "deleteUser",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -396,8 +465,12 @@
         }
       },
       "put": {
+        "summary": "update a user",
         "description": "update a user",
         "operationId": "updateUser",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -450,12 +523,52 @@
   },
   "components": {
     "schemas": {
+      "Role": {
+        "type": "string",
+        "enum": [
+          "ADMIN_SYSTEM",
+          "ADMIN",
+          "SUPERVISOR",
+          "OPERATEUR"
+        ],
+        "example": "OPERATEUR"
+      },
+      "SuperiorAndSubordinate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "1"
+          },
+          "superior_id": {
+            "type": "string",
+            "example": "1"
+          },
+          "subordinate_id": {
+            "type": "string",
+            "example": "1"
+          },
+          "subordinate": {
+            "nullable": true,
+            "$ref": "#/components/schemas/User"
+          },
+          "superior": {
+            "nullable": true,
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
       "User": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "example": "1"
+          },
+          "avatar_url": {
+            "type": "string",
+            "example": "https://server.ibdm.local.ifri/images/avatar/1",
+            "nullable": true
           },
           "email": {
             "type": "string",
@@ -467,15 +580,69 @@
             "example": "bob"
           },
           "role": {
-            "type": "string",
-            "example": "USER"
+            "$ref": "#/components/schemas/Role"
           },
           "phone_number": {
             "type": "string",
             "nullable": true,
             "example": "0549267381"
+          },
+          "superiors": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperiorAndSubordinate"
+            }
+          },
+          "subordinates": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperiorAndSubordinate"
+            }
           }
         }
+      },
+      "AddUserInput": {
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string",
+            "format": "binary",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "example": "example@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "example@example.com"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "example": "bob"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "phone_number": {
+            "type": "string",
+            "nullable": true,
+            "example": "0549267381"
+          },
+          "superior_id": {
+            "type": "string",
+            "nullable": true,
+            "example": "1"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "role"
+        ]
       },
       "LoginRequest": {
         "type": "object",
@@ -523,6 +690,37 @@
           }
         }
       },
+      "GetUsersResponse": {
+        "description": "response of getUsers",
+        "type": "object",
+        "properties": {
+          "perPage": {
+            "type": "integer",
+            "nullable": true,
+            "example": 10
+          },
+          "currentPage": {
+            "type": "integer",
+            "nullable": true,
+            "example": 1
+          },
+          "nbrTotalPages": {
+            "type": "integer",
+            "nullable": true,
+            "example": 2
+          },
+          "nbrTotalUsers": {
+            "type": "integer",
+            "example": 15
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        }
+      },
       "getUserResponse": {
         "type": "object",
         "properties": {
@@ -546,12 +744,10 @@
       },
       "userIdsArray": {
         "type": "array",
-        "properties": {
-          "property": {
-            "type": "string",
-            "example": "675ed2ea1164d1a1bae8ab1a",
-            "minItems": 1
-          }
+        "items": {
+          "type": "string",
+          "example": "675ed2ea1164d1a1bae8ab1a",
+          "minItems": 1
         }
       }
     },
@@ -626,6 +822,16 @@
         "schema": {
           "type": "number",
           "example": 10
+        }
+      },
+      "enablePagination": {
+        "name": "enablePagination",
+        "in": "query",
+        "required": false,
+        "description": "enable pagination, default true",
+        "schema": {
+          "type": "boolean",
+          "example": true
         }
       },
       "userIds": {

@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/actions_row.dart';
-import 'package:ibdm/pages/home.dart';
-import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
