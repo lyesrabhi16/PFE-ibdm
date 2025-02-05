@@ -3,8 +3,7 @@ import SessionConfig from "#config/session/session.config";
 import { comparePassword } from "#models/user_actions";
 import { LOGLEVELS } from "#types/logger.types";
 import { logger } from "#utils";
-import { Request, Response } from "express";
-import session from "express-session";
+import { CookieOptions, Request, Response } from "express";
 
 
 // Fonction de login avec sessions
@@ -70,7 +69,10 @@ export const logoutUser = async (req: Request, res: Response) => {
       console.error("Erreur lors de la déconnexion :", err);
       return res.status(500).json({ message: "Erreur lors de la déconnexion." });
     }
-    res.clearCookie(SessionConfig.name ?? "sid");
+    res.clearCookie(SessionConfig.name ?? "sid", {
+      ...(SessionConfig.cookie as CookieOptions),
+      maxAge: undefined,
+    });
     res.status(200).json({ message: "Déconnexion réussie." });
   });
 };
