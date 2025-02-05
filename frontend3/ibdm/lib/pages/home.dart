@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
@@ -30,32 +31,12 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/logo.png', 
-                height: 150.0,
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Welcome to the app',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
     final strings = getTranslations(context).obs;
     final localecontroller = Get.find<LocaleController>();
+
+    if (_isLoading) {
+      return LoadingPage();
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -71,7 +52,8 @@ class _HomeState extends State<Home> {
               ),
             ),
             SizedBox(height: AppSizes.sm),
-            Text("Current Language: ${localecontroller.locale.value.languageCode}"),
+            Text(
+                "Current Language: ${localecontroller.locale.value.languageCode}"),
             SizedBox(height: AppSizes.md),
             FilledButton(
               child: Obx(() => Text(strings.value.login)),
@@ -109,6 +91,40 @@ class _HomeState extends State<Home> {
             ),
             SizedBox(height: AppSizes.md),
             const ActionsRow(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LoadingPage extends StatelessWidget {
+  const LoadingPage({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = getTranslations(context);
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/logo.png',
+              height: 150.0,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              strings.homePageWelcomeMessage,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const CircularProgressIndicator(),
           ],
         ),
       ),
