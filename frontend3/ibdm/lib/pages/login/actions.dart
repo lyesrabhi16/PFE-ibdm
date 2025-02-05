@@ -19,6 +19,7 @@ class LoginActions {
     required Rx<FutureState> loginProgress,
     required TextEditingController emailController,
     required TextEditingController passwordController,
+    required bool rememberMe,
   }) async {
     final strings = getTranslations(context);
     // validate form
@@ -46,11 +47,14 @@ class LoginActions {
       logger.d("Creating Api Client...");
       logger.d("Requesting Login...");
 
-      IbdmApiClient apiClient = await ApiClientInstance.getApiClient();
-      final response = await apiClient.login(
-        body: LoginRequest(
-            email: emailController.text, password: passwordController.text),
-      );
+       IbdmApiClient apiClient = await ApiClientInstance.getApiClient();
+       final response = await apiClient.login(
+         body: LoginRequest(
+           email: emailController.text,
+           password: passwordController.text,
+           rememberMe: rememberMe, // add this to LoginRequest hhhhhh
+         ),
+       );
       logger.d("Login Response: $response");
       // set login progress to success
       loginProgress.value = FutureState.success;

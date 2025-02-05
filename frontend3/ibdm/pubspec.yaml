@@ -35,6 +35,7 @@ dependencies:
   retrofit: ^4.4.0 # Api Client Generator
   logger: ^2.5.0 # for logging purpose
   json_annotation: ^4.9.0
+  http: ^1.2.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -46,7 +47,7 @@ dependencies:
     sdk: flutter
   google_fonts: ^6.2.1
   intl: any
-  shared_preferences: ^2.3.4
+  shared_preferences: ^2.3.4 #pour stocker la session sid dans le frontend
   url_strategy: ^0.3.0
   elegant_notification: ^2.4.1
   toastification: ^2.3.0

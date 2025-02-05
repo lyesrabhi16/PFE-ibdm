@@ -11,7 +11,7 @@ import session from "express-session";
 export const loginUser = async (req: Request, res: Response) => {
   logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: "loginUser started" });
   logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: "Request body", body: req.body });
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body; //rememberMe
 
   try {
     logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: `User ${email} is trying to log in` });
@@ -40,6 +40,14 @@ export const loginUser = async (req: Request, res: Response) => {
     // Créer une session utilisateur
     req.session.userId = user.id; // Stocke l'ID de l'utilisateur dans la session
     req.session.isAuthenticated = true;
+
+    // Définir la durée de la session
+
+  if (rememberMe) {
+     req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 jours
+   } else {
+     req.session.cookie.maxAge = 60 * 60 * 1000; // 1 heure
+   }
 
     logger.log({ level: LOGLEVELS.INFO, label: "LOGIN", message: `Session created for user ${email}` });
 

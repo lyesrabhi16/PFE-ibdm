@@ -11,12 +11,14 @@ class LoginRequest {
   const LoginRequest({
     required this.email,
     required this.password,
+    required this.rememberMe,
   });
   
   factory LoginRequest.fromJson(Map<String, Object?> json) => _$LoginRequestFromJson(json);
   
   final String email;
   final String password;
+  final bool rememberMe;
 
   Map<String, Object?> toJson() => _$LoginRequestToJson(this);
 }
