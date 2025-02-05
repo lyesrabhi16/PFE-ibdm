@@ -22,8 +22,11 @@ export const startServer = (server: http.Server | https.Server, port: number, la
 };
 
 
-export const parse_json = (v:string) => {
+export const parse_json = (v:any) => {
   try{
+      if( v === undefined || v === null) return v;
+      if( v instanceof Object) return v;
+      logger.log({ level:LOGLEVELS.DEBUG, message:"json parse "+typeof v+": "+v, label:"parse_json" });
       return JSON.parse(v);
   }catch(e) {
       logger.log({ level:LOGLEVELS.ERROR, message:"json parse failed: "+v+ " error: "+(e as Error).message, label:"parse_json" })

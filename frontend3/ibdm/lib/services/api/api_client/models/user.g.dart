@@ -10,6 +10,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       id: json['id'] as String,
       email: json['email'] as String,
       role: Role.fromJson(json['role'] as String),
+      avatarUrl: json['avatar_url'] as String?,
       name: json['name'] as String?,
       phoneNumber: json['phone_number'] as String?,
       superiors: (json['superiors'] as List<dynamic>?)
@@ -24,6 +25,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'id': instance.id,
+      'avatar_url': instance.avatarUrl,
       'email': instance.email,
       'name': instance.name,
       'role': _$RoleEnumMap[instance.role]!,

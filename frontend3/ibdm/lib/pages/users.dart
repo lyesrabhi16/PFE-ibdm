@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:data_table_2/data_table_2.dart';
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/icon_with_label_button.dart';
 import 'package:ibdm/services/api/api_client.dart';
@@ -14,16 +18,19 @@ import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
+import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 
 class UsersPage extends StatelessWidget {
   UsersPage({super.key});
 
-  final Rx<bool> _triggerUpdateVar = false.obs;
-  void _triggerUpdate() => _triggerUpdateVar.value = !_triggerUpdateVar.value;
+  static final UserController userController = Get.find();
 
   final Rx<bool> _loaded = false.obs;
+  final Rx<bool> _loadedAddUserSuperiorOptions = false.obs;
+  final RxList<ShadOption<User>> _addUserSuperiorOptions =
+      <ShadOption<User>>[].obs;
 
   final RxMap<String, bool> _hovered = <String, bool>{}.obs;
 
@@ -61,6 +68,16 @@ class UsersPage extends StatelessWidget {
   static final _addUserNameController = TextEditingController();
   static final _addUserPasswordController = TextEditingController();
   static final _addUserPhoneController = TextEditingController();
+  static final _addUserRole = _getInitialRoleValue().obs;
+  static User? _addUserSuperior;
+  static final _searchAddUserSuperior = false.obs;
+  static final _searchAddUserSuperiorOptions = <ShadOption<User>>[].obs;
+  static final Rx<Icon> _addUserPlaceHolderAvatar = Icon(
+    LucideIcons.circleUserRound,
+    size: AppSizes.xl * 3,
+  ).obs;
+  static final Rx<bool> _addUserAvatarSelected = false.obs;
+  static File? _addUserAvatar;
 
   static final Rx<bool> _showCheckboxColumn = false.obs;
 
@@ -87,11 +104,11 @@ class UsersPage extends StatelessWidget {
 
       // set data
       usersData = res.users;
-      nbrTotalPages = res.nbrTotalPages;
+      nbrTotalPages = res.nbrTotalPages!;
       nbrUsersShown = usersData.length;
       nbrTotalUsers = res.nbrTotalUsers;
-      currentPage = res.currentPage;
-      perPage = res.perPage.obs;
+      currentPage = res.currentPage!;
+      perPage = res.perPage!.obs;
 
       // mark as loaded
       _loaded.value = true;
@@ -268,7 +285,6 @@ class UsersPage extends StatelessWidget {
                               style: Theme.of(context).textTheme.titleLarge),
                         ),
                         SizedBox(height: AppSizes.xl),
-                        //TODO: add actions
                         Container(
                           constraints: BoxConstraints(
                             minWidth: context.width,
@@ -313,62 +329,8 @@ class UsersPage extends StatelessWidget {
                                         },
                                         child: Text("Add User")),
                                     ShadButton.destructive(
-                                        onPressed: () {
-                                          _showCheckboxColumn.value =
-                                              !_showCheckboxColumn.value;
-
-                                          ShadToaster.of(context)
-                                              .show(ShadToast.destructive(
-                                            closeIcon: SizedBox(),
-                                            duration: Duration(days: 365),
-                                            title: Text("Delete Users"),
-                                            description: Obx(
-                                              () {
-                                                return _selectedUsers.isEmpty
-                                                    ? Text(
-                                                        "Select users to delete")
-                                                    : Text(
-                                                        "Are you sure you want to delete ${_selectedUsers.length} user(s)?");
-                                              },
-                                            ),
-                                            action: Obx(
-                                              () => _selectedUsers.isEmpty
-                                                  ? ShadButton(
-                                                      onPressed: () {
-                                                        _selectedUsers.clear();
-                                                        _showCheckboxColumn
-                                                            .value = false;
-                                                        ShadToaster.of(context)
-                                                            .hide();
-                                                      },
-                                                      child: Text("Cancel"),
-                                                    )
-                                                  : Row(
-                                                      children: [
-                                                        ShadButton(
-                                                          onPressed: () async {
-                                                            await _deleteUsers(
-                                                                context);
-                                                          },
-                                                          child: Text("Yes"),
-                                                        ),
-                                                        ShadButton(
-                                                          onPressed: () {
-                                                            _selectedUsers
-                                                                .clear();
-                                                            _showCheckboxColumn
-                                                                .value = false;
-                                                            ShadToaster.of(
-                                                                    context)
-                                                                .hide();
-                                                          },
-                                                          child: Text("No"),
-                                                        ),
-                                                      ],
-                                                    ),
-                                            ),
-                                          ));
-                                        },
+                                        onPressed: () =>
+                                            _onDeleteButtonClick(context),
                                         enabled: !_showCheckboxColumn.value,
                                         child: Text("Delete")),
                                   ],
@@ -632,7 +594,10 @@ class UsersPage extends StatelessWidget {
                                     onChanged: () {},
                                     child: TextFormField(
                                       validator: (value) =>
-                                          _perPageValidator(value),
+                                          AppValidators.perPageValidator(
+                                        value,
+                                        _expandPerPage,
+                                      ),
                                       controller: _perPageController,
                                       onTapOutside: (_) =>
                                           _executeChangePerPageIfPossible(
@@ -659,6 +624,7 @@ class UsersPage extends StatelessWidget {
                           height: AppSizes.sm,
                         ),
                         // data table
+
                         Expanded(
                           child: Container(
                             constraints: BoxConstraints(
@@ -670,98 +636,111 @@ class UsersPage extends StatelessWidget {
                                   .surfaceContainer,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: SingleChildScrollView(
-                              child: DataTable2(
-                                sortAscending: true,
-                                onSelectAll: (selectedAll) =>
-                                    selectedAll == true
-                                        ? _selectedUsers.addAll(usersData)
-                                        : _selectedUsers.clear(),
-                                showCheckboxColumn: _showCheckboxColumn.value,
-                                sortColumnIndex: 0,
-                                dataRowColor: WidgetStateProperty.fromMap({
-                                  WidgetState.hovered: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer,
-                                  WidgetState.focused:
-                                      colorScheme.primaryContainer,
-                                }),
-                                columns: [
-                                  DataColumn(
-                                      label: Expanded(
-                                          child: Text(
-                                    "No",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall
-                                        ?.copyWith(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ))),
-                                  DataColumn(
-                                      label: Expanded(
-                                          child: Text(
-                                    "Avatar",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall
-                                        ?.copyWith(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ))),
-                                  DataColumn(
-                                      label: Expanded(
-                                          child: Text(
-                                    "ID",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall
-                                        ?.copyWith(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ))),
-                                  DataColumn(
-                                      label: Expanded(
-                                          child: Text(
-                                    "Email",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall
-                                        ?.copyWith(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ))),
-                                  DataColumn(
-                                      label: Expanded(
-                                          child: Text(
-                                    "Name",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall
-                                        ?.copyWith(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ))),
-                                  DataColumn(
-                                      label: Expanded(
-                                          child: Text(
-                                    "Role",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall
-                                        ?.copyWith(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ))),
-                                ],
-                                rows: _getRows(context),
-                              ),
+                            child: DataTable2(
+                              sortAscending: true,
+                              onSelectAll: (selectedAll) => selectedAll == true
+                                  ? _selectedUsers.addAll(usersData)
+                                  : _selectedUsers.clear(),
+                              showCheckboxColumn: _showCheckboxColumn.value,
+                              sortColumnIndex: 0,
+                              dataRowColor: WidgetStateProperty.fromMap({
+                                WidgetState.hovered: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                WidgetState.focused:
+                                    colorScheme.primaryContainer,
+                              }),
+                              columns: [
+                                DataColumn2(
+                                    label: Expanded(
+                                        child: Text(
+                                  "No",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ))),
+                                DataColumn2(
+                                    label: Expanded(
+                                        child: Text(
+                                  "Avatar",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ))),
+                                DataColumn2(
+                                    label: Expanded(
+                                        child: Text(
+                                  "ID",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ))),
+                                DataColumn2(
+                                    label: Expanded(
+                                        child: Text(
+                                  "Email",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ))),
+                                DataColumn2(
+                                    label: Expanded(
+                                        child: Text(
+                                  "Name",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ))),
+                                DataColumn2(
+                                  label: Expanded(
+                                    child: Text(
+                                      "Role",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall
+                                          ?.copyWith(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Expanded(
+                                    child: Text(
+                                      "Actions",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall
+                                          ?.copyWith(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              rows: _getRows(context),
                             ),
                           ),
                         ),
@@ -820,16 +799,70 @@ class UsersPage extends StatelessWidget {
     );
   }
 
+  void _onDeleteButtonClick(BuildContext context) {
+    _showCheckboxColumn.value = !_showCheckboxColumn.value;
+
+    ShadToaster.of(context).show(
+      ShadToast.destructive(
+        closeIcon: SizedBox(),
+        duration: Duration(days: 365),
+        title: Text("Delete Users"),
+        description: Obx(
+          () {
+            return _selectedUsers.isEmpty
+                ? Text("Select users to delete")
+                : Text(
+                    "Are you sure you want to delete ${_selectedUsers.length} user(s)?");
+          },
+        ),
+        action: Obx(
+          () => _selectedUsers.isEmpty
+              ? ShadButton(
+                  onPressed: () {
+                    _selectedUsers.clear();
+                    _showCheckboxColumn.value = false;
+                    ShadToaster.of(context).hide();
+                  },
+                  child: Text("Cancel"),
+                )
+              : Row(
+                  children: [
+                    ShadButton(
+                      onPressed: () async {
+                        await _deleteUsers(context);
+                        _loadUsers(context);
+                      },
+                      child: Text("Yes"),
+                    ),
+                    ShadButton(
+                      onPressed: () {
+                        _selectedUsers.clear();
+                        _showCheckboxColumn.value = false;
+                        ShadToaster.of(context).hide();
+                      },
+                      child: Text("No"),
+                    ),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _deleteUsers(BuildContext context) async {
     final api = await ApiClientInstance.getApiClient();
     api.deleteUsers(
-        userIds: _selectedUsers.map((u) => u.id).toList() as UserIdsArray);
+      userIds: _selectedUsers.map((u) => u.id).toList(),
+    );
     _selectedUsers.clear();
     _showCheckboxColumn.value = false;
     ShadToaster.of(context).hide();
   }
 
   Future<dynamic> _showAddUserDialog(BuildContext context) {
+    _addUserRole.value = _getInitialRoleValue();
+    _loadSuperiorsOptions(context);
+
     return showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
@@ -839,6 +872,13 @@ class UsersPage extends StatelessWidget {
           ShadButton(
             child: Text("Add User"),
             onPressed: () async {
+              if (!_formKeyAddUser.currentState!.validate()) {
+                Toasts.showErrorToastNotification(
+                    context: context,
+                    message: "¨Please fix the errors in the form");
+                return;
+              }
+
               Rx<FutureState> _loadingToastState = FutureState.loading.obs;
               // show loading toast
               final toast = Toasts.showStatefulToast(
@@ -851,20 +891,23 @@ class UsersPage extends StatelessWidget {
               // add user request
               try {
                 final api = await ApiClientInstance.getApiClient();
+                //print("superior: ${_addUserSuperior}");
                 final res = await api.addUser(
-                  body: AddUserInput(
-                    email: _addUserEmailController.text,
-                    password: _addUserPasswordController.text,
-                    role: Role.operateur,
-                    phoneNumber: _addUserPhoneController.text,
-                    name: _addUserNameController.text,
-                  ),
+                  avatar: _addUserAvatar,
+                  email: _addUserEmailController.text,
+                  password: _addUserPasswordController.text,
+                  role: _addUserRole.value,
+                  phoneNumber: _addUserPhoneController.text,
+                  name: _addUserNameController.text,
+                  superiorId: _addUserSuperior?.id,
                 );
                 // show success toast
                 _loadingToastState.value = FutureState.success;
                 // close toast after a short duration
                 Future.delayed(Duration(seconds: 1),
                     () => Toastification().dismissById(toast.id));
+                // reload users list
+                _loadUsers(context);
               } catch (e) {
                 logger.e("failed to add user: $e");
                 // show error toast
@@ -876,55 +919,259 @@ class UsersPage extends StatelessWidget {
             },
           )
         ],
-        child: Form(
-          key: _formKeyAddUser,
-          child: Column(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  LucideIcons.circleUserRound,
-                  size: AppSizes.xl * 3,
-                ),
+        child: Obx(
+          () {
+            if (!_loadedAddUserSuperiorOptions.value) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            return Form(
+              key: _formKeyAddUser,
+              child: Column(
+                children: [
+                  _addUserAvatarSelected.value
+                      ? IconButton(
+                          padding: EdgeInsets.all(AppSizes.sm),
+                          onPressed: () {
+                            _addUserAvatarSelected.value = false;
+                            _addUserAvatar = null;
+                          },
+                          icon: SizedBox(
+                            width: AppSizes.xl * 6,
+                            height: AppSizes.xl * 6,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Image.file(
+                                _addUserAvatar!,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                        )
+                      : TextButton(
+                          onPressed: () async {
+                            Rx<FutureState> _openFilePickerToast =
+                                FutureState.loading.obs;
+                            final toast = Toasts.showStatefulToast(
+                              context: context,
+                              message: "Opening File Picker...",
+                              messageError: "Canceled",
+                              messageSuccess: "File Selected",
+                              state: _openFilePickerToast,
+                            );
+                            // show image picker
+                            FilePickerResult? result =
+                                await FilePicker.platform.pickFiles(
+                              type: FileType.image,
+                            );
+                            if (result != null) {
+                              _openFilePickerToast.value = FutureState.success;
+
+                              // set image file
+                              _addUserAvatar = File(result.files.single.path!);
+                              _addUserAvatarSelected.value = true;
+                              // close toast after delay
+                              Future.delayed(Duration(seconds: 1),
+                                  () => Toastification().dismissById(toast.id));
+                            } else {
+                              // User canceled the picker
+                              _openFilePickerToast.value = FutureState.error;
+                              // close toast after delay
+                              Future.delayed(Duration(seconds: 1),
+                                  () => Toastification().dismissById(toast.id));
+                            }
+                          },
+                          child: _addUserPlaceHolderAvatar.value,
+                        ),
+                  SizedBox(height: AppSizes.sm),
+                  // email
+                  ShadInputFormField(
+                    controller: _addUserEmailController,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: FormBuilderValidators.email(),
+                    label: Text("Email"),
+                    placeholder: Text("account@exmaple.com"),
+                  ),
+                  SizedBox(height: AppSizes.sm),
+                  // password
+                  ShadInputFormField(
+                    controller: _addUserPasswordController,
+                    keyboardType: TextInputType.visiblePassword,
+                    validator: (v) => AppValidators.customPasswordValidator(v),
+                    obscureText: true,
+                    label: Text("Password"),
+                    placeholder: Text("********"),
+                  ),
+                  SizedBox(height: AppSizes.sm),
+                  // name
+                  ShadInputFormField(
+                    controller: _addUserNameController,
+                    keyboardType: TextInputType.name,
+                    label: Text("Name"),
+                    placeholder: Text("Lyes Rabhi"),
+                  ),
+                  SizedBox(height: AppSizes.sm),
+                  // role
+                  Container(
+                    constraints: BoxConstraints(
+                      minWidth: context.width,
+                    ),
+                    child: ShadSelectFormField<Role>(
+                      initialValue: _addUserRole.value,
+                      enabled: userController.user?.role != Role.supervisor,
+                      validator: (v) =>
+                          AppValidators.roleSelectionValidator(v?.name),
+                      options: _getRoleOptions(context),
+                      label: Text("Role"),
+                      selectedOptionBuilder: (context, value) => Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
+                        ),
+                        child: Text("Role: ${value.name.toUpperCase()}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  color: AppColors.getRoleColor(
+                                      _addUserRole.value),
+                                )),
+                      ),
+                      placeholder: Text("Role"),
+                      shrinkWrap: false,
+                      onChanged: (value) {
+                        if (value != null) _addUserRole.value = value;
+                        _loadSuperiorsOptions(context);
+                      },
+                    ),
+                  ),
+                  SizedBox(height: AppSizes.sm),
+                  // phone number
+                  ShadInputFormField(
+                    controller: _addUserPhoneController,
+                    keyboardType: TextInputType.phone,
+                    validator: (v) => AppValidators.phoneNumberValidator(v),
+                    label: Text("Phone number"),
+                    placeholder: Text("0549267381"),
+                  ),
+
+                  SizedBox(height: AppSizes.sm),
+                  // superior
+                  Container(
+                    constraints: BoxConstraints(
+                      minWidth: context.width,
+                    ),
+                    child: ShadSelectFormField<User>.withSearch(
+                      label: Text("Superior"),
+                      validator: (value) =>
+                          AppValidators.superiorSelectionValidator(
+                        value?.id,
+                        _addUserSuperiorOptions.map((o) => o.value).toList(),
+                      ),
+                      allowDeselection: true,
+                      options: _searchAddUserSuperior.value
+                          ? _searchAddUserSuperiorOptions
+                          : _addUserSuperiorOptions,
+                      placeholder: Container(
+                          constraints: BoxConstraints(
+                            minWidth: context.width,
+                          ),
+                          child: Text("Select a Superior")),
+                      anchor: ShadAnchorAuto(
+                        preferBelow: false,
+                      ),
+                      onChanged: (value) {
+                        print("value: $value");
+                        _addUserSuperior = value;
+                      },
+                      selectedOptionBuilder: (context, value) => Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
+                        ),
+                        child: Text(
+                            "Superior: ${value.role.name.toUpperCase()} ${value.name ?? value.email}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  color: AppColors.getRoleColor(Role.values
+                                      .firstWhere((r) =>
+                                          r.name.toUpperCase() ==
+                                          value.role.name.toUpperCase())),
+                                )),
+                      ),
+                      onSearchChanged: (value) {
+                        if (value.isNotEmpty) {
+                          _searchAddUserSuperior.value =
+                              false; // turn it off to trigger update later
+                          _searchAddUserSuperiorOptions.clear();
+                          _searchAddUserSuperiorOptions
+                              .addAll(_addUserSuperiorOptions.where((o) {
+                            if (o.value.name != null) {
+                              if (o.value.name!.contains(value)) {
+                                return true;
+                              }
+                            }
+                            return o.value.email.contains(value);
+                          }));
+                          _searchAddUserSuperior.value =
+                              true; // turning it back on to trigger update
+                        } else {
+                          _searchAddUserSuperior.value = false;
+                          _searchAddUserSuperiorOptions.clear();
+                        }
+                      },
+                    ),
+                  ),
+                  SizedBox(height: AppSizes.md),
+                ],
               ),
-              // email
-              ShadInputFormField(
-                controller: _addUserEmailController,
-                keyboardType: TextInputType.emailAddress,
-                validator: FormBuilderValidators.email(),
-                label: Text("Email"),
-                placeholder: Text("account@exmaple.com"),
-              ),
-              // password
-              ShadInputFormField(
-                controller: _addUserPasswordController,
-                keyboardType: TextInputType.visiblePassword,
-                validator: FormBuilderValidators.password(),
-                obscureText: true,
-                label: Text("Password"),
-                placeholder: Text("********"),
-              ),
-              // name
-              ShadInputFormField(
-                controller: _addUserNameController,
-                keyboardType: TextInputType.name,
-                label: Text("Name"),
-                placeholder: Text("Lyes Rabhi"),
-              ),
-              // role
-              // phone number
-              ShadInputFormField(
-                controller: _addUserPhoneController,
-                keyboardType: TextInputType.phone,
-                validator: FormBuilderValidators.phoneNumber(),
-                label: Text("Phone number"),
-                placeholder: Text("0549267381"),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
+  }
+
+  static Role _getInitialRoleValue() {
+    switch (userController.user?.role) {
+      case Role.adminSystem:
+        return Role.admin;
+      case Role.admin:
+        return Role.supervisor;
+      case Role.supervisor:
+        return Role.operateur;
+      default:
+        return Role.operateur;
+    }
+  }
+
+  Iterable<Widget> _getRoleOptions(BuildContext context) {
+    List<Role> roles = [];
+    switch (userController.user?.role) {
+      case Role.adminSystem:
+        roles = Role.values.toList();
+        break;
+      case Role.admin:
+        roles = [Role.supervisor, Role.operateur];
+        break;
+      case Role.supervisor:
+        roles = [Role.operateur];
+        break;
+      default:
+        roles = [];
+        break;
+    }
+    return roles.map((role) => ShadOption(
+          value: role,
+          child: Text(
+            role.name.toUpperCase(),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.getRoleColor(role),
+                ),
+          ),
+        ));
   }
 
   WidgetStateProperty<Color>? _getRowColor(BuildContext context, User user) {
@@ -1003,7 +1250,31 @@ class UsersPage extends StatelessWidget {
                     ),
               ),
             ),
-            showEditIcon: true,
+          ),
+          DataCell(
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    _showViewUserDialog(context, user);
+                  },
+                  icon: Icon(Icons.remove_red_eye_rounded),
+                ),
+                IconButton(
+                  onPressed: () {
+                    _showEditUserDialog(context, user);
+                  },
+                  icon: Icon(Icons.edit),
+                ),
+                IconButton(
+                  onPressed: () {
+                    _selectedUsers.add(user);
+                    _onDeleteButtonClick(context);
+                  },
+                  icon: Icon(Icons.delete),
+                ),
+              ],
+            ),
           ),
         ],
         selected: _selectedUsers.contains(user),
@@ -1016,8 +1287,97 @@ class UsersPage extends StatelessWidget {
             _selectedUsers.add(user);
           }
         },
-      ).;
+      );
     }).toList();
+  }
+
+  void _loadSuperiorsOptions(BuildContext context) async {
+    final _me = "${userController.user!.name ?? ""}(Me)";
+    List<ShadOption<User>> options = [];
+
+    if (userController.user?.role == Role.supervisor) {
+      // can only add operators assigned to himself
+      _addUserSuperiorOptions.value = [
+        ShadOption(value: userController.user!, child: Text(_me))
+      ];
+      _loadedAddUserSuperiorOptions.value = true;
+      return;
+    }
+    if (userController.user?.role == Role.admin) {
+      // can add operators assigned to his supervisors subordinates
+      // can add operators assigned to himself
+      if (_addUserRole.value.name == Role.operateur.name) {
+        try {
+          _loadedAddUserSuperiorOptions.value = false;
+          final api = await ApiClientInstance.getApiClient();
+          final res = await api.getUser(id: userController.user!.id);
+          userController.user = res.user;
+          userController.user!.subordinates?.forEach((s) {
+            if (s.subordinate == null) {
+              logger.e("subordinate value is null, from api response");
+              return;
+            }
+            if (s.subordinate!.role != Role.supervisor) {
+              return;
+            }
+
+            options.add(
+              ShadOption(
+                value: s.subordinate!,
+                child: Text(s.subordinate!.name ?? s.subordinate!.email),
+              ),
+            );
+          });
+          options
+              .add(ShadOption(value: userController.user!, child: Text(_me)));
+          _addUserSuperiorOptions.value = options;
+          _loadedAddUserSuperiorOptions.value = true;
+          return;
+        } catch (e) {
+          logger.e("failed to get subordinates: $e");
+          Toasts.showErrorToastNotification(
+              context: context,
+              message: "Failed to get subordinates",
+              title: "Error: Failed to get subordinates");
+          _addUserSuperiorOptions.value = [];
+          _loadedAddUserSuperiorOptions.value = true;
+          return;
+        }
+      }
+
+      // can add supervisors assigned to himself
+      if (_addUserRole.value.name == Role.supervisor.name) {
+        options.add(ShadOption(value: userController.user!, child: Text(_me)));
+        _addUserSuperiorOptions.value = options;
+        _loadedAddUserSuperiorOptions.value = true;
+        return;
+      }
+    }
+
+    // can add any kind of user
+    try {
+      final api = await ApiClientInstance.getApiClient();
+      final res = await api.getUsers(enablePagination: false);
+      _addUserSuperiorOptions.value = res.users
+          .map(
+            (u) => ShadOption(
+              value: u,
+              child: Text(u.name ?? u.email),
+            ),
+          )
+          .toList();
+      _loadedAddUserSuperiorOptions.value = true;
+      return;
+    } catch (e) {
+      logger.e("failed to get users: $e");
+      Toasts.showErrorToastNotification(
+          context: context,
+          message: "Failed to get users",
+          title: "Error: Failed to get users");
+      _addUserSuperiorOptions.value = [];
+      _loadedAddUserSuperiorOptions.value = true;
+      return;
+    }
   }
 
   void _executeChangePerPageIfPossible(BuildContext context) {
@@ -1039,16 +1399,9 @@ class UsersPage extends StatelessWidget {
     }
   }
 
-  String? _perPageValidator(String? value) {
-    final String? error = IntegerValidator().validate(value);
-    if (error != null) {
-      _expandPerPage.value = true;
-      return error;
-    } else {
-      _expandPerPage.value = false;
-    }
-    return null;
-  }
+  void _showEditUserDialog(BuildContext context, User user) {}
+
+  void _showViewUserDialog(BuildContext context, User user) {}
 }
 
 class PageIndex {

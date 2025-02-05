@@ -17,6 +17,7 @@ const EnvSchemaDefinition = z.object({
     SESSION_SECRET: z.string(),
     DATABASE_URL: z.string(),
     ALLOWED_ORIGINS: z.array(z.string()).default(["*"]),
+    BASE_URL: z.string().url().default("http://localhost:8080"),
 });
 
 

@@ -1,4 +1,5 @@
 import { db_client } from "#config/db/db";
+import env from "#config/env.config";
 import { LOGLEVELS } from "#types/logger.types";
 import { logger } from "#utils";
 import { generateHash } from "#utils/generateHash";
@@ -6,6 +7,7 @@ import { $Enums } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { log } from "console";
 import { Request, Response } from "express";
+import { unlinkSync } from "fs";
 
 export const getUsers = async (req: Request, res: Response) => {
     const pagination = req.pagination;
@@ -24,8 +26,8 @@ export const getUsers = async (req: Request, res: Response) => {
     // include OPERATEURS
     const isADMIN_SYSTEM = user.role === $Enums.Role.ADMIN_SYSTEM;
     const users = await db_client.ibdm.user.findMany({
-        take:  pagination.perPage,
-        skip: (pagination.page - 1) * pagination.perPage,
+        take: pagination.enablePagination ? pagination.perPage : undefined,
+        skip: pagination.enablePagination ? (pagination.page - 1) * pagination.perPage : undefined,
         where: isADMIN_SYSTEM ? {} : {
             superiors: {
                 some: {
@@ -61,11 +63,6 @@ export const getUsers = async (req: Request, res: Response) => {
             }
         }
     });
-
-    users.forEach(u => {
-        console.log(u.email);
-        
-    })
     
     const nbrTotalUsers = await db_client.ibdm.user.count({
         where: isADMIN_SYSTEM ? {} : {
@@ -81,9 +78,9 @@ export const getUsers = async (req: Request, res: Response) => {
     res.status(200).json({
         users: users,
         nbrTotalUsers: nbrTotalUsers,
-        nbrTotalPages: nbrTotalPages,
-        currentPage: pagination.page,
-        perPage: pagination.perPage,
+        nbrTotalPages: pagination.enablePagination ? nbrTotalPages : undefined,
+        currentPage: pagination.enablePagination ? pagination.page : undefined,
+        perPage: pagination.enablePagination ? pagination.perPage : undefined,
     });
 }
 
@@ -98,6 +95,30 @@ export const getUser = async (req: Request, res: Response) => {
     const user = await db_client.ibdm.user.findUnique({
         where: {
             id: userId
+        },
+        include: {
+            superiors: true,
+            subordinates: {
+                include: {
+                    subordinate: {
+                        omit: {
+                            password: true,
+                        },
+                        include:{
+                            _count: true,
+                            subordinates:{
+                                include:{
+                                    subordinate:{
+                                        omit:{
+                                            password: true,
+                                        }
+                                    }
+                                }
+                        }  }
+                    }
+                }
+            },
+            _count:true,
         },
         omit: {
             password: true,
@@ -245,6 +266,7 @@ export const createUser = async (req: Request, res: Response) => {
             
         }
 
+        
 
         const user = await db_client.ibdm.user.create({
             data: {
@@ -253,7 +275,8 @@ export const createUser = async (req: Request, res: Response) => {
                 name: name,
                 role: role,
                 phone_number: phone_number,
-                superiors: {
+                avatar_url: req.file ? env.BASE_URL+"/images/avatar/"+req.file.filename: "",
+                superiors: superior_ids ? {
                     createMany: {
                         data: superior_ids.map((id:string) => {
                             return {
@@ -261,7 +284,7 @@ export const createUser = async (req: Request, res: Response) => {
                             }
                         })
                     }
-                }
+                } : undefined,
             },
             omit: {
                 password: true,
@@ -270,15 +293,21 @@ export const createUser = async (req: Request, res: Response) => {
 
         logger.log({
             level: LOGLEVELS.DEBUG,
-            message: "user created",
+            message: "user created" + req.file ? ` with avatar '${req.file?.filename}'` : "",
             label: "createUser",
         });
+        
 
         res.status(201).json({
             message: "user created successfully",
             user: user,
         })
     } catch (e) {
+        // remove saved file on error
+        if (req.file) {
+             unlinkSync(req.file.path);
+        }
+
         if (e instanceof PrismaClientKnownRequestError) {
             logger.log({
                 level: LOGLEVELS.ERROR,
@@ -304,7 +333,7 @@ export const createUser = async (req: Request, res: Response) => {
         
         logger.log({
             level: LOGLEVELS.ERROR,
-            message: "an unknown error occurred while creating user",
+            message: "an unknown error occurred while creating user: "+(e as Error).message,
             error: e,
             label: "createUser",
         });

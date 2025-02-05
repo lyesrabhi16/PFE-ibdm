@@ -8,7 +8,6 @@ export 'ibdm_api/ibdm_api_client.dart';
 export 'models/role.dart';
 export 'models/superior_and_subordinate.dart';
 export 'models/user.dart';
-export 'models/add_user_input.dart';
 export 'models/login_request.dart';
 export 'models/login_response.dart';
 export 'models/logout_response.dart';
@@ -18,6 +17,7 @@ export 'models/error.dart';
 export 'models/user_ids_array.dart';
 export 'models/post_api_users_response.dart';
 export 'models/delete_api_users_response.dart';
+export 'models/get_api_users_id_response.dart';
 export 'models/delete_api_users_id_response.dart';
 // Root client
 export 'api_client.dart';

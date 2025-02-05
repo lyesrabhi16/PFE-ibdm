@@ -4,3 +4,13 @@ enum Role {
   ADMIN
   ADMIN_SYSTEM
 }
+
+enum Permission {
+  READ
+  WRITE
+  DELETE
+  SHARE
+  UPLOAD
+  DOWNLOAD
+  EXPORT
+}

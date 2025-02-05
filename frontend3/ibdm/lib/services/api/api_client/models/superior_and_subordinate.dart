@@ -4,6 +4,8 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
+import 'user.dart';
+
 part 'superior_and_subordinate.g.dart';
 
 @JsonSerializable()
@@ -23,8 +25,8 @@ class SuperiorAndSubordinate {
   final String superiorId;
   @JsonKey(name: 'subordinate_id')
   final String subordinateId;
-  final dynamic subordinate;
-  final dynamic superior;
+  final User? subordinate;
+  final User? superior;
 
   Map<String, Object?> toJson() => _$SuperiorAndSubordinateToJson(this);
 }

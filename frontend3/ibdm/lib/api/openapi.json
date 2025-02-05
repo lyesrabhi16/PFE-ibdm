@@ -220,6 +220,9 @@
           },
           {
             "$ref": "#/components/parameters/perPage"
+          },
+          {
+            "$ref": "#/components/parameters/enablePagination"
           }
         ],
         "responses": {
@@ -259,6 +262,11 @@
         ],
         "requestBody": {
           "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserInput"
+              }
+            },
             "application/x-www-form-urlencoded": {
               "schema": {
                 "$ref": "#/components/schemas/AddUserInput"
@@ -377,7 +385,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
                 }
               }
             }
@@ -537,15 +550,11 @@
           },
           "subordinate": {
             "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/User"
-            }
+            "$ref": "#/components/schemas/User"
           },
           "superior": {
             "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/User"
-            }
+            "$ref": "#/components/schemas/User"
           }
         }
       },
@@ -555,6 +564,11 @@
           "id": {
             "type": "string",
             "example": "1"
+          },
+          "avatar_url": {
+            "type": "string",
+            "example": "https://server.ibdm.local.ifri/images/avatar/1",
+            "nullable": true
           },
           "email": {
             "type": "string",
@@ -578,21 +592,25 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SuperiorAndSubordinate"
-            },
-            "example": "1"
+            }
           },
           "subordinates": {
+            "nullable": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SuperiorAndSubordinate"
-            },
-            "nullable": true
+            }
           }
         }
       },
       "AddUserInput": {
         "type": "object",
         "properties": {
+          "avatar": {
+            "type": "string",
+            "format": "binary",
+            "nullable": true
+          },
           "email": {
             "type": "string",
             "example": "example@example.com"
@@ -607,8 +625,7 @@
             "example": "bob"
           },
           "role": {
-            "$ref": "#/components/schemas/Role",
-            "required": true
+            "$ref": "#/components/schemas/Role"
           },
           "phone_number": {
             "type": "string",
@@ -620,7 +637,12 @@
             "nullable": true,
             "example": "1"
           }
-        }
+        },
+        "required": [
+          "email",
+          "password",
+          "role"
+        ]
       },
       "LoginRequest": {
         "type": "object",
@@ -670,14 +692,17 @@
         "properties": {
           "perPage": {
             "type": "integer",
+            "nullable": true,
             "example": 10
           },
           "currentPage": {
             "type": "integer",
+            "nullable": true,
             "example": 1
           },
           "nbrTotalPages": {
             "type": "integer",
+            "nullable": true,
             "example": 2
           },
           "nbrTotalUsers": {
@@ -715,12 +740,10 @@
       },
       "userIdsArray": {
         "type": "array",
-        "properties": {
-          "property": {
-            "type": "string",
-            "example": "675ed2ea1164d1a1bae8ab1a",
-            "minItems": 1
-          }
+        "items": {
+          "type": "string",
+          "example": "675ed2ea1164d1a1bae8ab1a",
+          "minItems": 1
         }
       }
     },
@@ -795,6 +818,16 @@
         "schema": {
           "type": "number",
           "example": 10
+        }
+      },
+      "enablePagination": {
+        "name": "enablePagination",
+        "in": "query",
+        "required": false,
+        "description": "enable pagination, default true",
+        "schema": {
+          "type": "boolean",
+          "example": true
         }
       },
       "userIds": {
