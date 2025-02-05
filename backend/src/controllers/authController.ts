@@ -14,7 +14,7 @@ export const loginUser = async (req: Request, res: Response) => {
   const { email, password, rememberMe } = req.body; //rememberMe
 
   try {
-    logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: `User ${email} is trying to log in` });
+    logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: `User ${email} is trying to log in with remember me set to: ${rememberMe}` });
 
     // Recherche l'utilisateur par son email
     const user = await db_client.ibdm.user.findUnique({
@@ -46,7 +46,7 @@ export const loginUser = async (req: Request, res: Response) => {
   if (rememberMe) {
      req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 jours
    } else {
-     req.session.cookie.maxAge = 60 * 60 * 1000; // 1 heure
+     req.session.cookie.maxAge = 24 * 60 * 60 * 1000; // 1 jour
    }
 
     logger.log({ level: LOGLEVELS.INFO, label: "LOGIN", message: `Session created for user ${email}` });
