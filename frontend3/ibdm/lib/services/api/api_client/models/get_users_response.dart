@@ -12,18 +12,18 @@ part 'get_users_response.g.dart';
 @JsonSerializable()
 class GetUsersResponse {
   const GetUsersResponse({
-    required this.perPage,
-    required this.currentPage,
-    required this.nbrTotalPages,
     required this.nbrTotalUsers,
     required this.users,
+    this.perPage,
+    this.currentPage,
+    this.nbrTotalPages,
   });
   
   factory GetUsersResponse.fromJson(Map<String, Object?> json) => _$GetUsersResponseFromJson(json);
   
-  final int perPage;
-  final int currentPage;
-  final int nbrTotalPages;
+  final int? perPage;
+  final int? currentPage;
+  final int? nbrTotalPages;
   final int nbrTotalUsers;
   final List<User> users;
 

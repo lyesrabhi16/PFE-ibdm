@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ibdm/common/extensions/rbac_extensions.dart';
+import 'package:ibdm/services/api/api_client/export.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 
 class Destination {
   final String title;
   final IconData icon;
   final String route;
+  final GetPage page;
   int? index;
-  Destination(this.title, this.icon, this.route);
+  Destination({
+    required this.title,
+    required this.icon,
+    required this.route,
+    required this.page,
+  });
 
-  static List<Destination> getDestinations(context) => [
-        Destination("Home", Icons.home, Routes.home),
-        Destination("Protected", Icons.lock, "/protected"),
-        Destination("Users", Icons.people, Routes.users),
-        Destination("Settings", Icons.settings, Routes.settings),
-      ];
+  static List<Destination> getDestinations(context) => Routes.destinations;
 
   static Map<String, Destination> getDestinationsMap(
     context, {

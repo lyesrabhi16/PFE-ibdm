@@ -6,11 +6,11 @@ import { NextFunction, Request, Response } from "express";
 export const UserManagementPermission = async (req:Request, res:Response, has_perm: CallableFunction) => {
     logger.log({
         level:LOGLEVELS.INFO,
-        message:"checking isAdmin Permission",
+        message:"checking UserManagement Permission role: "+req.user?.role,
         label: "UserManagementPermission"
     })
     try {
-      const allowed_roles: Set<$Enums.Role> = new Set([$Enums.Role.ADMIN, $Enums.Role.ADMIN_SYSTEM, $Enums.Role.OPERATEUR]);
+      const allowed_roles: Set<$Enums.Role> = new Set([$Enums.Role.ADMIN, $Enums.Role.ADMIN_SYSTEM, $Enums.Role.SUPERVISOR]);
       
       if (!req.user) {
         has_perm(false);

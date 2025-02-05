@@ -28,18 +28,20 @@ components:
           example: "1"
         subordinate:
           nullable: true
-          items:
-            $ref: "#/components/schemas/User"
+          $ref: "#/components/schemas/User"
         superior:
           nullable: true
-          items:
-            $ref: "#/components/schemas/User"
+          $ref: "#/components/schemas/User"
     User:
       type: object
       properties:
         id:
           type: string
           example: "1"
+        avatar_url:
+          type: string
+          example: "https://server.ibdm.local.ifri/images/avatar/1"
+          nullable: true
         email:
           type: string
           example: "example@example.com"
@@ -58,15 +60,18 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/SuperiorAndSubordinate"
-          example: "1"
         subordinates:
+          nullable: true
           type: array
           items:
             $ref: "#/components/schemas/SuperiorAndSubordinate"
-          nullable: true
     AddUserInput:
       type: object
       properties:
+        avatar:
+          type: string
+          format: binary
+          nullable: true
         email:
           type: string
           example: "example@example.com"
@@ -79,7 +84,6 @@ components:
           example: "bob"
         role:
           $ref: "#/components/schemas/Role"
-          required: true
         phone_number:
           type: string
           nullable: true
@@ -88,6 +92,11 @@ components:
           type: string
           nullable: true
           example: "1"
+      required:
+        - email
+        - password
+        - role
+
     LoginRequest:
       type: object
       properties:
@@ -123,12 +132,15 @@ components:
       properties:
         perPage:
           type: integer
+          nullable: true
           example: 10
         currentPage:
           type: integer
+          nullable: true
           example: 1
         nbrTotalPages:
           type: integer
+          nullable: true
           example: 2
         nbrTotalUsers:
           type: integer
@@ -153,8 +165,7 @@ components:
           example: "Error message"
     userIdsArray:
       type: array
-      properties:
-        property:
+      items:
           type: string
           example: "675ed2ea1164d1a1bae8ab1a"
           minItems: 1
@@ -207,6 +218,14 @@ components:
       schema:
         type: number
         example: 10
+    enablePagination:
+      name: enablePagination
+      in: query
+      required: false
+      description: "enable pagination, default true"
+      schema:
+        type: boolean
+        example: true
     userIds:
       name: userIds
       in: query
@@ -333,6 +352,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/perPage"
+        - $ref: "#/components/parameters/enablePagination"
 
       responses:
         "200":
@@ -359,9 +379,12 @@ paths:
         - Users
       requestBody:
         content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/AddUserInput"
           application/x-www-form-urlencoded:
-              schema:
-                $ref: "#/components/schemas/AddUserInput"
+            schema:
+              $ref: "#/components/schemas/AddUserInput"
           application/json:
             schema:
               $ref: "#/components/schemas/AddUserInput"
@@ -436,7 +459,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":

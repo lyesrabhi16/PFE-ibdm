@@ -8,13 +8,13 @@ part of 'get_users_response.dart';
 
 GetUsersResponse _$GetUsersResponseFromJson(Map<String, dynamic> json) =>
     GetUsersResponse(
-      perPage: (json['perPage'] as num).toInt(),
-      currentPage: (json['currentPage'] as num).toInt(),
-      nbrTotalPages: (json['nbrTotalPages'] as num).toInt(),
       nbrTotalUsers: (json['nbrTotalUsers'] as num).toInt(),
       users: (json['users'] as List<dynamic>)
           .map((e) => User.fromJson(e as Map<String, dynamic>))
           .toList(),
+      perPage: (json['perPage'] as num?)?.toInt(),
+      currentPage: (json['currentPage'] as num?)?.toInt(),
+      nbrTotalPages: (json['nbrTotalPages'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$GetUsersResponseToJson(GetUsersResponse instance) =>

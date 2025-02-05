@@ -15,6 +15,7 @@ class User {
     required this.id,
     required this.email,
     required this.role,
+    this.avatarUrl,
     this.name,
     this.phoneNumber,
     this.superiors,
@@ -24,6 +25,8 @@ class User {
   factory User.fromJson(Map<String, Object?> json) => _$UserFromJson(json);
   
   final String id;
+  @JsonKey(name: 'avatar_url')
+  final String? avatarUrl;
   final String email;
   final String? name;
   final Role role;

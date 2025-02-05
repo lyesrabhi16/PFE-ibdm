@@ -7,6 +7,15 @@ import { NextFunction, Request, Response } from "express";
 const createUserValidator = async (req:Request, res:Response, next:NextFunction) => {
     try {
         // validate the request body using the updateUser schema validator
+        if (req.body.superior_id) {
+            if (typeof req.body.superior_id === "string") {
+                req.body.superior_ids = [req.body.superior_id];
+            }
+            else{
+                return res.status(400).json({ message: "superior_id must be a string, if you are sending an array use superior_ids instead" });
+            }
+        }
+        console.log("validating: "+ JSON.stringify(req.body, null, 2));
         const validated_data = await CreateUserValidator.validate(req.body);
         console.log("validated: "+validated_data);
         

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
+import 'package:ibdm/common/controllers/routes_controller.dart';
 import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/utils/constants/routes.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   final ThemeModeController themeModeController =
       Get.put(ThemeModeController());
   final UserController userController = Get.put(UserController());
-
+  final RoutesController routesController = Get.put(RoutesController());
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
           supportedLocales: AppLocalizations.supportedLocales,
           debugShowCheckedModeBanner: false,
           initialRoute: Routes.home,
-          getPages: Routes.router,
+          getPages: routesController.routes,
           textDirection: TextDirection.ltr,
           builder: (context, child) {
             return ShadToaster(child: child!);

@@ -6,7 +6,6 @@ import { NextFunction, Request, Response } from "express";
 const deleteUsersValidator = async (req:Request, res:Response, next:NextFunction)=> {
     try{
         console.log(req.query);
-        
         const validated_data = await DeleteUsersValidator.validate(req.query);
         req.query = validated_data;
         next();
