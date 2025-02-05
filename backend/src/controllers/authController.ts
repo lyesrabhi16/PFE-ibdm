@@ -1,4 +1,5 @@
 import { db_client } from "#config/db/db";
+import env from "#config/env.config";
 import SessionConfig from "#config/session/session.config";
 import { comparePassword } from "#models/user_actions";
 import { LOGLEVELS } from "#types/logger.types";
@@ -43,9 +44,9 @@ export const loginUser = async (req: Request, res: Response) => {
     // Définir la durée de la session
 
   if (rememberMe) {
-     req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 jours
+     req.session.cookie.maxAge = env.REMEMBER_DURATION // 30 jours
    } else {
-     req.session.cookie.maxAge = 24 * 60 * 60 * 1000; // 1 jour
+     req.session.cookie.maxAge = env.NOT_REMEMBER_DURATION // 1 jour
    }
 
     logger.log({ level: LOGLEVELS.INFO, label: "LOGIN", message: `Session created for user ${email}` });
