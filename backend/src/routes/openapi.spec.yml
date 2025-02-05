@@ -39,6 +39,9 @@ components:
         password:
           type: string
           example: 'password'
+        rememberMe:
+           type: boolean
+           example: 'true'
       required:
         - email
         - password
