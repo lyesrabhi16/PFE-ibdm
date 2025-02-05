@@ -57,14 +57,25 @@ dependencies:
   shadcn_ui: ^0.18.0
   easy_sidemenu: ^0.6.0
   dio_cookie_manager: ^3.1.1
+  path_provider: ^2.1.5
+  data_table_2: ^2.5.18
+  pluto_grid: ^8.0.0
+  file_picker: ^8.3.1
+  #freezed: ^2.5.8
+  #freezed_annotation: ^2.4.4 # for freezed
+  dart_mappable: ^4.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   retrofit_generator: ">=8.0.0 <10.0.0" # for Dart 3.3 use ^9.0.0
-  build_runner: ^2.3.3
-  json_serializable: ^6.8.0
+  build_runner: ^2.4.12
+  carapacik_lints: ^1.10.0
+  dart_mappable_builder: ^4.3.0 # for dart_mappable
+  # freezed: ^2.5.7 # for freezed
+  json_serializable: ^6.9.0
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

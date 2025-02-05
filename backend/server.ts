@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, {  } from "express";
 import cors from "cors";
 import session from "express-session";
 import { connectDB } from "#config/db/db";
@@ -9,13 +9,13 @@ import SessionConfig from "#config/session/session.config";
 import fs from "fs";
 import https from "https";
 import http from "http";
-import dotenv from "dotenv";
 import env, { EnvSchema } from "#config/env.config";
-import forceHttps from "#middlewares/forceHttps";
 import { startServer } from "#utils/server.utils";
 import { authRoutes, documentationRoutes, notFoundRoutes, userRoutes } from "#routes";
 import { pagination } from "#middlewares/pagination.middelware";
 import { cors_config } from "#config/cors/cors.config";
+import path from "path";
+import { pathConstants } from "#config/path/path.config";
 
 logger.log({ level: LOGLEVELS.INFO, message: "Starting server...", label: "Server" });
 
@@ -56,6 +56,9 @@ app.use(session(SessionConfig));
 
 app.use(pagination);
 
+// Static files
+app.use('/images', express.static(path.join(pathConstants.__dirname, '../../data/images')));
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
@@ -67,6 +70,7 @@ app.get("/", (req, res) => {
 
 // documentation
 app.use("/api/documentation", documentationRoutes);
+app.use("/api/docs", documentationRoutes);
 
 
 // not found

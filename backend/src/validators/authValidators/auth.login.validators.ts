@@ -8,6 +8,8 @@ const loginValidator = async (req: Request, res: Response, next: NextFunction) =
     logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: "loginValidator started" });
 
     try {
+        console.log("Body: ", req.body);
+        
         // validate the request body using the loginInput schema validator
         const validated_data = await loginInputValidator.validate(req.body);
         req.body = validated_data;
