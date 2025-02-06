@@ -20,6 +20,7 @@ import '../models/post_api_users_response.dart';
 import '../models/role.dart';
 import '../models/user.dart';
 import '../models/user_ids_array.dart';
+import 'package:http/http.dart' as http;
 
 part 'ibdm_api_client.g.dart';
 
