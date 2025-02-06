@@ -5,6 +5,7 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
+import 'package:ibdm/pages/loading_page.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
@@ -91,40 +92,6 @@ class _HomeState extends State<Home> {
             ),
             SizedBox(height: AppSizes.md),
             const ActionsRow(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class LoadingPage extends StatelessWidget {
-  const LoadingPage({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final strings = getTranslations(context);
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/logo.png',
-              height: 150.0,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              strings.homePageWelcomeMessage,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const CircularProgressIndicator(),
           ],
         ),
       ),
