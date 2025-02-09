@@ -7,10 +7,13 @@ import 'package:dio/dio.dart'
         ErrorInterceptorHandler,
         FormData,
         Interceptor,
+        MultipartFile,
+        Options,
         RequestInterceptorHandler,
         RequestOptions,
         Response,
-        ResponseInterceptorHandler;
+        ResponseInterceptorHandler,
+        ResponseType;
 import 'package:dio_cookie_manager/dio_cookie_manager.dart' show CookieManager;
 import 'package:flutter/services.dart'
     show ByteData, TargetPlatform, Uint8List, rootBundle;
@@ -21,6 +24,8 @@ import 'package:ibdm/config/api.config.dart' show ApiConfig;
 import 'package:ibdm/services/api/api_client/export.dart'
     show ApiClient, IbdmApiClient, Role, RoleMapper;
 import 'package:cookie_jar/cookie_jar.dart' show FileStorage, PersistCookieJar;
+import 'package:ibdm/services/api/api_client/models/post_api_users_response.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
 /* 
@@ -31,11 +36,13 @@ extension RoleExtension on Role {
 } */
 
 class ApiClientInstance {
-  ApiClientInstance._();
-  static Future<IbdmApiClient> getApiClient() async {
-    // create Dio instance
-    Dio dio = Dio();
+  static final dio = Dio();
 
+  ApiClientInstance._() {
+    init();
+  }
+
+  static init() async {
     // set default configurations
     dio.options.headers['Content-Type'] = 'application/json';
     dio.options.headers['Accept'] = 'application/json';
@@ -68,7 +75,148 @@ class ApiClientInstance {
       }
     }
 
+    print("ApiClientInstance: Initialized");
+  }
+
+  static Future<IbdmApiClient> getApiClient() async {
+    await init();
     return ApiClient(dio, baseUrl: ApiConfig.base_url).ibdmApi;
+  }
+}
+
+extension WebAddUsers on IbdmApiClient {
+  Future<PostApiUsersResponse> addUsersOnWeb({
+    required String email,
+    required String password,
+    required Role role,
+    Uint8List? avatar,
+    String? avatarFileName = "avatar.jpg",
+    String? name,
+    String? phoneNumber,
+    String? superiorId,
+  }) async {
+    if (avatar != null && avatarFileName == null) {
+      throw Exception(
+          "AddUsersOnWeb: avatarFileName must be provided when avatar is provided");
+    }
+
+    logger.i("addUsersOnWeb: Start");
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry(
+      'email',
+      email,
+    ));
+    _data.fields.add(MapEntry(
+      'password',
+      password,
+    ));
+    _data.fields.add(MapEntry(
+      'role',
+      role.name,
+    ));
+    if (avatar != null) {
+      _data.files.add(MapEntry(
+        'avatar',
+        MultipartFile.fromBytes(avatar, filename: avatarFileName),
+      ));
+    }
+    if (name != null) {
+      _data.fields.add(MapEntry(
+        'name',
+        name,
+      ));
+    }
+
+    if (phoneNumber != null) {
+      _data.fields.add(MapEntry(
+        'phone_number',
+        phoneNumber,
+      ));
+    }
+    if (superiorId != null) {
+      _data.fields.add(MapEntry(
+        'superior_id',
+        superiorId,
+      ));
+    }
+    logger.i("addUsersOnWeb: Added all");
+    /* final options = RequestOptions(
+      baseUrl: ApiConfig.base_url,
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+      data: _data,
+      queryParameters: queryParameters,
+    ); */
+    final _options = _setStreamType<PostApiUsersResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          ApiClientInstance.dio.options,
+          '/api/users',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          ApiClientInstance.dio.options.baseUrl,
+          ApiConfig.base_url,
+        )));
+    logger.i("addUsersOnWeb: options");
+    final result =
+        await ApiClientInstance.dio.fetch<Map<String, dynamic>>(_options);
+
+    //final result = await ApiClientInstance.dio.fetch(options);
+
+    logger.i("addUsersOnWeb: fetched");
+    late PostApiUsersResponse value;
+    try {
+      value = PostApiUsersResponse.fromJson(result.data!);
+    } on Object catch (e, s) {
+      //errorLogger?.logError(e, s, options);
+      logger.e("add users web failed", stackTrace: s, error: e);
+      rethrow;
+    }
+    logger.d("addUsersOnWeb: End");
+    return value;
+  }
+
+  RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
+    if (T != dynamic &&
+        !(requestOptions.responseType == ResponseType.bytes ||
+            requestOptions.responseType == ResponseType.stream)) {
+      if (T == String) {
+        requestOptions.responseType = ResponseType.plain;
+      } else {
+        requestOptions.responseType = ResponseType.json;
+      }
+    }
+    return requestOptions;
+  }
+
+  String _combineBaseUrls(
+    String dioBaseUrl,
+    String? baseUrl,
+  ) {
+    if (baseUrl == null || baseUrl.trim().isEmpty) {
+      return dioBaseUrl;
+    }
+
+    final url = Uri.parse(baseUrl);
+
+    if (url.isAbsolute) {
+      return url.toString();
+    }
+
+    return Uri.parse(dioBaseUrl).resolveUri(url).toString();
   }
 }
 
@@ -104,13 +252,31 @@ class RoleFixInterceptor extends Interceptor {
       }
     } else if (options.data is FormData) {
       if (_hasRoleField((options.data as FormData).fields)) {
+        print("RoleFixInterceptor: request has role field");
         (options.data as FormData).fields.forEach((e) {
           if (e.key == "role") {
-            MapEntry<String, String> newE = MapEntry(e.key,
-                Role.values.firstWhere((r) => r.name == e.value).json ?? "");
+            print(
+                "RoleFixInterceptor: Found role field with value: ${e.value}");
+            MapEntry<String, String> newE = MapEntry(
+                e.key,
+                Role.values.firstWhere(
+                      (r) => r.name == e.value,
+                      orElse: () {
+                        if (Role.values.indexWhere((r) => r.json == e.value) ==
+                            -1) {
+                          logger.e(
+                              "RoleFixInterceptor: Role value ${e.value} not found in Role Enum (name or json value)");
+                          throw Exception(
+                              "RoleFixInterceptor: Role value ${e.value} not found in Role Enum (name or json value)");
+                        }
+                        return Role.fromJson(e.value);
+                      },
+                    ).json ??
+                    "");
             (options.data as FormData)
                 .fields
                 .insert((options.data as FormData).fields.indexOf(e), newE);
+            print("RoleFixInterceptor: created new role value: $newE");
             (options.data as FormData).fields.remove(e);
             print(
                 "RoleFixInterceptor: Changed ${e.key} from ${e.value} to ${newE.value}");
