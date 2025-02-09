@@ -15,6 +15,9 @@ const createUserValidator = async (req:Request, res:Response, next:NextFunction)
                 return res.status(400).json({ message: "superior_id must be a string, if you are sending an array use superior_ids instead" });
             }
         }
+
+        console.log("Files:", req.file, req.files);
+        
         console.log("validating: "+ JSON.stringify(req.body, null, 2));
         const validated_data = await CreateUserValidator.validate(req.body);
         console.log("validated: "+validated_data);
