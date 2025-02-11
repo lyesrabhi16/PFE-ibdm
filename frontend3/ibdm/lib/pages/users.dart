@@ -23,6 +23,7 @@ import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:universal_io/io.dart';
+import 'package:ibdm/generated/l10n.dart';
 
 class UsersPage extends StatelessWidget {
   UsersPage({super.key});
@@ -197,8 +198,8 @@ class UsersPage extends StatelessWidget {
     final strings = getTranslations(context).obs;
     String getRoleLabel(BuildContext context, Role r) {
       final strings = getTranslations(context); // Récupérer la traduction
-        print("Langue active : ${Localizations.localeOf(context)}");
-        print("Traduction pour ${r.json}: ${strings.role_ADMIN_SYSTEM}");
+      print("Langue active : ${Localizations.localeOf(context)}");
+      print("Traduction pour ${r.json}: ${strings.role_ADMIN_SYSTEM}");
 
       switch (r) {
         case Role.adminSystem:
@@ -396,14 +397,14 @@ class UsersPage extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text("Filters",
+                                          Text(strings.value.filter,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .headlineMedium),
                                           SizedBox(
                                             height: AppSizes.sm,
                                           ),
-                                          Text("Filter users",
+                                          Text(strings.value.filterUser,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyLarge),
@@ -414,7 +415,7 @@ class UsersPage extends StatelessWidget {
                                           SizedBox(
                                             height: AppSizes.md,
                                           ),
-                                          Text("Filter by Role",
+                                          Text(strings.value.filterByRole,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyMedium),
@@ -422,8 +423,8 @@ class UsersPage extends StatelessWidget {
                                             height: AppSizes.sm,
                                           ),
                                           DropdownMenu(
-                                            hintText: "Role",
-                                            label: Text("Role"),
+                                            hintText: strings.value.role,
+                                            label: Text(strings.value.role),
                                             inputDecorationTheme:
                                                 Theme.of(context)
                                                     .inputDecorationTheme
@@ -438,16 +439,19 @@ class UsersPage extends StatelessWidget {
                                             onSelected: (value) {
                                               _roleFilter.value = value ?? "";
                                             },
-                                            dropdownMenuEntries: [
-                                              DropdownMenuEntry(
-                                                value: "USER",
-                                                label: "USER",
-                                              ),
-                                              DropdownMenuEntry(
-                                                value: "ADMIN",
-                                                label: "ADMIN",
-                                              ),
-                                            ],
+                                            dropdownMenuEntries: Role.values
+                                                .where((r) =>
+                                                    r !=
+                                                    Role
+                                                        .$unknown) // Exclure la valeur inconnue
+                                                .map(
+                                                    (role) => DropdownMenuEntry(
+                                                          value: role.json!,
+                                                          label: getRoleLabel(
+                                                              context,
+                                                              role), // Afficher la traduction
+                                                        ))
+                                                .toList(),
                                           )
                                         ],
                                       ),
@@ -455,7 +459,7 @@ class UsersPage extends StatelessWidget {
                                     child: IconWithLabelButton(
                                       icon: Icons.filter_alt,
                                       active: _filtersActive.value,
-                                      text: "Filter",
+                                      text: strings.value.filter,
                                       onTap: () {
                                         _filtersActive.value =
                                             !_filtersActive.value;
@@ -483,14 +487,14 @@ class UsersPage extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text("Sort",
+                                          Text(strings.value.sort,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .headlineMedium),
                                           SizedBox(
                                             height: AppSizes.sm,
                                           ),
-                                          Text("Sort users",
+                                          Text(strings.value.sortUser,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyLarge),
@@ -501,7 +505,7 @@ class UsersPage extends StatelessWidget {
                                           SizedBox(
                                             height: AppSizes.md,
                                           ),
-                                          Text("Sort by:",
+                                          Text(strings.value.sortBy,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyMedium),
@@ -523,7 +527,7 @@ class UsersPage extends StatelessWidget {
                                                         .primary,
                                                 value: _sorters["id"] ?? false,
                                                 label: Text(
-                                                  "ID",
+                                                  strings.value.id,
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyMedium,
@@ -543,7 +547,7 @@ class UsersPage extends StatelessWidget {
                                                 value:
                                                     _sorters["Email"] ?? false,
                                                 label: Text(
-                                                  "Email",
+                                                  strings.value.email,
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyMedium,
@@ -563,7 +567,7 @@ class UsersPage extends StatelessWidget {
                                                 value:
                                                     _sorters["Name"] ?? false,
                                                 label: Text(
-                                                  "Name",
+                                                  strings.value.name,
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyMedium,
@@ -583,7 +587,7 @@ class UsersPage extends StatelessWidget {
                                                 value:
                                                     _sorters["Role"] ?? false,
                                                 label: Text(
-                                                  "Role",
+                                                  strings.value.role,
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyMedium,
@@ -599,7 +603,7 @@ class UsersPage extends StatelessWidget {
                                     child: IconWithLabelButton(
                                       icon: Icons.sort_rounded,
                                       active: _sortActive.value,
-                                      text: "Sort",
+                                      text: strings.value.sort,
                                       onTap: () {
                                         _sortActive.value = !_sortActive.value;
                                         _sortPopoverController.toggle();
@@ -633,7 +637,7 @@ class UsersPage extends StatelessWidget {
                                           _changePerPage(context, value),
                                       decoration: InputDecoration(
                                         filled: true,
-                                        labelText: "Per Page",
+                                        labelText: strings.value.perPage,
                                         hintText: "10",
                                       ),
                                     ),
@@ -840,6 +844,7 @@ class UsersPage extends StatelessWidget {
                 ? Text(strings.value.selectUserDelete)
                 : Text(
                     "Are you sure you want to delete ${_selectedUsers.length} user(s)?");
+                   //S.of(context).delete_users(_selectedUsers.length);
           },
         ),
         action: Obx(
@@ -907,14 +912,14 @@ class UsersPage extends StatelessWidget {
                 return;
               }
 
-              Rx<FutureState> _loadingToastState = FutureState.loading.obs;
+              Rx<FutureState> loadingToastState = FutureState.loading.obs;
               // show loading toast
               final toast = Toasts.showStatefulToast(
                 context: context,
                 message: strings.value.addUserMessage,
                 messageError: strings.value.failedToAddUserMessage,
                 messageSuccess: strings.value.successAddUserMessage,
-                state: _loadingToastState,
+                state: loadingToastState,
               );
               // add user request
               try {
@@ -945,7 +950,7 @@ class UsersPage extends StatelessWidget {
                 }
 
                 // show success toast
-                _loadingToastState.value = FutureState.success;
+                loadingToastState.value = FutureState.success;
                 // close toast after a short duration
                 Future.delayed(Duration(seconds: 1),
                     () => Toastification().dismissById(toast.id));
@@ -954,7 +959,7 @@ class UsersPage extends StatelessWidget {
               } catch (e) {
                 logger.e("failed to add user: $e");
                 // show error toast
-                _loadingToastState.value = FutureState.error;
+                loadingToastState.value = FutureState.error;
                 // close toast after a duration
                 Future.delayed(Duration(seconds: 3),
                     () => Toastification().dismissById(toast.id));
@@ -997,14 +1002,14 @@ class UsersPage extends StatelessWidget {
                         )
                       : TextButton(
                           onPressed: () async {
-                            Rx<FutureState> _openFilePickerToast =
+                            Rx<FutureState> openFilePickerToast =
                                 FutureState.loading.obs;
                             final toast = Toasts.showStatefulToast(
                               context: context,
                               message: strings.value.openingFilePicher,
                               messageError: strings.value.canceled,
                               messageSuccess: strings.value.fileSelected,
-                              state: _openFilePickerToast,
+                              state: openFilePickerToast,
                             );
                             // show image picker
                             FilePickerResult? result =
@@ -1024,14 +1029,14 @@ class UsersPage extends StatelessWidget {
                                     File(result.files.first.path!);
                                 _addUserAvatarSelected.value = true;
                               }
-                              _openFilePickerToast.value = FutureState.success;
+                              openFilePickerToast.value = FutureState.success;
                               Future.delayed(Duration(seconds: 1),
                                   () => Toastification().dismissById(toast.id));
 
                               // close toast after delay
                             } else {
                               // User canceled the picker
-                              _openFilePickerToast.value = FutureState.error;
+                              openFilePickerToast.value = FutureState.error;
                               // close toast after delay
                               Future.delayed(Duration(seconds: 1),
                                   () => Toastification().dismissById(toast.id));
@@ -1347,13 +1352,13 @@ class UsersPage extends StatelessWidget {
   }
 
   void _loadSuperiorsOptions(BuildContext context) async {
-    final _me = "${userController.user!.name ?? ""}(Me)";
+    final me = "${userController.user!.name ?? ""}(Me)";
     List<ShadOption<User>> options = [];
 
     if (userController.user?.role == Role.supervisor) {
       // can only add operators assigned to himself
       _addUserSuperiorOptions.value = [
-        ShadOption(value: userController.user!, child: Text(_me))
+        ShadOption(value: userController.user!, child: Text(me))
       ];
       _loadedAddUserSuperiorOptions.value = true;
       return;
@@ -1383,8 +1388,7 @@ class UsersPage extends StatelessWidget {
               ),
             );
           });
-          options
-              .add(ShadOption(value: userController.user!, child: Text(_me)));
+          options.add(ShadOption(value: userController.user!, child: Text(me)));
           _addUserSuperiorOptions.value = options;
           _loadedAddUserSuperiorOptions.value = true;
           return;
@@ -1402,7 +1406,7 @@ class UsersPage extends StatelessWidget {
 
       // can add supervisors assigned to himself
       if (_addUserRole.value.name == Role.supervisor.name) {
-        options.add(ShadOption(value: userController.user!, child: Text(_me)));
+        options.add(ShadOption(value: userController.user!, child: Text(me)));
         _addUserSuperiorOptions.value = options;
         _loadedAddUserSuperiorOptions.value = true;
         return;
