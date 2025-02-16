@@ -170,4 +170,3 @@ class UserSerializer(serializers.ModelSerializer, SuperiorsAndSubordinatesFields
             "password": {"write_only": True, "required": False},
             "avatar": {"write_only": True},
         }
-

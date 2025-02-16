@@ -34,10 +34,9 @@
 		"build:ios": "cd frontend3/ibdm && flutter build ios",
 		"build:macos": "cd frontend3/ibdm && flutter build macos",
 		"build:linux": "cd frontend3/ibdm && flutter build linux",
-		"generate:api-client": "cp backend/openapi.json frontend3/ibdm/lib/api && cd frontend3/ibdm && dart run swagger_parser && dart run build_runner build",
 		"mongo_test_db:up": "cd backend/src/config/db && docker compose down && docker compose up -d && pnpm prisma:ibdm:push && pnpm:prisma:ibdm:seed",
 		"mongo_test_db:down": "cd backend/src/config/db && docker compose down -v && rmdir /S /Q data",
-		"generate:api-client:openapi": "cp backend2/ibdm_api/openapi/openapi.spec.json frontend3/ibdm/lib/api/openapi.spec.json && cd frontend3/ibdm && rm -rf n && docker run --rm -v %cd%/frontend3/ibdm:/local openapitools/openapi-generator-cli generate -i /local/lib/api/openapi.spec.json -g dart-dio -o /local/n/ --additional-properties pubName=ibdm_api_client --additional-properties serializationLibrary=json_serializable && cd n && dart run build_runner build"
+		"generate:api-client": "cd backend2 && pipenv run generate_schema_json && cd .. && copy .\\backend2\\ibdm_api\\openapi\\openapi.spec.json .\\frontend3\\ibdm\\lib\\api\\ && cd frontend3/ibdm && rmdir /S /Q lib\\services\\api_django && dart run swagger_parser && dart run build_runner build"
 	},
 	"keywords": [],
 	"author": "",

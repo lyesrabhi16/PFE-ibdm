@@ -2,7 +2,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, unused_import
 
-import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'group.dart';
@@ -21,9 +20,9 @@ class Role {
     required this.permissions,
     required this.managedRoles,
   });
-
+  
   factory Role.fromJson(Map<String, Object?> json) => _$RoleFromJson(json);
-
+  
   final String url;
   @JsonKey(name: 'role_id')
   final int roleId;
