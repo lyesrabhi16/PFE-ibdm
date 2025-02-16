@@ -65,6 +65,7 @@
     universal_io: ^2.2.2
     http: any
     provider: any
+    image_picker: ^1.0.7
 
   dev_dependencies:
     flutter_test:

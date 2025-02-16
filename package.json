@@ -33,7 +33,7 @@
 		"build:macos": "cd frontend3/ibdm && flutter build macos",
 		"build:linux": "cd frontend3/ibdm && flutter build linux",
 		"generate:api-client": "cp backend/openapi.json frontend3/ibdm/lib/api && cd frontend3/ibdm && dart run swagger_parser && dart run build_runner build",
-		"mongo_test_db:up": "cd backend/src/config/db && docker compose down && docker compose up -d && pnpm prisma:ibdm:push && pnpm:prisma:ibdm:seed",
+		"mongo_test_db:up": "cd backend/src/config/db && docker compose down && docker compose up -d && pnpm prisma:ibdm:push && pnpm prisma:ibdm:seed",
 		"mongo_test_db:down": "cd backend/src/config/db && docker compose down -v && rmdir /S /Q data"
 	},
 	"keywords": [],
