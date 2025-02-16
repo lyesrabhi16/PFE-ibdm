@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSRF Test</title>
+</head>
+<body>
+    <h1>CSRF Attack Test</h1>
+    <form action="https://server.ibdm.local.ifri/auth/logout" method="POST">
+        <input type="hidden" name="csrf_token" value="fake_token">
+        <button type="submit">Logout</button>
+    </form>
+    <button onclick="forgeRequestWithOutReferer">LogoutJSWithReferer</button>
+    <script>
+        function forgeRequestWithOutReferer() {
+            fetch(
+                'https://server.ibdm.local.ifri/auth/logout',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Referer': 'https://server.ibdm.local.ifri/auth/logout'
+                    },
+                    body: JSON.stringify({
+                    })
+                }
+            )
+        }
+    </script>
+</body>
+</html>

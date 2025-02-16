@@ -8,7 +8,9 @@
 		"dev:server": "cd backend && tsx watch server.ts --host 0.0.0.0",
 		"dev:app": "cd frontend3/ibdm && flutter run",
 		"dev:web": "cd frontend3/ibdm && flutter run -d chrome",
-		"dev:web:external": "cd frontend3/ibdm && flutter run -d chrome --web-hostname 0.0.0.0 --web-port 8001",
+		"dev:web:external": "cd frontend3/ibdm && flutter run -d chrome --web-hostname app.ibdm.local.ifri --web-port 8001",
+		"deploy:copy-assets": "cp -r frontend3/ibdm/build/web/* backend2/ibdm_api/assets/ &&  mv backend2/ibdm_api/assets/index.html backend2/ibdm_api/templates/web/index.html",
+		"deploy:web": "pnpm run build:web && pnpm run deploy:copy-assets",
 		"dev:windows": "cd frontend3/ibdm && flutter run -d windows",
 		"dev:macos": "cd frontend3/ibdm && flutter run -d macos",
 		"dev:linux": "cd frontend3/ibdm && flutter run -d linux",
@@ -34,7 +36,8 @@
 		"build:linux": "cd frontend3/ibdm && flutter build linux",
 		"generate:api-client": "cp backend/openapi.json frontend3/ibdm/lib/api && cd frontend3/ibdm && dart run swagger_parser && dart run build_runner build",
 		"mongo_test_db:up": "cd backend/src/config/db && docker compose down && docker compose up -d && pnpm prisma:ibdm:push && pnpm:prisma:ibdm:seed",
-		"mongo_test_db:down": "cd backend/src/config/db && docker compose down -v && rmdir /S /Q data"
+		"mongo_test_db:down": "cd backend/src/config/db && docker compose down -v && rmdir /S /Q data",
+		"generate:api-client:openapi": "cp backend2/ibdm_api/openapi/openapi.spec.json frontend3/ibdm/lib/api/openapi.spec.json && cd frontend3/ibdm && rm -rf n && docker run --rm -v %cd%/frontend3/ibdm:/local openapitools/openapi-generator-cli generate -i /local/lib/api/openapi.spec.json -g dart-dio -o /local/n/ --additional-properties pubName=ibdm_api_client --additional-properties serializationLibrary=json_serializable && cd n && dart run build_runner build"
 	},
 	"keywords": [],
 	"author": "",

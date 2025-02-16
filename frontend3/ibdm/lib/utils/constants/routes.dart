@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
-import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/pages/home.dart';
@@ -9,7 +8,6 @@ import 'package:ibdm/pages/login/login_page.dart';
 import 'package:ibdm/common/middlewares/protected_route_middleware.dart';
 import 'package:ibdm/pages/settings.dart';
 import 'package:ibdm/pages/users.dart';
-import 'package:ibdm/services/api/api_client/export.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 
 class Routes {
@@ -65,7 +63,7 @@ class Routes {
             page: () => UsersPage(),
             middlewares: [ProtectedRouteMiddleware()],
           ),
-        ).disallowRole(Role.operateur),
+        ),
         Destination(
           title: "Settings",
           icon: Icons.settings,

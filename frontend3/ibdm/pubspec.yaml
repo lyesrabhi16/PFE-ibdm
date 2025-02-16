@@ -64,6 +64,10 @@ dependencies:
   #freezed_annotation: ^2.4.4 # for freezed
   dart_mappable: ^4.3.0
   universal_io: ^2.2.2
+  cached_network_image: ^3.4.1
+  #ibdm_api_client:
+  #  path: n/
+  universal_html: ^2.2.4
 
 dev_dependencies:
   flutter_test:

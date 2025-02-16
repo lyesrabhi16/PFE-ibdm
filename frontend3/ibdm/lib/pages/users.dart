@@ -1,16 +1,17 @@
 import 'package:data_table_2/data_table_2.dart';
-import 'package:dio/dio.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/avatar.dart';
 import 'package:ibdm/common/widgets/icon_with_label_button.dart';
+import 'package:ibdm/common/widgets/side_menu_container.dart';
+import 'package:ibdm/common/widgets/user_form.dart';
 import 'package:ibdm/services/api/api_client.dart';
-import 'package:ibdm/services/api/api_client/export.dart';
+import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
@@ -18,6 +19,7 @@ import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
+import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
@@ -27,13 +29,14 @@ class UsersPage extends StatelessWidget {
   UsersPage({super.key});
 
   static final UserController userController = Get.find();
+  static final List<Role> roles = <Role>[];
 
   final Rx<bool> _loaded = false.obs;
   final Rx<bool> _loadedAddUserSuperiorOptions = false.obs;
   final RxList<ShadOption<User>> _addUserSuperiorOptions =
       <ShadOption<User>>[].obs;
 
-  final RxMap<String, bool> _hovered = <String, bool>{}.obs;
+  final RxMap<int, bool> _hovered = <int, bool>{}.obs;
 
   static Rx<int>? perPage = 10.obs;
   static final _perPageController = TextEditingController(
@@ -67,17 +70,13 @@ class UsersPage extends StatelessWidget {
   static final _formKeyAddUser = GlobalKey<FormState>();
   static final _addUserEmailController = TextEditingController();
   static final _addUserNameController = TextEditingController();
+  static final _addFirstNameController = TextEditingController();
+  static final _addLastNameController = TextEditingController();
+
   static final _addUserPasswordController = TextEditingController();
   static final _addUserPhoneController = TextEditingController();
-  static final _addUserRole = _getInitialRoleValue().obs;
+  static Role? _addUserRole;
   static User? _addUserSuperior;
-  static final _searchAddUserSuperior = false.obs;
-  static final _searchAddUserSuperiorOptions = <ShadOption<User>>[].obs;
-  static final Rx<Icon> _addUserPlaceHolderAvatar = Icon(
-    LucideIcons.circleUserRound,
-    size: AppSizes.xl * 3,
-  ).obs;
-  static final Rx<bool> _addUserAvatarSelected = false.obs;
   static File? _addUserAvatarFile; // use on non-web
   static Uint8List? _addUserAvatarBytes; // use on web
   static String? _addUserAvatarBytesFileName; // use on web
@@ -86,13 +85,16 @@ class UsersPage extends StatelessWidget {
 
   static final RxSet<User> _selectedUsers = <User>{}.obs;
 
-  void _loadUsers(
+  static final ShadPopoverController _actionsPopoverController =
+      ShadPopoverController();
+
+  Future<void> _loadUsers(
     BuildContext context, {
     int page = 1,
-  }) {
-    // mark as not loaded
-    _loaded.value = false;
-    ApiClientInstance.getApiClient().then((apiClient) async {
+  }) async {
+    try {
+      _loaded.value = false;
+      final apiClient = await ApiClientInstance.getApiClient();
       // use stored perPage if it exists
       int? perPageInStorage = await LocalStorage.getPerPage();
       if (perPageInStorage != null && perPageInStorage != perPage?.value) {
@@ -100,24 +102,20 @@ class UsersPage extends StatelessWidget {
       }
       print("perPage?.value: ${perPage?.value}");
       // get data from api
-      GetUsersResponse res = await apiClient.getUsers(
+      PaginatedUserList res = await apiClient.getUsers(
         perPage: perPage?.value,
         page: page,
       );
-
+      final resContent = res.data;
       // set data
-      usersData = res.users;
-      nbrTotalPages = res.nbrTotalPages!;
+      usersData = resContent;
+      nbrTotalPages = res.totalPages;
       nbrUsersShown = usersData.length;
-      nbrTotalUsers = res.nbrTotalUsers;
-      currentPage = res.currentPage!;
-      perPage = res.perPage!.obs;
-
-      // mark as loaded
-      _loaded.value = true;
-    }).catchError((err) {
-      _loaded.value = true;
-      if (err is DioException) {
+      nbrTotalUsers = res.totalResults;
+      currentPage = res.currentPage;
+      perPage = res.perPage.obs;
+    } catch (err) {
+      if (err is dio.DioException) {
         logger.e(
           "Error: Failed to load data of users, known error",
           error: err,
@@ -136,7 +134,25 @@ class UsersPage extends StatelessWidget {
           context: context,
           message: "Details: Unknown Error Occured",
           title: "Error: Failed to load data of users");
-    });
+    } finally {
+      _loaded.value = true;
+    }
+  }
+
+  _loadSuperiors(BuildContext context, User user) {
+    logger.d("loading superiors for user: ${user.username}");
+    /* if (user.superiors == null || user.superiors!.isEmpty) {
+    return [];
+  }
+  return user.superiors!.map(
+    (s) {
+      return ShadOption<User>(
+        value: s.superior!,
+        child: Text(s.superior!.name ?? s.superior!.email),
+      );
+    },
+  ).toList(); */
+    return [];
   }
 
   List<int> _getIndexesOfPages(
@@ -188,9 +204,22 @@ class UsersPage extends StatelessWidget {
     return fIndexes;
   }
 
+  void _load(BuildContext context) async {
+    _loaded.value = false;
+    roles.clear();
+    roles.addAll(await userController.getRoles(context));
+    await _loadUsers(context);
+    _loaded.value = true;
+
+    logger.e(
+      "Loaded users page $usersData",
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    _loadUsers(context);
+    // load required data
+    _load(context);
 
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -198,7 +227,16 @@ class UsersPage extends StatelessWidget {
       () {
         List<Widget> pageIndexesButtons = [];
         if (_loaded.value && usersData.isNotEmpty) {
-          final indexes = _getIndexesOfPages(currentPage!, nbrTotalPages!);
+          final indexes = _getIndexesOfPages(currentPage!, nbrTotalPages!,
+              nbrAdditionalIndexesShown: (context) {
+                if (isAtMostSmallScreen(context)) {
+                  return 0;
+                }
+                if (isAtMostMediumScreen(context)) {
+                  return 1;
+                }
+                return 2;
+              }(context));
           pageIndexesButtons = indexes.map(
             (i) {
               if (i < 0) {
@@ -241,7 +279,7 @@ class UsersPage extends StatelessWidget {
                       initialValue: "...",
                       selectedOptionBuilder: (context, v) => FittedBox(
                         child: Text(
-                          "$v",
+                          v,
                           style: Theme.of(context).textTheme.bodyMedium,
                           textAlign: TextAlign.center,
                         ),
@@ -296,355 +334,112 @@ class UsersPage extends StatelessWidget {
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Padding(
-                            padding: EdgeInsets.all(AppSizes.sm),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SearchBar(
-                                  onChanged: (value) async {
-                                    final api =
-                                        await ApiClientInstance.getApiClient();
-                                  },
-                                  constraints: BoxConstraints(
-                                    maxWidth: AppSizes.lg * 8,
-                                    minHeight: AppSizes.lg * 1.5,
-                                    maxHeight: AppSizes.lg * 1.5,
-                                  ),
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainer),
-                                  elevation: WidgetStatePropertyAll(0),
-                                  leading: Icon(Icons.search),
-                                  hintText: "Search...",
+                          child: Wrap(
+                            alignment: WrapAlignment.spaceEvenly,
+                            runAlignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            direction: Axis.horizontal,
+                            runSpacing: AppSizes.sm,
+                            verticalDirection: VerticalDirection.down,
+                            children: [
+                              SearchBar(
+                                onChanged: (value) async {
+                                  final api =
+                                      await ApiClientInstance.getApiClient();
+                                },
+                                constraints: BoxConstraints(
+                                  maxWidth: AppSizes.lg * 8,
+                                  minHeight: AppSizes.lg * 1.5,
+                                  maxHeight: AppSizes.lg * 1.5,
                                 ),
-                                Row(
-                                  children: [
-                                    ShadButton(
+                                backgroundColor: WidgetStatePropertyAll(
+                                    Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainer),
+                                elevation: WidgetStatePropertyAll(0),
+                                leading: Icon(Icons.search),
+                                hintText: "Search...",
+                              ),
+                              Wrap(
+                                alignment: WrapAlignment.center,
+                                runAlignment: WrapAlignment.center,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                direction: Axis.horizontal,
+                                runSpacing: AppSizes.sm,
+                                verticalDirection: VerticalDirection.down,
+                                children: [
+                                  ShadButton(
+                                      backgroundColor:
+                                          colorScheme.surfaceContainerLow,
+                                      hoverBackgroundColor:
+                                          colorScheme.surfaceContainerHighest,
+                                      foregroundColor: colorScheme.onSurface,
+                                      onPressed: () {
+                                        _showAddUserDialog(context);
+                                      },
+                                      icon: Icon(Icons.add),
+                                      child: Text("Add User")),
+                                  ShadButton.destructive(
+                                      onPressed: () => _onDeleteButtonClick(
+                                          context,
+                                          onDeleteConfirmed: () => _loadUsers(
+                                              context,
+                                              page: currentPage ?? 1)),
+                                      enabled: !_showCheckboxColumn.value,
+                                      icon: Icon(Icons.delete),
+                                      child: Text("Delete")),
+                                  ShadPopover(
+                                    decoration: ShadDecoration(
+                                      border: ShadBorder.all(
+                                          width: 0,
+                                          radius: BorderRadius.circular(10)),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainer,
+                                    ),
+                                    popover: (context) => ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxWidth: 300,
+                                      ),
+                                      child: _getTopActionBar(
+                                        context,
+                                        colorScheme,
+                                        alignment: WrapAlignment.center,
+                                        expandPerPage: true,
+                                        customExpandPerPage: context.width,
+                                      ),
+                                    ),
+                                    controller: _actionsPopoverController,
+                                    child: ShadButton(
                                         backgroundColor:
                                             colorScheme.surfaceContainerLow,
                                         hoverBackgroundColor:
                                             colorScheme.surfaceContainerHighest,
                                         foregroundColor: colorScheme.onSurface,
                                         onPressed: () {
-                                          _showAddUserDialog(context);
+                                          _actionsPopoverController.toggle();
                                         },
-                                        child: Text("Add User")),
-                                    ShadButton.destructive(
-                                        onPressed: () =>
-                                            _onDeleteButtonClick(context),
-                                        enabled: !_showCheckboxColumn.value,
-                                        child: Text("Delete")),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                        icon: Icon(Icons.settings),
+                                        child: Text("Options")),
+                                  ).optionalWhen(
+                                      isAtLeastMediumScreen(context)),
+                                ].nonNulls.toList(),
+                              ),
+                            ].nonNulls.toList(),
                           ),
                         ),
 
                         SizedBox(height: AppSizes.sm),
                         // top actions
                         Container(
-                          decoration: BoxDecoration(
-                            color: colorScheme.surfaceContainer,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppSizes.md,
-                              vertical: AppSizes.sm,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // left row
-                                Row(
-                                  children: [
-                                    // filter button
-                                    SizedBox(
-                                      width: AppSizes.xl * 4,
-                                      child: ShadPopover(
-                                        controller: _filtersPopoverController,
-                                        decoration: ShadDecoration(
-                                          border: ShadBorder.none,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surfaceContainer,
-                                        ),
-                                        closeOnTapOutside: false,
-                                        popover: (context) => SizedBox(
-                                          width: AppSizes.xl * 4,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text("Filters",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineMedium),
-                                              SizedBox(
-                                                height: AppSizes.sm,
-                                              ),
-                                              Text("Filter users",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge),
-                                              SizedBox(
-                                                height: AppSizes.sm,
-                                              ),
-                                              Divider(),
-                                              SizedBox(
-                                                height: AppSizes.md,
-                                              ),
-                                              Text("Filter by Role",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium),
-                                              SizedBox(
-                                                height: AppSizes.sm,
-                                              ),
-                                              DropdownMenu(
-                                                hintText: "Role",
-                                                label: Text("Role"),
-                                                inputDecorationTheme:
-                                                    Theme.of(context)
-                                                        .inputDecorationTheme
-                                                        .copyWith(
-                                                          filled: true,
-                                                          fillColor:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .surface,
-                                                        ),
-                                                initialSelection:
-                                                    _roleFilter.value,
-                                                onSelected: (value) {
-                                                  _roleFilter.value =
-                                                      value ?? "";
-                                                },
-                                                dropdownMenuEntries: [
-                                                  DropdownMenuEntry(
-                                                    value: "USER",
-                                                    label: "USER",
-                                                  ),
-                                                  DropdownMenuEntry(
-                                                    value: "ADMIN",
-                                                    label: "ADMIN",
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        child: IconWithLabelButton(
-                                          icon: Icons.filter_alt,
-                                          active: _filtersActive.value,
-                                          text: "Filter",
-                                          onTap: () {
-                                            _filtersActive.value =
-                                                !_filtersActive.value;
-                                            _filtersPopoverController.toggle();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    // sort button
-                                    SizedBox(
-                                      width: AppSizes.xl * 4,
-                                      child: ShadPopover(
-                                        controller: _sortPopoverController,
-                                        decoration: ShadDecoration(
-                                          border: ShadBorder.none,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surfaceContainer,
-                                        ),
-                                        closeOnTapOutside: false,
-                                        popover: (context) => SizedBox(
-                                          width: AppSizes.xl * 4,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text("Sort",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineMedium),
-                                              SizedBox(
-                                                height: AppSizes.sm,
-                                              ),
-                                              Text("Sort users",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge),
-                                              SizedBox(
-                                                height: AppSizes.sm,
-                                              ),
-                                              Divider(),
-                                              SizedBox(
-                                                height: AppSizes.md,
-                                              ),
-                                              Text("Sort by:",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium),
-                                              SizedBox(
-                                                height: AppSizes.sm,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  ShadSwitch(
-                                                    uncheckedTrackColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .surfaceDim,
-                                                    checkedTrackColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
-                                                    value:
-                                                        _sorters["id"] ?? false,
-                                                    label: Text(
-                                                      "ID",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyMedium,
-                                                    ),
-                                                    onChanged: (value) =>
-                                                        _sorters['id'] = value,
-                                                  ),
-                                                  ShadSwitch(
-                                                    uncheckedTrackColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .surfaceDim,
-                                                    checkedTrackColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
-                                                    value: _sorters["Email"] ??
-                                                        false,
-                                                    label: Text(
-                                                      "Email",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyMedium,
-                                                    ),
-                                                    onChanged: (value) =>
-                                                        _sorters['Email'] =
-                                                            value,
-                                                  ),
-                                                  ShadSwitch(
-                                                    uncheckedTrackColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .surfaceDim,
-                                                    checkedTrackColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
-                                                    value: _sorters["Name"] ??
-                                                        false,
-                                                    label: Text(
-                                                      "Name",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyMedium,
-                                                    ),
-                                                    onChanged: (value) =>
-                                                        _sorters['Name'] =
-                                                            value,
-                                                  ),
-                                                  ShadSwitch(
-                                                    uncheckedTrackColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .surfaceDim,
-                                                    checkedTrackColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
-                                                    value: _sorters["Role"] ??
-                                                        false,
-                                                    label: Text(
-                                                      "Role",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyMedium,
-                                                    ),
-                                                    onChanged: (value) =>
-                                                        _sorters['Role'] =
-                                                            value,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        child: IconWithLabelButton(
-                                          icon: Icons.sort_rounded,
-                                          active: _sortActive.value,
-                                          text: "Sort",
-                                          onTap: () {
-                                            _sortActive.value =
-                                                !_sortActive.value;
-                                            _sortPopoverController.toggle();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    // PerPage TextField
-                                    SizedBox(
-                                      width: _expandPerPage.value
-                                          ? AppSizes.xl * 8
-                                          : AppSizes.xl * 3,
-                                      child: Form(
-                                        key: _perPageFormKey,
-                                        onChanged: () {},
-                                        child: TextFormField(
-                                          validator: (value) =>
-                                              AppValidators.perPageValidator(
-                                            value,
-                                            _expandPerPage,
-                                          ),
-                                          controller: _perPageController,
-                                          onTapOutside: (_) =>
-                                              _executeChangePerPageIfPossible(
-                                                  context),
-                                          onEditingComplete: () =>
-                                              _executeChangePerPageIfPossible(
-                                                  context),
-                                          onChanged: (value) =>
-                                              _changePerPage(context, value),
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            labelText: "Per Page",
-                                            hintText: "10",
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                width: context.width,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.surfaceContainer,
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
-
-                                //right refresh button
-                                SizedBox(
-                                  width: AppSizes.xl * 4,
-                                  child: IconWithLabelButton(
-                                    icon: Icons.refresh_rounded,
-                                    onTap: () => _loadUsers(context),
-                                    text: "refresh",
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                                child: _getTopActionBar(context, colorScheme,
+                                    expandPerPage: _expandPerPage.value))
+                            .optionalWhen(isAtMostSmallScreen(context)),
 
                         SizedBox(
                           height: AppSizes.sm,
@@ -664,6 +459,7 @@ class UsersPage extends StatelessWidget {
                             ),
                             child: DataTable2(
                               sortAscending: true,
+                              columnSpacing: _getColumnSpacing(context),
                               onSelectAll: (selectedAll) => selectedAll == true
                                   ? _selectedUsers.addAll(usersData)
                                   : _selectedUsers.clear(),
@@ -676,96 +472,7 @@ class UsersPage extends StatelessWidget {
                                 WidgetState.focused:
                                     colorScheme.primaryContainer,
                               }),
-                              columns: [
-                                DataColumn2(
-                                    label: Expanded(
-                                        child: Text(
-                                  "No",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ))),
-                                DataColumn2(
-                                    label: Expanded(
-                                        child: Text(
-                                  "Avatar",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ))),
-                                DataColumn2(
-                                    label: Expanded(
-                                        child: Text(
-                                  "ID",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ))),
-                                DataColumn2(
-                                    label: Expanded(
-                                        child: Text(
-                                  "Email",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ))),
-                                DataColumn2(
-                                    label: Expanded(
-                                        child: Text(
-                                  "Name",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ))),
-                                DataColumn2(
-                                  label: Expanded(
-                                    child: Text(
-                                      "Role",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall
-                                          ?.copyWith(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn2(
-                                  label: Expanded(
-                                    child: Text(
-                                      "Actions",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall
-                                          ?.copyWith(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              columns: _getCols(context),
                               rows: _getRows(context),
                             ),
                           ),
@@ -774,6 +481,7 @@ class UsersPage extends StatelessWidget {
                         SizedBox(height: AppSizes.sm),
                         // page actions
                         Container(
+                          width: context.width,
                           decoration: BoxDecoration(
                               color: Theme.of(context)
                                   .colorScheme
@@ -781,42 +489,64 @@ class UsersPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10)),
                           child: Padding(
                             padding: EdgeInsets.all(AppSizes.sm),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Wrap(
+                              alignment: WrapAlignment.spaceBetween,
+                              direction: Axis.horizontal,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              runAlignment: WrapAlignment.center,
+                              verticalDirection: VerticalDirection.down,
                               children: [
-                                Text("Page: $currentPage"),
+                                if (isAtLeastMediumScreen(context) &&
+                                    !SideMenuContainer.open)
+                                  Text(
+                                    "Page: $currentPage", // if it is at least a small screen show it in this position
+                                  ),
                                 Row(
+                                  mainAxisSize:
+                                      isAtLeastMediumScreen(context) &&
+                                              !SideMenuContainer.open
+                                          ? MainAxisSize.min
+                                          : MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    ShadButton(
-                                      backgroundColor: colorScheme.surface,
-                                      foregroundColor: colorScheme.onSurface,
-                                      enabled: currentPage != null
-                                          ? currentPage! > 1
-                                          : false,
-                                      onPressed: () => _loadUsers(context,
-                                          page: currentPage! - 1),
-                                      child: Text("Prev"),
-                                    ),
+                                    if (isAtLeastMediumScreen(context) &&
+                                        !SideMenuContainer.open)
+                                      ShadButton(
+                                        backgroundColor: colorScheme.surface,
+                                        foregroundColor: colorScheme.onSurface,
+                                        enabled: currentPage != null
+                                            ? currentPage! > 1
+                                            : false,
+                                        onPressed: () => _loadUsers(context,
+                                            page: currentPage! - 1),
+                                        child: Text("Prev"),
+                                      ),
                                     ...pageIndexesButtons,
-                                    ShadButton(
-                                      backgroundColor: colorScheme.surface,
-                                      foregroundColor: colorScheme.onSurface,
-                                      enabled: currentPage != null &&
-                                              nbrTotalPages != null
-                                          ? currentPage! < nbrTotalPages!
-                                          : false,
-                                      onPressed: () => _loadUsers(context,
-                                          page: currentPage! + 1),
-                                      child: Text("Next"),
-                                    ),
+                                    if (isAtLeastMediumScreen(context) ||
+                                        SideMenuContainer.open)
+                                      ShadButton(
+                                        backgroundColor: colorScheme.surface,
+                                        foregroundColor: colorScheme.onSurface,
+                                        enabled: currentPage != null &&
+                                                nbrTotalPages != null
+                                            ? currentPage! < nbrTotalPages!
+                                            : false,
+                                        onPressed: () => _loadUsers(context,
+                                            page: currentPage! + 1),
+                                        child: Text("Next"),
+                                      ),
                                   ],
                                 ),
+                                if (isAtMostSmallScreen(context) ||
+                                    SideMenuContainer.open)
+                                  Text(
+                                      "Page: $currentPage"), // if it is at most a small screen show it in this position
                                 Text("Users: $nbrUsersShown/$nbrTotalUsers"),
                               ],
                             ),
                           ),
                         )
-                      ],
+                      ].nonNulls.toList(),
                     ),
                   )
                 : Center(child: CircularProgressIndicator()),
@@ -826,7 +556,326 @@ class UsersPage extends StatelessWidget {
     );
   }
 
-  void _onDeleteButtonClick(BuildContext context) {
+  Widget _getTopActionBar(
+    BuildContext context,
+    ColorScheme colorScheme, {
+    WrapAlignment alignment = WrapAlignment.spaceBetween,
+    bool reverseOrder = false,
+    bool expandPerPage = false,
+    double? customExpandPerPage,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSizes.md,
+        vertical: AppSizes.sm,
+      ),
+      child: Wrap(
+        alignment: alignment,
+        direction: Axis.horizontal,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        runAlignment: WrapAlignment.center,
+        verticalDirection: VerticalDirection.down,
+        textDirection: reverseOrder ? TextDirection.rtl : TextDirection.ltr,
+        children: [
+          // left row
+          Wrap(
+            direction: Axis.horizontal,
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            runAlignment: WrapAlignment.center,
+            verticalDirection: VerticalDirection.down,
+            children: [
+              // filter button
+              SizedBox(
+                width: AppSizes.xl * 4,
+                child: ShadPopover(
+                  controller: _filtersPopoverController,
+                  decoration: ShadDecoration(
+                    border: ShadBorder.none,
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                  ),
+                  closeOnTapOutside: false,
+                  popover: (context) => SizedBox(
+                    width: AppSizes.xl * 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("Filters",
+                            style: Theme.of(context).textTheme.headlineMedium),
+                        SizedBox(
+                          height: AppSizes.sm,
+                        ),
+                        Text("Filter users",
+                            style: Theme.of(context).textTheme.bodyLarge),
+                        SizedBox(
+                          height: AppSizes.sm,
+                        ),
+                        Divider(),
+                        SizedBox(
+                          height: AppSizes.md,
+                        ),
+                        Text("Filter by Role",
+                            style: Theme.of(context).textTheme.bodyMedium),
+                        SizedBox(
+                          height: AppSizes.sm,
+                        ),
+                        DropdownMenu(
+                          hintText: "Role",
+                          label: Text("Role"),
+                          inputDecorationTheme:
+                              Theme.of(context).inputDecorationTheme.copyWith(
+                                    filled: true,
+                                    fillColor:
+                                        Theme.of(context).colorScheme.surface,
+                                  ),
+                          initialSelection: _roleFilter.value,
+                          onSelected: (value) {
+                            _roleFilter.value = value ?? "";
+                          },
+                          dropdownMenuEntries: [
+                            DropdownMenuEntry(
+                              value: "USER",
+                              label: "USER",
+                            ),
+                            DropdownMenuEntry(
+                              value: "ADMIN",
+                              label: "ADMIN",
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  child: IconWithLabelButton(
+                    icon: Icons.filter_alt,
+                    active: _filtersActive.value,
+                    text: "Filter",
+                    onTap: () {
+                      _filtersActive.value = !_filtersActive.value;
+                      _filtersPopoverController.toggle();
+                    },
+                  ),
+                ),
+              ),
+              // sort button
+              SizedBox(
+                width: AppSizes.xl * 4,
+                child: ShadPopover(
+                  controller: _sortPopoverController,
+                  decoration: ShadDecoration(
+                    border: ShadBorder.none,
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                  ),
+                  closeOnTapOutside: false,
+                  popover: (context) => SizedBox(
+                    width: AppSizes.xl * 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("Sort",
+                            style: Theme.of(context).textTheme.headlineMedium),
+                        SizedBox(
+                          height: AppSizes.sm,
+                        ),
+                        Text("Sort users",
+                            style: Theme.of(context).textTheme.bodyLarge),
+                        SizedBox(
+                          height: AppSizes.sm,
+                        ),
+                        Divider(),
+                        SizedBox(
+                          height: AppSizes.md,
+                        ),
+                        Text("Sort by:",
+                            style: Theme.of(context).textTheme.bodyMedium),
+                        SizedBox(
+                          height: AppSizes.sm,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ShadSwitch(
+                              uncheckedTrackColor:
+                                  Theme.of(context).colorScheme.surfaceDim,
+                              checkedTrackColor:
+                                  Theme.of(context).colorScheme.primary,
+                              value: _sorters["id"] ?? false,
+                              label: Text(
+                                "ID",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              onChanged: (value) => _sorters['id'] = value,
+                            ),
+                            ShadSwitch(
+                              uncheckedTrackColor:
+                                  Theme.of(context).colorScheme.surfaceDim,
+                              checkedTrackColor:
+                                  Theme.of(context).colorScheme.primary,
+                              value: _sorters["Email"] ?? false,
+                              label: Text(
+                                "Email",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              onChanged: (value) => _sorters['Email'] = value,
+                            ),
+                            ShadSwitch(
+                              uncheckedTrackColor:
+                                  Theme.of(context).colorScheme.surfaceDim,
+                              checkedTrackColor:
+                                  Theme.of(context).colorScheme.primary,
+                              value: _sorters["Name"] ?? false,
+                              label: Text(
+                                "Name",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              onChanged: (value) => _sorters['Name'] = value,
+                            ),
+                            ShadSwitch(
+                              uncheckedTrackColor:
+                                  Theme.of(context).colorScheme.surfaceDim,
+                              checkedTrackColor:
+                                  Theme.of(context).colorScheme.primary,
+                              value: _sorters["Role"] ?? false,
+                              label: Text(
+                                "Role",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              onChanged: (value) => _sorters['Role'] = value,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  child: IconWithLabelButton(
+                    icon: Icons.sort_rounded,
+                    active: _sortActive.value,
+                    text: "Sort",
+                    onTap: () {
+                      _sortActive.value = !_sortActive.value;
+                      _sortPopoverController.toggle();
+                    },
+                  ),
+                ),
+              ),
+              // PerPage TextField
+              SizedBox(
+                width: expandPerPage
+                    ? customExpandPerPage ?? AppSizes.xl * 8
+                    : AppSizes.xl * 3,
+                child: Form(
+                  key: _perPageFormKey,
+                  onChanged: () {},
+                  child: TextFormField(
+                    validator: (value) => AppValidators.perPageValidator(
+                      value,
+                      _expandPerPage,
+                    ),
+                    controller: _perPageController,
+                    onTapOutside: (_) =>
+                        _executeChangePerPageIfPossible(context),
+                    onEditingComplete: () =>
+                        _executeChangePerPageIfPossible(context),
+                    onChanged: (value) => _changePerPage(context, value),
+                    decoration: InputDecoration(
+                      filled: true,
+                      labelText: "Per Page",
+                      hintText: "10",
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          //right refresh button
+          SizedBox(
+            width: AppSizes.xl * 4,
+            child: IconWithLabelButton(
+              icon: Icons.refresh_rounded,
+              onTap: () => _loadUsers(context, page: currentPage ?? 1),
+              text: "refresh",
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<DataColumn> _getCols(BuildContext context) {
+    return [
+      DataColumn2(
+          label: Text(
+        "No",
+        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
+      )).optionalWhen(isAtMostSmallScreen(context)),
+      DataColumn2(
+          label: Expanded(
+              child: Text(
+        "Avatar",
+        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
+      ))).optionalWhen(isAtMostSmallScreen(context)),
+      DataColumn2(
+          label: Expanded(
+              child: Text(
+        "ID",
+        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
+      ))).optionalWhen(isAtMostMediumScreen(context)),
+      DataColumn2(
+          label: Expanded(
+              child: Text(
+        "Email",
+        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
+      ))),
+      DataColumn2(
+          label: Expanded(
+              child: Text(
+        "Name",
+        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
+      ))).optionalWhen(isAtMostMediumScreen(context)),
+      DataColumn2(
+        label: Expanded(
+          child: Text(
+            "Role",
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+        ),
+      ),
+      DataColumn2(
+        label: Expanded(
+          child: Text(
+            "Actions",
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+        ),
+      ),
+    ].nonNulls.toList();
+  }
+
+  void _onDeleteButtonClick(BuildContext context,
+      {Function()? onDeleteConfirmed}) {
     _showCheckboxColumn.value = !_showCheckboxColumn.value;
 
     ShadToaster.of(context).show(
@@ -858,6 +907,7 @@ class UsersPage extends StatelessWidget {
                       onPressed: () async {
                         await _deleteUsers(context);
                         _loadUsers(context);
+                        onDeleteConfirmed?.call();
                       },
                       child: Text("Yes"),
                     ),
@@ -878,18 +928,20 @@ class UsersPage extends StatelessWidget {
 
   Future<void> _deleteUsers(BuildContext context) async {
     final api = await ApiClientInstance.getApiClient();
-    api.deleteUsers(
-      userIds: _selectedUsers.map((u) => u.id).toList(),
-    );
+    for (User user in _selectedUsers) {
+      api.removeUser(
+        id: user.userId,
+      );
+    }
+
     _selectedUsers.clear();
     _showCheckboxColumn.value = false;
     ShadToaster.of(context).hide();
   }
 
   Future<dynamic> _showAddUserDialog(BuildContext context) {
-    _addUserRole.value = _getInitialRoleValue();
     _loadSuperiorsOptions(context);
-
+    logger.d("showing dialog");
     return showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
@@ -898,67 +950,7 @@ class UsersPage extends StatelessWidget {
         actions: [
           ShadButton(
             child: Text("Add User"),
-            onPressed: () async {
-              if (!_formKeyAddUser.currentState!.validate()) {
-                Toasts.showErrorToastNotification(
-                    context: context,
-                    message: "¨Please fix the errors in the form");
-                return;
-              }
-
-              Rx<FutureState> _loadingToastState = FutureState.loading.obs;
-              // show loading toast
-              final toast = Toasts.showStatefulToast(
-                context: context,
-                message: "Adding user...",
-                messageError: "Failed to add user",
-                messageSuccess: "User Added Successfully",
-                state: _loadingToastState,
-              );
-              // add user request
-              try {
-                final api = await ApiClientInstance.getApiClient();
-                //print("superior: ${_addUserSuperior}");
-                PostApiUsersResponse res;
-                if (kIsWeb) {
-                  res = await api.addUsersOnWeb(
-                    avatar: _addUserAvatarBytes,
-                    avatarFileName: _addUserAvatarBytesFileName,
-                    email: _addUserEmailController.text,
-                    password: _addUserPasswordController.text,
-                    role: _addUserRole.value,
-                    phoneNumber: _addUserPhoneController.text,
-                    name: _addUserNameController.text,
-                    superiorId: _addUserSuperior?.id,
-                  );
-                } else {
-                  res = await api.addUser(
-                    avatar: _addUserAvatarFile,
-                    email: _addUserEmailController.text,
-                    password: _addUserPasswordController.text,
-                    role: _addUserRole.value,
-                    phoneNumber: _addUserPhoneController.text,
-                    name: _addUserNameController.text,
-                    superiorId: _addUserSuperior?.id,
-                  );
-                }
-
-                // show success toast
-                _loadingToastState.value = FutureState.success;
-                // close toast after a short duration
-                Future.delayed(Duration(seconds: 1),
-                    () => Toastification().dismissById(toast.id));
-                // reload users list
-                _loadUsers(context);
-              } catch (e) {
-                logger.e("failed to add user: $e");
-                // show error toast
-                _loadingToastState.value = FutureState.error;
-                // close toast after a duration
-                Future.delayed(Duration(seconds: 3),
-                    () => Toastification().dismissById(toast.id));
-              }
-            },
+            onPressed: () => _onAddUserPressed(context),
           )
         ],
         child: Obx(
@@ -969,262 +961,30 @@ class UsersPage extends StatelessWidget {
               );
             }
 
-            return Form(
-              key: _formKeyAddUser,
-              child: Column(
-                children: [
-                  _addUserAvatarSelected.value
-                      ? IconButton(
-                          padding: EdgeInsets.all(AppSizes.sm),
-                          onPressed: () {
-                            _addUserAvatarSelected.value = false;
-                            _addUserAvatarBytes = null;
-                          },
-                          icon: SizedBox(
-                            width: AppSizes.xl * 6,
-                            height: AppSizes.xl * 6,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(100),
-                              child: Image.memory(
-                                kIsWeb
-                                    ? _addUserAvatarBytes!
-                                    : _addUserAvatarFile!.readAsBytesSync(),
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                        )
-                      : TextButton(
-                          onPressed: () async {
-                            Rx<FutureState> _openFilePickerToast =
-                                FutureState.loading.obs;
-                            final toast = Toasts.showStatefulToast(
-                              context: context,
-                              message: "Opening File Picker...",
-                              messageError: "Canceled",
-                              messageSuccess: "File Selected",
-                              state: _openFilePickerToast,
-                            );
-                            // show image picker
-                            FilePickerResult? result =
-                                await FilePicker.platform.pickFiles(
-                              type: FileType.image,
-                            );
-
-                            if (result != null) {
-                              // set image file
-                              if (result.files.first.bytes != null) {
-                                _addUserAvatarBytes = result.files.first.bytes!;
-                                _addUserAvatarSelected.value = true;
-                                _addUserAvatarBytesFileName =
-                                    result.files.first.name;
-                              } else if (!kIsWeb) {
-                                _addUserAvatarFile =
-                                    File(result.files.first.path!);
-                                _addUserAvatarSelected.value = true;
-                              }
-                              _openFilePickerToast.value = FutureState.success;
-                              Future.delayed(Duration(seconds: 1),
-                                  () => Toastification().dismissById(toast.id));
-
-                              // close toast after delay
-                            } else {
-                              // User canceled the picker
-                              _openFilePickerToast.value = FutureState.error;
-                              // close toast after delay
-                              Future.delayed(Duration(seconds: 1),
-                                  () => Toastification().dismissById(toast.id));
-                            }
-                          },
-                          child: _addUserPlaceHolderAvatar.value,
-                        ),
-                  SizedBox(height: AppSizes.sm),
-                  // email
-                  ShadInputFormField(
-                    controller: _addUserEmailController,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: FormBuilderValidators.email(),
-                    label: Text("Email"),
-                    placeholder: Text("account@exmaple.com"),
-                  ),
-                  SizedBox(height: AppSizes.sm),
-                  // password
-                  ShadInputFormField(
-                    controller: _addUserPasswordController,
-                    keyboardType: TextInputType.visiblePassword,
-                    validator: (v) => AppValidators.customPasswordValidator(v),
-                    obscureText: true,
-                    label: Text("Password"),
-                    placeholder: Text("********"),
-                  ),
-                  SizedBox(height: AppSizes.sm),
-                  // name
-                  ShadInputFormField(
-                    controller: _addUserNameController,
-                    keyboardType: TextInputType.name,
-                    label: Text("Name"),
-                    placeholder: Text("Lyes Rabhi"),
-                  ),
-                  SizedBox(height: AppSizes.sm),
-                  // role
-                  Container(
-                    constraints: BoxConstraints(
-                      minWidth: context.width,
-                    ),
-                    child: ShadSelectFormField<Role>(
-                      initialValue: _addUserRole.value,
-                      enabled: userController.user?.role != Role.supervisor,
-                      validator: (v) =>
-                          AppValidators.roleSelectionValidator(v?.name),
-                      options: _getRoleOptions(context),
-                      label: Text("Role"),
-                      selectedOptionBuilder: (context, value) => Container(
-                        constraints: BoxConstraints(
-                          minWidth: context.width,
-                        ),
-                        child: Text("Role: ${value.name.toUpperCase()}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  color: AppColors.getRoleColor(
-                                      _addUserRole.value),
-                                )),
-                      ),
-                      placeholder: Text("Role"),
-                      shrinkWrap: false,
-                      onChanged: (value) {
-                        if (value != null) _addUserRole.value = value;
-                        _loadSuperiorsOptions(context);
-                      },
-                    ),
-                  ),
-                  SizedBox(height: AppSizes.sm),
-                  // phone number
-                  ShadInputFormField(
-                    controller: _addUserPhoneController,
-                    keyboardType: TextInputType.phone,
-                    validator: (v) => AppValidators.phoneNumberValidator(v),
-                    label: Text("Phone number"),
-                    placeholder: Text("0549267381"),
-                  ),
-
-                  SizedBox(height: AppSizes.sm),
-                  // superior
-                  Container(
-                    constraints: BoxConstraints(
-                      minWidth: context.width,
-                    ),
-                    child: ShadSelectFormField<User>.withSearch(
-                      label: Text("Superior"),
-                      validator: (value) =>
-                          AppValidators.superiorSelectionValidator(
-                        value?.id,
-                        _addUserSuperiorOptions.map((o) => o.value).toList(),
-                      ),
-                      allowDeselection: true,
-                      options: _searchAddUserSuperior.value
-                          ? _searchAddUserSuperiorOptions
-                          : _addUserSuperiorOptions,
-                      placeholder: Container(
-                          constraints: BoxConstraints(
-                            minWidth: context.width,
-                          ),
-                          child: Text("Select a Superior")),
-                      anchor: ShadAnchorAuto(
-                        preferBelow: false,
-                      ),
-                      onChanged: (value) {
-                        print("value: $value");
-                        _addUserSuperior = value;
-                      },
-                      selectedOptionBuilder: (context, value) => Container(
-                        constraints: BoxConstraints(
-                          minWidth: context.width,
-                        ),
-                        child: Text(
-                            "Superior: ${value.role.name.toUpperCase()} ${value.name ?? value.email}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  color: AppColors.getRoleColor(Role.values
-                                      .firstWhere((r) =>
-                                          r.name.toUpperCase() ==
-                                          value.role.name.toUpperCase())),
-                                )),
-                      ),
-                      onSearchChanged: (value) {
-                        if (value.isNotEmpty) {
-                          _searchAddUserSuperior.value =
-                              false; // turn it off to trigger update later
-                          _searchAddUserSuperiorOptions.clear();
-                          _searchAddUserSuperiorOptions
-                              .addAll(_addUserSuperiorOptions.where((o) {
-                            if (o.value.name != null) {
-                              if (o.value.name!.contains(value)) {
-                                return true;
-                              }
-                            }
-                            return o.value.email.contains(value);
-                          }));
-                          _searchAddUserSuperior.value =
-                              true; // turning it back on to trigger update
-                        } else {
-                          _searchAddUserSuperior.value = false;
-                          _searchAddUserSuperiorOptions.clear();
-                        }
-                      },
-                    ),
-                  ),
-                  SizedBox(height: AppSizes.md),
-                ],
-              ),
+            return UserForm(
+              addUserEmailController: _addUserEmailController,
+              addUserNameController: _addUserNameController,
+              addFirstNameController: _addFirstNameController,
+              addLastNameController: _addLastNameController,
+              addUserPasswordController: _addUserPasswordController,
+              addUserPhoneController: _addUserPhoneController,
+              formKeyAddUser: _formKeyAddUser,
+              loadSuperiorsOptions: _loadSuperiorsOptions,
+              addUserSuperiorOptions: _addUserSuperiorOptions,
+              onAddUser: (email, username, password, phone, role, superior,
+                  firstName, lastName, avatarBytes, avatarFile) {
+                logger.e("setRole: ${role.name}");
+                _addUserRole = role;
+                _addUserSuperior = superior;
+                _addUserAvatarBytes = avatarBytes;
+                _addUserAvatarBytesFileName = "avatar.jpg";
+                _addUserAvatarFile = avatarFile;
+              },
             );
           },
         ),
       ),
     );
-  }
-
-  static Role _getInitialRoleValue() {
-    switch (userController.user?.role) {
-      case Role.adminSystem:
-        return Role.admin;
-      case Role.admin:
-        return Role.supervisor;
-      case Role.supervisor:
-        return Role.operateur;
-      default:
-        return Role.operateur;
-    }
-  }
-
-  Iterable<Widget> _getRoleOptions(BuildContext context) {
-    List<Role> roles = [];
-    switch (userController.user?.role) {
-      case Role.adminSystem:
-        roles = Role.values.toList();
-        break;
-      case Role.admin:
-        roles = [Role.supervisor, Role.operateur];
-        break;
-      case Role.supervisor:
-        roles = [Role.operateur];
-        break;
-      default:
-        roles = [];
-        break;
-    }
-    return roles.map((role) => ShadOption(
-          value: role,
-          child: Text(
-            role.name.toUpperCase(),
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.getRoleColor(role),
-                ),
-          ),
-        ));
   }
 
   WidgetStateProperty<Color>? _getRowColor(BuildContext context, User user) {
@@ -1234,7 +994,7 @@ class UsersPage extends StatelessWidget {
             WidgetState.selected,
             WidgetState.focused
           ].contains(s))) {
-        return AppColors.getRoleColor(user.role);
+        return AppColors.getRoleColorWithRoleValue(user.role);
       } else {
         return Colors.transparent;
       }
@@ -1243,100 +1003,156 @@ class UsersPage extends StatelessWidget {
 
   List<DataRow> _getRows(BuildContext context) {
     return usersData.map((user) {
-      if (_hovered[user.id] == null) {
-        _hovered[user.id] = false;
+      if (_hovered[user.userId] == null) {
+        _hovered[user.userId] = false;
       }
-
+      final actionsController = ShadPopoverController();
       return DataRow2(
         color: _getRowColor(context, user),
+        onDoubleTap: () => _showViewUserDialog(context, user),
         cells: [
           DataCell(
             Text(
               (usersData.indexOf(user) + 1).toString(),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-          ),
+          ).optionalWhen(isAtMostSmallScreen(context)),
           DataCell(
-            Padding(
-              padding: EdgeInsets.all(AppSizes.sm),
-              child: ShadAvatar(
-                Icons.person_sharp,
-                size: Size(
-                  AppSizes.xl * 2,
-                  AppSizes.xl * 5,
-                ),
-                fit: BoxFit.cover,
-                backgroundColor: AppColors.getRoleColor(user.role),
+            Center(
+              child: Padding(
+                padding: EdgeInsets.all(AppSizes.sm),
+                child: Avatar(user: user),
               ),
             ),
-          ),
+          ).optionalWhen(isAtMostSmallScreen(context)),
           DataCell(
             Text(
-              user.id,
+              "${user.userId}",
               style: Theme.of(context).textTheme.bodyMedium,
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
+          ).optionalWhen(isAtMostMediumScreen(context)),
           DataCell(
             Text(
               user.email,
               style: Theme.of(context).textTheme.bodyMedium,
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           DataCell(
             Text(
-              user.name ?? "",
+              user.username ?? "",
               style: Theme.of(context).textTheme.bodyMedium,
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
+          ).optionalWhen(isAtMostMediumScreen(context)),
           DataCell(
             MouseRegion(
-              onEnter: (p) => _hovered[user.id] = true,
-              onExit: (p) => _hovered[user.id] = false,
+              onEnter: (p) => _hovered[user.userId] = true,
+              onExit: (p) => _hovered[user.userId] = false,
               child: Text(
-                user.role.name.toUpperCase(),
+                user.role.toUpperCase(),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: _hovered[user.id] == true
+                      color: _hovered[user.userId] == true
                           ? null
-                          : AppColors.getRoleColor(user.role),
+                          : AppColors.getRoleColorWithRoleValue(user.role),
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.bold,
                     ),
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
           DataCell(
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    _showViewUserDialog(context, user);
-                  },
-                  icon: Icon(Icons.remove_red_eye_rounded),
-                ),
-                IconButton(
-                  onPressed: () {
-                    _showEditUserDialog(context, user);
-                  },
-                  icon: Icon(Icons.edit),
-                ),
-                IconButton(
-                  onPressed: () {
-                    _selectedUsers.add(user);
-                    _onDeleteButtonClick(context);
-                  },
-                  icon: Icon(Icons.delete),
-                ),
-              ],
+            FittedBox(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      _showViewUserDialog(context, user);
+                    },
+                    icon: Icon(Icons.remove_red_eye_rounded),
+                  ).optionalWhen(isAtMostMediumScreen(context)),
+                  IconButton(
+                    onPressed: () {
+                      _showEditUserDialog(context, user);
+                    },
+                    icon: Icon(Icons.edit),
+                  ).optionalWhen(isAtMostSmallScreen(context)),
+                  IconButton(
+                    onPressed: () {
+                      _selectedUsers.add(user);
+                      _onDeleteButtonClick(context);
+                    },
+                    icon: Icon(Icons.delete),
+                  ).optionalWhen(isAtMostMediumScreen(context)),
+                  ShadPopover(
+                    padding: EdgeInsets.zero,
+                    decoration: ShadDecoration(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        border: ShadBorder.all(
+                          width: 0,
+                          radius: BorderRadius.circular(10),
+                        )),
+                    popover: (context) => SizedBox(
+                      width: AppSizes.lg * 5,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconWithLabelButton(
+                            icon: Icons.remove_red_eye_rounded,
+                            text: "view",
+                            onTap: () => {
+                              _showViewUserDialog(context, user),
+                              actionsController.toggle(),
+                            },
+                          ),
+                          IconWithLabelButton(
+                            icon: Icons.edit,
+                            onTap: () {
+                              _showEditUserDialog(context, user);
+                              actionsController.toggle();
+                            },
+                            text: "edit",
+                          ).optionalWhen(isAtLeastMediumScreen(context)),
+                          IconWithLabelButton(
+                            icon: Icons.delete,
+                            text: "delete",
+                            activeColor: errorColor,
+                          ),
+                        ].nonNulls.toList(),
+                      ),
+                    ),
+                    controller: actionsController,
+                    child: IconButton(
+                      onPressed: () {
+                        actionsController.toggle();
+                      },
+                      icon: Icon(
+                        LucideIcons.ellipsisVertical,
+                        applyTextScaling: true,
+                      ),
+                    ),
+                  ).optionalWhen(isAtLeastLargeScreen(context)),
+                ].nonNulls.toList(),
+              ),
             ),
           ),
-        ],
+        ].nonNulls.toList(),
         selected: _selectedUsers.contains(user),
         onSelectChanged: (value) {
           if (_selectedUsers.contains(user)) {
-            print("unselected ${user.id}: $value");
+            print("unselected ${user.userId}: $value");
             _selectedUsers.remove(user);
           } else {
-            print("selected ${user.id}: $value");
+            print("selected ${user.userId}: $value");
             _selectedUsers.add(user);
           }
         },
@@ -1345,80 +1161,58 @@ class UsersPage extends StatelessWidget {
   }
 
   void _loadSuperiorsOptions(BuildContext context) async {
-    final _me = "${userController.user!.name ?? ""}(Me)";
-    List<ShadOption<User>> options = [];
-
-    if (userController.user?.role == Role.supervisor) {
-      // can only add operators assigned to himself
-      _addUserSuperiorOptions.value = [
-        ShadOption(value: userController.user!, child: Text(_me))
-      ];
-      _loadedAddUserSuperiorOptions.value = true;
-      return;
-    }
-    if (userController.user?.role == Role.admin) {
-      // can add operators assigned to his supervisors subordinates
-      // can add operators assigned to himself
-      if (_addUserRole.value.name == Role.operateur.name) {
-        try {
-          _loadedAddUserSuperiorOptions.value = false;
-          final api = await ApiClientInstance.getApiClient();
-          final res = await api.getUser(id: userController.user!.id);
-          userController.user = res.user;
-          userController.user!.subordinates?.forEach((s) {
-            if (s.subordinate == null) {
-              logger.e("subordinate value is null, from api response");
-              return;
-            }
-            if (s.subordinate!.role != Role.supervisor) {
-              return;
-            }
-
-            options.add(
-              ShadOption(
-                value: s.subordinate!,
-                child: Text(s.subordinate!.name ?? s.subordinate!.email),
+    _loadedAddUserSuperiorOptions.value = false;
+    final me = "${userController.user!.username} (Me)";
+    List<ShadOption<User>> options = [
+      ShadOption(
+        value: userController.user!,
+        child: Text(
+          me,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppColors.getRoleColorWithRoleValue(
+                    userController.user!.role),
               ),
-            );
-          });
-          options
-              .add(ShadOption(value: userController.user!, child: Text(_me)));
-          _addUserSuperiorOptions.value = options;
-          _loadedAddUserSuperiorOptions.value = true;
-          return;
-        } catch (e) {
-          logger.e("failed to get subordinates: $e");
-          Toasts.showErrorToastNotification(
-              context: context,
-              message: "Failed to get subordinates",
-              title: "Error: Failed to get subordinates");
-          _addUserSuperiorOptions.value = [];
-          _loadedAddUserSuperiorOptions.value = true;
-          return;
-        }
-      }
-
-      // can add supervisors assigned to himself
-      if (_addUserRole.value.name == Role.supervisor.name) {
-        options.add(ShadOption(value: userController.user!, child: Text(_me)));
-        _addUserSuperiorOptions.value = options;
-        _loadedAddUserSuperiorOptions.value = true;
-        return;
-      }
-    }
-
+        ),
+      ),
+    ];
     // can add any kind of user
     try {
       final api = await ApiClientInstance.getApiClient();
-      final res = await api.getUsers(enablePagination: false);
-      _addUserSuperiorOptions.value = res.users
-          .map(
-            (u) => ShadOption(
-              value: u,
-              child: Text(u.name ?? u.email),
-            ),
-          )
-          .toList();
+
+      traverseSubordinatesTree(
+          User user, Function(User user) onUserFound) async {
+        if (user.subordinates.isNotEmpty) {
+          for (var user in user.subordinates) {
+            final sub_user = await (await ApiClientInstance.getApiClient())
+                .getUser(id: user.userId);
+            onUserFound(sub_user);
+            traverseSubordinatesTree(sub_user, onUserFound);
+          }
+        }
+      }
+
+      await traverseSubordinatesTree(
+        userController.user!,
+        (user) => options.add(
+          ShadOption(
+              value: user,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(user.username.isNotEmpty ? user.username : user.email),
+                  SizedBox(width: AppSizes.md),
+                  Text(
+                    user.role,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppColors.getRoleColorWithRoleValue(user.role),
+                        ),
+                  )
+                ],
+              )),
+        ),
+      );
+
+      _addUserSuperiorOptions.value = options;
       _loadedAddUserSuperiorOptions.value = true;
       return;
     } catch (e) {
@@ -1452,21 +1246,441 @@ class UsersPage extends StatelessWidget {
     }
   }
 
-  void _showEditUserDialog(BuildContext context, User user) {}
+  Future _showEditUserDialog(BuildContext context, User user) async {
+    _loadSuperiorsOptions(context);
+    logger.d("showing edit dialog");
+    User newUser = User(
+      url: user.url,
+      userId: user.userId,
+      email: user.email,
+      username: user.username,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      avatarUrl: user.avatarUrl,
+      superiors: user.superiors,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      subordinates: user.subordinates,
+      userPermissions: user.userPermissions,
+    );
+    Uint8List? _editUserAvatarBytes;
+    File? _editUserAvatarFile;
+    String? _password;
+    logger.d("showing edit dialog 2");
+    final loadedUserDetails = false.obs;
+    User? userDetails;
+    final Rx<bool> _loadedRoles = false.obs;
+    final RxList<Role> _roles = <Role>[].obs;
+    ApiClientInstance.getApiClient().then((api) async {
+      _roles.clear();
+      _roles.addAll((await api.getRoles()).data);
+      _loadedRoles.value = true;
+      final res = await api.getUser(id: user.userId);
+      userDetails = res;
+      loadedUserDetails.value = true;
+      logger.d("user details fetched");
+    }).catchError((e) {
+      logger.e("failed to get user details: $e");
+      Toasts.showErrorToastNotification(
+          context: context,
+          message: "Details: ${e.toString()}",
+          title: "Error: Failed to get user details");
+      loadedUserDetails.value = true;
+    });
 
-  void _showViewUserDialog(BuildContext context, User user) {}
+    return showShadDialog(
+      context: context,
+      builder: (context) => ShadDialog(
+        title: Text("User: ${user.username ?? user.email}"),
+        description: Text("Edit User"),
+        actions: [
+          Obx(() => Expanded(
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (loadedUserDetails.value)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          ShadButton.destructive(
+                            child: Text("Delete"),
+                            onPressed: () {
+                              _selectedUsers.add(userDetails!);
+                              _onDeleteButtonClick(
+                                context,
+                                onDeleteConfirmed: () =>
+                                    Navigator.of(context).pop(),
+                              );
+                            },
+                          ),
+                          ShadButton(
+                            icon: Icon(Icons.edit),
+                            child: Text("Save"),
+                            onPressed: () {
+                              onSaveButtonPressed(
+                                context: context,
+                                user: newUser,
+                                password:
+                                    _password != null && _password!.isNotEmpty
+                                        ? _password
+                                        : null,
+                                userAvatarBytes: _editUserAvatarBytes,
+                                userAvatarFile: _editUserAvatarFile,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ShadButton(
+                      icon: Icon(Icons.close),
+                      child: Text("Close"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ))
+        ],
+        child: Obx(
+          () {
+            if (!loadedUserDetails.value ||
+                !_loadedRoles.value ||
+                !_loadedAddUserSuperiorOptions.value) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            final role = _roles.firstWhereOrNull((r) => r.name == user.role);
+            return UserForm(
+              editable: true,
+              showPlaceHolders: false,
+              role: role,
+              user: user,
+              onAddUser: (email, username, password, phone, role, superior,
+                      firstName, lastName, avatarBytes, avatarFile) =>
+                  {
+                _editUserAvatarBytes = avatarBytes,
+                _editUserAvatarFile = avatarFile,
+                _password = password,
+                newUser = User(
+                  url: newUser.url,
+                  userId: newUser.userId,
+                  email: email,
+                  username: username,
+                  phoneNumber: phone,
+                  role: role.name,
+                  superiors: superior != null
+                      ? [
+                          UserSerializerWithSuperiors(
+                              url: superior.url,
+                              userId: superior.userId,
+                              email: superior.email,
+                              username: superior.username,
+                              superiors: superior.superiors)
+                        ]
+                      : [],
+                  firstName: firstName,
+                  lastName: lastName,
+                  avatarUrl: null,
+                  subordinates: newUser.subordinates,
+                  userPermissions: newUser.userPermissions,
+                )
+              },
+              addUserEmailController:
+                  TextEditingController(text: userDetails!.email),
+              addUserNameController:
+                  TextEditingController(text: userDetails!.username),
+              addFirstNameController:
+                  TextEditingController(text: userDetails!.firstName),
+              addLastNameController:
+                  TextEditingController(text: userDetails!.lastName),
+              addUserPasswordController: TextEditingController(),
+              addUserPhoneController:
+                  TextEditingController(text: userDetails!.phoneNumber),
+              formKeyAddUser: _formKeyAddUser,
+              addUserSuperiorOptions: _addUserSuperiorOptions,
+              loadSuperiorsOptions: _loadSuperiorsOptions,
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Future _showViewUserDialog(BuildContext context, User user) async {
+    final loadedUserDetails = false.obs;
+    User? userDetails;
+    final Rx<bool> _loadedRoles = false.obs;
+    final RxList<Role> _roles = <Role>[].obs;
+    ApiClientInstance.getApiClient().then((api) async {
+      _roles.clear();
+      _roles.addAll((await api.getRoles()).data);
+      _loadedRoles.value = false;
+      final res = await api.getUser(id: user.userId);
+      userDetails = res;
+      loadedUserDetails.value = true;
+      logger.d("user details fetched");
+    }).catchError((e) {
+      logger.e("failed to get user details: $e");
+      Toasts.showErrorToastNotification(
+          context: context,
+          message: "Details: ${e.toString()}",
+          title: "Error: Failed to get user details");
+      loadedUserDetails.value = true;
+    });
+
+    return showShadDialog(
+      context: context,
+      builder: (context) => ShadDialog(
+        title: Text("User: ${user.username ?? user.email}"),
+        description: Text("View User Details"),
+        actions: [
+          Obx(() => Expanded(
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (loadedUserDetails.value)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          ShadButton.destructive(
+                            child: Text("Delete"),
+                            onPressed: () {
+                              _selectedUsers.add(userDetails!);
+                              _onDeleteButtonClick(
+                                context,
+                                onDeleteConfirmed: () =>
+                                    Navigator.of(context).pop(),
+                              );
+                            },
+                          ),
+                          ShadButton(
+                            icon: Icon(Icons.edit),
+                            child: Text("Edit"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              _showEditUserDialog(context, user);
+                            },
+                          ),
+                        ],
+                      ),
+                    ShadButton(
+                      icon: Icon(Icons.close),
+                      child: Text("Close"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ))
+        ],
+        child: Obx(
+          () {
+            if (!loadedUserDetails.value) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            final role = _roles.firstWhereOrNull((r) => r.name == user.role);
+            return UserForm(
+              editable: false,
+              showPlaceHolders: false,
+              role: role,
+              user: user,
+              addUserEmailController:
+                  TextEditingController(text: userDetails!.email),
+              addUserNameController:
+                  TextEditingController(text: userDetails!.username),
+              addFirstNameController:
+                  TextEditingController(text: userDetails!.firstName),
+              addLastNameController:
+                  TextEditingController(text: userDetails!.lastName),
+              addUserPasswordController:
+                  TextEditingController(text: "Hashed Value"),
+              addUserPhoneController:
+                  TextEditingController(text: userDetails!.phoneNumber),
+              formKeyAddUser: GlobalKey<FormState>(),
+              addUserSuperiorOptions: <ShadOption<User>>[].obs,
+              loadSuperiorsOptions: (context) =>
+                  _loadSuperiors(context, userDetails!),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  void _onAddUserPressed(BuildContext context) async {
+    if (!_formKeyAddUser.currentState!.validate()) {
+      Toasts.showErrorToastNotification(
+          context: context, message: "¨Please fix the errors in the form");
+      return;
+    }
+
+    Rx<FutureState> loadingToastState = FutureState.loading.obs;
+    // show loading toast
+    final toast = Toasts.showStatefulToast(
+      context: context,
+      message: "Adding user...",
+      messageError: "Failed to add user",
+      messageSuccess: "User Added Successfully",
+      state: loadingToastState,
+    );
+    // add user request
+    try {
+      final api = await ApiClientInstance.getApiClient();
+      logger.e("addUserRole: ${_addUserRole!.name}");
+      late final User res;
+      if (kIsWeb) {
+        res = await api.addUsersOnWeb(
+          avatar: _addUserAvatarBytes,
+          avatarFileName: _addUserAvatarBytesFileName,
+          email: _addUserEmailController.text,
+          password: _addUserPasswordController.text,
+          role: _addUserRole!.name,
+          phoneNumber: _addUserPhoneController.text,
+          username: _addUserNameController.text,
+          firstName: _addFirstNameController.text,
+          lastName: _addLastNameController.text,
+        );
+      } else {
+        res = await api.addUser(
+          avatar: _addUserAvatarFile,
+          email: _addUserEmailController.text,
+          password: _addUserPasswordController.text,
+          role: _addUserRole!.name,
+          phoneNumber: _addUserPhoneController.text,
+          username: _addUserNameController.text,
+        );
+      }
+
+      if (_addUserSuperior != null) {
+        await api.addSubordinateAndSuperior(
+            superior: _addUserSuperior!.userId, subordinate: res.userId);
+      } else {
+        logger.e("superior is null");
+      }
+
+      // show success toast
+      loadingToastState.value = FutureState.success;
+      // close toast after a short duration
+      Future.delayed(
+          Duration(seconds: 1), () => Toastification().dismissById(toast.id));
+      // reload users list
+      _loadUsers(context);
+    } catch (e) {
+      logger.e("failed to add user: $e");
+      // show error toast
+      loadingToastState.value = FutureState.error;
+      // close toast after a duration
+      Future.delayed(
+          Duration(seconds: 3), () => Toastification().dismissById(toast.id));
+    }
+  }
+
+  Future<void> onSaveButtonPressed({
+    required BuildContext context,
+    required User user,
+    Uint8List? userAvatarBytes,
+    File? userAvatarFile,
+    String? password,
+  }) async {
+    if (!_formKeyAddUser.currentState!.validate()) {
+      Toasts.showErrorToastNotification(
+          context: context, message: "¨Please fix the errors in the form");
+      return;
+    }
+
+    Rx<FutureState> loadingToastState = FutureState.loading.obs;
+    // show loading toast
+    final toast = Toasts.showStatefulToast(
+      context: context,
+      message: "Saving user...",
+      messageError: "Failed to save user",
+      messageSuccess: "User Saved Successfully",
+      state: loadingToastState,
+    );
+    // add user request
+    try {
+      final api = await ApiClientInstance.getApiClient();
+      //logger.e("addUserRole: ${_addUserRole!.name}");
+      logger.e(
+          "avatar: ${userAvatarBytes != null} $_addUserAvatarBytesFileName ${userAvatarFile != null}");
+      late final User res;
+      if (kIsWeb) {
+        res = await api.partialUpdateUserOnWeb(
+          id: user.userId,
+          avatar: userAvatarBytes,
+          avatarFileName: _addUserAvatarBytesFileName ?? "avatar.jpg",
+          email: user.email,
+          password: password,
+          role: user.role,
+          phoneNumber: user.phoneNumber,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        );
+      } else {
+        res = await api.partialUpdateUser(
+          id: user.userId,
+          avatar: userAvatarFile,
+          email: user.email,
+          password: password,
+          role: user.role,
+          phoneNumber: user.phoneNumber,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        );
+      }
+
+      if (_addUserSuperior != null) {
+        await api.addSubordinateAndSuperior(
+            superior: _addUserSuperior!.userId, subordinate: res.userId);
+      } else {
+        logger.e("superior is null");
+      }
+
+      // show success toast
+      loadingToastState.value = FutureState.success;
+      // close toast after a short duration
+      Future.delayed(
+          Duration(seconds: 1), () => Toastification().dismissById(toast.id));
+      // reload users list
+      _loadUsers(context);
+    } catch (e) {
+      logger.e("failed to add user: $e");
+      // show error toast
+      loadingToastState.value = FutureState.error;
+      // close toast after a duration
+      Future.delayed(
+          Duration(seconds: 3), () => Toastification().dismissById(toast.id));
+    }
+  }
+
+  _getColumnSpacing(BuildContext context) {
+    return isSmallScreen(context) ? AppSizes.sm : AppSizes.md;
+  }
 }
 
-extension DataRowExtention on DataRow {
-  Widget withMouseRegion({
-    required void Function(PointerEnterEvent) onEnter,
-    required void Function(PointerExitEvent) onExit,
-    void Function(PointerHoverEvent)? onHover,
-  }) {
-    return MouseRegion(
-      onEnter: (p) => onEnter(p),
-      onExit: (p1) => onExit(p1),
-      child: this as Widget,
-    );
+extension WidgetOptionalWhen on Widget {
+  Widget? optionalWhen(bool condition) {
+    return condition ? null : this;
+  }
+}
+
+extension DataColumnOptionalWhen on DataColumn2 {
+  DataColumn2? optionalWhen(bool condition) {
+    return condition ? null : this;
+  }
+}
+
+extension DataCellOptionalWhen on DataCell {
+  DataCell? optionalWhen(bool condition) {
+    return condition ? null : this;
   }
 }

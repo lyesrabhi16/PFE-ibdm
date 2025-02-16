@@ -1,6 +1,6 @@
 swagger_parser:
-  schema_path: lib/api/openapi.json
-  output_directory: lib/services/api/api_client
+  schema_path: lib/api/openapi.spec.json
+  output_directory: lib/services/api_django/api_client
   name: ibdm_api
   root_client: true
   root_client_name: ApiClient

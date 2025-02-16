@@ -1,0 +1,16 @@
+
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+IP.1  = 10.2.60.9
+IP.2 = 192.168.57.83
+IP.3 = 172.16.103.41
+IP.4 = 192.168.136.83
+IP.5 = 192.168.4.83
+IP.6 = 192.168.121.83
+DNS.1 = ibdm.local.ifri
+DNS.2 = localhost
+DNS.3 = server.ibdm.local.ifri

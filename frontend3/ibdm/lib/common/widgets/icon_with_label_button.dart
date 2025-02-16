@@ -10,6 +10,7 @@ class IconWithLabelButton extends StatelessWidget {
     required this.text,
     this.onTap,
     this.active = false,
+    this.activeColor,
   });
 
   final Function? onTap;
@@ -17,6 +18,7 @@ class IconWithLabelButton extends StatelessWidget {
   final String text;
   final Rx<bool> _hover = false.obs;
   final bool active;
+  final Color? activeColor;
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +30,11 @@ class IconWithLabelButton extends StatelessWidget {
       foregroundColor: _hover.value
           ? Theme.of(context).colorScheme.onPrimary
           : Theme.of(context).colorScheme.onSurface,
-      backgroundColor:
-          _hover.value ? Theme.of(context).colorScheme.primaryContainer : null,
-      hoverBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      backgroundColor: _hover.value
+          ? activeColor ?? Theme.of(context).colorScheme.primaryContainer
+          : null,
+      hoverBackgroundColor:
+          activeColor ?? Theme.of(context).colorScheme.primaryContainer,
       hoverForegroundColor: Theme.of(context).colorScheme.onPrimary,
       onHoverChange: (value) => active ? null : _hover.value = value,
       onPressed: () {

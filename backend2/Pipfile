@@ -1,0 +1,31 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+djangorestframework = "*"
+mssql-django = "*"
+drf-spectacular = {extras = ["sidecar"], version = "*"}
+setuptools = "*"
+django-jazzmin = "*"
+pillow = "*"
+channels = {extras = ["daphne"], version = "*"}
+twisted = {extras = ["http2", "tls"], version = "*"}
+django-cors-headers = "*"
+django-filter = "*"
+python-decouple = "*"
+django-crispy-forms = "*"
+
+[requires]
+python_version = "3.12.9"
+
+[scripts]
+"start" = "python manage.py runserver"
+"start_https" = "cd ibdm_api && daphne -e ssl:443:privateKey=certs/ibdm.key:certKey=certs/ibdm.crt ibdm_api.asgi:application --access-log logs/daphne.log"
+"migrate"  = "python manage.py makemigrations && python manage.py migrate"
+"createsuperuser" = "python manage.py createsuperuser"
+"generate_schema_json" = "python ibdm_api/manage.py spectacular --file ibdm_api/openapi/openapi.spec.json --format openapi-json --validate --fail-on-warn"
+
+[dev-packages]
