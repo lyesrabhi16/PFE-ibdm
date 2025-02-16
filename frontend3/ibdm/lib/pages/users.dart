@@ -16,7 +16,6 @@ import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
-import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
 import 'package:ibdm/utils/helpers/validators/app_validators.dart';
@@ -24,6 +23,9 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:universal_io/io.dart';
 import 'package:ibdm/generated/l10n.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
+import 'package:ibdm/common/widgets/responsive_appbar.dart';
+import 'package:ibdm/utils/constants/routes.dart';
 
 class UsersPage extends StatelessWidget {
   UsersPage({super.key});
@@ -197,7 +199,7 @@ class UsersPage extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final strings = getTranslations(context).obs;
     String getRoleLabel(BuildContext context, Role r) {
-      final strings = getTranslations(context); // Récupérer la traduction
+      final strings = getTranslations(context); 
       print("Langue active : ${Localizations.localeOf(context)}");
       print("Traduction pour ${r.json}: ${strings.role_ADMIN_SYSTEM}");
 
@@ -215,617 +217,639 @@ class UsersPage extends StatelessWidget {
       }
     }
 
-    return Obx(
-      () {
-        List<Widget> pageIndexesButtons = [];
-        if (_loaded.value && usersData.isNotEmpty) {
-          final indexes = _getIndexesOfPages(currentPage!, nbrTotalPages!);
-          pageIndexesButtons = indexes.map(
-            (i) {
-              if (i < 0) {
-                final items = <PageIndex>[];
-                for (var index = 1; index <= nbrTotalPages!; index++) {
-                  items.add(
-                    PageIndex(
-                      index: index,
-                      button: ShadButton(
-                        backgroundColor: colorScheme.surface,
-                        foregroundColor: colorScheme.onSurface,
-                        onPressed: () => _loadUsers(context, page: index),
-                        child: Text(
-                          "$index",
-                          textAlign: TextAlign.center,
+    return Scaffold(
+      appBar: ResponsiveAppBar(
+        userName: userController.user?.name ?? "No Name",
+        userImage: (userController.user?.avatarUrl != null &&
+                userController.user!.avatarUrl!.isNotEmpty)
+            ? userController.user!.avatarUrl!
+            : '',
+        onLogout: () {
+          userController.logoutUser();
+          Get.offAllNamed(Routes.login);
+        },
+      ),
+      body: Obx(
+        () {
+          List<Widget> pageIndexesButtons = [];
+          if (_loaded.value && usersData.isNotEmpty) {
+            final indexes = _getIndexesOfPages(currentPage!, nbrTotalPages!);
+            pageIndexesButtons = indexes.map(
+              (i) {
+                if (i < 0) {
+                  final items = <PageIndex>[];
+                  for (var index = 1; index <= nbrTotalPages!; index++) {
+                    items.add(
+                      PageIndex(
+                        index: index,
+                        button: ShadButton(
+                          backgroundColor: colorScheme.surface,
+                          foregroundColor: colorScheme.onSurface,
+                          onPressed: () => _loadUsers(context, page: index),
+                          child: Text(
+                            "$index",
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
-                    ),
-                  );
+                    );
+                  }
+                  // set display to all
+                  searchedPageIndexes.value = items;
+                  return Obx(() {
+                    return ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minWidth: 30,
+                        maxWidth: 60,
+                        maxHeight: 60,
+                      ),
+                      child: ShadSelect.withSearch(
+                        decoration: ShadDecoration(
+                          color: colorScheme.surface,
+                          border: ShadBorder.none,
+                          labelStyle: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        trailing: Icon(
+                          Icons.arrow_drop_up,
+                          size: AppSizes.md,
+                        ),
+                        initialValue: "...",
+                        selectedOptionBuilder: (context, v) => FittedBox(
+                          child: Text(
+                            "$v",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        anchor: ShadAnchorAuto(preferBelow: false),
+                        options: [
+                          ...searchedPageIndexes.map((pi) => pi.button)
+                        ],
+                        searchPlaceholder: Text(strings.value.search),
+                        onSearchChanged: (String value) {
+                          if (value.isEmpty) {
+                            searchedPageIndexes.value = items;
+                          } else {
+                            searchedPageIndexes.value = items
+                                .where((pi) => pi.index == int.tryParse(value))
+                                .toList();
+                          }
+                        },
+                      ),
+                    );
+                  });
                 }
-                // set display to all
-                searchedPageIndexes.value = items;
-                return Obx(() {
-                  return ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: 30,
-                      maxWidth: 60,
-                      maxHeight: 60,
-                    ),
-                    child: ShadSelect.withSearch(
-                      decoration: ShadDecoration(
-                        color: colorScheme.surface,
-                        border: ShadBorder.none,
-                        labelStyle: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      trailing: Icon(
-                        Icons.arrow_drop_up,
-                        size: AppSizes.md,
-                      ),
-                      initialValue: "...",
-                      selectedOptionBuilder: (context, v) => FittedBox(
-                        child: Text(
-                          "$v",
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      anchor: ShadAnchorAuto(preferBelow: false),
-                      options: [...searchedPageIndexes.map((pi) => pi.button)],
-                      searchPlaceholder: Text(strings.value.search),
-                      onSearchChanged: (String value) {
-                        if (value.isEmpty) {
-                          searchedPageIndexes.value = items;
-                        } else {
-                          searchedPageIndexes.value = items
-                              .where((pi) => pi.index == int.tryParse(value))
-                              .toList();
-                        }
-                      },
-                    ),
-                  );
-                });
-              }
-              return ShadButton(
-                backgroundColor:
-                    i == currentPage ? colorScheme.primaryContainer : null,
-                onPressed: () {
-                  _loadUsers(context, page: i);
-                },
-                child: Text("$i"),
-              );
-            },
-          ).toList();
-        }
-        return AppCustomContainer(
-          child: Center(
-            child: _loaded.value
-                ? Padding(
-                    padding: EdgeInsets.all(AppSizes.sm),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Center(
-                          child: Text(strings.value.userManagement,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleLarge),
-                        ),
-                        SizedBox(height: AppSizes.xl),
-                        Container(
-                          constraints: BoxConstraints(
-                            minWidth: context.width,
+                return ShadButton(
+                  backgroundColor:
+                      i == currentPage ? colorScheme.primaryContainer : null,
+                  onPressed: () {
+                    _loadUsers(context, page: i);
+                  },
+                  child: Text("$i"),
+                );
+              },
+            ).toList();
+          }
+          return AppCustomContainer(
+            child: Center(
+              child: _loaded.value
+                  ? Padding(
+                      padding: EdgeInsets.all(AppSizes.sm),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Center(
+                            child: Text(strings.value.userManagement,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.titleLarge),
                           ),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(AppSizes.sm),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SearchBar(
-                                  onChanged: (value) async {
-                                    final api =
-                                        await ApiClientInstance.getApiClient();
-                                  },
-                                  constraints: BoxConstraints(
-                                    maxWidth: AppSizes.lg * 8,
-                                    minHeight: AppSizes.lg * 1.5,
-                                    maxHeight: AppSizes.lg * 1.5,
-                                  ),
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainer),
-                                  elevation: WidgetStatePropertyAll(0),
-                                  leading: Icon(Icons.search),
-                                  hintText: strings.value.search,
-                                ),
-                                Row(
-                                  children: [
-                                    ShadButton(
-                                        backgroundColor:
-                                            colorScheme.surfaceContainerLow,
-                                        hoverBackgroundColor:
-                                            colorScheme.surfaceContainerHighest,
-                                        foregroundColor: colorScheme.onSurface,
-                                        onPressed: () {
-                                          _showAddUserDialog(context);
-                                        },
-                                        child: Text(strings.value.addUser)),
-                                    ShadButton.destructive(
-                                        onPressed: () =>
-                                            _onDeleteButtonClick(context),
-                                        enabled: !_showCheckboxColumn.value,
-                                        child: Text(strings.value.delete)),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: AppSizes.sm),
-                        // top actions
-                        Container(
-                          decoration: BoxDecoration(
-                            color: colorScheme.surfaceContainer,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppSizes.md,
-                              vertical: AppSizes.sm,
-                            ),
-                            child: Row(
-                              children: [
-                                // filter button
-                                SizedBox(
-                                  width: AppSizes.xl * 4,
-                                  child: ShadPopover(
-                                    controller: _filtersPopoverController,
-                                    decoration: ShadDecoration(
-                                      border: ShadBorder.none,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainer,
-                                    ),
-                                    closeOnTapOutside: false,
-                                    popover: (context) => SizedBox(
-                                      width: AppSizes.xl * 4,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(strings.value.filter,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headlineMedium),
-                                          SizedBox(
-                                            height: AppSizes.sm,
-                                          ),
-                                          Text(strings.value.filterUser,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge),
-                                          SizedBox(
-                                            height: AppSizes.sm,
-                                          ),
-                                          Divider(),
-                                          SizedBox(
-                                            height: AppSizes.md,
-                                          ),
-                                          Text(strings.value.filterByRole,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium),
-                                          SizedBox(
-                                            height: AppSizes.sm,
-                                          ),
-                                          DropdownMenu(
-                                            hintText: strings.value.role,
-                                            label: Text(strings.value.role),
-                                            inputDecorationTheme:
-                                                Theme.of(context)
-                                                    .inputDecorationTheme
-                                                    .copyWith(
-                                                      filled: true,
-                                                      fillColor:
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .surface,
-                                                    ),
-                                            initialSelection: _roleFilter.value,
-                                            onSelected: (value) {
-                                              _roleFilter.value = value ?? "";
-                                            },
-                                            dropdownMenuEntries: Role.values
-                                                .where((r) =>
-                                                    r !=
-                                                    Role
-                                                        .$unknown) // Exclure la valeur inconnue
-                                                .map(
-                                                    (role) => DropdownMenuEntry(
-                                                          value: role.json!,
-                                                          label: getRoleLabel(
-                                                              context,
-                                                              role), // Afficher la traduction
-                                                        ))
-                                                .toList(),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    child: IconWithLabelButton(
-                                      icon: Icons.filter_alt,
-                                      active: _filtersActive.value,
-                                      text: strings.value.filter,
-                                      onTap: () {
-                                        _filtersActive.value =
-                                            !_filtersActive.value;
-                                        _filtersPopoverController.toggle();
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                // sort button
-                                SizedBox(
-                                  width: AppSizes.xl * 4,
-                                  child: ShadPopover(
-                                    controller: _sortPopoverController,
-                                    decoration: ShadDecoration(
-                                      border: ShadBorder.none,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainer,
-                                    ),
-                                    closeOnTapOutside: false,
-                                    popover: (context) => SizedBox(
-                                      width: AppSizes.xl * 4,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(strings.value.sort,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headlineMedium),
-                                          SizedBox(
-                                            height: AppSizes.sm,
-                                          ),
-                                          Text(strings.value.sortUser,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge),
-                                          SizedBox(
-                                            height: AppSizes.sm,
-                                          ),
-                                          Divider(),
-                                          SizedBox(
-                                            height: AppSizes.md,
-                                          ),
-                                          Text(strings.value.sortBy,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium),
-                                          SizedBox(
-                                            height: AppSizes.sm,
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              ShadSwitch(
-                                                uncheckedTrackColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .surfaceDim,
-                                                checkedTrackColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
-                                                value: _sorters["id"] ?? false,
-                                                label: Text(
-                                                  strings.value.id,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium,
-                                                ),
-                                                onChanged: (value) =>
-                                                    _sorters['id'] = value,
-                                              ),
-                                              ShadSwitch(
-                                                uncheckedTrackColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .surfaceDim,
-                                                checkedTrackColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
-                                                value:
-                                                    _sorters["Email"] ?? false,
-                                                label: Text(
-                                                  strings.value.email,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium,
-                                                ),
-                                                onChanged: (value) =>
-                                                    _sorters['Email'] = value,
-                                              ),
-                                              ShadSwitch(
-                                                uncheckedTrackColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .surfaceDim,
-                                                checkedTrackColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
-                                                value:
-                                                    _sorters["Name"] ?? false,
-                                                label: Text(
-                                                  strings.value.name,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium,
-                                                ),
-                                                onChanged: (value) =>
-                                                    _sorters['Name'] = value,
-                                              ),
-                                              ShadSwitch(
-                                                uncheckedTrackColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .surfaceDim,
-                                                checkedTrackColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
-                                                value:
-                                                    _sorters["Role"] ?? false,
-                                                label: Text(
-                                                  strings.value.role,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium,
-                                                ),
-                                                onChanged: (value) =>
-                                                    _sorters['Role'] = value,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    child: IconWithLabelButton(
-                                      icon: Icons.sort_rounded,
-                                      active: _sortActive.value,
-                                      text: strings.value.sort,
-                                      onTap: () {
-                                        _sortActive.value = !_sortActive.value;
-                                        _sortPopoverController.toggle();
-                                      },
-                                    ),
-                                  ),
-                                ),
-
-                                // PerPage TextField
-                                SizedBox(
-                                  width: _expandPerPage.value
-                                      ? AppSizes.xl * 8
-                                      : AppSizes.xl * 3,
-                                  child: Form(
-                                    key: _perPageFormKey,
-                                    onChanged: () {},
-                                    child: TextFormField(
-                                      validator: (value) =>
-                                          AppValidators.perPageValidator(
-                                        value,
-                                        _expandPerPage,
-                                      ),
-                                      controller: _perPageController,
-                                      onTapOutside: (_) =>
-                                          _executeChangePerPageIfPossible(
-                                              context),
-                                      onEditingComplete: () =>
-                                          _executeChangePerPageIfPossible(
-                                              context),
-                                      onChanged: (value) =>
-                                          _changePerPage(context, value),
-                                      decoration: InputDecoration(
-                                        filled: true,
-                                        labelText: strings.value.perPage,
-                                        hintText: "10",
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(
-                          height: AppSizes.sm,
-                        ),
-
-                        // data table
-                        Expanded(
-                          child: Container(
+                          SizedBox(height: AppSizes.xl),
+                          Container(
                             constraints: BoxConstraints(
                               minWidth: context.width,
                             ),
                             decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainer,
+                              color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: DataTable2(
-                              sortAscending: true,
-                              onSelectAll: (selectedAll) => selectedAll == true
-                                  ? _selectedUsers.addAll(usersData)
-                                  : _selectedUsers.clear(),
-                              showCheckboxColumn: _showCheckboxColumn.value,
-                              sortColumnIndex: 0,
-                              dataRowColor: WidgetStateProperty.fromMap({
-                                WidgetState.hovered: Theme.of(context)
-                                    .colorScheme
-                                    .primaryContainer,
-                                WidgetState.focused:
-                                    colorScheme.primaryContainer,
-                              }),
-                              columns: [
-                                DataColumn2(
-                                    label: Expanded(
-                                        child: Text(
-                                  strings.value.no,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ))),
-                                DataColumn2(
-                                    label: Expanded(
-                                        child: Text(
-                                  strings.value.avatar,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ))),
-                                DataColumn2(
-                                    label: Expanded(
-                                        child: Text(
-                                  strings.value.id,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ))),
-                                DataColumn2(
-                                    label: Expanded(
-                                        child: Text(
-                                  strings.value.email,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ))),
-                                DataColumn2(
-                                    label: Expanded(
-                                        child: Text(
-                                  strings.value.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ))),
-                                DataColumn2(
-                                  label: Expanded(
-                                    child: Text(
-                                      strings.value.role,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall
-                                          ?.copyWith(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                            child: Padding(
+                              padding: EdgeInsets.all(AppSizes.sm),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SearchBar(
+                                    onChanged: (value) async {
+                                      final api = await ApiClientInstance
+                                          .getApiClient();
+                                    },
+                                    constraints: BoxConstraints(
+                                      maxWidth: AppSizes.lg * 8,
+                                      minHeight: AppSizes.lg * 1.5,
+                                      maxHeight: AppSizes.lg * 1.5,
                                     ),
+                                    backgroundColor: WidgetStatePropertyAll(
+                                        Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainer),
+                                    elevation: WidgetStatePropertyAll(0),
+                                    leading: Icon(Icons.search),
+                                    hintText: strings.value.search,
                                   ),
-                                ),
-                                DataColumn2(
-                                  label: Expanded(
-                                    child: Text(
-                                      strings.value.actions,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall
-                                          ?.copyWith(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
+                                  Row(
+                                    children: [
+                                      ShadButton(
+                                          backgroundColor:
+                                              colorScheme.surfaceContainerLow,
+                                          hoverBackgroundColor: colorScheme
+                                              .surfaceContainerHighest,
+                                          foregroundColor:
+                                              colorScheme.onSurface,
+                                          onPressed: () {
+                                            _showAddUserDialog(context);
+                                          },
+                                          child: Text(strings.value.addUser)),
+                                      ShadButton.destructive(
+                                          onPressed: () =>
+                                              _onDeleteButtonClick(context),
+                                          enabled: !_showCheckboxColumn.value,
+                                          child: Text(strings.value.delete)),
+                                    ],
                                   ),
-                                ),
-                              ],
-                              rows: _getRows(context),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
 
-                        SizedBox(height: AppSizes.sm),
-                        // page actions
-                        Container(
-                          decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainer,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Padding(
-                            padding: EdgeInsets.all(AppSizes.sm),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("${strings.value.page} : $currentPage"),
-                                Row(
-                                  children: [
-                                    ShadButton(
-                                      backgroundColor: colorScheme.surface,
-                                      foregroundColor: colorScheme.onSurface,
-                                      enabled: currentPage != null
-                                          ? currentPage! > 1
-                                          : false,
-                                      onPressed: () => _loadUsers(context,
-                                          page: currentPage! - 1),
-                                      child: Text(strings.value.prevPage),
+                          SizedBox(height: AppSizes.sm),
+                          // top actions
+                          Container(
+                            decoration: BoxDecoration(
+                              color: colorScheme.surfaceContainer,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: AppSizes.md,
+                                vertical: AppSizes.sm,
+                              ),
+                              child: Row(
+                                children: [
+                                  // filter button
+                                  SizedBox(
+                                    width: AppSizes.xl * 4,
+                                    child: ShadPopover(
+                                      controller: _filtersPopoverController,
+                                      decoration: ShadDecoration(
+                                        border: ShadBorder.none,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainer,
+                                      ),
+                                      closeOnTapOutside: false,
+                                      popover: (context) => SizedBox(
+                                        width: AppSizes.xl * 4,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(strings.value.filter,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineMedium),
+                                            SizedBox(
+                                              height: AppSizes.sm,
+                                            ),
+                                            Text(strings.value.filterUser,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge),
+                                            SizedBox(
+                                              height: AppSizes.sm,
+                                            ),
+                                            Divider(),
+                                            SizedBox(
+                                              height: AppSizes.md,
+                                            ),
+                                            Text(strings.value.filterByRole,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium),
+                                            SizedBox(
+                                              height: AppSizes.sm,
+                                            ),
+                                            DropdownMenu(
+                                              hintText: strings.value.role,
+                                              label: Text(strings.value.role),
+                                              inputDecorationTheme:
+                                                  Theme.of(context)
+                                                      .inputDecorationTheme
+                                                      .copyWith(
+                                                        filled: true,
+                                                        fillColor:
+                                                            Theme.of(context)
+                                                                .colorScheme
+                                                                .surface,
+                                                      ),
+                                              initialSelection:
+                                                  _roleFilter.value,
+                                              onSelected: (value) {
+                                                _roleFilter.value = value ?? "";
+                                              },
+                                              dropdownMenuEntries: Role.values
+                                                  .where((r) =>
+                                                      r !=
+                                                      Role
+                                                          .$unknown) // Exclure la valeur inconnue
+                                                  .map((role) =>
+                                                      DropdownMenuEntry(
+                                                        value: role.json!,
+                                                        label: getRoleLabel(
+                                                            context,
+                                                            role), // Afficher la traduction
+                                                      ))
+                                                  .toList(),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      child: IconWithLabelButton(
+                                        icon: Icons.filter_alt,
+                                        active: _filtersActive.value,
+                                        text: strings.value.filter,
+                                        onTap: () {
+                                          _filtersActive.value =
+                                              !_filtersActive.value;
+                                          _filtersPopoverController.toggle();
+                                        },
+                                      ),
                                     ),
-                                    ...pageIndexesButtons,
-                                    ShadButton(
-                                      backgroundColor: colorScheme.surface,
-                                      foregroundColor: colorScheme.onSurface,
-                                      enabled: currentPage != null &&
-                                              nbrTotalPages != null
-                                          ? currentPage! < nbrTotalPages!
-                                          : false,
-                                      onPressed: () => _loadUsers(context,
-                                          page: currentPage! + 1),
-                                      child: Text(strings.value.nextPage),
+                                  ),
+                                  // sort button
+                                  SizedBox(
+                                    width: AppSizes.xl * 4,
+                                    child: ShadPopover(
+                                      controller: _sortPopoverController,
+                                      decoration: ShadDecoration(
+                                        border: ShadBorder.none,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainer,
+                                      ),
+                                      closeOnTapOutside: false,
+                                      popover: (context) => SizedBox(
+                                        width: AppSizes.xl * 4,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(strings.value.sort,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineMedium),
+                                            SizedBox(
+                                              height: AppSizes.sm,
+                                            ),
+                                            Text(strings.value.sortUser,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge),
+                                            SizedBox(
+                                              height: AppSizes.sm,
+                                            ),
+                                            Divider(),
+                                            SizedBox(
+                                              height: AppSizes.md,
+                                            ),
+                                            Text(strings.value.sortBy,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium),
+                                            SizedBox(
+                                              height: AppSizes.sm,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                ShadSwitch(
+                                                  uncheckedTrackColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .surfaceDim,
+                                                  checkedTrackColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                  value:
+                                                      _sorters["id"] ?? false,
+                                                  label: Text(
+                                                    strings.value.id,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                  ),
+                                                  onChanged: (value) =>
+                                                      _sorters['id'] = value,
+                                                ),
+                                                ShadSwitch(
+                                                  uncheckedTrackColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .surfaceDim,
+                                                  checkedTrackColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                  value: _sorters["Email"] ??
+                                                      false,
+                                                  label: Text(
+                                                    strings.value.email,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                  ),
+                                                  onChanged: (value) =>
+                                                      _sorters['Email'] = value,
+                                                ),
+                                                ShadSwitch(
+                                                  uncheckedTrackColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .surfaceDim,
+                                                  checkedTrackColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                  value:
+                                                      _sorters["Name"] ?? false,
+                                                  label: Text(
+                                                    strings.value.name,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                  ),
+                                                  onChanged: (value) =>
+                                                      _sorters['Name'] = value,
+                                                ),
+                                                ShadSwitch(
+                                                  uncheckedTrackColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .surfaceDim,
+                                                  checkedTrackColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                  value:
+                                                      _sorters["Role"] ?? false,
+                                                  label: Text(
+                                                    strings.value.role,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                  ),
+                                                  onChanged: (value) =>
+                                                      _sorters['Role'] = value,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      child: IconWithLabelButton(
+                                        icon: Icons.sort_rounded,
+                                        active: _sortActive.value,
+                                        text: strings.value.sort,
+                                        onTap: () {
+                                          _sortActive.value =
+                                              !_sortActive.value;
+                                          _sortPopoverController.toggle();
+                                        },
+                                      ),
                                     ),
-                                  ],
-                                ),
-                                Text(
-                                    "${strings.value.users}: $nbrUsersShown/$nbrTotalUsers"),
-                              ],
+                                  ),
+
+                                  // PerPage TextField
+                                  SizedBox(
+                                    width: _expandPerPage.value
+                                        ? AppSizes.xl * 8
+                                        : AppSizes.xl * 3,
+                                    child: Form(
+                                      key: _perPageFormKey,
+                                      onChanged: () {},
+                                      child: TextFormField(
+                                        validator: (value) =>
+                                            AppValidators.perPageValidator(
+                                          value,
+                                          _expandPerPage,
+                                        ),
+                                        controller: _perPageController,
+                                        onTapOutside: (_) =>
+                                            _executeChangePerPageIfPossible(
+                                                context),
+                                        onEditingComplete: () =>
+                                            _executeChangePerPageIfPossible(
+                                                context),
+                                        onChanged: (value) =>
+                                            _changePerPage(context, value),
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          labelText: strings.value.perPage,
+                                          hintText: "10",
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                  )
-                : Center(child: CircularProgressIndicator()),
-          ),
-        );
-      },
+
+                          SizedBox(
+                            height: AppSizes.sm,
+                          ),
+
+                          // data table
+                          Expanded(
+                            child: Container(
+                              constraints: BoxConstraints(
+                                minWidth: context.width,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainer,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: DataTable2(
+                                sortAscending: true,
+                                onSelectAll: (selectedAll) =>
+                                    selectedAll == true
+                                        ? _selectedUsers.addAll(usersData)
+                                        : _selectedUsers.clear(),
+                                showCheckboxColumn: _showCheckboxColumn.value,
+                                sortColumnIndex: 0,
+                                dataRowColor: WidgetStateProperty.fromMap({
+                                  WidgetState.hovered: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                  WidgetState.focused:
+                                      colorScheme.primaryContainer,
+                                }),
+                                columns: [
+                                  DataColumn2(
+                                      label: Expanded(
+                                          child: Text(
+                                    strings.value.no,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall
+                                        ?.copyWith(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ))),
+                                  DataColumn2(
+                                      label: Expanded(
+                                          child: Text(
+                                    strings.value.avatar,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall
+                                        ?.copyWith(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ))),
+                                  DataColumn2(
+                                      label: Expanded(
+                                          child: Text(
+                                    strings.value.id,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall
+                                        ?.copyWith(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ))),
+                                  DataColumn2(
+                                      label: Expanded(
+                                          child: Text(
+                                    strings.value.email,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall
+                                        ?.copyWith(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ))),
+                                  DataColumn2(
+                                      label: Expanded(
+                                          child: Text(
+                                    strings.value.name,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall
+                                        ?.copyWith(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ))),
+                                  DataColumn2(
+                                    label: Expanded(
+                                      child: Text(
+                                        strings.value.role,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn2(
+                                    label: Expanded(
+                                      child: Text(
+                                        strings.value.actions,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                rows: _getRows(context),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: AppSizes.sm),
+                          // page actions
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainer,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Padding(
+                              padding: EdgeInsets.all(AppSizes.sm),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("${strings.value.page} : $currentPage"),
+                                  Row(
+                                    children: [
+                                      ShadButton(
+                                        backgroundColor: colorScheme.surface,
+                                        foregroundColor: colorScheme.onSurface,
+                                        enabled: currentPage != null
+                                            ? currentPage! > 1
+                                            : false,
+                                        onPressed: () => _loadUsers(context,
+                                            page: currentPage! - 1),
+                                        child: Text(strings.value.prevPage),
+                                      ),
+                                      ...pageIndexesButtons,
+                                      ShadButton(
+                                        backgroundColor: colorScheme.surface,
+                                        foregroundColor: colorScheme.onSurface,
+                                        enabled: currentPage != null &&
+                                                nbrTotalPages != null
+                                            ? currentPage! < nbrTotalPages!
+                                            : false,
+                                        onPressed: () => _loadUsers(context,
+                                            page: currentPage! + 1),
+                                        child: Text(strings.value.nextPage),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                      "${strings.value.users}: $nbrUsersShown/$nbrTotalUsers"),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  : Center(child: CircularProgressIndicator()),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -844,7 +868,7 @@ class UsersPage extends StatelessWidget {
                 ? Text(strings.value.selectUserDelete)
                 : Text(
                     "Are you sure you want to delete ${_selectedUsers.length} user(s)?");
-                   //S.of(context).delete_users(_selectedUsers.length);
+            //S.of(context).delete_users(_selectedUsers.length);
           },
         ),
         action: Obx(

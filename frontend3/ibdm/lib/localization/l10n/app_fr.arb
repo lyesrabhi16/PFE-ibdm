@@ -81,7 +81,10 @@
     "role_ADMIN": "Administrateur",
     "role_SUPERVISOR": "Superviseur",
     "role_OPERATEUR": "Opérateur",
-    "delete_users": "Êtes-vous sûr de vouloir supprimer {count} utilisateur(s) ?"
+    "delete_users": "Êtes-vous sûr de vouloir supprimer {count} utilisateur(s) ?",
+    "ibdm": "IBDM",
+    "ifri_bdd": "Ifri Base de Données Machines"
+
 
 
 
