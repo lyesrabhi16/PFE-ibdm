@@ -1,9 +1,10 @@
 from django.contrib.auth.models import Group, Permission
 from rest_framework import permissions, viewsets
 from api_v1.utils import with_operation_ids
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema_view
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+import rest_framework.pagination
 from users.models import SubordinateAndSuperior
 from .models import Role, User
 from .serializers import (
@@ -25,7 +26,30 @@ from .serializers import (
     on_partial_update="partialUpdateUser",
 )
 @extend_schema(tags=["users"])
-
+@extend_schema_view(
+    list=extend_schema(summary="Get users", description="Get all users", parameters=[
+        OpenApiParameter(
+        name="search",
+        required=False,
+        description="Search by username, email, first_name, last_name",
+        location=OpenApiParameter.QUERY,
+    ),
+    OpenApiParameter(
+        name="ordering",
+        required=False,
+        description="Order by id, username, email, first_name, last_name, role",
+        enum=["id", "username", "email", "first_name", "last_name", "role", "-id", "-username", "-email", "-first_name", "-last_name", "-role"],
+        location=OpenApiParameter.QUERY,
+    ),
+    OpenApiParameter(
+        name="role",
+        required=False,
+        description="Filter by role",
+        location=OpenApiParameter.QUERY,
+        
+    )
+    ]),
+)
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -35,7 +59,7 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     filterset_fields = ["role"]
     search_fields = ["username", "email", "first_name", "last_name"]
-    ordering_fields = ["id","username", "email", "first_name", "last_name"]
+    ordering_fields = ["id","username", "email", "first_name", "last_name", "role"]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):

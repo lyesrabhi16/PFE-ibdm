@@ -15,7 +15,7 @@ class UserController extends GetxController {
   List<Role> _roles = <Role>[];
   Future<List<Role>> getRoles(BuildContext context) async {
     if (_roles.isEmpty) {
-      _loadRoles(context);
+      await _loadRoles(context);
     }
     return _roles;
   }

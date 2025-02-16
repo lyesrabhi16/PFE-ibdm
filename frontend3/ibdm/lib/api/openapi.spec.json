@@ -1,2503 +1,2633 @@
 {
-	"openapi": "3.0.0",
-	"info": {
-		"title": "IBDM API",
-		"version": "1.0.0",
-		"description": "API for IBDM"
-	},
-	"paths": {
-		"/api/v1/auth/login": {
-			"post": {
-				"operationId": "login",
-				"tags": ["Authentication"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/LoginRequestRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/LoginRequestRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/LoginRequestRequest"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/LoginResponse"
-								}
-							}
-						},
-						"description": ""
-					},
-					"400": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						},
-						"description": ""
-					},
-					"401": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			}
-		},
-		"/api/v1/auth/logout": {
-			"post": {
-				"operationId": "logout",
-				"tags": ["Authentication"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			}
-		},
-		"/api/v1/auth/user/me": {
-			"get": {
-				"operationId": "getCurrentUserInfo",
-				"tags": ["Authentication"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			}
-		},
-		"/api/v1/docs/schema/": {
-			"get": {
-				"operationId": "retrieve_api_v1_docs_schema",
-				"description": "OpenApi3 schema for this API. Format can be selected via content negotiation.\n\n- YAML: application/vnd.oai.openapi\n- JSON: application/vnd.oai.openapi+json",
-				"parameters": [
-					{
-						"in": "query",
-						"name": "format",
-						"schema": {
-							"type": "string",
-							"enum": ["json", "yaml"]
-						}
-					},
-					{
-						"in": "query",
-						"name": "lang",
-						"schema": {
-							"type": "string",
-							"enum": [
-								"af",
-								"ar",
-								"ar-dz",
-								"ast",
-								"az",
-								"be",
-								"bg",
-								"bn",
-								"br",
-								"bs",
-								"ca",
-								"ckb",
-								"cs",
-								"cy",
-								"da",
-								"de",
-								"dsb",
-								"el",
-								"en",
-								"en-au",
-								"en-gb",
-								"eo",
-								"es",
-								"es-ar",
-								"es-co",
-								"es-mx",
-								"es-ni",
-								"es-ve",
-								"et",
-								"eu",
-								"fa",
-								"fi",
-								"fr",
-								"fy",
-								"ga",
-								"gd",
-								"gl",
-								"he",
-								"hi",
-								"hr",
-								"hsb",
-								"hu",
-								"hy",
-								"ia",
-								"id",
-								"ig",
-								"io",
-								"is",
-								"it",
-								"ja",
-								"ka",
-								"kab",
-								"kk",
-								"km",
-								"kn",
-								"ko",
-								"ky",
-								"lb",
-								"lt",
-								"lv",
-								"mk",
-								"ml",
-								"mn",
-								"mr",
-								"ms",
-								"my",
-								"nb",
-								"ne",
-								"nl",
-								"nn",
-								"os",
-								"pa",
-								"pl",
-								"pt",
-								"pt-br",
-								"ro",
-								"ru",
-								"sk",
-								"sl",
-								"sq",
-								"sr",
-								"sr-latn",
-								"sv",
-								"sw",
-								"ta",
-								"te",
-								"tg",
-								"th",
-								"tk",
-								"tr",
-								"tt",
-								"udm",
-								"ug",
-								"uk",
-								"ur",
-								"uz",
-								"vi",
-								"zh-hans",
-								"zh-hant"
-							]
-						}
-					}
-				],
-				"tags": ["api"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					},
-					{}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/vnd.oai.openapi": {
-								"schema": {
-									"type": "object",
-									"additionalProperties": {}
-								}
-							},
-							"application/yaml": {
-								"schema": {
-									"type": "object",
-									"additionalProperties": {}
-								}
-							},
-							"application/vnd.oai.openapi+json": {
-								"schema": {
-									"type": "object",
-									"additionalProperties": {}
-								}
-							},
-							"application/json": {
-								"schema": {
-									"type": "object",
-									"additionalProperties": {}
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			}
-		},
-		"/api/v1/documentation/schema/": {
-			"get": {
-				"operationId": "retrieve_api_v1_documentation_schema",
-				"description": "OpenApi3 schema for this API. Format can be selected via content negotiation.\n\n- YAML: application/vnd.oai.openapi\n- JSON: application/vnd.oai.openapi+json",
-				"parameters": [
-					{
-						"in": "query",
-						"name": "format",
-						"schema": {
-							"type": "string",
-							"enum": ["json", "yaml"]
-						}
-					},
-					{
-						"in": "query",
-						"name": "lang",
-						"schema": {
-							"type": "string",
-							"enum": [
-								"af",
-								"ar",
-								"ar-dz",
-								"ast",
-								"az",
-								"be",
-								"bg",
-								"bn",
-								"br",
-								"bs",
-								"ca",
-								"ckb",
-								"cs",
-								"cy",
-								"da",
-								"de",
-								"dsb",
-								"el",
-								"en",
-								"en-au",
-								"en-gb",
-								"eo",
-								"es",
-								"es-ar",
-								"es-co",
-								"es-mx",
-								"es-ni",
-								"es-ve",
-								"et",
-								"eu",
-								"fa",
-								"fi",
-								"fr",
-								"fy",
-								"ga",
-								"gd",
-								"gl",
-								"he",
-								"hi",
-								"hr",
-								"hsb",
-								"hu",
-								"hy",
-								"ia",
-								"id",
-								"ig",
-								"io",
-								"is",
-								"it",
-								"ja",
-								"ka",
-								"kab",
-								"kk",
-								"km",
-								"kn",
-								"ko",
-								"ky",
-								"lb",
-								"lt",
-								"lv",
-								"mk",
-								"ml",
-								"mn",
-								"mr",
-								"ms",
-								"my",
-								"nb",
-								"ne",
-								"nl",
-								"nn",
-								"os",
-								"pa",
-								"pl",
-								"pt",
-								"pt-br",
-								"ro",
-								"ru",
-								"sk",
-								"sl",
-								"sq",
-								"sr",
-								"sr-latn",
-								"sv",
-								"sw",
-								"ta",
-								"te",
-								"tg",
-								"th",
-								"tk",
-								"tr",
-								"tt",
-								"udm",
-								"ug",
-								"uk",
-								"ur",
-								"uz",
-								"vi",
-								"zh-hans",
-								"zh-hant"
-							]
-						}
-					}
-				],
-				"tags": ["api"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					},
-					{}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/vnd.oai.openapi": {
-								"schema": {
-									"type": "object",
-									"additionalProperties": {}
-								}
-							},
-							"application/yaml": {
-								"schema": {
-									"type": "object",
-									"additionalProperties": {}
-								}
-							},
-							"application/vnd.oai.openapi+json": {
-								"schema": {
-									"type": "object",
-									"additionalProperties": {}
-								}
-							},
-							"application/json": {
-								"schema": {
-									"type": "object",
-									"additionalProperties": {}
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			}
-		},
-		"/api/v1/user-management/groups/": {
-			"get": {
-				"operationId": "getGroups",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"name": "enable_pagination",
-						"in": "query",
-						"description": "Enable or disable pagination",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"name": "page",
-						"in": "query",
-						"description": "Page number",
-						"required": false,
-						"schema": {
-							"type": "integer"
-						}
-					},
-					{
-						"name": "per_page",
-						"in": "query",
-						"description": "Number of results per page",
-						"required": false,
-						"schema": {
-							"type": "integer"
-						}
-					}
-				],
-				"tags": ["Roles"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PaginatedGroupList"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"post": {
-				"operationId": "addGroup",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"tags": ["Roles"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/GroupRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/GroupRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/GroupRequest"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"201": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Group"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			}
-		},
-		"/api/v1/user-management/groups/{id}/": {
-			"get": {
-				"operationId": "getGroup",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this group.",
-						"required": true
-					}
-				],
-				"tags": ["Roles"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Group"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"put": {
-				"operationId": "updateGroup",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this group.",
-						"required": true
-					}
-				],
-				"tags": ["Roles"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/GroupRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/GroupRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/GroupRequest"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Group"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"patch": {
-				"operationId": "partialUpdateGroup",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this group.",
-						"required": true
-					}
-				],
-				"tags": ["Roles"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedGroupRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedGroupRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedGroupRequest"
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Group"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"delete": {
-				"operationId": "removeGroup",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this group.",
-						"required": true
-					}
-				],
-				"tags": ["Roles"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"204": {
-						"description": "No response body"
-					}
-				}
-			}
-		},
-		"/api/v1/user-management/permissions/": {
-			"get": {
-				"operationId": "getPermissions",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"name": "enable_pagination",
-						"in": "query",
-						"description": "Enable or disable pagination",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"name": "page",
-						"in": "query",
-						"description": "Page number",
-						"required": false,
-						"schema": {
-							"type": "integer"
-						}
-					},
-					{
-						"name": "per_page",
-						"in": "query",
-						"description": "Number of results per page",
-						"required": false,
-						"schema": {
-							"type": "integer"
-						}
-					}
-				],
-				"tags": ["Permissions"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PaginatedPermissionList"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"post": {
-				"operationId": "addPermission",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"tags": ["Permissions"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/PermissionRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/PermissionRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/PermissionRequest"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"201": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Permission"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			}
-		},
-		"/api/v1/user-management/permissions/{id}/": {
-			"get": {
-				"operationId": "getPermission",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this permission.",
-						"required": true
-					}
-				],
-				"tags": ["Permissions"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Permission"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"put": {
-				"operationId": "updatePermission",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this permission.",
-						"required": true
-					}
-				],
-				"tags": ["Permissions"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/PermissionRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/PermissionRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/PermissionRequest"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Permission"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"patch": {
-				"operationId": "partialUpdatePermission",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this permission.",
-						"required": true
-					}
-				],
-				"tags": ["Permissions"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedPermissionRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedPermissionRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedPermissionRequest"
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Permission"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"delete": {
-				"operationId": "removePermission",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this permission.",
-						"required": true
-					}
-				],
-				"tags": ["Permissions"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"204": {
-						"description": "No response body"
-					}
-				}
-			}
-		},
-		"/api/v1/user-management/roles/": {
-			"get": {
-				"operationId": "getRoles",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"name": "enable_pagination",
-						"in": "query",
-						"description": "Enable or disable pagination",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"name": "page",
-						"in": "query",
-						"description": "Page number",
-						"required": false,
-						"schema": {
-							"type": "integer"
-						}
-					},
-					{
-						"name": "per_page",
-						"in": "query",
-						"description": "Number of results per page",
-						"required": false,
-						"schema": {
-							"type": "integer"
-						}
-					}
-				],
-				"tags": ["Roles"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PaginatedRoleList"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"post": {
-				"operationId": "addRole",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"tags": ["Roles"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/RoleRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/RoleRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/RoleRequest"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"201": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Role"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			}
-		},
-		"/api/v1/user-management/roles/{id}/": {
-			"get": {
-				"operationId": "getRole",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this role.",
-						"required": true
-					}
-				],
-				"tags": ["Roles"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Role"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"put": {
-				"operationId": "updateRole",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this role.",
-						"required": true
-					}
-				],
-				"tags": ["Roles"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/RoleRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/RoleRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/RoleRequest"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Role"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"patch": {
-				"operationId": "partialUpdateRole",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this role.",
-						"required": true
-					}
-				],
-				"tags": ["Roles"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedRoleRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedRoleRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedRoleRequest"
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Role"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"delete": {
-				"operationId": "removeRole",
-				"description": "API endpoint that allows groups to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this role.",
-						"required": true
-					}
-				],
-				"tags": ["Roles"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"204": {
-						"description": "No response body"
-					}
-				}
-			}
-		},
-		"/api/v1/user-management/subordinates_superiors/": {
-			"get": {
-				"operationId": "getSubordinatesAndSuperiors",
-				"parameters": [
-					{
-						"name": "enable_pagination",
-						"in": "query",
-						"description": "Enable or disable pagination",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"name": "page",
-						"in": "query",
-						"description": "Page number",
-						"required": false,
-						"schema": {
-							"type": "integer"
-						}
-					},
-					{
-						"name": "per_page",
-						"in": "query",
-						"description": "Number of results per page",
-						"required": false,
-						"schema": {
-							"type": "integer"
-						}
-					}
-				],
-				"tags": ["api"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PaginatedSubordinateAndSuperiorList"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"post": {
-				"operationId": "addSubordinateAndSuperior",
-				"tags": ["api"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"201": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SubordinateAndSuperior"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			}
-		},
-		"/api/v1/user-management/subordinates_superiors/{id}/": {
-			"get": {
-				"operationId": "getSubordinateAndSuperior",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this subordinate and superior.",
-						"required": true
-					}
-				],
-				"tags": ["api"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SubordinateAndSuperior"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"put": {
-				"operationId": "updateSubordinateAndSuperior",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this subordinate and superior.",
-						"required": true
-					}
-				],
-				"tags": ["api"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SubordinateAndSuperior"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"patch": {
-				"operationId": "partialUpdateSubordinateAndSuperior",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this subordinate and superior.",
-						"required": true
-					}
-				],
-				"tags": ["api"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedSubordinateAndSuperiorRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedSubordinateAndSuperiorRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedSubordinateAndSuperiorRequest"
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SubordinateAndSuperior"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"delete": {
-				"operationId": "removeSubordinateAndSuperior",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this subordinate and superior.",
-						"required": true
-					}
-				],
-				"tags": ["api"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"204": {
-						"description": "No response body"
-					}
-				}
-			}
-		},
-		"/api/v1/user-management/users/": {
-			"get": {
-				"operationId": "getUsers",
-				"description": "API endpoint that allows users to be viewed or edited.",
-				"parameters": [
-					{
-						"name": "enable_pagination",
-						"in": "query",
-						"description": "Enable or disable pagination",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"name": "ordering",
-						"required": false,
-						"in": "query",
-						"description": "Which field to use when ordering the results.",
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"name": "page",
-						"in": "query",
-						"description": "Page number",
-						"required": false,
-						"schema": {
-							"type": "integer"
-						}
-					},
-					{
-						"name": "per_page",
-						"in": "query",
-						"description": "Number of results per page",
-						"required": false,
-						"schema": {
-							"type": "integer"
-						}
-					},
-					{
-						"in": "query",
-						"name": "role",
-						"schema": {
-							"type": "integer"
-						}
-					},
-					{
-						"name": "search",
-						"required": false,
-						"in": "query",
-						"description": "A search term.",
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"tags": ["users"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PaginatedUserList"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"post": {
-				"operationId": "addUser",
-				"description": "API endpoint that allows users to be viewed or edited.",
-				"tags": ["users"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/UserRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/UserRequest"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"201": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			}
-		},
-		"/api/v1/user-management/users/{id}/": {
-			"get": {
-				"operationId": "getUser",
-				"description": "API endpoint that allows users to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this user.",
-						"required": true
-					}
-				],
-				"tags": ["users"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"put": {
-				"operationId": "updateUser",
-				"description": "API endpoint that allows users to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this user.",
-						"required": true
-					}
-				],
-				"tags": ["users"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/UserRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/UserRequest"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"patch": {
-				"operationId": "partialUpdateUser",
-				"description": "API endpoint that allows users to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this user.",
-						"required": true
-					}
-				],
-				"tags": ["users"],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedUserRequest"
-							}
-						},
-						"application/x-www-form-urlencoded": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedUserRequest"
-							}
-						},
-						"multipart/form-data": {
-							"schema": {
-								"$ref": "#/components/schemas/PatchedUserRequest"
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						},
-						"description": ""
-					}
-				}
-			},
-			"delete": {
-				"operationId": "removeUser",
-				"description": "API endpoint that allows users to be viewed or edited.",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"schema": {
-							"type": "integer"
-						},
-						"description": "A unique integer value identifying this user.",
-						"required": true
-					}
-				],
-				"tags": ["users"],
-				"security": [
-					{
-						"MySessionAuthentication": []
-					}
-				],
-				"responses": {
-					"204": {
-						"description": "No response body"
-					}
-				}
-			}
-		}
-	},
-	"components": {
-		"schemas": {
-			"CodeEnum": {
-				"enum": ["invalid_input", "invalid_credentials"],
-				"type": "string",
-				"description": "* `invalid_input` - invalid_input\n* `invalid_credentials` - invalid_credentials"
-			},
-			"ErrorResponse": {
-				"type": "object",
-				"properties": {
-					"status": {
-						"type": "string"
-					},
-					"code": {
-						"$ref": "#/components/schemas/CodeEnum"
-					}
-				},
-				"required": ["code", "status"]
-			},
-			"Group": {
-				"type": "object",
-				"properties": {
-					"url": {
-						"type": "string",
-						"format": "uri",
-						"readOnly": true
-					},
-					"group_id": {
-						"type": "integer",
-						"readOnly": true
-					},
-					"name": {
-						"type": "string",
-						"maxLength": 150
-					}
-				},
-				"required": ["group_id", "name", "url"]
-			},
-			"GroupRequest": {
-				"type": "object",
-				"properties": {
-					"name": {
-						"type": "string",
-						"minLength": 1,
-						"maxLength": 150
-					}
-				},
-				"required": ["name"]
-			},
-			"LoginRequestRequest": {
-				"type": "object",
-				"properties": {
-					"email": {
-						"type": "string",
-						"minLength": 1
-					},
-					"password": {
-						"type": "string",
-						"minLength": 1
-					}
-				},
-				"required": ["email", "password"]
-			},
-			"LoginResponse": {
-				"type": "object",
-				"properties": {
-					"status": {
-						"type": "string"
-					},
-					"user": {
-						"$ref": "#/components/schemas/User"
-					}
-				},
-				"required": ["status", "user"]
-			},
-			"PaginatedGroupList": {
-				"type": "object",
-				"properties": {
-					"next_url": {
-						"type": "string",
-						"nullable": true,
-						"format": "uri",
-						"example": "http://example.com/api/v1/users/?page=2"
-					},
-					"previous_url": {
-						"type": "string",
-						"nullable": true,
-						"format": "uri",
-						"example": "http://example.com/api/v1/users/?page=1"
-					},
-					"total_pages": {
-						"type": "integer",
-						"example": 10
-					},
-					"total_results": {
-						"type": "integer",
-						"example": 100
-					},
-					"per_page": {
-						"type": "integer",
-						"example": 10
-					},
-					"current_page": {
-						"type": "integer",
-						"example": 1
-					},
-					"data": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/Group"
-						}
-					}
-				}
-			},
-			"PaginatedPermissionList": {
-				"type": "object",
-				"properties": {
-					"next_url": {
-						"type": "string",
-						"nullable": true,
-						"format": "uri",
-						"example": "http://example.com/api/v1/users/?page=2"
-					},
-					"previous_url": {
-						"type": "string",
-						"nullable": true,
-						"format": "uri",
-						"example": "http://example.com/api/v1/users/?page=1"
-					},
-					"total_pages": {
-						"type": "integer",
-						"example": 10
-					},
-					"total_results": {
-						"type": "integer",
-						"example": 100
-					},
-					"per_page": {
-						"type": "integer",
-						"example": 10
-					},
-					"current_page": {
-						"type": "integer",
-						"example": 1
-					},
-					"data": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/Permission"
-						}
-					}
-				}
-			},
-			"PaginatedRoleList": {
-				"type": "object",
-				"properties": {
-					"next_url": {
-						"type": "string",
-						"nullable": true,
-						"format": "uri",
-						"example": "http://example.com/api/v1/users/?page=2"
-					},
-					"previous_url": {
-						"type": "string",
-						"nullable": true,
-						"format": "uri",
-						"example": "http://example.com/api/v1/users/?page=1"
-					},
-					"total_pages": {
-						"type": "integer",
-						"example": 10
-					},
-					"total_results": {
-						"type": "integer",
-						"example": 100
-					},
-					"per_page": {
-						"type": "integer",
-						"example": 10
-					},
-					"current_page": {
-						"type": "integer",
-						"example": 1
-					},
-					"data": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/Role"
-						}
-					}
-				}
-			},
-			"PaginatedSubordinateAndSuperiorList": {
-				"type": "object",
-				"properties": {
-					"next_url": {
-						"type": "string",
-						"nullable": true,
-						"format": "uri",
-						"example": "http://example.com/api/v1/users/?page=2"
-					},
-					"previous_url": {
-						"type": "string",
-						"nullable": true,
-						"format": "uri",
-						"example": "http://example.com/api/v1/users/?page=1"
-					},
-					"total_pages": {
-						"type": "integer",
-						"example": 10
-					},
-					"total_results": {
-						"type": "integer",
-						"example": 100
-					},
-					"per_page": {
-						"type": "integer",
-						"example": 10
-					},
-					"current_page": {
-						"type": "integer",
-						"example": 1
-					},
-					"data": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/SubordinateAndSuperior"
-						}
-					}
-				}
-			},
-			"PaginatedUserList": {
-				"type": "object",
-				"properties": {
-					"next_url": {
-						"type": "string",
-						"nullable": true,
-						"format": "uri",
-						"example": "http://example.com/api/v1/users/?page=2"
-					},
-					"previous_url": {
-						"type": "string",
-						"nullable": true,
-						"format": "uri",
-						"example": "http://example.com/api/v1/users/?page=1"
-					},
-					"total_pages": {
-						"type": "integer",
-						"example": 10
-					},
-					"total_results": {
-						"type": "integer",
-						"example": 100
-					},
-					"per_page": {
-						"type": "integer",
-						"example": 10
-					},
-					"current_page": {
-						"type": "integer",
-						"example": 1
-					},
-					"data": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/User"
-						}
-					}
-				}
-			},
-			"PatchedGroupRequest": {
-				"type": "object",
-				"properties": {
-					"name": {
-						"type": "string",
-						"minLength": 1,
-						"maxLength": 150
-					}
-				}
-			},
-			"PatchedPermissionRequest": {
-				"type": "object",
-				"properties": {
-					"name": {
-						"type": "string",
-						"minLength": 1,
-						"maxLength": 255
-					},
-					"codename": {
-						"type": "string",
-						"minLength": 1,
-						"maxLength": 100
-					},
-					"content_type": {
-						"type": "integer",
-						"writeOnly": true
-					}
-				}
-			},
-			"PatchedRoleRequest": {
-				"type": "object",
-				"properties": {
-					"group_id": {
-						"type": "integer"
-					},
-					"managed_roles": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
-					}
-				}
-			},
-			"PatchedSubordinateAndSuperiorRequest": {
-				"type": "object",
-				"properties": {
-					"superior": {
-						"type": "integer"
-					},
-					"subordinate": {
-						"type": "integer"
-					}
-				}
-			},
-			"PatchedUserRequest": {
-				"type": "object",
-				"properties": {
-					"first_name": {
-						"type": "string",
-						"maxLength": 50
-					},
-					"last_name": {
-						"type": "string",
-						"maxLength": 50
-					},
-					"username": {
-						"type": "string",
-						"maxLength": 255
-					},
-					"email": {
-						"type": "string",
-						"format": "email",
-						"minLength": 1,
-						"maxLength": 254
-					},
-					"password": {
-						"type": "string",
-						"writeOnly": true,
-						"minLength": 1,
-						"maxLength": 255
-					},
-					"phone_number": {
-						"type": "string",
-						"maxLength": 15
-					},
-					"avatar": {
-						"type": "string",
-						"format": "binary",
-						"writeOnly": true
-					},
-					"role": {
-						"type": "string"
-					},
-					"user_permissions": {
-						"type": "array",
-						"items": {
-							"type": "integer"
-						},
-						"description": "Specific permissions for this user."
-					}
-				}
-			},
-			"Permission": {
-				"type": "object",
-				"properties": {
-					"url": {
-						"type": "string",
-						"format": "uri",
-						"readOnly": true
-					},
-					"permission_id": {
-						"type": "integer",
-						"readOnly": true
-					},
-					"name": {
-						"type": "string",
-						"maxLength": 255
-					},
-					"codename": {
-						"type": "string",
-						"maxLength": 100
-					},
-					"content_type_name": {
-						"type": "string",
-						"readOnly": true
-					}
-				},
-				"required": [
-					"codename",
-					"content_type_name",
-					"name",
-					"permission_id",
-					"url"
-				]
-			},
-			"PermissionRequest": {
-				"type": "object",
-				"properties": {
-					"name": {
-						"type": "string",
-						"minLength": 1,
-						"maxLength": 255
-					},
-					"codename": {
-						"type": "string",
-						"minLength": 1,
-						"maxLength": 100
-					},
-					"content_type": {
-						"type": "integer",
-						"writeOnly": true
-					}
-				},
-				"required": ["codename", "content_type", "name"]
-			},
-			"Role": {
-				"type": "object",
-				"properties": {
-					"url": {
-						"type": "string",
-						"format": "uri",
-						"readOnly": true
-					},
-					"role_id": {
-						"type": "integer",
-						"readOnly": true
-					},
-					"name": {
-						"type": "string",
-						"readOnly": true
-					},
-					"group_id": {
-						"type": "integer"
-					},
-					"group": {
-						"type": "object",
-						"properties": {
-							"url": {
-								"type": "string"
-							},
-							"group_id": {
-								"type": "integer"
-							},
-							"name": {
-								"type": "string"
-							}
-						},
-						"required": ["url", "group_id", "name"],
-						"readOnly": true
-					},
-					"permissions": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/Permission"
-						},
-						"readOnly": true
-					},
-					"managed_roles": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
-					}
-				},
-				"required": [
-					"group",
-					"group_id",
-					"managed_roles",
-					"name",
-					"permissions",
-					"role_id",
-					"url"
-				]
-			},
-			"RoleRequest": {
-				"type": "object",
-				"properties": {
-					"group_id": {
-						"type": "integer"
-					},
-					"managed_roles": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
-					}
-				},
-				"required": ["group_id", "managed_roles"]
-			},
-			"SubordinateAndSuperior": {
-				"type": "object",
-				"properties": {
-					"url": {
-						"type": "string",
-						"format": "uri",
-						"readOnly": true
-					},
-					"superior": {
-						"type": "integer"
-					},
-					"subordinate": {
-						"type": "integer"
-					}
-				},
-				"required": ["subordinate", "superior", "url"]
-			},
-			"SubordinateAndSuperiorRequest": {
-				"type": "object",
-				"properties": {
-					"superior": {
-						"type": "integer"
-					},
-					"subordinate": {
-						"type": "integer"
-					}
-				},
-				"required": ["subordinate", "superior"]
-			},
-			"SuccessResponse": {
-				"type": "object",
-				"properties": {
-					"status": {
-						"type": "string"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": ["message", "status"]
-			},
-			"User": {
-				"type": "object",
-				"properties": {
-					"url": {
-						"type": "string",
-						"format": "uri",
-						"readOnly": true
-					},
-					"user_id": {
-						"type": "integer",
-						"readOnly": true
-					},
-					"first_name": {
-						"type": "string",
-						"maxLength": 50
-					},
-					"last_name": {
-						"type": "string",
-						"maxLength": 50
-					},
-					"username": {
-						"type": "string",
-						"maxLength": 255
-					},
-					"email": {
-						"type": "string",
-						"format": "email",
-						"maxLength": 254
-					},
-					"phone_number": {
-						"type": "string",
-						"maxLength": 15
-					},
-					"avatar_url": {
-						"type": "string",
-						"format": "uri",
-						"readOnly": true,
-						"nullable": true
-					},
-					"role": {
-						"type": "string"
-					},
-					"superiors": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/UserSerializerWithSuperiors"
-						},
-
-						"readOnly": true
-					},
-					"subordinates": {
-                        "type":"array",
-                        "items":{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "IBDM API",
+        "version": "1.0.0",
+        "description": "API for IBDM"
+    },
+    "paths": {
+        "/api/v1/auth/login": {
+            "post": {
+                "operationId": "login",
+                "tags": [
+                    "Authentication"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequestRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequestRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequestRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "operationId": "logout",
+                "tags": [
+                    "Authentication"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/user/me": {
+            "get": {
+                "operationId": "getCurrentUserInfo",
+                "tags": [
+                    "Authentication"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/docs/schema/": {
+            "get": {
+                "operationId": "retrieve_api_v1_docs_schema",
+                "description": "OpenApi3 schema for this API. Format can be selected via content negotiation.\n\n- YAML: application/vnd.oai.openapi\n- JSON: application/vnd.oai.openapi+json",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "format",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "json",
+                                "yaml"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "lang",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "af",
+                                "ar",
+                                "ar-dz",
+                                "ast",
+                                "az",
+                                "be",
+                                "bg",
+                                "bn",
+                                "br",
+                                "bs",
+                                "ca",
+                                "ckb",
+                                "cs",
+                                "cy",
+                                "da",
+                                "de",
+                                "dsb",
+                                "el",
+                                "en",
+                                "en-au",
+                                "en-gb",
+                                "eo",
+                                "es",
+                                "es-ar",
+                                "es-co",
+                                "es-mx",
+                                "es-ni",
+                                "es-ve",
+                                "et",
+                                "eu",
+                                "fa",
+                                "fi",
+                                "fr",
+                                "fy",
+                                "ga",
+                                "gd",
+                                "gl",
+                                "he",
+                                "hi",
+                                "hr",
+                                "hsb",
+                                "hu",
+                                "hy",
+                                "ia",
+                                "id",
+                                "ig",
+                                "io",
+                                "is",
+                                "it",
+                                "ja",
+                                "ka",
+                                "kab",
+                                "kk",
+                                "km",
+                                "kn",
+                                "ko",
+                                "ky",
+                                "lb",
+                                "lt",
+                                "lv",
+                                "mk",
+                                "ml",
+                                "mn",
+                                "mr",
+                                "ms",
+                                "my",
+                                "nb",
+                                "ne",
+                                "nl",
+                                "nn",
+                                "os",
+                                "pa",
+                                "pl",
+                                "pt",
+                                "pt-br",
+                                "ro",
+                                "ru",
+                                "sk",
+                                "sl",
+                                "sq",
+                                "sr",
+                                "sr-latn",
+                                "sv",
+                                "sw",
+                                "ta",
+                                "te",
+                                "tg",
+                                "th",
+                                "tk",
+                                "tr",
+                                "tt",
+                                "udm",
+                                "ug",
+                                "uk",
+                                "ur",
+                                "uz",
+                                "vi",
+                                "zh-hans",
+                                "zh-hant"
+                            ]
+                        }
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/vnd.oai.openapi": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/yaml": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/vnd.oai.openapi+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/documentation/schema/": {
+            "get": {
+                "operationId": "retrieve_api_v1_documentation_schema",
+                "description": "OpenApi3 schema for this API. Format can be selected via content negotiation.\n\n- YAML: application/vnd.oai.openapi\n- JSON: application/vnd.oai.openapi+json",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "format",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "json",
+                                "yaml"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "lang",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "af",
+                                "ar",
+                                "ar-dz",
+                                "ast",
+                                "az",
+                                "be",
+                                "bg",
+                                "bn",
+                                "br",
+                                "bs",
+                                "ca",
+                                "ckb",
+                                "cs",
+                                "cy",
+                                "da",
+                                "de",
+                                "dsb",
+                                "el",
+                                "en",
+                                "en-au",
+                                "en-gb",
+                                "eo",
+                                "es",
+                                "es-ar",
+                                "es-co",
+                                "es-mx",
+                                "es-ni",
+                                "es-ve",
+                                "et",
+                                "eu",
+                                "fa",
+                                "fi",
+                                "fr",
+                                "fy",
+                                "ga",
+                                "gd",
+                                "gl",
+                                "he",
+                                "hi",
+                                "hr",
+                                "hsb",
+                                "hu",
+                                "hy",
+                                "ia",
+                                "id",
+                                "ig",
+                                "io",
+                                "is",
+                                "it",
+                                "ja",
+                                "ka",
+                                "kab",
+                                "kk",
+                                "km",
+                                "kn",
+                                "ko",
+                                "ky",
+                                "lb",
+                                "lt",
+                                "lv",
+                                "mk",
+                                "ml",
+                                "mn",
+                                "mr",
+                                "ms",
+                                "my",
+                                "nb",
+                                "ne",
+                                "nl",
+                                "nn",
+                                "os",
+                                "pa",
+                                "pl",
+                                "pt",
+                                "pt-br",
+                                "ro",
+                                "ru",
+                                "sk",
+                                "sl",
+                                "sq",
+                                "sr",
+                                "sr-latn",
+                                "sv",
+                                "sw",
+                                "ta",
+                                "te",
+                                "tg",
+                                "th",
+                                "tk",
+                                "tr",
+                                "tt",
+                                "udm",
+                                "ug",
+                                "uk",
+                                "ur",
+                                "uz",
+                                "vi",
+                                "zh-hans",
+                                "zh-hant"
+                            ]
+                        }
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/vnd.oai.openapi": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/yaml": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/vnd.oai.openapi+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/user-management/groups/": {
+            "get": {
+                "operationId": "getGroups",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedGroupList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "addGroup",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "tags": [
+                    "Roles"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GroupRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GroupRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GroupRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Group"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/user-management/groups/{id}/": {
+            "get": {
+                "operationId": "getGroup",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this group.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Group"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "updateGroup",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this group.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GroupRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GroupRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GroupRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Group"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "partialUpdateGroup",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this group.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedGroupRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedGroupRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedGroupRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Group"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "removeGroup",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this group.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/user-management/permissions/": {
+            "get": {
+                "operationId": "getPermissions",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedPermissionList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "addPermission",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "tags": [
+                    "Permissions"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PermissionRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PermissionRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PermissionRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Permission"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/user-management/permissions/{id}/": {
+            "get": {
+                "operationId": "getPermission",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this permission.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Permission"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "updatePermission",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this permission.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PermissionRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PermissionRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PermissionRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Permission"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "partialUpdatePermission",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this permission.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPermissionRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPermissionRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedPermissionRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Permission"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "removePermission",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this permission.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/user-management/roles/": {
+            "get": {
+                "operationId": "getRoles",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedRoleList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "addRole",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "tags": [
+                    "Roles"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/user-management/roles/{id}/": {
+            "get": {
+                "operationId": "getRole",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this role.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "updateRole",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this role.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "partialUpdateRole",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this role.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedRoleRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedRoleRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedRoleRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "removeRole",
+                "description": "API endpoint that allows groups to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this role.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/user-management/subordinates_superiors/": {
+            "get": {
+                "operationId": "getSubordinatesAndSuperiors",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedSubordinateAndSuperiorList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "addSubordinateAndSuperior",
+                "tags": [
+                    "api"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubordinateAndSuperior"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/user-management/subordinates_superiors/{id}/": {
+            "get": {
+                "operationId": "getSubordinateAndSuperior",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this subordinate and superior.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubordinateAndSuperior"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "updateSubordinateAndSuperior",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this subordinate and superior.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubordinateAndSuperiorRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubordinateAndSuperior"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "partialUpdateSubordinateAndSuperior",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this subordinate and superior.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedSubordinateAndSuperiorRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedSubordinateAndSuperiorRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedSubordinateAndSuperiorRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubordinateAndSuperior"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "removeSubordinateAndSuperior",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this subordinate and superior.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/user-management/users/": {
+            "get": {
+                "operationId": "getUsers",
+                "description": "API endpoint that allows users to be viewed or edited.",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "ordering",
+                        "required": false,
+                        "in": "query",
+                        "description": "Which field to use when ordering the results.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "role",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "required": false,
+                        "in": "query",
+                        "description": "A search term.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "users"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedUserList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "addUser",
+                "description": "API endpoint that allows users to be viewed or edited.",
+                "tags": [
+                    "users"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/user-management/users/{id}/": {
+            "get": {
+                "operationId": "getUser",
+                "description": "API endpoint that allows users to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this user.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "users"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "updateUser",
+                "description": "API endpoint that allows users to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this user.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "users"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "partialUpdateUser",
+                "description": "API endpoint that allows users to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this user.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "users"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedUserRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedUserRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedUserRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "removeUser",
+                "description": "API endpoint that allows users to be viewed or edited.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this user.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "users"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CodeEnum": {
+                "enum": [
+                    "invalid_input",
+                    "invalid_credentials"
+                ],
+                "type": "string",
+                "description": "* `invalid_input` - invalid_input\n* `invalid_credentials` - invalid_credentials"
+            },
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string"
+                    },
+                    "code": {
+                        "$ref": "#/components/schemas/CodeEnum"
+                    }
+                },
+                "required": [
+                    "code",
+                    "status"
+                ]
+            },
+            "Group": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
+                    },
+                    "group_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 150
+                    }
+                },
+                "required": [
+                    "group_id",
+                    "name",
+                    "url"
+                ]
+            },
+            "GroupRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 150
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "LoginRequestRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ]
+            },
+            "LoginResponse": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    }
+                },
+                "required": [
+                    "status",
+                    "user"
+                ]
+            },
+            "PaginatedGroupList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Group"
+                        }
+                    }
+                }
+            },
+            "PaginatedPermissionList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Permission"
+                        }
+                    }
+                }
+            },
+            "PaginatedRoleList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Role"
+                        }
+                    }
+                }
+            },
+            "PaginatedSubordinateAndSuperiorList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SubordinateAndSuperior"
+                        }
+                    }
+                }
+            },
+            "PaginatedUserList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    }
+                }
+            },
+            "PatchedGroupRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 150
+                    }
+                }
+            },
+            "PatchedPermissionRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                    },
+                    "codename": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                    },
+                    "content_type": {
+                        "type": "integer",
+                        "writeOnly": true
+                    }
+                }
+            },
+            "PatchedRoleRequest": {
+                "type": "object",
+                "properties": {
+                    "group_id": {
+                        "type": "integer"
+                    },
+                    "managed_roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "PatchedSubordinateAndSuperiorRequest": {
+                "type": "object",
+                "properties": {
+                    "superior": {
+                        "type": "integer"
+                    },
+                    "subordinate": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "PatchedUserRequest": {
+                "type": "object",
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1,
+                        "maxLength": 254
+                    },
+                    "password": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "minLength": 1,
+                        "maxLength": 255
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "maxLength": 15
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "format": "binary",
+                        "writeOnly": true
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "user_permissions": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "description": "Specific permissions for this user."
+                    }
+                }
+            },
+            "Permission": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
+                    },
+                    "permission_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "codename": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "content_type_name": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "codename",
+                    "content_type_name",
+                    "name",
+                    "permission_id",
+                    "url"
+                ]
+            },
+            "PermissionRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                    },
+                    "codename": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                    },
+                    "content_type": {
+                        "type": "integer",
+                        "writeOnly": true
+                    }
+                },
+                "required": [
+                    "codename",
+                    "content_type",
+                    "name"
+                ]
+            },
+            "Role": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
+                    },
+                    "role_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "group_id": {
+                        "type": "integer"
+                    },
+                    "group": {
+                        "type": "object",
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            },
+                            "group_id": {
+                                "type": "integer"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "url",
+                            "group_id",
+                            "name"
+                        ],
+                        "readOnly": true
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Permission"
+                        },
+                        "readOnly": true,
+                        "default": []
+                    },
+                    "managed_roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "group",
+                    "group_id",
+                    "managed_roles",
+                    "name",
+                    "permissions",
+                    "role_id",
+                    "url"
+                ]
+            },
+            "RoleRequest": {
+                "type": "object",
+                "properties": {
+                    "group_id": {
+                        "type": "integer"
+                    },
+                    "managed_roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "group_id",
+                    "managed_roles"
+                ]
+            },
+            "SubordinateAndSuperior": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
+                    },
+                    "superior": {
+                        "type": "integer"
+                    },
+                    "subordinate": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "subordinate",
+                    "superior",
+                    "url"
+                ]
+            },
+            "SubordinateAndSuperiorRequest": {
+                "type": "object",
+                "properties": {
+                    "superior": {
+                        "type": "integer"
+                    },
+                    "subordinate": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "subordinate",
+                    "superior"
+                ]
+            },
+            "SuccessResponse": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "message",
+                    "status"
+                ]
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 254
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "maxLength": 15
+                    },
+                    "avatar_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true,
+                        "nullable": true
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "superiors": {
+                        "type": "array",
+                        "items":
+                            {
+                                "$ref": "#/components/schemas/UserSerializerWithSuperiors"
+                            },
+                        "readOnly": true
+                    },
+                    "subordinates": {
+                        "type": "array",
+                        "items":
+                            {
+                                "$ref": "#/components/schemas/UserSerializerWithSubordinates"
+                            },
+                        "readOnly": true
+                    },
+                    "user_permissions": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "description": "Specific permissions for this user."
+                    }
+                },
+                "required": [
+                    "avatar_url",
+                    "email",
+                    "role",
+                    "subordinates",
+                    "superiors",
+                    "url",
+                    "user_id"
+                ]
+            },
+            "UserRequest": {
+                "type": "object",
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1,
+                        "maxLength": 254
+                    },
+                    "password": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "minLength": 1,
+                        "maxLength": 255
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "maxLength": 15
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "format": "binary",
+                        "writeOnly": true
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "user_permissions": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "description": "Specific permissions for this user."
+                    }
+                },
+                "required": [
+                    "email",
+                    "role"
+                ]
+            },
+            "UserSerializerWithSubordinates": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 254
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "subordinates": {
+                        "type": "array",
+                        "items": {
                             "$ref": "#/components/schemas/UserSerializerWithSubordinates"
                         },
-						"readOnly": true
-					},
-					"user_permissions": {
-						"type": "array",
-						"items": {
-							"type": "integer"
-						},
-						"description": "Specific permissions for this user."
-					}
-				},
-				"required": [
-					"avatar_url",
-					"email",
-					"role",
-					"subordinates",
-					"superiors",
-					"url",
-					"user_id"
-				]
-			},
-			"UserRequest": {
-				"type": "object",
-				"properties": {
-					"first_name": {
-						"type": "string",
-						"maxLength": 50
-					},
-					"last_name": {
-						"type": "string",
-						"maxLength": 50
-					},
-					"username": {
-						"type": "string",
-						"maxLength": 255
-					},
-					"email": {
-						"type": "string",
-						"format": "email",
-						"minLength": 1,
-						"maxLength": 254
-					},
-					"password": {
-						"type": "string",
-						"writeOnly": true,
-						"minLength": 1,
-						"maxLength": 255
-					},
-					"phone_number": {
-						"type": "string",
-						"maxLength": 15
-					},
-					"avatar": {
-						"type": "string",
-						"format": "binary",
-						"writeOnly": true
-					},
-					"role": {
-						"type": "string"
-					},
-					"user_permissions": {
-						"type": "array",
-						"items": {
-							"type": "integer"
-						},
-						"description": "Specific permissions for this user."
-					}
-				},
-				"required": ["email", "role"]
-			},
-			"UserSerializerWithSubordinates": {
-				"type": "object",
-				"properties": {
-					"url": {
-						"type": "string",
-						"format": "uri",
-						"readOnly": true
-					},
-					"user_id": {
-						"type": "integer",
-						"readOnly": true
-					},
-					"email": {
-						"type": "string",
-						"format": "email",
-						"maxLength": 254
-					},
-					"username": {
-						"type": "string",
-						"maxLength": 255
-					},
-					"subordinates": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/UserSerializerWithSubordinates"
-						},
-						"readOnly": true
-					}
-				},
-				"required": ["email", "subordinates", "url", "user_id"]
-			},
-			"UserSerializerWithSuperiors": {
-				"type": "object",
-				"properties": {
-					"url": {
-						"type": "string",
-						"format": "uri",
-						"readOnly": true
-					},
-					"user_id": {
-						"type": "integer",
-						"readOnly": true
-					},
-					"email": {
-						"type": "string",
-						"format": "email",
-						"maxLength": 254
-					},
-					"username": {
-						"type": "string",
-						"maxLength": 255
-					},
-					"superiors": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/UserSerializerWithSuperiors"
-						},
-						"readOnly": true
-					}
-				},
-				"required": ["email", "superiors", "url", "user_id"]
-			}
-		},
-		"securitySchemes": {
-			"MySessionAuthentication": {
-				"type": "apiKey",
-				"in": "cookie",
-				"name": "sessionid",
-				"description": "Session based authentication. Use the sessionid cookie to authenticate."
-			}
-		}
-	}
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "email",
+                    "subordinates",
+                    "url",
+                    "user_id"
+                ]
+            },
+            "UserSerializerWithSuperiors": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 254
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "superiors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserSerializerWithSuperiors"
+                        },
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "email",
+                    "superiors",
+                    "url",
+                    "user_id"
+                ]
+            }
+        },
+        "securitySchemes": {
+            "MySessionAuthentication": {
+                "type": "apiKey",
+                "in": "cookie",
+                "name": "sessionid",
+                "description": "Session based authentication. Use the sessionid cookie to authenticate."
+            }
+        }
+    }
 }
