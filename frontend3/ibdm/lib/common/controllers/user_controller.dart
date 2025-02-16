@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/services/api/api_client.dart';
-import 'package:ibdm/services/api/api_client/export.dart';
+import 'package:ibdm/services/api_django/api_client/export.dart';
+import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 
@@ -9,6 +11,19 @@ class UserController extends GetxController {
 
   User? get user => _user.value;
   set user(User? value) => _user.value = value;
+
+  List<Role> _roles = <Role>[];
+  Future<List<Role>> getRoles(BuildContext context) async {
+    if (_roles.isEmpty) {
+      _loadRoles(context);
+    }
+    return _roles;
+  }
+
+  Future<void> _loadRoles(BuildContext context) async {
+    final res = await (await ApiClientInstance.getApiClient()).getRoles();
+    _roles = res.data.toList();
+  }
 
   bool get isAuthenticated => () {
         print(
@@ -49,10 +64,10 @@ class UserController extends GetxController {
 
   void fetchUserFromApi({Function(dynamic e)? onFail}) async {
     // fetch user from api
-    IbdmApiClient apiClient = await ApiClientInstance.getApiClient();
+    final apiClient = await ApiClientInstance.getApiClient();
     try {
-      GetUserResponse response = await apiClient.getCurrentUser();
-      setUser(response.user);
+      final response = await apiClient.getCurrentUserInfo();
+      setUser(response);
     } catch (e) {
       onFail?.call(e);
     }

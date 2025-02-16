@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api/api_client.dart';
-import 'package:ibdm/services/api/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/types.dart';
@@ -46,10 +45,10 @@ class LoginActions {
       logger.d("Creating Api Client...");
       logger.d("Requesting Login...");
 
-      IbdmApiClient apiClient = await ApiClientInstance.getApiClient();
+      final apiClient = await ApiClientInstance.getApiClient();
       final response = await apiClient.login(
-        body: LoginRequest(
-            email: emailController.text, password: passwordController.text),
+        email: emailController.text,
+        password: passwordController.text,
       );
       logger.d("Login Response: $response");
       // set login progress to success

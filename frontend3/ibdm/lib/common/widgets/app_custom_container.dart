@@ -10,7 +10,7 @@ class AppCustomContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: isSmallScreen(context)
+        body: isAtMostSmallScreen(context)
             ? DrawerContainer(child: child)
             : SideMenuContainer(child: child),
       ),
