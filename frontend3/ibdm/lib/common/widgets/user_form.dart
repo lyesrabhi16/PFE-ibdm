@@ -161,7 +161,9 @@ class UserForm extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: Image.memory(
-                          getSelectedAvatar()!,
+                          kIsWeb
+                              ? _addUserAvatarBytes!
+                              : _addUserAvatarFile!.readAsBytesSync(),
                           fit: BoxFit.fill,
                         ),
                       ),
@@ -458,13 +460,5 @@ class UserForm extends StatelessWidget {
         .getUser(id: user!.superiors.first.userId);
 
     _loadedSuperiorInitialValue.value = true;
-  }
-
-  Uint8List? getSelectedAvatar() {
-    if (_addUserAvatarSelected.value) {
-      return kIsWeb
-          ? _addUserAvatarBytes!
-          : _addUserAvatarFile!.readAsBytesSync();
-    }
   }
 }

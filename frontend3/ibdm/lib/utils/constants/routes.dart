@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
+import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
 import 'package:ibdm/common/middlewares/protected_route_middleware.dart';
 import 'package:ibdm/pages/settings.dart';
+import 'package:ibdm/pages/siroperie/siroperie.dart';
 import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
+import 'package:ibdm/utils/constants/permissions.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class Routes {
   Routes._();
@@ -17,6 +21,7 @@ class Routes {
 
   static const String home = '/';
   static const String login = '/login';
+  static const String siroperie = '/siroperie';
   static const String settings = '/settings';
   static const String users = '/users';
 
@@ -63,7 +68,17 @@ class Routes {
             page: () => UsersPage(),
             middlewares: [ProtectedRouteMiddleware()],
           ),
-        ),
+        ).withPermission(Permissions.viewUsersPage),
+        Destination(
+          title: "Siroperie",
+          icon: LucideIcons.boxes,
+          route: Routes.siroperie,
+          page: GetPage(
+            name: Routes.siroperie,
+            page: () => SiroperiePage(),
+            middlewares: [ProtectedRouteMiddleware()],
+          ),
+        ).withPermission(Permissions.viewSiroperiePage),
         Destination(
           title: "Settings",
           icon: Icons.settings,

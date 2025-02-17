@@ -37,5 +37,85 @@
     "connectionFailed": "Échec de la connexion",
     "accessDenied": "Accès refusé",
     "loginRequired": "Authentification requise",
-    "logoutRequired": "Déconnexion requise"
+    "logoutRequired": "Déconnexion requise",
+    "siroperieTitle": "Siroperie",
+    "january": "Janvier",
+    "february": "Février",
+    "march": "Mars",
+    "april": "Avril",
+    "may": "Mai",
+    "june": "Juin",
+    "july": "Juillet",
+    "august":"Août",
+    "september": "Septembre",
+    "october": "Octobre",
+    "november": "Novembre",
+    "december": "Décembre",
+    "year": "Année: {year}",
+    "@year":{
+        "placeholders": {
+            "year": {
+                "type": "String",
+                "description": "the year to display",
+                "example": "2025"
+            }
+        }
+    },
+    "month": "Mois: {month}",
+	"@month": {
+		"placeholders": {
+			"month": {
+				"type": "String",
+				"description": "the month to display",
+				"example": "july"
+			}
+		}
+	},
+    "day": "Jour: {day}",
+    "@day": {
+        "placeholders": {
+            "day": {
+                "type": "String",
+                "description": "the day to display",
+                "example": "25"
+            }
+        }
+    }
+    ,
+    "hour": "Heure: {hour}",
+    "@hour": {
+        "placeholders": {
+            "hour": {
+                "type": "String",
+                "description": "the hour to display",
+                "example": "15"
+            }
+        }
+    },
+    "minute": "Minute: {minute}",
+    "@minute": {
+        "placeholders": {
+            "minute": {
+                "type": "String",
+                "description": "the minute to display",
+                "example": "30"
+            }
+        }
+    },
+    "second": "Seconde: {second}",
+    "@second": {
+        "placeholders": {
+            "second": {
+                "type": "String",
+                "description": "the second to display",
+                "example": "45"
+            }
+        }
+    },
+    "totalSucre": "Sucre Total :",
+	"totalSucreTetra": "Sucre Total Tetra :",
+	"totalSucreAdue": "Sucre Total Adue:",
+	"sucreTetraTitle": "Sucre Tetra",
+	"sucreAdueTitle": "Sucre Adue",
+	"showLiveData": "Afficher les données en temps réel"
 }

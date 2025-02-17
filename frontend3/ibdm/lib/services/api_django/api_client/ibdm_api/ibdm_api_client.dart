@@ -10,17 +10,20 @@ import 'package:retrofit/retrofit.dart';
 
 import '../models/format.dart';
 import '../models/group.dart';
+import '../models/has_perm_response.dart';
 import '../models/lang.dart';
 import '../models/login_response.dart';
 import '../models/paginated_group_list.dart';
 import '../models/paginated_permission_list.dart';
 import '../models/paginated_role_list.dart';
 import '../models/paginated_subordinate_and_superior_list.dart';
+import '../models/paginated_sucre_list.dart';
 import '../models/paginated_user_list.dart';
 import '../models/permission.dart';
 import '../models/role.dart';
 import '../models/subordinate_and_superior.dart';
 import '../models/success_response.dart';
+import '../models/sucre.dart';
 import '../models/user.dart';
 
 part 'ibdm_api_client.g.dart';
@@ -42,6 +45,11 @@ abstract class IbdmApiClient {
   @GET('/api/v1/auth/user/me')
   Future<User> getCurrentUserInfo();
 
+  @GET('/api/v1/auth/user/permission/{codename}')
+  Future<HasPermResponse> hasPerm({
+    @Path('codename') required String codename,
+  });
+
   /// OpenApi3 schema for this API. Format can be selected via content negotiation.
   ///
   /// - YAML: application/vnd.oai.openapi.
@@ -60,6 +68,24 @@ abstract class IbdmApiClient {
   Future<dynamic> retrieveApiV1DocumentationSchema({
     @Query('format') Format? format,
     @Query('lang') Lang? lang,
+  });
+
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/siroperie/sucre/')
+  Future<PaginatedSucreList> getSucreList({
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
+  /// [date] - A unique value identifying this sucre.
+  @GET('/api/v1/siroperie/sucre/{date}/')
+  Future<Sucre> getSucre({
+    @Path('date') required DateTime date,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
