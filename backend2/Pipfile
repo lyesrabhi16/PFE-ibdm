@@ -17,6 +17,7 @@ django-cors-headers = "*"
 django-filter = "*"
 python-decouple = "*"
 django-crispy-forms = "*"
+apscheduler = "*"
 
 [requires]
 python_version = "3.12.9"

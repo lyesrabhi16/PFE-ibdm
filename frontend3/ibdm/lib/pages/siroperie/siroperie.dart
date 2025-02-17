@@ -15,11 +15,31 @@ class SiroperiePage extends StatefulWidget {
   State<SiroperiePage> createState() => _SiroperiePageState();
 }
 
+
+
+
+
 class _SiroperiePageState extends State<SiroperiePage> {
+  final _channel = WebSocketChannel.connect(
+    Uri.parse('ws://server.ibdm.local.ifri/ws/sucre'),
+  )
+
+  double TS21_value = 80;
+double TS22_value = 50;
+double TS23_value = 20;
+double TS24_value = 21;
+double TS25_value = 0;
+double T02_value = 65;
+double T03_value = 100;
+double T04_value = 39;
+double T05_value = 15;
+double T06_value = 8;
+
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
     final colorScheme = Theme.of(context).colorScheme;
+    
     return Center(
       child: AppCustomContainer(
         child: Padding(
@@ -65,30 +85,33 @@ class _SiroperiePageState extends State<SiroperiePage> {
                               children: [
                                 Cuve(
                                   title: "TS21",
-                                  value: 80,
-                                  niveaInL: 60000 * 80 / 100,
-                                  niveaInKG: 60000 * 80 / 100 * 3,
+                                  value: TS21_value,
+                                  niveaInL: 60000 * TS21_value / 100,
+                                  niveaInKG: 60000 * TS21_value / 100 * 3,
                                 ),
                                 Cuve(
                                   title: "TS22",
-                                  value: 50,
-                                  niveaInL: 60000 * 50 / 100,
-                                  niveaInKG: 60000 * 50 / 100 * 3,
+                                  value: TS22_value,
+                                  niveaInL: 60000 * TS22_value / 100,
+                                  niveaInKG: 60000 * TS22_value / 100 * 3,
                                 ),
                                 Cuve(
                                   title: "TS23",
-                                  value: 20,
-                                  niveaInL: 60000 * 20 / 100,
-                                  niveaInKG: 60000 * 20 / 100 * 3,
+                                  value: TS23_value,
+                                  niveaInL: 60000 * TS23_value / 100,
+                                  niveaInKG: 60000 * TS24_value / 100 * 3,
                                 ),
                                 Cuve(
                                   title: "TS24",
-                                  value: 21,
-                                  niveaInL: 60000 * 21 / 100,
-                                  niveaInKG: 60000 * 21 / 100 * 3,
+                                  value: TS24_value,
+                                  niveaInL: 60000 * TS24_value / 100,
+                                  niveaInKG: 60000 * TS24_value / 100 * 3,
                                 ),
                                 Cuve(
                                   title: "TS25",
+                                  value: TS25_value,
+                                  niveaInL: 60000 * TS25_value / 100,
+                                  niveaInKG: 60000 * TS25_value / 100 * 3,
                                 ),
                               ],
                             ),
@@ -114,21 +137,33 @@ class _SiroperiePageState extends State<SiroperiePage> {
                                 children: [
                                   Cuve(
                                     title: "T02",
+                                    value: T02_value,
+                                    niveaInL: 140000 * T02_value / 100,
+                                    niveaInKG: 140000 * T02_value / 100 * 3,
                                   ),
                                   Cuve(
                                     title: "T03",
-                                    value: 100,
-                                    niveaInL: 140000,
-                                    niveaInKG: 420000,
+                                    value: T03_value,
+                                    niveaInL: 140000 * T03_value / 100,
+                                    niveaInKG: 140000 * T03_value / 100 * 3,
                                   ),
                                   Cuve(
                                     title: "T04",
+                                    value: T04_value,
+                                    niveaInL: 140000 * T04_value / 100,
+                                    niveaInKG: 140000 * T04_value / 100 * 3,
                                   ),
                                   Cuve(
                                     title: "T05",
+                                    value: T05_value,
+                                    niveaInL: 60000 * T05_value / 100,
+                                    niveaInKG: 60000 * T05_value / 100 * 3,
                                   ),
                                   Cuve(
                                     title: "T06",
+                                    value: T06_value,
+                                    niveaInL: 60000 * T06_value / 100,
+                                    niveaInKG: 60000 * T06_value / 100 * 3,
                                   ),
                                 ],
                               ),
