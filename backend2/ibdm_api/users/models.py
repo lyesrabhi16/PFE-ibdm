@@ -111,4 +111,21 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.email}"
 
+    def has_perm(self, perm: str, obj: models.Model | None = None) -> bool:
+        
+        if self.is_superuser:
+            return True
+        if self.role.group.permissions.filter(codename=perm).exists():
+            return True
+        if self.groups.filter(permissions__codename=perm).exists():
+            return True
+        if self.user_permissions.filter(codename=perm).exists():
+            return True
+        
+        return super().has_perm(perm, obj)
+
+    class Meta:
+        permissions = [
+            ('can_view_users_page', 'Can view users page'),
+        ]
     

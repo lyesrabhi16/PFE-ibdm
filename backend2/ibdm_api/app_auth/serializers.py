@@ -9,3 +9,6 @@ class LoginRequestSerializer(serializers.Serializer):
 class LoginResponseSerializer(serializers.Serializer):
     status = serializers.CharField()
     user = UserSerializer()
+
+class HasPermResponseSerializer(serializers.Serializer):
+    has_perm = serializers.BooleanField()

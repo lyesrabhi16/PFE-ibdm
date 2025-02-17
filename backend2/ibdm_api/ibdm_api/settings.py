@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "app_auth",
     "documentation",
     "users",
+    "siroperie",
     "automate",
 ]
 
@@ -125,6 +126,17 @@ DATABASES = {
             "driver": "ODBC Driver 17 for SQL Server",
         },
     },
+    "siroperie": {
+        "ENGINE": "mssql",
+        "NAME": Env.DATABASE_SIROPERIE_NAME,
+        "USER": Env.DATABASE_SIROPERIE_USER,
+        "PASSWORD": Env.DATABASE_SIROPERIE_PASSWORD,
+        "HOST": Env.DATABASE_SIROPERIE_HOST,
+        "PORT": Env.DATABASE_SIROPERIE_PORT,
+        "OPTIONS": {
+            "driver": "ODBC Driver 17 for SQL Server",
+        },
+},
     "automate": {
         "ENGINE": "mssql",
         "NAME": Env.DATABASE_AUTOMATE_NAME,
