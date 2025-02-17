@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "85527d7686158c367d33cf35e584b3b3555c2c8d2165aa50dbaa33a21744cd1a"
+            "sha256": "bab58b5e53f282d07e6d083c9fbb11dab55a29bc148dd34c16b7eb556b2c4940"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,15 @@
         ]
     },
     "default": {
+        "apscheduler": {
+            "hashes": [
+                "sha256:4c622d250b0955a65d5d0eb91c33e6d43fd879834bf541e0a18661ae60460133",
+                "sha256:fc134ca32e50f5eadcc4938e3a4545ab19131435e851abb40b34d63d5141c6da"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==3.11.0"
+        },
         "asgiref": {
             "hashes": [
                 "sha256:3e1e3ecc849832fe52ccf2cb6686b7a55f82bb1d6aee72a58826471390335e47",
@@ -214,12 +223,12 @@
         },
         "django-filter": {
             "hashes": [
-                "sha256:c4852822928ce17fb699bcfccd644b3574f1a2d80aeb2b4ff4f16b02dd49dc64",
-                "sha256:d8ccaf6732afd21ca0542f6733b11591030fa98669f8d15599b358e24a2cd9c3"
+                "sha256:1ec9eef48fa8da1c0ac9b411744b16c3f4c31176c867886e4c48da369c407153",
+                "sha256:4fa48677cf5857b9b1347fed23e355ea792464e0fe07244d1fdfb8a806215b80"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
-            "version": "==24.3"
+            "markers": "python_version >= '3.9'",
+            "version": "==25.1"
         },
         "django-jazzmin": {
             "hashes": [
@@ -748,6 +757,14 @@
             ],
             "markers": "python_version >= '2'",
             "version": "==2025.1"
+        },
+        "tzlocal": {
+            "hashes": [
+                "sha256:2fafbfc07e9d8b49ade18f898d6bcd37ae88ce3ad6486842a2e4f03af68323d2",
+                "sha256:3814135a1bb29763c6e4f08fd6e41dbb435c7a60bfbb03270211bcc537187d8c"
+            ],
+            "markers": "python_version >= '3.9'",
+            "version": "==5.3"
         },
         "uritemplate": {
             "hashes": [

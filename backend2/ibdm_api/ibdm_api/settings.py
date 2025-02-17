@@ -150,7 +150,11 @@ DATABASES = {
     },
 }
 
-"""  """
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 DATABASE_ROUTERS = ["ibdm_api.db_routers.DB_Router"]
 
