@@ -88,6 +88,17 @@ abstract class IbdmApiClient {
     @Path('date') required DateTime date,
   });
 
+  /// getAtSpecificTime
+  @GET('/api/v1/siroperie/sucre/specific')
+  Future<Sucre> getAtSpecificTime({
+    @Query('year') required int year,
+    @Query('day') int? day,
+    @Query('hour') int? hour,
+    @Query('minute') int? minute,
+    @Query('month') int? month,
+    @Query('second') int? second,
+  });
+
   /// API endpoint that allows groups to be viewed or edited.
   ///
   /// [enablePagination] - Enable or disable pagination.

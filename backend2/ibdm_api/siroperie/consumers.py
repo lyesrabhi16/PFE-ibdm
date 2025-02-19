@@ -1,12 +1,11 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-
 class SucreConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        
         self.group_name = "sucre"
         await self.accept()
         await self.channel_layer.group_add(self.group_name, self.channel_name)
-        
         await self.send(json.dumps({
             "type": "websocket.accept",
         }))

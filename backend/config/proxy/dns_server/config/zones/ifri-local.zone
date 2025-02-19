@@ -10,6 +10,6 @@ $ORIGIN local.ifri.
                                         )
                         IN      NS      ns.local.ifri.
 
-ns                      IN      A       192.168.245.83
+ns                      IN      A       192.168.161.83
 
-*                       IN      A       192.168.245.83
+*                       IN      A       192.168.161.83

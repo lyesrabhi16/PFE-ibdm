@@ -149,6 +149,7 @@ DATABASES = {
         },
     },
 }
+CONN_MAX_AGE = None
 
 CHANNEL_LAYERS = {
     "default": {

@@ -69,6 +69,7 @@ dependencies:
   #  path: n/
   universal_html: ^2.2.4
   geekyants_flutter_gauges: ^1.0.4
+  web_socket_channel: ^3.0.2
 
 dev_dependencies:
   flutter_test:
