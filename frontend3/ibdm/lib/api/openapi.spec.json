@@ -591,6 +591,77 @@
                 }
             }
         },
+        "/api/v1/siroperie/sucre/specific": {
+            "get": {
+                "operationId": "getAtSpecificTime",
+                "description": "getAtSpecificTime",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "day",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "hour",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "minute",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "month",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "second",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "year",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Sucre"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sucre"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/user-management/groups/": {
             "get": {
                 "operationId": "getGroups",
@@ -2716,15 +2787,15 @@
                         "type": "string"
                     },
                     "superiors": {
-                        "type":"array",
-                        "items":{
+                        "type": "array",
+                        "items": {
                                 "$ref": "#/components/schemas/UserSerializerWithSuperiors"
                             },
                         "readOnly": true
                     },
                     "subordinates": {
-                        "type":"array",
-                        "items":{
+                        "type": "array",
+                        "items": {
                                 "$ref": "#/components/schemas/UserSerializerWithSubordinates"
                             },
                         "readOnly": true

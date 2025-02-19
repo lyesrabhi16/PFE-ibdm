@@ -118,5 +118,10 @@
 	"totalSucreAdue": "Sucre Total Adue:",
 	"sucreTetraTitle": "Sucre Tetra",
 	"sucreAdueTitle": "Sucre Adue",
-	"showLiveData": "showLiveData"
+	"showLiveData": "show Live Data",
+	"showingLiveData": "showing Live Data",
+	"inventory": "inventory",
+	"inventoryDescription": "show the inventory of a specific day.",
+	"cuve": "cuve",
+	"failedToGetInventory": "Failed to get inventory"
 }

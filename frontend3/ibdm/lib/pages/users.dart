@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
+import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/avatar.dart';
 import 'package:ibdm/common/widgets/icon_with_label_button.dart';
@@ -473,8 +474,7 @@ class UsersPage extends StatelessWidget {
                                         },
                                         icon: Icon(Icons.settings),
                                         child: Text("Options")),
-                                  ).optionalWhen(
-                                      isAtLeastMediumScreen(context)),
+                                  ).removeWhen(isAtLeastMediumScreen(context)),
                                 ].nonNulls.toList(),
                               ),
                             ].nonNulls.toList(),
@@ -491,7 +491,7 @@ class UsersPage extends StatelessWidget {
                                 ),
                                 child: _getTopActionBar(context, colorScheme,
                                     expandPerPage: _expandPerPage.value))
-                            .optionalWhen(isAtMostSmallScreen(context)),
+                            .removeWhen(isAtMostSmallScreen(context)),
 
                         SizedBox(
                           height: AppSizes.sm,
@@ -1193,20 +1193,20 @@ class UsersPage extends StatelessWidget {
                       _showViewUserDialog(context, user);
                     },
                     icon: Icon(Icons.remove_red_eye_rounded),
-                  ).optionalWhen(isAtMostMediumScreen(context)),
+                  ).removeWhen(isAtMostMediumScreen(context)),
                   IconButton(
                     onPressed: () {
                       _showEditUserDialog(context, user);
                     },
                     icon: Icon(Icons.edit),
-                  ).optionalWhen(isAtMostSmallScreen(context)),
+                  ).removeWhen(isAtMostSmallScreen(context)),
                   IconButton(
                     onPressed: () {
                       _selectedUsers.add(user);
                       _onDeleteButtonClick(context);
                     },
                     icon: Icon(Icons.delete),
-                  ).optionalWhen(isAtMostMediumScreen(context)),
+                  ).removeWhen(isAtMostMediumScreen(context)),
                   ShadPopover(
                     padding: EdgeInsets.zero,
                     decoration: ShadDecoration(
@@ -1237,7 +1237,7 @@ class UsersPage extends StatelessWidget {
                               actionsController.toggle();
                             },
                             text: "edit",
-                          ).optionalWhen(isAtLeastMediumScreen(context)),
+                          ).removeWhen(isAtLeastMediumScreen(context)),
                           IconWithLabelButton(
                             icon: Icons.delete,
                             text: "delete",
@@ -1256,7 +1256,7 @@ class UsersPage extends StatelessWidget {
                         applyTextScaling: true,
                       ),
                     ),
-                  ).optionalWhen(isAtLeastLargeScreen(context)),
+                  ).removeWhen(isAtLeastLargeScreen(context)),
                 ].nonNulls.toList(),
               ),
             ),
@@ -1788,12 +1788,6 @@ class Sorter {
   final String ordering_value;
 
   Sorter({required this.isSelected, required this.ordering_value});
-}
-
-extension WidgetOptionalWhen on Widget {
-  Widget? optionalWhen(bool condition) {
-    return condition ? null : this;
-  }
 }
 
 extension DataColumnOptionalWhen on DataColumn2 {

@@ -309,6 +309,54 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
+  Future<Sucre> getAtSpecificTime({
+    required int year,
+    int? day,
+    int? hour,
+    int? minute,
+    int? month,
+    int? second,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'year': year,
+      r'day': day,
+      r'hour': hour,
+      r'minute': minute,
+      r'month': month,
+      r'second': second,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Sucre>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/siroperie/sucre/specific',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Sucre _value;
+    try {
+      _value = Sucre.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<PaginatedGroupList> getGroups({
     bool? enablePagination,
     int? page,

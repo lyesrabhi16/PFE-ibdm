@@ -117,5 +117,10 @@
 	"totalSucreAdue": "Sucre Total Adue:",
 	"sucreTetraTitle": "Sucre Tetra",
 	"sucreAdueTitle": "Sucre Adue",
-	"showLiveData": "Afficher les données en temps réel"
+	"showLiveData": "Afficher en temps réel",
+    "showingLiveData": "Affichage en temps réel",
+    "inventory": "inventaire",
+    "inventoryDescription": "afficher l'inventaire d'un jour spécifique.",
+    "cuve": "cuve",
+    "failedToGetInventory": "Échec de l'obtention de l'inventaire"
 }
