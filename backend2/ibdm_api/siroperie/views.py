@@ -1,11 +1,12 @@
+from datetime import datetime
 from math import e
 from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import viewsets, generics
+from rest_framework import viewsets
 from rest_framework import permissions
 from api_v1.utils import with_operation_ids
 from siroperie.models import Sucre
-from siroperie.serializers import SucreSerializer
+from siroperie.serializers import SucreMetaDataSerializer, SucreSerializer
 from rest_framework.decorators import api_view, permission_classes
 @extend_schema(
     tags=["Sucre"]
@@ -67,7 +68,7 @@ class SucreView(viewsets.ReadOnlyModelViewSet):
 )
 @api_view(["GET"])
 @permission_classes([permissions.IsAuthenticated])
-def getAtSpecificTime(request):
+def getSucreAtSpecificTime(request):
     """
     getAtSpecificTime
     """
@@ -87,9 +88,36 @@ def getAtSpecificTime(request):
         "date__second": second
     }
     
+
     queryset = Sucre.objects.filter(**filters)
     record = queryset.first()
+
     if (record):
         return JsonResponse(SucreSerializer(record, context={ "request": request }).data)
     else:
-        return JsonResponse({}, status=404)
+        return JsonResponse({}, status=404)
+
+
+@extend_schema(
+    tags=["Sucre"],
+    operation_id="getSucreMetaData",
+    request=None,
+    responses={
+        200: SucreMetaDataSerializer,
+    },
+)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def getSucreMetaData(request):
+    sucreFirst = Sucre.objects.first()
+    sucreLast = Sucre.objects.last()
+
+    if (not sucreFirst or not sucreLast):
+        return JsonResponse({}, status=404)
+    return JsonResponse(
+        SucreMetaDataSerializer({
+            "start_date": sucreFirst.date,
+            "end_date": sucreLast.date
+        }).data
+    )
+

@@ -45,7 +45,7 @@ def Manager():
 scheduler.add_job(
     Manager,
     "interval",
-    seconds=0.5,
+    seconds=0.1,
     id="Manager",
     replace_existing=True,
 )

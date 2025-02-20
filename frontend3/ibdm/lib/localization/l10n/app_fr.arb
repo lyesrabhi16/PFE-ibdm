@@ -122,5 +122,16 @@
     "inventory": "inventaire",
     "inventoryDescription": "afficher l'inventaire d'un jour spécifique.",
     "cuve": "cuve",
-    "failedToGetInventory": "Échec de l'obtention de l'inventaire"
+    "failedToGetInventory": "Échec de l'obtention de l'inventaire",
+    "toOrder": "À commander",
+    "tank": "{count, plural, =0 {Citerne} =1 {Citerne} other {Citernes}}",
+    "@tank":{
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "the number of tanks",
+                "example": "5"
+            }
+        }
+    }
 }

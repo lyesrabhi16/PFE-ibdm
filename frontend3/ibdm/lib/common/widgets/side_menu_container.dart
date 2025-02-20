@@ -27,7 +27,7 @@ class SideMenuContainer extends StatelessWidget {
   static bool get open => sideMenuStateController.isOpen;
   static set open(bool value) => sideMenuStateController.isOpen = value;
 
-  static Rx<SideMenuDisplayMode> displayMode = SideMenuDisplayMode.auto.obs;
+  static Rx<SideMenuDisplayMode> displayMode = SideMenuDisplayMode.compact.obs;
 
   @override
   Widget build(BuildContext context) {
