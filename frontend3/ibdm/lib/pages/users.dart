@@ -46,10 +46,13 @@ class UsersPage extends StatelessWidget {
   static final _perPageFormKey = GlobalKey<FormState>();
 
   static final Rx<bool> _filtersActive = false.obs;
+  static final Rx<bool> _optionsActive = false.obs;
   static final _filtersPopoverController = ShadPopoverController();
 
   static final Rx<bool> _roleFilterSelected = false.obs;
   static Role? _roleFilter;
+
+  ///
   static final _roleFilterController = TextEditingController();
   static final Rx<bool> _sortActive = false.obs;
   static final _sortPopoverController = ShadPopoverController();
@@ -97,6 +100,9 @@ class UsersPage extends StatelessWidget {
   static final RxSet<User> _selectedUsers = <User>{}.obs;
 
   static final ShadPopoverController _actionsPopoverController =
+      ShadPopoverController();
+
+  static final ShadPopoverController _optionsPopoverController =
       ShadPopoverController();
 
   Future<void> _loadUsers(
@@ -439,42 +445,44 @@ class UsersPage extends StatelessWidget {
                                       enabled: !_showCheckboxColumn.value,
                                       icon: Icon(Icons.delete),
                                       child: Text("Delete")),
-                                  ShadPopover(
-                                    decoration: ShadDecoration(
-                                      border: ShadBorder.all(
-                                          width: 0,
-                                          radius: BorderRadius.circular(10)),
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainer,
-                                    ),
-                                    popover: (context) => ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        maxWidth: 300,
+                                  SizedBox(
+                                    width: AppSizes.xl * 4,
+                                    child: ShadPopover(
+                                      closeOnTapOutside: false,
+                                      decoration: ShadDecoration(
+                                        border: ShadBorder.all(
+                                            width: 0,
+                                            radius: BorderRadius.circular(10)),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainer,
                                       ),
-                                      child: _getTopActionBar(
-                                        context,
-                                        colorScheme,
-                                        alignment: WrapAlignment.center,
-                                        expandPerPage: true,
-                                        customExpandPerPage: context.width,
+                                      popover: (context) => ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxWidth: 300,
+                                        ),
+                                        child: _getTopActionBar(
+                                          context,
+                                          colorScheme,
+                                          alignment: WrapAlignment.center,
+                                          expandPerPage: true,
+                                          customExpandPerPage: context.width,
+                                        ),
                                       ),
-                                    ),
-                                    controller: _actionsPopoverController,
-                                    child: ShadButton(
-                                        backgroundColor:
-                                            colorScheme.surfaceContainerLow,
-                                        hoverBackgroundColor:
-                                            colorScheme.surfaceContainerHighest,
-                                        foregroundColor: colorScheme.onSurface,
-                                        onFocusChange: (_) {},
-                                        onPressed: () {
-                                          _actionsPopoverController.toggle();
+                                      controller: _optionsPopoverController,
+                                      child: IconWithLabelButton(
+                                        icon: Icons.settings,
+                                        text: "Options",
+                                        onTap: () {
+                                          _optionsActive.value =
+                                              !_optionsActive.value;
+                                          _optionsPopoverController.toggle();
                                         },
-                                        icon: Icon(Icons.settings),
-                                        child: Text("Options")),
-                                  ).optionalWhen(
-                                      isAtLeastMediumScreen(context)),
+                                        active: _optionsActive.value,
+                                      ),
+                                    ).optionalWhen(
+                                        isAtLeastMediumScreen(context)),
+                                  ),
                                 ].nonNulls.toList(),
                               ),
                             ].nonNulls.toList(),
@@ -679,52 +687,66 @@ class UsersPage extends StatelessWidget {
                         SizedBox(
                           height: AppSizes.sm,
                         ),
-                        DropdownMenu<Role>(
-                          hintText: "Role",
-                          label: Text("Role"),
-                          controller: _roleFilterController,
-                          inputDecorationTheme:
-                              Theme.of(context).inputDecorationTheme.copyWith(
+                        GestureDetector(
+                            onTap: () {
+                              logger.e("Tappedddd");
+                              logger.e("Tappedddd");
+                              logger.e("Tappedddd");
+                              logger.e("Tappedddd");
+                            },
+                            child: DropdownMenu<Role>(
+                              hintText: "Role",
+                              label: Text("Role"),
+                              controller: _roleFilterController,
+                              inputDecorationTheme: Theme.of(context)
+                                  .inputDecorationTheme
+                                  .copyWith(
                                     filled: true,
                                     fillColor:
                                         Theme.of(context).colorScheme.surface,
                                   ),
-                          initialSelection:
-                              _roleFilterSelected.value ? _roleFilter! : null,
-                          textStyle: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                                  color: AppColors.getRoleColorWithRoleValue(
-                                      _roleFilter?.name ?? "")),
-                          onSelected: (value) {
-                            _roleFilterSelected.value = false;
-                            if (value == _roleFilter) {
-                              _roleFilter = null;
-                              _roleFilterController.clear();
-                              _loadUsers(context);
-                              return;
-                            }
-                            logger.e("Role:${_roleFilter?.name} $value");
-                            if (value != null) {
-                              _roleFilter = value;
-                              _roleFilterSelected.value = true;
-                              _loadUsers(context);
-                            }
-                            logger.e("Role:${_roleFilter?.name} $value");
-                          },
-                          dropdownMenuEntries: [
-                            for (var role in roles)
-                              DropdownMenuEntry(
-                                  value: role,
-                                  label: role.name,
-                                  style: ButtonStyle(
-                                    foregroundColor: WidgetStatePropertyAll(
-                                        AppColors.getRoleColorWithRoleValue(
-                                            role.name)),
-                                  )),
-                          ],
-                        )
+                              initialSelection: _roleFilterSelected.value
+                                  ? _roleFilter!
+                                  : null,
+                              textStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                      color:
+                                          AppColors.getRoleColorWithRoleValue(
+                                              _roleFilter?.name ?? "")),
+                              onSelected: (value) {
+                                logger.e("Dropdown tapped: $value");
+                                _roleFilterSelected.value = false;
+                                // _roleFilterSelected.refresh();
+                                if (value == _roleFilter) {
+                                  _roleFilter = null;
+                                  _roleFilterController.clear();
+                                  _loadUsers(context);
+                                  return;
+                                }
+                                logger.e("Dropdown tapped: $value");
+                                logger.e("Role:${_roleFilter?.name} $value");
+                                if (value != null) {
+                                  _roleFilter = value;
+                                  _roleFilterSelected.value = true;
+                                  _loadUsers(context);
+                                }
+                                logger.e("Role:${_roleFilter?.name} $value");
+                              },
+                              dropdownMenuEntries: [
+                                //logger.e("Roles: ${roles.map((r) => r.name).toList()}");
+                                for (var role in roles)
+                                  DropdownMenuEntry(
+                                      value: role,
+                                      label: role.name,
+                                      style: ButtonStyle(
+                                        foregroundColor: WidgetStatePropertyAll(
+                                            AppColors.getRoleColorWithRoleValue(
+                                                role.name)),
+                                      )),
+                              ],
+                            )),
                       ],
                     ),
                   ),
@@ -733,6 +755,7 @@ class UsersPage extends StatelessWidget {
                     active: _filtersActive.value,
                     text: "Filter",
                     onTap: () {
+                      logger.e("filter tapped");
                       _filtersActive.value = !_filtersActive.value;
                       _filtersPopoverController.toggle();
                     },
