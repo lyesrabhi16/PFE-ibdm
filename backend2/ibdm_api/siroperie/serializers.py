@@ -21,3 +21,6 @@ class SucreSerializer(serializers.ModelSerializer):
             "a_t05",
             "a_t06",
         ]
+class SucreMetaDataSerializer(serializers.Serializer):
+    start_date = serializers.DateTimeField()
+    end_date = serializers.DateTimeField()

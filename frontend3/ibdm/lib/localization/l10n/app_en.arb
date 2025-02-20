@@ -123,5 +123,16 @@
 	"inventory": "inventory",
 	"inventoryDescription": "show the inventory of a specific day.",
 	"cuve": "cuve",
-	"failedToGetInventory": "Failed to get inventory"
+	"failedToGetInventory": "Failed to get inventory",
+	"toOrder": "To Order",
+	"tank": "{count, plural, one {Tank} other {Tanks}}",
+	"@tank": {
+		"placeholders": {
+			"count": {
+				"type": "int",
+				"description": "the number of tanks",
+				"example": "5"
+			}
+		}
+	}
 }

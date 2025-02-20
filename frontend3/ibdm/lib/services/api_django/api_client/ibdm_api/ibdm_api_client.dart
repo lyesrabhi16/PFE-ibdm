@@ -24,6 +24,7 @@ import '../models/role.dart';
 import '../models/subordinate_and_superior.dart';
 import '../models/success_response.dart';
 import '../models/sucre.dart';
+import '../models/sucre_meta_data.dart';
 import '../models/user.dart';
 
 part 'ibdm_api_client.g.dart';
@@ -88,9 +89,12 @@ abstract class IbdmApiClient {
     @Path('date') required DateTime date,
   });
 
+  @GET('/api/v1/siroperie/sucre/meta')
+  Future<SucreMetaData> getSucreMetaData();
+
   /// getAtSpecificTime
   @GET('/api/v1/siroperie/sucre/specific')
-  Future<Sucre> getAtSpecificTime({
+  Future<Sucre> getSucreAtSpecificTime({
     @Query('year') required int year,
     @Query('day') int? day,
     @Query('hour') int? hour,

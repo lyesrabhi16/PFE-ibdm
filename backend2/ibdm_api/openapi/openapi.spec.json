@@ -591,9 +591,34 @@
                 }
             }
         },
+        "/api/v1/siroperie/sucre/meta": {
+            "get": {
+                "operationId": "getSucreMetaData",
+                "tags": [
+                    "Sucre"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SucreMetaData"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/siroperie/sucre/specific": {
             "get": {
-                "operationId": "getAtSpecificTime",
+                "operationId": "getSucreAtSpecificTime",
                 "description": "getAtSpecificTime",
                 "parameters": [
                     {
@@ -2742,6 +2767,23 @@
                 },
                 "required": [
                     "url"
+                ]
+            },
+            "SucreMetaData": {
+                "type": "object",
+                "properties": {
+                    "start_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "end_date",
+                    "start_date"
                 ]
             },
             "User": {

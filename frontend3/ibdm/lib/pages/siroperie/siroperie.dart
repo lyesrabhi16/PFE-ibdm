@@ -13,6 +13,7 @@ import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
@@ -46,6 +47,9 @@ class _SiroperiePageState extends State<SiroperiePage> {
   double sommeAdueL = 0;
   double get sommeAdueKG => convertSugarLToKG(sommeAdueL);
 
+  final Rx<DateTime> sucre_start_date = DateTime.now().obs;
+  final Rx<DateTime> sucre_end_date = DateTime.now().obs;
+
   static WebSocketChannel? _channel;
   Rx<bool> isLive = true.obs;
   static Stream? _stream;
@@ -62,6 +66,53 @@ class _SiroperiePageState extends State<SiroperiePage> {
     super.dispose();
   }
 
+  int? year;
+  int? month;
+  int? day;
+  int? hour;
+  int? minute;
+  int? second;
+
+  _getSucreData() async {
+    final _state = FutureState.loading.obs;
+    final toast = Toasts.showStatefulToast(
+        context: context,
+        messageSuccess: "data found",
+        message: "getting data...",
+        messageError: "data not found",
+        state: _state);
+
+    try {
+      logger.e("Getting sucre data $year $month $day $hour $minute $second");
+      final _sucre =
+          await (await ApiClientInstance.getApiClient()).getSucreAtSpecificTime(
+        year: year!,
+        month: month,
+        day: day,
+        hour: hour,
+        minute: minute,
+        second: second,
+      );
+      sucre = _sucre;
+      refresh.value = true;
+      _state.value = FutureState.success;
+      loaded.value = true;
+      return sucre;
+    } catch (e) {
+      logger.e("Failed to get sucre data");
+      _state.value = FutureState.error;
+      loaded.value = true;
+      return null;
+    } finally {
+      Future.delayed(Durations.long2, () {
+        toastification.dismissById(toast.id);
+      });
+    }
+  }
+
+  late Sucre sucre;
+  Rx<bool> refresh = false.obs;
+
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
@@ -72,26 +123,41 @@ class _SiroperiePageState extends State<SiroperiePage> {
         () {
           if (!loaded.value) {
             _load();
+            logger.e("loading because of loaded value");
             return Center(
               child: CircularProgressIndicator(),
             );
           }
-
+          if (refresh.value) {
+            refresh.value = false;
+          }
           return StreamBuilder(
               stream: _stream,
               builder: (context, snapshot) {
-                if (snapshot == null ||
-                    snapshot.connectionState == ConnectionState.waiting ||
-                    snapshot.data == null ||
-                    snapshot.data == "" ||
-                    JsonCodec().decode(snapshot.data) == null ||
-                    JsonCodec().decode(snapshot.data)["data"] == null) {
+                if (isLive.value &&
+                    (snapshot == null ||
+                        snapshot.connectionState == ConnectionState.waiting ||
+                        snapshot.data == null ||
+                        snapshot.data == "" ||
+                        JsonCodec().decode(snapshot.data) == null ||
+                        JsonCodec().decode(snapshot.data)["data"] == null)) {
+                  _load();
+                  logger.e("loading instead of stream builder");
                   return Center(
                     child: CircularProgressIndicator(),
                   );
                 }
-                final sucre =
-                    Sucre.fromJson(JsonCodec().decode(snapshot.data)["data"]);
+                if (isLive.value) {
+                  sucre =
+                      Sucre.fromJson(JsonCodec().decode(snapshot.data)["data"]);
+                  sucre_end_date.value = sucre.date;
+                  year = sucre.date.year;
+                  month = sucre.date.month;
+                  day = sucre.date.day;
+                  hour = sucre.date.hour;
+                  minute = sucre.date.minute;
+                  second = sucre.date.second;
+                }
 
                 T02_value = sucre.aT02 != null ? sucre.aT02! * 100 / 140000 : 0;
                 T03_value = sucre.aT03 != null ? sucre.aT03! * 100 / 140000 : 0;
@@ -285,12 +351,17 @@ class _SiroperiePageState extends State<SiroperiePage> {
     );
   }
 
-_load() async {
+  _load() async {
     loaded.value = false;
     if (_stream == null) {
       try {
         _channel = WebSocketChannel.connect(
             Uri.parse(ApiConfig.sucre_broadcast_websocket_url));
+        final res =
+            await (await ApiClientInstance.getApiClient()).getSucreMetaData();
+
+        sucre_start_date.value = res.startDate;
+        sucre_end_date.value = res.endDate;
         await _channel!.ready;
         _stream = _channel!.stream.asBroadcastStream();
         loaded.value = true;
@@ -311,346 +382,334 @@ _load() async {
     }
     loaded.value = true;
   }
-  
+
+  _getMonthFromInt(int month) {
+    final strings = getTranslations(context).obs;
+    switch (month) {
+      case 1:
+        return strings.value.january;
+      case 2:
+        return strings.value.february;
+      case 3:
+        return strings.value.march;
+      case 4:
+        return strings.value.april;
+      case 5:
+        return strings.value.may;
+      case 6:
+        return strings.value.june;
+      case 7:
+        return strings.value.july;
+      case 8:
+        return strings.value.august;
+      case 9:
+        return strings.value.september;
+      case 10:
+        return strings.value.october;
+      case 11:
+        return strings.value.november;
+      case 12:
+        return strings.value.december;
+    }
+  }
+
+  List<ShadOption> _getMonths() {
+    final strings = getTranslations(context).obs;
+    return List.generate(12, (index) => index + 1)
+        .map((month) {
+          return ShadOption(value: month, child: Text(_getMonthFromInt(month)));
+        })
+        .nonNulls
+        .toList();
+  }
+
+  List<ShadOption> _getDays() {
+    return List.generate(31, (index) => index + 1)
+        .map((day) {
+          return ShadOption(value: day, child: Text(day.toString()));
+        })
+        .nonNulls
+        .toList();
+  }
+
+  List<ShadOption> _getHours() {
+    return List.generate(24, (index) => index)
+        .map((hour) {
+          return ShadOption(value: hour, child: Text(hour.toString()));
+        })
+        .nonNulls
+        .toList();
+  }
+
+  List<ShadOption> _getMinutes() {
+    return List.generate(60, (index) => index)
+        .map((minute) {
+          return ShadOption(value: minute, child: Text(minute.toString()));
+        })
+        .nonNulls
+        .toList();
+  }
+
+  List<ShadOption> _getSeconds() {
+    return List.generate(60, (index) => index)
+        .map((second) {
+          return ShadOption(value: second, child: Text(second.toString()));
+        })
+        .nonNulls
+        .toList();
+  }
+
+  _getBackgroundColor(bool active) {
+    return active
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.surfaceContainerLow;
+  }
+
+  _getForgroundColor(bool active) {
+    return active
+        ? Theme.of(context).colorScheme.onPrimary
+        : Theme.of(context).colorScheme.onSurface;
+  }
+
   _getTopActionsBar() {
     final strings = getTranslations(context).obs;
-    return Obx(
-      () => Padding(
-        padding: EdgeInsets.all(AppSizes.sm),
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          runAlignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            // show live data
-            ShadButton(
-              enabled: !isLive.value,
-              backgroundColor: isLive.value
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.surfaceContainerLow,
-              hoverBackgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerHighest,
-              foregroundColor: isLive.value
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.onSurface,
-              child: Text(isLive.value
-                  ? strings.value.showingLiveData
-                  : strings.value.showLiveData),
-            ),
-            Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                // year
-                ShadSelect(
-                  decoration: ShadDecoration(
-                      border: ShadBorder.none,
-                      color: Theme.of(context).colorScheme.surfaceContainerLow,
-                      labelStyle:
-                          Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              )),
-                  options: [
-                    ShadOption(value: "2021", child: Text("2021")),
-                    ShadOption(value: "2022", child: Text("2022")),
-                    ShadOption(value: "2023", child: Text("2023")),
-                    ShadOption(value: "2024", child: Text("2024")),
-                    ShadOption(value: "2025", child: Text("2025")),
-                  ],
-                  onChanged: (value) {
-                    print(value);
-                  },
-                  selectedOptionBuilder: (context, option) {
-                    return Text(
-                      strings.value.year(int.parse(option)),
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                    );
-                  },
-                  initialValue: "2025",
-                ),
-                // month
-                ShadSelect(
-                  options: [
-                    ShadOption(
-                        value: strings.value.january,
-                        child: Text(strings.value.january)),
-                    ShadOption(
-                        value: strings.value.february,
-                        child: Text(strings.value.february)),
-                    ShadOption(
-                        value: strings.value.march,
-                        child: Text(strings.value.march)),
-                    ShadOption(
-                        value: strings.value.april,
-                        child: Text(strings.value.april)),
-                    ShadOption(
-                        value: strings.value.may,
-                        child: Text(strings.value.may)),
-                    ShadOption(
-                        value: strings.value.june,
-                        child: Text(strings.value.june)),
-                    ShadOption(
-                        value: strings.value.july,
-                        child: Text(strings.value.july)),
-                    ShadOption(
-                        value: strings.value.august,
-                        child: Text(strings.value.august)),
-                    ShadOption(
-                        value: strings.value.september,
-                        child: Text(strings.value.september)),
-                    ShadOption(
-                        value: strings.value.october,
-                        child: Text(strings.value.october)),
-                    ShadOption(
-                        value: strings.value.november,
-                        child: Text(strings.value.november)),
-                    ShadOption(
-                        value: strings.value.december,
-                        child: Text(strings.value.december)),
-                  ],
-                  onChanged: (value) {
-                    print(value);
-                  },
-                  selectedOptionBuilder: (context, option) {
-                    return Text(strings.value.month(option));
-                  },
-                  initialValue: "December",
-                ),
-                // day
-                ShadSelect(
-                  options: [
-                    ShadOption(value: "1", child: Text("1")),
-                    ShadOption(value: "2", child: Text("2")),
-                    ShadOption(value: "3", child: Text("3")),
-                    ShadOption(value: "4", child: Text("4")),
-                    ShadOption(value: "5", child: Text("5")),
-                    ShadOption(value: "6", child: Text("6")),
-                    ShadOption(value: "7", child: Text("7")),
-                    ShadOption(value: "8", child: Text("8")),
-                    ShadOption(value: "9", child: Text("9")),
-                    ShadOption(value: "10", child: Text("10")),
-                    ShadOption(value: "11", child: Text("11")),
-                    ShadOption(value: "12", child: Text("12")),
-                    ShadOption(value: "13", child: Text("13")),
-                    ShadOption(value: "14", child: Text("14")),
-                    ShadOption(value: "15", child: Text("15")),
-                    ShadOption(value: "16", child: Text("16")),
-                    ShadOption(value: "17", child: Text("17")),
-                    ShadOption(value: "18", child: Text("18")),
-                    ShadOption(value: "19", child: Text("19")),
-                    ShadOption(value: "20", child: Text("20")),
-                    ShadOption(value: "21", child: Text("21")),
-                    ShadOption(value: "22", child: Text("22")),
-                    ShadOption(value: "23", child: Text("23")),
-                    ShadOption(value: "24", child: Text("24")),
-                    ShadOption(value: "25", child: Text("25")),
-                    ShadOption(value: "26", child: Text("26")),
-                    ShadOption(value: "27", child: Text("27")),
-                    ShadOption(value: "28", child: Text("28")),
-                    ShadOption(value: "29", child: Text("29")),
-                    ShadOption(value: "30", child: Text("30")),
-                    ShadOption(value: "31", child: Text("31")),
-                  ],
-                  onChanged: (value) {
-                    print(value);
-                  },
-                  selectedOptionBuilder: (context, option) {
-                    return Text(strings.value.day(option));
-                  },
-                  initialValue: "7",
-                ),
-                // hour
-                ShadSelect(
-                  options: [
-                    ShadOption(value: "0", child: Text("0")),
-                    ShadOption(value: "1", child: Text("1")),
-                    ShadOption(value: "2", child: Text("2")),
-                    ShadOption(value: "3", child: Text("3")),
-                    ShadOption(value: "4", child: Text("4")),
-                    ShadOption(value: "5", child: Text("5")),
-                    ShadOption(value: "6", child: Text("6")),
-                    ShadOption(value: "7", child: Text("7")),
-                    ShadOption(value: "8", child: Text("8")),
-                    ShadOption(value: "9", child: Text("9")),
-                    ShadOption(value: "10", child: Text("10")),
-                    ShadOption(value: "11", child: Text("11")),
-                    ShadOption(value: "12", child: Text("12")),
-                    ShadOption(value: "13", child: Text("13")),
-                    ShadOption(value: "14", child: Text("14")),
-                    ShadOption(value: "15", child: Text("15")),
-                    ShadOption(value: "16", child: Text("16")),
-                    ShadOption(value: "17", child: Text("17")),
-                    ShadOption(value: "18", child: Text("18")),
-                    ShadOption(value: "19", child: Text("19")),
-                    ShadOption(value: "20", child: Text("20")),
-                    ShadOption(value: "21", child: Text("21")),
-                    ShadOption(value: "22", child: Text("22")),
-                    ShadOption(value: "23", child: Text("23")),
-                  ],
-                  onChanged: (value) {
-                    print(value);
-                  },
-                  selectedOptionBuilder: (context, option) {
-                    return Text(strings.value.hour(option));
-                  },
-                  initialValue: "12",
-                ),
-                // minute
-                ShadSelect(
-                  options: [
-                    ShadOption(value: "0", child: Text("0")),
-                    ShadOption(value: "1", child: Text("1")),
-                    ShadOption(value: "2", child: Text("2")),
-                    ShadOption(value: "3", child: Text("3")),
-                    ShadOption(value: "4", child: Text("4")),
-                    ShadOption(value: "5", child: Text("5")),
-                    ShadOption(value: "6", child: Text("6")),
-                    ShadOption(value: "7", child: Text("7")),
-                    ShadOption(value: "8", child: Text("8")),
-                    ShadOption(value: "9", child: Text("9")),
-                    ShadOption(value: "10", child: Text("10")),
-                    ShadOption(value: "11", child: Text("11")),
-                    ShadOption(value: "12", child: Text("12")),
-                    ShadOption(value: "13", child: Text("13")),
-                    ShadOption(value: "14", child: Text("14")),
-                    ShadOption(value: "15", child: Text("15")),
-                    ShadOption(value: "16", child: Text("16")),
-                    ShadOption(value: "17", child: Text("17")),
-                    ShadOption(value: "18", child: Text("18")),
-                    ShadOption(value: "19", child: Text("19")),
-                    ShadOption(value: "20", child: Text("20")),
-                    ShadOption(value: "21", child: Text("21")),
-                    ShadOption(value: "22", child: Text("22")),
-                    ShadOption(value: "23", child: Text("23")),
-                    ShadOption(value: "24", child: Text("24")),
-                    ShadOption(value: "25", child: Text("25")),
-                    ShadOption(value: "26", child: Text("26")),
-                    ShadOption(value: "27", child: Text("27")),
-                    ShadOption(value: "28", child: Text("28")),
-                    ShadOption(value: "29", child: Text("29")),
-                    ShadOption(value: "30", child: Text("30")),
-                    ShadOption(value: "31", child: Text("31")),
-                    ShadOption(value: "32", child: Text("32")),
-                    ShadOption(value: "33", child: Text("33")),
-                    ShadOption(value: "34", child: Text("34")),
-                    ShadOption(value: "35", child: Text("35")),
-                    ShadOption(value: "36", child: Text("36")),
-                    ShadOption(value: "37", child: Text("37")),
-                    ShadOption(value: "38", child: Text("38")),
-                    ShadOption(value: "39", child: Text("39")),
-                    ShadOption(value: "40", child: Text("40")),
-                    ShadOption(value: "41", child: Text("41")),
-                    ShadOption(value: "42", child: Text("42")),
-                    ShadOption(value: "43", child: Text("43")),
-                    ShadOption(value: "44", child: Text("44")),
-                    ShadOption(value: "45", child: Text("45")),
-                    ShadOption(value: "46", child: Text("46")),
-                    ShadOption(value: "47", child: Text("47")),
-                    ShadOption(value: "48", child: Text("48")),
-                    ShadOption(value: "49", child: Text("49")),
-                    ShadOption(value: "50", child: Text("50")),
-                    ShadOption(value: "51", child: Text("51")),
-                    ShadOption(value: "52", child: Text("52")),
-                    ShadOption(value: "53", child: Text("53")),
-                    ShadOption(value: "54", child: Text("54")),
-                    ShadOption(value: "55", child: Text("55")),
-                    ShadOption(value: "56", child: Text("56")),
-                    ShadOption(value: "57", child: Text("57")),
-                    ShadOption(value: "58", child: Text("58")),
-                    ShadOption(value: "59", child: Text("59")),
-                  ],
-                  onChanged: (value) {
-                    print(value);
-                  },
-                  selectedOptionBuilder: (context, option) {
-                    return Text(strings.value.minute(option));
-                  },
-                  initialValue: "30",
-                ),
-                // second
-                ShadSelect(
-                  options: [
-                    ShadOption(value: "0", child: Text("0")),
-                    ShadOption(value: "1", child: Text("1")),
-                    ShadOption(value: "2", child: Text("2")),
-                    ShadOption(value: "3", child: Text("3")),
-                    ShadOption(value: "4", child: Text("4")),
-                    ShadOption(value: "5", child: Text("5")),
-                    ShadOption(value: "6", child: Text("6")),
-                    ShadOption(value: "7", child: Text("7")),
-                    ShadOption(value: "8", child: Text("8")),
-                    ShadOption(value: "9", child: Text("9")),
-                    ShadOption(value: "10", child: Text("10")),
-                    ShadOption(value: "11", child: Text("11")),
-                    ShadOption(value: "12", child: Text("12")),
-                    ShadOption(value: "13", child: Text("13")),
-                    ShadOption(value: "14", child: Text("14")),
-                    ShadOption(value: "15", child: Text("15")),
-                    ShadOption(value: "16", child: Text("16")),
-                    ShadOption(value: "17", child: Text("17")),
-                    ShadOption(value: "18", child: Text("18")),
-                    ShadOption(value: "19", child: Text("19")),
-                    ShadOption(value: "20", child: Text("20")),
-                    ShadOption(value: "21", child: Text("21")),
-                    ShadOption(value: "22", child: Text("22")),
-                    ShadOption(value: "23", child: Text("23")),
-                    ShadOption(value: "24", child: Text("24")),
-                    ShadOption(value: "25", child: Text("25")),
-                    ShadOption(value: "26", child: Text("26")),
-                    ShadOption(value: "27", child: Text("27")),
-                    ShadOption(value: "28", child: Text("28")),
-                    ShadOption(value: "29", child: Text("29")),
-                    ShadOption(value: "30", child: Text("30")),
-                    ShadOption(value: "31", child: Text("31")),
-                    ShadOption(value: "32", child: Text("32")),
-                    ShadOption(value: "33", child: Text("33")),
-                    ShadOption(value: "34", child: Text("34")),
-                    ShadOption(value: "35", child: Text("35")),
-                    ShadOption(value: "36", child: Text("36")),
-                    ShadOption(value: "37", child: Text("37")),
-                    ShadOption(value: "38", child: Text("38")),
-                    ShadOption(value: "39", child: Text("39")),
-                    ShadOption(value: "40", child: Text("40")),
-                    ShadOption(value: "41", child: Text("41")),
-                    ShadOption(value: "42", child: Text("42")),
-                    ShadOption(value: "43", child: Text("43")),
-                    ShadOption(value: "44", child: Text("44")),
-                    ShadOption(value: "45", child: Text("45")),
-                    ShadOption(value: "46", child: Text("46")),
-                    ShadOption(value: "47", child: Text("47")),
-                    ShadOption(value: "48", child: Text("48")),
-                    ShadOption(value: "49", child: Text("49")),
-                    ShadOption(value: "50", child: Text("50")),
-                    ShadOption(value: "51", child: Text("51")),
-                    ShadOption(value: "52", child: Text("52")),
-                    ShadOption(value: "53", child: Text("53")),
-                    ShadOption(value: "54", child: Text("54")),
-                    ShadOption(value: "55", child: Text("55")),
-                    ShadOption(value: "56", child: Text("56")),
-                    ShadOption(value: "57", child: Text("57")),
-                    ShadOption(value: "58", child: Text("58")),
-                    ShadOption(value: "59", child: Text("59")),
-                  ],
-                  onChanged: (value) {
-                    print(value);
-                  },
-                  selectedOptionBuilder: (context, option) {
-                    return Text(strings.value.second(option));
-                  },
-                  initialValue: "0",
-                ),
-              ],
-            ),
 
-            // inventory button
-            ShadButton(
-              onPressed: () => _openInventoryDialog(),
-              child: Text(strings.value.inventory),
-            )
-          ],
-        ),
-      ),
+    return Obx(
+      () {
+        return Padding(
+          padding: EdgeInsets.all(AppSizes.sm),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            runAlignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              // show live data
+              ShadButton(
+                backgroundColor: _getBackgroundColor(isLive.value),
+                hoverBackgroundColor: isLive.value
+                    ? Theme.of(context).colorScheme.surfaceContainerLow
+                    : Theme.of(context).colorScheme.primary,
+                hoverForegroundColor: isLive.value
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).colorScheme.onPrimary,
+                foregroundColor: isLive.value
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSurface,
+                onPressed: () {
+                  isLive.value = !isLive.value;
+                },
+                child: Text(isLive.value
+                    ? strings.value.showingLiveData
+                    : strings.value.showLiveData),
+              ),
+              Wrap(
+                alignment: WrapAlignment.center,
+                children: [
+                  // year
+                  ShadSelect(
+                    enabled: !isLive.value,
+                    decoration: ShadDecoration(
+                        border: ShadBorder.all(
+                          width: 0,
+                          radius: BorderRadius.circular(5),
+                        ),
+                        color: _getBackgroundColor(!isLive.value),
+                        labelStyle: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            )),
+                    options: [
+                      for (var year in List.generate(
+                          sucre_end_date.value.year -
+                              sucre_start_date.value.year +
+                              1,
+                          (index) => sucre_start_date.value.year + index))
+                        ShadOption(
+                          value: year.toString(),
+                          child: Text(
+                            year.toString(),
+                          ),
+                        ),
+                    ],
+                    onChanged: (value) {
+                      year = int.parse(value!);
+                      _getSucreData();
+                    },
+                    selectedOptionBuilder: (context, option) {
+                      return Text(
+                        strings.value.year(int.parse(option)),
+                        style: TextTheme.of(context).bodyMedium?.copyWith(
+                              color: _getForgroundColor(!isLive.value),
+                            ),
+                      );
+                    },
+                    initialValue: sucre_end_date.value.year.toString(),
+                  ),
+                  // month
+                  ShadSelect(
+                    enabled: !isLive.value,
+                    options: _getMonths(),
+                    decoration: ShadDecoration(
+                        border: ShadBorder.all(
+                          width: 0,
+                          radius: BorderRadius.circular(5),
+                        ),
+                        color: _getBackgroundColor(!isLive.value),
+                        labelStyle: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            )),
+                    onChanged: (value) {
+                      month = value;
+                      _getSucreData();
+                    },
+                    selectedOptionBuilder: (context, option) {
+                      return Text(
+                        strings.value.month(_getMonthFromInt(option)),
+                        style: TextTheme.of(context).bodyMedium?.copyWith(
+                              color: _getForgroundColor(!isLive.value),
+                            ),
+                      );
+                    },
+                    initialValue: sucre_end_date.value.month,
+                  ),
+                  // day
+                  ShadSelect(
+                    enabled: !isLive.value,
+                    decoration: ShadDecoration(
+                        border: ShadBorder.all(
+                          width: 0,
+                          radius: BorderRadius.circular(5),
+                        ),
+                        color: _getBackgroundColor(!isLive.value),
+                        labelStyle: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            )),
+                    options: _getDays(),
+                    onChanged: (value) {
+                      day = value;
+                      _getSucreData();
+                    },
+                    selectedOptionBuilder: (context, option) {
+                      return Text(
+                        strings.value.day(option.toString()),
+                        style: TextTheme.of(context).bodyMedium?.copyWith(
+                              color: _getForgroundColor(!isLive.value),
+                            ),
+                      );
+                    },
+                    initialValue: sucre_end_date.value.day,
+                  ),
+                  // hour
+                  ShadSelect(
+                    enabled: !isLive.value,
+                    decoration: ShadDecoration(
+                        border: ShadBorder.all(
+                          width: 0,
+                          radius: BorderRadius.circular(5),
+                        ),
+                        color: _getBackgroundColor(!isLive.value),
+                        labelStyle: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            )),
+                    options: _getHours(),
+                    onChanged: (value) {
+                      hour = value;
+                      _getSucreData();
+                    },
+                    selectedOptionBuilder: (context, option) {
+                      return Text(
+                        strings.value.hour(option.toString()),
+                        style: TextTheme.of(context).bodyMedium?.copyWith(
+                              color: _getForgroundColor(!isLive.value),
+                            ),
+                      );
+                    },
+                    initialValue: sucre_end_date.value.hour,
+                  ),
+                  // minute
+                  ShadSelect(
+                    enabled: !isLive.value,
+                    decoration: ShadDecoration(
+                        border: ShadBorder.all(
+                          width: 0,
+                          radius: BorderRadius.circular(5),
+                        ),
+                        color: _getBackgroundColor(!isLive.value),
+                        labelStyle: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            )),
+                    options: _getMinutes(),
+                    onChanged: (value) {
+                      minute = value;
+                      _getSucreData();
+                    },
+                    selectedOptionBuilder: (context, option) {
+                      return Text(
+                        strings.value.minute(option.toString()),
+                        style: TextTheme.of(context).bodyMedium?.copyWith(
+                              color: _getForgroundColor(!isLive.value),
+                            ),
+                      );
+                    },
+                    initialValue: sucre_end_date.value.minute,
+                  ),
+                  // second
+                  ShadSelect(
+                    enabled: !isLive.value,
+                    decoration: ShadDecoration(
+                        border: ShadBorder.all(
+                          width: 0,
+                          radius: BorderRadius.circular(5),
+                        ),
+                        color: _getBackgroundColor(!isLive.value),
+                        labelStyle: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            )),
+                    options: _getSeconds(),
+                    onChanged: (value) {
+                      second = value;
+                      _getSucreData();
+                    },
+                    selectedOptionBuilder: (context, option) {
+                      return Text(
+                        strings.value.second(
+                          option.toString(),
+                        ),
+                        style: TextTheme.of(context).bodyMedium?.copyWith(
+                              color: _getForgroundColor(!isLive.value),
+                            ),
+                      );
+                    },
+                    initialValue: sucre_end_date.value.second,
+                  ),
+                ],
+              ),
+              // inventory button
+              ShadButton(
+                onPressed: () => _openInventoryDialog(),
+                child: Text(strings.value.inventory),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -794,12 +853,13 @@ _load() async {
     final Rx<DateTime> _selectedDate = DateTime.now().obs;
     final Rx<bool> _dataLoaded = false.obs;
     final Rx<bool> _failed = false.obs;
-
+    int retries = 3;
     _getSucreData() async {
       _dataLoaded.value = false;
+
       try {
-        sucre =
-            await (await ApiClientInstance.getApiClient()).getAtSpecificTime(
+        sucre = await (await ApiClientInstance.getApiClient())
+            .getSucreAtSpecificTime(
           year: _selectedDate.value.year,
           month: _selectedDate.value.month,
           day: _selectedDate.value.day,
@@ -807,12 +867,19 @@ _load() async {
         _failed.value = false;
         _dataLoaded.value = true;
       } catch (e) {
-        _failed.value = true;
-        _dataLoaded.value = true;
-        Toasts.showErrorToast(
-          context: context,
-          message: strings.value.failedToGetInventory,
-        );
+        if (retries > 0) {
+          retries--;
+          _getSucreData();
+        } else {
+          retries = 3;
+
+          _failed.value = true;
+          _dataLoaded.value = true;
+          Toasts.showErrorToast(
+            context: context,
+            message: strings.value.failedToGetInventory,
+          );
+        }
       }
     }
 
@@ -833,148 +900,301 @@ _load() async {
                 _selectedDate.value = value ?? _selectedDate.value,
                 _getSucreData()
               },
+              closeOnSelection: true,
+              closeOnTapOutside: true,
+              selectableDayPredicate: (day) =>
+                  day.isSameDayOrGreatier(sucre_start_date.value) &&
+                  day.isSameDayOrLower(sucre_end_date.value),
               allowDeselection: false,
               formatDate: (date) => "${date.day}/${date.month}/${date.year}",
               selected: _selectedDate.value,
+              initialMonth: _selectedDate.value,
+              fromMonth: sucre_start_date.value,
+              toMonth: sucre_end_date.value,
             ),
-            SizedBox(height: AppSizes.lg),
-            Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: context.width,
-                  minHeight: 550,
-                  maxHeight: 550,
-                ),
-                child: Obx(() {
-                  if (!_dataLoaded.value) {
-                    _getSucreData();
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (_failed.value) {
-                    return Text(strings.value.failedToGetInventory);
-                  }
-                  double _T02_value =
-                      sucre?.aT02 != null ? sucre!.aT02! * 100 / 140000 : 0;
-                  double _T03_value =
-                      sucre?.aT03 != null ? sucre!.aT03! * 100 / 140000 : 0;
-                  double _T04_value =
-                      sucre?.aT04 != null ? sucre!.aT04! * 100 / 140000 : 0;
-                  double _T05_value =
-                      sucre?.aT05 != null ? sucre!.aT05! * 100 / 60000 : 0;
-                  double _T06_value =
-                      sucre?.aT06 != null ? sucre!.aT06! * 100 / 60000 : 0;
-                  double _TS21_value =
-                      sucre?.tS21 != null ? sucre!.tS21! * 100 / 60000 : 0;
-                  double _TS22_value =
-                      sucre?.tS22 != null ? sucre!.tS22! * 100 / 60000 : 0;
-                  double _TS23_value =
-                      sucre?.tS23 != null ? sucre!.tS23! * 100 / 60000 : 0;
-                  double _TS24_value =
-                      sucre?.tS24 != null ? sucre!.tS24! * 100 / 60000 : 0;
-                  double _TS25_value =
-                      sucre?.tS25 != null ? sucre!.tS25! * 100 / 60000 : 0;
-                  return ShadTable.list(
-                    columnSpanExtent: (t) => FixedTableSpanExtent(125),
-                    header: [
-                      ShadTableCell.header(child: Text("Cuve")),
-                      ShadTableCell.header(child: Text("Niveau en L")),
-                      ShadTableCell.header(child: Text("Niveau en KG")),
-                      ShadTableCell.header(child: Text("Fill")),
-                    ],
-                    children: [
-                      for (var r in [
-                        InventoryRow(
-                          nom: "TS21",
-                          niveauL: "${sucre!.tS21?.toStringAsFixed(2) ?? 0} L",
-                          niveauKG:
-                              "${convertSugarLToKG(sucre!.tS21 ?? 0).toStringAsFixed(2)} KG",
-                          fill: "${_TS21_value.toStringAsFixed(2)}%",
-                        ),
-                        InventoryRow(
-                          nom: "TS22",
-                          niveauL: "${sucre!.tS22?.toStringAsFixed(2) ?? 0} L",
-                          niveauKG:
-                              "${convertSugarLToKG(sucre!.tS22 ?? 0).toStringAsFixed(2)} KG",
-                          fill: "${_TS22_value.toStringAsFixed(2)}%",
-                        ),
-                        InventoryRow(
-                          nom: "TS23",
-                          niveauL: "${sucre!.tS23?.toStringAsFixed(2) ?? 0} L",
-                          niveauKG:
-                              "${convertSugarLToKG(sucre!.tS23 ?? 0).toStringAsFixed(2)} KG",
-                          fill: "${_TS23_value.toStringAsFixed(2)}%",
-                        ),
-                        InventoryRow(
-                          nom: "TS24",
-                          niveauL: "${sucre!.tS24?.toStringAsFixed(2) ?? 0} L",
-                          niveauKG:
-                              "${convertSugarLToKG(sucre!.tS24 ?? 0).toStringAsFixed(2)} KG",
-                          fill: "${_TS24_value.toStringAsFixed(2)}%",
-                        ),
-                        InventoryRow(
-                          nom: "TS25",
-                          niveauL: "${sucre!.tS25?.toStringAsFixed(2) ?? 0} L",
-                          niveauKG:
-                              "${convertSugarLToKG(sucre!.tS25 ?? 0).toStringAsFixed(2)} KG",
-                          fill: "${_TS25_value.toStringAsFixed(2)}%",
-                        ),
-                        InventoryRow(
-                          nom: "T02",
-                          niveauL: "${sucre!.aT02?.toStringAsFixed(2) ?? 0} L",
-                          niveauKG:
-                              "${convertSugarLToKG(sucre!.aT02 ?? 0).toStringAsFixed(2)} KG",
-                          fill: "${_T02_value.toStringAsFixed(2)}%",
-                        ),
-                        InventoryRow(
-                          nom: "T03",
-                          niveauL: "${sucre!.aT03?.toStringAsFixed(2) ?? 0} L",
-                          niveauKG:
-                              "${convertSugarLToKG(sucre!.aT03 ?? 0).toStringAsFixed(2)} KG",
-                          fill: "${_T03_value.toStringAsFixed(2)}%",
-                        ),
-                        InventoryRow(
-                          nom: "T04",
-                          niveauL: "${sucre!.aT04?.toStringAsFixed(2) ?? 0} L",
-                          niveauKG:
-                              "${convertSugarLToKG(sucre!.aT04 ?? 0).toStringAsFixed(2)} KG",
-                          fill: "${_T04_value.toStringAsFixed(2)}%",
-                        ),
-                        InventoryRow(
-                          nom: "T05",
-                          niveauL: "${sucre!.aT05?.toStringAsFixed(2) ?? 0} L",
-                          niveauKG:
-                              "${convertSugarLToKG(sucre!.aT05 ?? 0).toStringAsFixed(2)} KG",
-                          fill: "${_T05_value.toStringAsFixed(2)}%",
-                        ),
-                        InventoryRow(
-                          nom: "T06",
-                          niveauL: "${sucre!.aT06?.toStringAsFixed(2) ?? 0} L",
-                          niveauKG:
-                              "${convertSugarLToKG(sucre!.aT06 ?? 0).toStringAsFixed(2)} KG",
-                          fill: "${_T06_value.toStringAsFixed(2)}%",
-                        ),
-                      ])
-                        [
-                          ShadTableCell(
-                            child: Text(r.nom),
-                          ),
-                          ShadTableCell(
-                            child: Text(r.niveauL),
-                          ),
-                          ShadTableCell(
-                            child: Text(r.niveauKG),
-                          ),
-                          ShadTableCell(
-                            child: Text(r.fill),
-                          ),
+            Obx(() {
+              if (!_dataLoaded.value) {
+                _getSucreData();
+                return SizedBox(
+                  height: 600,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+              if (_failed.value) {
+                return Text(strings.value.failedToGetInventory);
+              }
+              double _T02_value =
+                  sucre?.aT02 != null ? sucre!.aT02! * 100 / 140000 : 0;
+              double _T03_value =
+                  sucre?.aT03 != null ? sucre!.aT03! * 100 / 140000 : 0;
+              double _T04_value =
+                  sucre?.aT04 != null ? sucre!.aT04! * 100 / 140000 : 0;
+              double _T05_value =
+                  sucre?.aT05 != null ? sucre!.aT05! * 100 / 60000 : 0;
+              double _T06_value =
+                  sucre?.aT06 != null ? sucre!.aT06! * 100 / 60000 : 0;
+              double _TS21_value =
+                  sucre?.tS21 != null ? sucre!.tS21! * 100 / 60000 : 0;
+              double _TS22_value =
+                  sucre?.tS22 != null ? sucre!.tS22! * 100 / 60000 : 0;
+              double _TS23_value =
+                  sucre?.tS23 != null ? sucre!.tS23! * 100 / 60000 : 0;
+              double _TS24_value =
+                  sucre?.tS24 != null ? sucre!.tS24! * 100 / 60000 : 0;
+              double _TS25_value =
+                  sucre?.tS25 != null ? sucre!.tS25! * 100 / 60000 : 0;
+              double _sommeTetraL = (sucre?.tS21 ?? 0) +
+                  (sucre?.tS22 ?? 0) +
+                  (sucre?.tS23 ?? 0) +
+                  (sucre?.tS24 ?? 0) +
+                  (sucre?.tS25 ?? 0);
+              double _sommeAdueL = (sucre?.aT02 ?? 0) +
+                  (sucre?.aT03 ?? 0) +
+                  (sucre?.aT04 ?? 0) +
+                  (sucre?.aT05 ?? 0) +
+                  (sucre?.aT06 ?? 0);
+              return Column(
+                children: [
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: context.width,
+                        minHeight: 300,
+                        maxHeight: 680,
+                      ),
+                      child: ShadTable.list(
+                        columnSpanExtent: (t) => FixedTableSpanExtent(130),
+                        rowSpanBackgroundDecoration: (row) =>
+                            [6, 12, 13].contains(row)
+                                ? SpanDecoration(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainer)
+                                : null,
+                        header: [
+                          ShadTableCell.header(child: Text("Cuve")),
+                          ShadTableCell.header(child: Text("Niveau en L")),
+                          ShadTableCell.header(child: Text("Niveau en KG")),
+                          ShadTableCell.header(child: Text("Fill")),
                         ],
-                    ],
-                  );
-                }),
-              ),
-            )
+                        children: [
+                          for (var r in [
+                            InventoryRow(
+                              nom: "TS21",
+                              niveauL:
+                                  "${sucre!.tS21?.toStringAsFixed(2) ?? 0} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(sucre!.tS21 ?? 0).toStringAsFixed(2)} KG",
+                              fill: "${_TS21_value.toStringAsFixed(2)}%",
+                              inDanger: _TS21_value < 10,
+                            ),
+                            InventoryRow(
+                              nom: "TS22",
+                              niveauL:
+                                  "${sucre!.tS22?.toStringAsFixed(2) ?? 0} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(sucre!.tS22 ?? 0).toStringAsFixed(2)} KG",
+                              fill: "${_TS22_value.toStringAsFixed(2)}%",
+                              inDanger: _TS22_value < 10,
+                            ),
+                            InventoryRow(
+                              nom: "TS23",
+                              niveauL:
+                                  "${sucre!.tS23?.toStringAsFixed(2) ?? 0} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(sucre!.tS23 ?? 0).toStringAsFixed(2)} KG",
+                              fill: "${_TS23_value.toStringAsFixed(2)}%",
+                              inDanger: _TS23_value < 10,
+                            ),
+                            InventoryRow(
+                              nom: "TS24",
+                              niveauL:
+                                  "${sucre!.tS24?.toStringAsFixed(2) ?? 0} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(sucre!.tS24 ?? 0).toStringAsFixed(2)} KG",
+                              fill: "${_TS24_value.toStringAsFixed(2)}%",
+                              inDanger: _TS24_value < 10,
+                            ),
+                            InventoryRow(
+                              nom: "TS25",
+                              niveauL:
+                                  "${sucre!.tS25?.toStringAsFixed(2) ?? 0} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(sucre!.tS25 ?? 0).toStringAsFixed(2)} KG",
+                              fill: "${_TS25_value.toStringAsFixed(2)}%",
+                              inDanger: _TS25_value < 10,
+                            ),
+                            InventoryRow(
+                              nom: "Total Tetra",
+                              niveauL: "${_sommeTetraL.toStringAsFixed(2)} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(_sommeTetraL).toStringAsFixed(2)} KG",
+                              fill:
+                                  "${(_sommeTetraL * 100 / 300000).toStringAsFixed(2)}%",
+                              inDanger: _sommeTetraL < 30000,
+                            ),
+                            InventoryRow(
+                              nom: "T02",
+                              niveauL:
+                                  "${sucre!.aT02?.toStringAsFixed(2) ?? 0} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(sucre!.aT02 ?? 0).toStringAsFixed(2)} KG",
+                              fill: "${_T02_value.toStringAsFixed(2)}%",
+                              inDanger: _T02_value < 10,
+                            ),
+                            InventoryRow(
+                              nom: "T03",
+                              niveauL:
+                                  "${sucre!.aT03?.toStringAsFixed(2) ?? 0} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(sucre!.aT03 ?? 0).toStringAsFixed(2)} KG",
+                              fill: "${_T03_value.toStringAsFixed(2)}%",
+                              inDanger: _T03_value < 10,
+                            ),
+                            InventoryRow(
+                              nom: "T04",
+                              niveauL:
+                                  "${sucre!.aT04?.toStringAsFixed(2) ?? 0} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(sucre!.aT04 ?? 0).toStringAsFixed(2)} KG",
+                              fill: "${_T04_value.toStringAsFixed(2)}%",
+                              inDanger: _T04_value < 10,
+                            ),
+                            InventoryRow(
+                              nom: "T05",
+                              niveauL:
+                                  "${sucre!.aT05?.toStringAsFixed(2) ?? 0} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(sucre!.aT05 ?? 0).toStringAsFixed(2)} KG",
+                              fill: "${_T05_value.toStringAsFixed(2)}%",
+                              inDanger: _T05_value < 10,
+                            ),
+                            InventoryRow(
+                              nom: "T06",
+                              niveauL:
+                                  "${sucre!.aT06?.toStringAsFixed(2) ?? 0} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(sucre!.aT06 ?? 0).toStringAsFixed(2)} KG",
+                              fill: "${_T06_value.toStringAsFixed(2)}%",
+                              inDanger: _T06_value < 10,
+                            ),
+                            InventoryRow(
+                              nom: "Total Adue",
+                              niveauL: "${_sommeAdueL.toStringAsFixed(2)} L",
+                              niveauKG:
+                                  "${convertSugarLToKG(_sommeAdueL).toStringAsFixed(2)} KG",
+                              fill:
+                                  "${(_sommeAdueL * 100 / 540000).toStringAsFixed(2)}%",
+                              inDanger: _sommeAdueL < 54000,
+                            ),
+                            InventoryRow(
+                              nom: "Total",
+                              niveauL:
+                                  "${(_sommeTetraL + _sommeAdueL).toStringAsFixed(2)} L",
+                              niveauKG:
+                                  "${convertSugarLToKG((_sommeTetraL + _sommeAdueL)).toStringAsFixed(2)} KG",
+                              fill:
+                                  "${((_sommeTetraL + _sommeAdueL) * 100 / 840000).toStringAsFixed(2)}%",
+                              inDanger: (_sommeTetraL + _sommeAdueL) < 84000,
+                            ),
+                          ])
+                            [
+                              ShadTableCell(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: r.inDanger
+                                          ? errorColor
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                    ),
+                                child: Text(
+                                  r.nom,
+                                  softWrap: false,
+                                ),
+                              ),
+                              ShadTableCell(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: r.inDanger
+                                          ? errorColor
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                    ),
+                                child: Text(
+                                  r.niveauL,
+                                  softWrap: false,
+                                ),
+                              ),
+                              ShadTableCell(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: r.inDanger
+                                          ? errorColor
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                    ),
+                                child: Text(
+                                  r.niveauKG,
+                                  softWrap: false,
+                                ),
+                              ),
+                              ShadTableCell(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: r.inDanger
+                                          ? errorColor
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                    ),
+                                child: Text(
+                                  r.fill,
+                                  softWrap: false,
+                                ),
+                              ),
+                            ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                        Text(
+                          strings.value.toOrder,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: errorColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        Text(
+                          "${((840000 - (_sommeTetraL + _sommeAdueL)) / 20000).floor()} ${strings.value.tank(((840000 - (_sommeTetraL + _sommeAdueL)) / 20000).floor())}",
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: errorColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ]))
+                ],
+              );
+            })
           ],
         ),
       ),
@@ -987,11 +1207,13 @@ class InventoryRow {
   final String niveauL;
   final String niveauKG;
   final String fill;
+  final bool inDanger;
   InventoryRow({
     required this.nom,
     required this.niveauL,
     required this.niveauKG,
     required this.fill,
+    required this.inDanger,
   });
 }
 

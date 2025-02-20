@@ -21,6 +21,7 @@ export 'models/role.dart';
 export 'models/subordinate_and_superior.dart';
 export 'models/success_response.dart';
 export 'models/sucre.dart';
+export 'models/sucre_meta_data.dart';
 export 'models/user.dart';
 export 'models/user_serializer_with_subordinates.dart';
 export 'models/user_serializer_with_superiors.dart';
