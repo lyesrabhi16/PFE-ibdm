@@ -1,22 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/actions_row.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
+import 'package:ibdm/pages/loading_page.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/common/widgets/responsive_appbar.dart';
 import 'dart:io';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 10), () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
     final localeController = Get.find<LocaleController>();
+
+    if (_isLoading) {
+      return LoadingPage();
+    }
+
     final userController = Get.find<UserController>();
 
     return Scaffold(
@@ -77,6 +101,20 @@ class Home extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ActionsRow extends StatelessWidget {
+  const ActionsRow({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        ThemeModeSwitchButton(),
+        LanguageSwitchButton(),
+      ],
     );
   }
 }
