@@ -283,24 +283,6 @@ class UsersPage extends StatelessWidget {
 
     final colorScheme = Theme.of(context).colorScheme;
     final strings = getTranslations(context).obs;
-    String getRoleLabel(BuildContext context, Role r) {
-      final strings = getTranslations(context); // Récupérer la traduction
-      print("Langue active : ${Localizations.localeOf(context)}");
-      print("Traduction pour ${r.json}: ${strings.role_ADMIN_SYSTEM}");
-
-      switch (r) {
-        case Role.adminSystem:
-          return strings.role_ADMIN_SYSTEM;
-        case Role.admin:
-          return strings.role_ADMIN;
-        case Role.supervisor:
-          return strings.role_SUPERVISOR;
-        case Role.operateur:
-          return strings.role_OPERATEUR;
-        default:
-          return r.json!;
-      }
-    }
 
     return Obx(
       () {
@@ -417,11 +399,11 @@ class UsersPage extends StatelessWidget {
                             padding: EdgeInsets.all(AppSizes.sm),
                             child: Wrap(
                               alignment: WrapAlignment.spaceEvenly,
-                            runAlignment: WrapAlignment.center,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            direction: Axis.horizontal,
-                            runSpacing: AppSizes.sm,
-                            verticalDirection: VerticalDirection.down,
+                              runAlignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              direction: Axis.horizontal,
+                              runSpacing: AppSizes.sm,
+                              verticalDirection: VerticalDirection.down,
                               children: [
                                 SearchBar(
                                   onChanged: (value) async {
@@ -429,7 +411,7 @@ class UsersPage extends StatelessWidget {
                                         await ApiClientInstance.getApiClient();
                                   },
                                   onSubmitted: (_) => _loadUsers(context),
-                                onTapOutside: (_) => _loadUsers(context),
+                                  onTapOutside: (_) => _loadUsers(context),
                                   constraints: BoxConstraints(
                                     maxWidth: AppSizes.lg * 8,
                                     minHeight: AppSizes.lg * 1.5,
@@ -444,13 +426,13 @@ class UsersPage extends StatelessWidget {
                                   hintText: strings.value.search,
                                 ),
                                 Wrap(
-                                alignment: WrapAlignment.center,
-                                runAlignment: WrapAlignment.center,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                direction: Axis.horizontal,
-                                runSpacing: AppSizes.sm,
-                                verticalDirection: VerticalDirection.down,
-                                children: [
+                                  alignment: WrapAlignment.center,
+                                  runAlignment: WrapAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  direction: Axis.horizontal,
+                                  runSpacing: AppSizes.sm,
+                                  verticalDirection: VerticalDirection.down,
+                                  children: [
                                     ShadButton(
                                         backgroundColor:
                                             colorScheme.surfaceContainerLow,
@@ -466,44 +448,45 @@ class UsersPage extends StatelessWidget {
                                             _onDeleteButtonClick(context),
                                         enabled: !_showCheckboxColumn.value,
                                         child: Text(strings.value.delete)),
-                                        SizedBox(
-                                    width: AppSizes.xl * 4,
-                                    child: ShadPopover(
-                                      closeOnTapOutside: false,
-                                      decoration: ShadDecoration(
-                                        border: ShadBorder.all(
-                                            width: 0,
-                                            radius: BorderRadius.circular(10)),
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surfaceContainer,
-                                      ),
-                                      popover: (context) => ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          maxWidth: 300,
+                                    SizedBox(
+                                      width: AppSizes.xl * 4,
+                                      child: ShadPopover(
+                                        closeOnTapOutside: false,
+                                        decoration: ShadDecoration(
+                                          border: ShadBorder.all(
+                                              width: 0,
+                                              radius:
+                                                  BorderRadius.circular(10)),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surfaceContainer,
                                         ),
-                                        child: _getTopActionBar(
-                                          context,
-                                          colorScheme,
-                                          alignment: WrapAlignment.center,
-                                          expandPerPage: true,
-                                          customExpandPerPage: context.width,
+                                        popover: (context) => ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            maxWidth: 300,
+                                          ),
+                                          child: _getTopActionBar(
+                                            context,
+                                            colorScheme,
+                                            alignment: WrapAlignment.center,
+                                            expandPerPage: true,
+                                            customExpandPerPage: context.width,
+                                          ),
                                         ),
-                                      ),
-                                      controller: _optionsPopoverController,
-                                      child: IconWithLabelButton(
-                                        icon: Icons.settings,
-                                        text: strings.value.options,
-                                        onTap: () {
-                                          _optionsActive.value =
-                                              !_optionsActive.value;
-                                          _optionsPopoverController.toggle();
-                                        },
-                                        active: _optionsActive.value,
-                                      ),
-                                    ).optionalWhen(
-                                        isAtLeastMediumScreen(context)),
-                                  ),
+                                        controller: _optionsPopoverController,
+                                        child: IconWithLabelButton(
+                                          icon: Icons.settings,
+                                          text: strings.value.options,
+                                          onTap: () {
+                                            _optionsActive.value =
+                                                !_optionsActive.value;
+                                            _optionsPopoverController.toggle();
+                                          },
+                                          active: _optionsActive.value,
+                                        ),
+                                      ).optionalWhen(
+                                          isAtLeastMediumScreen(context)),
+                                    ),
                                   ].nonNulls.toList(),
                                 ),
                               ].nonNulls.toList(),
@@ -1036,7 +1019,7 @@ class UsersPage extends StatelessWidget {
                 ? Text(strings.value.selectUserDelete)
                 : Text(
                     "Are you sure you want to delete ${_selectedUsers.length} user(s)?");
-                   //S.of(context).delete_users(_selectedUsers.length);
+            //S.of(context).delete_users(_selectedUsers.length);
           },
         ),
         action: Obx(
@@ -1110,217 +1093,25 @@ class UsersPage extends StatelessWidget {
               );
             }
 
-            return Form(
-              key: _formKeyAddUser,
-              child: Column(
-                children: [
-                  _addUserAvatarSelected.value
-                      ? IconButton(
-                          padding: EdgeInsets.all(AppSizes.sm),
-                          onPressed: () {
-                            _addUserAvatarSelected.value = false;
-                            _addUserAvatarBytes = null;
-                          },
-                          icon: SizedBox(
-                            width: AppSizes.xl * 6,
-                            height: AppSizes.xl * 6,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(100),
-                              child: Image.memory(
-                                kIsWeb
-                                    ? _addUserAvatarBytes!
-                                    : _addUserAvatarFile!.readAsBytesSync(),
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                        )
-                      : TextButton(
-                          onPressed: () async {
-                            Rx<FutureState> _openFilePickerToast =
-                                FutureState.loading.obs;
-                            final toast = Toasts.showStatefulToast(
-                              context: context,
-                              message: strings.value.openingFilePicher,
-                              messageError: strings.value.canceled,
-                              messageSuccess: strings.value.fileSelected,
-                              state: _openFilePickerToast,
-                            );
-                            // show image picker
-                            FilePickerResult? result =
-                                await FilePicker.platform.pickFiles(
-                              type: FileType.image,
-                            );
-
-                            if (result != null) {
-                              // set image file
-                              if (result.files.first.bytes != null) {
-                                _addUserAvatarBytes = result.files.first.bytes!;
-                                _addUserAvatarSelected.value = true;
-                                _addUserAvatarBytesFileName =
-                                    result.files.first.name;
-                              } else if (!kIsWeb) {
-                                _addUserAvatarFile =
-                                    File(result.files.first.path!);
-                                _addUserAvatarSelected.value = true;
-                              }
-                              _openFilePickerToast.value = FutureState.success;
-                              Future.delayed(Duration(seconds: 1),
-                                  () => Toastification().dismissById(toast.id));
-
-                              // close toast after delay
-                            } else {
-                              // User canceled the picker
-                              _openFilePickerToast.value = FutureState.error;
-                              // close toast after delay
-                              Future.delayed(Duration(seconds: 1),
-                                  () => Toastification().dismissById(toast.id));
-                            }
-                          },
-                          child: _addUserPlaceHolderAvatar.value,
-                        ),
-                  SizedBox(height: AppSizes.sm),
-                  // email
-                  ShadInputFormField(
-                    controller: _addUserEmailController,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: FormBuilderValidators.email(),
-                    label: Text(strings.value.email),
-                    placeholder: Text(strings.value.emailExemple),
-                  ),
-                  SizedBox(height: AppSizes.sm),
-                  // password
-                  ShadInputFormField(
-                    controller: _addUserPasswordController,
-                    keyboardType: TextInputType.visiblePassword,
-                    validator: (v) => AppValidators.customPasswordValidator(v),
-                    obscureText: true,
-                    label: Text(strings.value.password),
-                    placeholder: Text("********"),
-                  ),
-                  SizedBox(height: AppSizes.sm),
-                  // name
-                  ShadInputFormField(
-                    controller: _addUserNameController,
-                    keyboardType: TextInputType.name,
-                    label: Text(strings.value.name),
-                    placeholder: Text("Lyes Rabhi"),
-                  ),
-                  SizedBox(height: AppSizes.sm),
-                  // role
-                  Container(
-                    constraints: BoxConstraints(
-                      minWidth: context.width,
-                    ),
-                    child: ShadSelectFormField<Role>(
-                      initialValue: _addUserRole.value,
-                      enabled: userController.user?.role != Role.supervisor,
-                      validator: (v) =>
-                          AppValidators.roleSelectionValidator(v?.name),
-                      options: _getRoleOptions(context),
-                      label: Text(strings.value.role),
-                      selectedOptionBuilder: (context, value) => Container(
-                        constraints: BoxConstraints(
-                          minWidth: context.width,
-                        ),
-                        child: Text("${strings.value.role}: ${value.name.toUpperCase()}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  color: AppColors.getRoleColor(
-                                      _addUserRole.value),
-                                )),
-                      ),
-                      placeholder: Text(strings.value.role),
-                      shrinkWrap: false,
-                      onChanged: (value) {
-                        if (value != null) _addUserRole.value = value;
-                        _loadSuperiorsOptions(context);
-                      },
-                    ),
-                  ),
-                  SizedBox(height: AppSizes.sm),
-                  // phone number
-                  ShadInputFormField(
-                    controller: _addUserPhoneController,
-                    keyboardType: TextInputType.phone,
-                    validator: (v) => AppValidators.phoneNumberValidator(v),
-                    label: Text(strings.value.phoneNumber),
-                    placeholder: Text("0549267381"),
-                  ),
-
-                  SizedBox(height: AppSizes.sm),
-                  // superior
-                  Container(
-                    constraints: BoxConstraints(
-                      minWidth: context.width,
-                    ),
-                    child: ShadSelectFormField<User>.withSearch(
-                      label: Text(strings.value.superior),
-                      validator: (value) =>
-                          AppValidators.superiorSelectionValidator(
-                        value?.id,
-                        _addUserSuperiorOptions.map((o) => o.value).toList(),
-                      ),
-                      allowDeselection: true,
-                      options: _searchAddUserSuperior.value
-                          ? _searchAddUserSuperiorOptions
-                          : _addUserSuperiorOptions,
-                      placeholder: Container(
-                          constraints: BoxConstraints(
-                            minWidth: context.width,
-                          ),
-                          child: Text(strings.value.selectSuperior))),
-                      anchor: ShadAnchorAuto(
-                        preferBelow: false,
-                      ),
-                      onChanged: (value) {
-                        print("value: $value");
-                        _addUserSuperior = value;
-                      },
-                      selectedOptionBuilder: (context, value) => Container(
-                        constraints: BoxConstraints(
-                          minWidth: context.width,
-                        ),
-                        child: Text(
-                            "${strings.value.superior}: ${value.role.name.toUpperCase()} ${value.name ?? value.email}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  color: AppColors.getRoleColor(Role.values
-                                      .firstWhere((r) =>
-                                          r.name.toUpperCase() ==
-                                          value.role.name.toUpperCase())),
-                                )),
-                      ),
-                      onSearchChanged: (value) {
-                        if (value.isNotEmpty) {
-                          _searchAddUserSuperior.value =
-                              false; // turn it off to trigger update later
-                          _searchAddUserSuperiorOptions.clear();
-                          _searchAddUserSuperiorOptions
-                              .addAll(_addUserSuperiorOptions.where((o) {
-                            if (o.value.name != null) {
-                              if (o.value.name!.contains(value)) {
-                                return true;
-                              }
-                            }
-                            return o.value.email.contains(value);
-                          }));
-                          _searchAddUserSuperior.value =
-                              true; // turning it back on to trigger update
-                        } else {
-                          _searchAddUserSuperior.value = false;
-                          _searchAddUserSuperiorOptions.clear();
-                        }
-                      },
-                    ),
-                  ),
-                  SizedBox(height: AppSizes.md),
-                ],
-              ),
+            return UserForm(
+              addUserEmailController: _addUserEmailController,
+              addUserNameController: _addUserNameController,
+              addFirstNameController: _addFirstNameController,
+              addLastNameController: _addLastNameController,
+              addUserPasswordController: _addUserPasswordController,
+              addUserPhoneController: _addUserPhoneController,
+              formKeyAddUser: _formKeyAddUser,
+              loadSuperiorsOptions: _loadSuperiorsOptions,
+              addUserSuperiorOptions: _addUserSuperiorOptions,
+              onAddUser: (email, username, password, phone, role, superior,
+                  firstName, lastName, avatarBytes, avatarFile) {
+                logger.e("setRole: ${role.name}");
+                _addUserRole = role;
+                _addUserSuperior = superior;
+                _addUserAvatarBytes = avatarBytes;
+                _addUserAvatarBytesFileName = "avatar.jpg";
+                _addUserAvatarFile = avatarFile;
+              },
             );
           },
         ),
@@ -1502,81 +1293,60 @@ class UsersPage extends StatelessWidget {
   }
 
   void _loadSuperiorsOptions(BuildContext context) async {
-    //! todo: translate (Me)
-    final _me = "${userController.user!.name ?? ""}(Me)";
-    List<ShadOption<User>> options = [];
-
-    if (userController.user?.role == Role.supervisor) {
-      // can only add operators assigned to himself
-      _addUserSuperiorOptions.value = [
-        ShadOption(value: userController.user!, child: Text(_me))
-      ];
-      _loadedAddUserSuperiorOptions.value = true;
-      return;
-    }
-    if (userController.user?.role == Role.admin) {
-      // can add operators assigned to his supervisors subordinates
-      // can add operators assigned to himself
-      if (_addUserRole.value.name == Role.operateur.name) {
-        try {
-          _loadedAddUserSuperiorOptions.value = false;
-          final api = await ApiClientInstance.getApiClient();
-          final res = await api.getUser(id: userController.user!.id);
-          userController.user = res.user;
-          userController.user!.subordinates?.forEach((s) {
-            if (s.subordinate == null) {
-              logger.e("subordinate value is null, from api response");
-              return;
-            }
-            if (s.subordinate!.role != Role.supervisor) {
-              return;
-            }
-
-            options.add(
-              ShadOption(
-                value: s.subordinate!,
-                child: Text(s.subordinate!.name ?? s.subordinate!.email),
+    _loadedAddUserSuperiorOptions.value = false;
+    final strings = getTranslations(context).obs;
+    final me =
+        "${userController.user!.username.isEmpty ? userController.user!.email : userController.user!.username}(${strings.value.me})";
+    List<ShadOption<User>> options = [
+      ShadOption(
+        value: userController.user!,
+        child: Text(
+          me,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppColors.getRoleColorWithRoleValue(
+                    userController.user!.role),
               ),
-            );
-          });
-          options
-              .add(ShadOption(value: userController.user!, child: Text(_me)));
-          _addUserSuperiorOptions.value = options;
-          _loadedAddUserSuperiorOptions.value = true;
-          return;
-        } catch (e) {
-          logger.e("failed to get subordinates: $e");
-          Toasts.showErrorToastNotification(
-              context: context,
-              message: "Failed to get subordinates",
-              title: "Error: Failed to get subordinates");
-          _addUserSuperiorOptions.value = [];
-          _loadedAddUserSuperiorOptions.value = true;
-          return;
-        }
-      }
-
-      // can add supervisors assigned to himself
-      if (_addUserRole.value.name == Role.supervisor.name) {
-        options.add(ShadOption(value: userController.user!, child: Text(_me)));
-        _addUserSuperiorOptions.value = options;
-        _loadedAddUserSuperiorOptions.value = true;
-        return;
-      }
-    }
-
+        ),
+      ),
+    ];
     // can add any kind of user
     try {
       final api = await ApiClientInstance.getApiClient();
-      final res = await api.getUsers(enablePagination: false);
-      _addUserSuperiorOptions.value = res.users
-          .map(
-            (u) => ShadOption(
-              value: u,
-              child: Text(u.name ?? u.email),
-            ),
-          )
-          .toList();
+
+      traverseSubordinatesTree(
+          User user, Function(User user) onUserFound) async {
+        if (user.subordinates.isNotEmpty) {
+          for (var user in user.subordinates) {
+            final sub_user = await (await ApiClientInstance.getApiClient())
+                .getUser(id: user.userId);
+            onUserFound(sub_user);
+            traverseSubordinatesTree(sub_user, onUserFound);
+          }
+        }
+      }
+
+      await traverseSubordinatesTree(
+        userController.user!,
+        (user) => options.add(
+          ShadOption(
+              value: user,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(user.username.isNotEmpty ? user.username : user.email),
+                  SizedBox(width: AppSizes.md),
+                  Text(
+                    user.role,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppColors.getRoleColorWithRoleValue(user.role),
+                        ),
+                  )
+                ],
+              )),
+        ),
+      );
+
+      _addUserSuperiorOptions.value = options;
       _loadedAddUserSuperiorOptions.value = true;
       return;
     } catch (e) {
