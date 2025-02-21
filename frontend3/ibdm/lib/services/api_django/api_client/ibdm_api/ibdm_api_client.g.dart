@@ -9,11 +9,7 @@ part of 'ibdm_api_client.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
 
 class _IbdmApiClient implements IbdmApiClient {
-  _IbdmApiClient(
-    this._dio, {
-    this.baseUrl,
-    this.errorLogger,
-  });
+  _IbdmApiClient(this._dio, {this.baseUrl, this.errorLogger});
 
   final Dio _dio;
 
@@ -25,36 +21,30 @@ class _IbdmApiClient implements IbdmApiClient {
   Future<LoginResponse> login({
     required String email,
     required String password,
+    bool rememberMe = false,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'email',
-      email,
-    ));
-    _data.fields.add(MapEntry(
-      'password',
-      password,
-    ));
-    final _options = _setStreamType<LoginResponse>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/auth/login',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    _data.fields.add(MapEntry('email', email));
+    _data.fields.add(MapEntry('password', password));
+    _data.fields.add(MapEntry('remember_me', rememberMe.toString()));
+    final _options = _setStreamType<LoginResponse>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/auth/login',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late LoginResponse _value;
     try {
@@ -72,22 +62,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<SuccessResponse>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/auth/logout',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<SuccessResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/auth/logout',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late SuccessResponse _value;
     try {
@@ -105,22 +89,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<User>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/auth/user/me',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<User>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/auth/user/me',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late User _value;
     try {
@@ -133,10 +111,7 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<dynamic> retrieveApiV1DocsSchema({
-    Format? format,
-    Lang? lang,
-  }) async {
+  Future<dynamic> retrieveApiV1DocsSchema({Format? format, Lang? lang}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'format': format?.name,
@@ -145,22 +120,16 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<dynamic>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/docs/schema/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/docs/schema/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch(_options);
     final _value = _result.data;
     return _value;
@@ -179,22 +148,16 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<dynamic>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/documentation/schema/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/documentation/schema/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch(_options);
     final _value = _result.data;
     return _value;
@@ -215,22 +178,16 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<PaginatedGroupList>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/groups/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<PaginatedGroupList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/groups/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late PaginatedGroupList _value;
     try {
@@ -248,27 +205,22 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'name',
-      name,
-    ));
-    final _options = _setStreamType<Group>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/groups/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    _data.fields.add(MapEntry('name', name));
+    final _options = _setStreamType<Group>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/groups/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Group _value;
     try {
@@ -286,22 +238,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<Group>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/groups/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<Group>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/groups/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Group _value;
     try {
@@ -314,35 +260,27 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<Group> updateGroup({
-    required int id,
-    required String name,
-  }) async {
+  Future<Group> updateGroup({required int id, required String name}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'name',
-      name,
-    ));
-    final _options = _setStreamType<Group>(Options(
-      method: 'PUT',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/groups/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    _data.fields.add(MapEntry('name', name));
+    final _options = _setStreamType<Group>(
+      Options(
+        method: 'PUT',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/groups/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Group _value;
     try {
@@ -355,38 +293,30 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<Group> partialUpdateGroup({
-    required int id,
-    String? name,
-  }) async {
+  Future<Group> partialUpdateGroup({required int id, String? name}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
     if (name != null) {
-      _data.fields.add(MapEntry(
-        'name',
-        name,
-      ));
+      _data.fields.add(MapEntry('name', name));
     }
-    final _options = _setStreamType<Group>(Options(
-      method: 'PATCH',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/groups/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<Group>(
+      Options(
+        method: 'PATCH',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/groups/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Group _value;
     try {
@@ -404,22 +334,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(Options(
-      method: 'DELETE',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/groups/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<void>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/groups/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     await _dio.fetch<void>(_options);
   }
 
@@ -438,22 +362,16 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<PaginatedPermissionList>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/permissions/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<PaginatedPermissionList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/permissions/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late PaginatedPermissionList _value;
     try {
@@ -475,35 +393,24 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'name',
-      name,
-    ));
-    _data.fields.add(MapEntry(
-      'codename',
-      codename,
-    ));
-    _data.fields.add(MapEntry(
-      'content_type',
-      contentType.toString(),
-    ));
-    final _options = _setStreamType<Permission>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/permissions/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    _data.fields.add(MapEntry('name', name));
+    _data.fields.add(MapEntry('codename', codename));
+    _data.fields.add(MapEntry('content_type', contentType.toString()));
+    final _options = _setStreamType<Permission>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/permissions/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Permission _value;
     try {
@@ -521,22 +428,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<Permission>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/permissions/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<Permission>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/permissions/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Permission _value;
     try {
@@ -559,35 +460,24 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'name',
-      name,
-    ));
-    _data.fields.add(MapEntry(
-      'codename',
-      codename,
-    ));
-    _data.fields.add(MapEntry(
-      'content_type',
-      contentType.toString(),
-    ));
-    final _options = _setStreamType<Permission>(Options(
-      method: 'PUT',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/permissions/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    _data.fields.add(MapEntry('name', name));
+    _data.fields.add(MapEntry('codename', codename));
+    _data.fields.add(MapEntry('content_type', contentType.toString()));
+    final _options = _setStreamType<Permission>(
+      Options(
+        method: 'PUT',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/permissions/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Permission _value;
     try {
@@ -612,40 +502,29 @@ class _IbdmApiClient implements IbdmApiClient {
     final _headers = <String, dynamic>{};
     final _data = FormData();
     if (name != null) {
-      _data.fields.add(MapEntry(
-        'name',
-        name,
-      ));
+      _data.fields.add(MapEntry('name', name));
     }
     if (codename != null) {
-      _data.fields.add(MapEntry(
-        'codename',
-        codename,
-      ));
+      _data.fields.add(MapEntry('codename', codename));
     }
     if (contentType != null) {
-      _data.fields.add(MapEntry(
-        'content_type',
-        contentType.toString(),
-      ));
+      _data.fields.add(MapEntry('content_type', contentType.toString()));
     }
-    final _options = _setStreamType<Permission>(Options(
-      method: 'PATCH',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/permissions/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<Permission>(
+      Options(
+        method: 'PATCH',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/permissions/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Permission _value;
     try {
@@ -663,22 +542,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(Options(
-      method: 'DELETE',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/permissions/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<void>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/permissions/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     await _dio.fetch<void>(_options);
   }
 
@@ -697,22 +570,16 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<PaginatedRoleList>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/roles/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<PaginatedRoleList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/roles/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late PaginatedRoleList _value;
     try {
@@ -733,30 +600,25 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'group_id',
-      groupId.toString(),
-    ));
+    _data.fields.add(MapEntry('group_id', groupId.toString()));
     managedRoles.forEach((i) {
       _data.fields.add(MapEntry('managed_roles', i));
     });
-    final _options = _setStreamType<Role>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/roles/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<Role>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/roles/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Role _value;
     try {
@@ -774,22 +636,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<Role>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/roles/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<Role>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/roles/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Role _value;
     try {
@@ -811,30 +667,25 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'group_id',
-      groupId.toString(),
-    ));
+    _data.fields.add(MapEntry('group_id', groupId.toString()));
     managedRoles.forEach((i) {
       _data.fields.add(MapEntry('managed_roles', i));
     });
-    final _options = _setStreamType<Role>(Options(
-      method: 'PUT',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/roles/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<Role>(
+      Options(
+        method: 'PUT',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/roles/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Role _value;
     try {
@@ -858,31 +709,26 @@ class _IbdmApiClient implements IbdmApiClient {
     final _headers = <String, dynamic>{};
     final _data = FormData();
     if (groupId != null) {
-      _data.fields.add(MapEntry(
-        'group_id',
-        groupId.toString(),
-      ));
+      _data.fields.add(MapEntry('group_id', groupId.toString()));
     }
     managedRoles?.forEach((i) {
       _data.fields.add(MapEntry('managed_roles', i));
     });
-    final _options = _setStreamType<Role>(Options(
-      method: 'PATCH',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/roles/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<Role>(
+      Options(
+        method: 'PATCH',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/roles/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Role _value;
     try {
@@ -900,22 +746,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(Options(
-      method: 'DELETE',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/roles/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<void>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/roles/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     await _dio.fetch<void>(_options);
   }
 
@@ -934,23 +774,16 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options =
-        _setStreamType<PaginatedSubordinateAndSuperiorList>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/api/v1/user-management/subordinates_superiors/',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            )));
+    final _options = _setStreamType<PaginatedSubordinateAndSuperiorList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/subordinates_superiors/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late PaginatedSubordinateAndSuperiorList _value;
     try {
@@ -971,31 +804,23 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'superior',
-      superior.toString(),
-    ));
-    _data.fields.add(MapEntry(
-      'subordinate',
-      subordinate.toString(),
-    ));
-    final _options = _setStreamType<SubordinateAndSuperior>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/subordinates_superiors/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    _data.fields.add(MapEntry('superior', superior.toString()));
+    _data.fields.add(MapEntry('subordinate', subordinate.toString()));
+    final _options = _setStreamType<SubordinateAndSuperior>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/subordinates_superiors/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late SubordinateAndSuperior _value;
     try {
@@ -1008,28 +833,23 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<SubordinateAndSuperior> getSubordinateAndSuperior(
-      {required int id}) async {
+  Future<SubordinateAndSuperior> getSubordinateAndSuperior({
+    required int id,
+  }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<SubordinateAndSuperior>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/subordinates_superiors/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<SubordinateAndSuperior>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/subordinates_superiors/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late SubordinateAndSuperior _value;
     try {
@@ -1051,31 +871,23 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'superior',
-      superior.toString(),
-    ));
-    _data.fields.add(MapEntry(
-      'subordinate',
-      subordinate.toString(),
-    ));
-    final _options = _setStreamType<SubordinateAndSuperior>(Options(
-      method: 'PUT',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/subordinates_superiors/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    _data.fields.add(MapEntry('superior', superior.toString()));
+    _data.fields.add(MapEntry('subordinate', subordinate.toString()));
+    final _options = _setStreamType<SubordinateAndSuperior>(
+      Options(
+        method: 'PUT',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/subordinates_superiors/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late SubordinateAndSuperior _value;
     try {
@@ -1099,34 +911,26 @@ class _IbdmApiClient implements IbdmApiClient {
     final _headers = <String, dynamic>{};
     final _data = FormData();
     if (superior != null) {
-      _data.fields.add(MapEntry(
-        'superior',
-        superior.toString(),
-      ));
+      _data.fields.add(MapEntry('superior', superior.toString()));
     }
     if (subordinate != null) {
-      _data.fields.add(MapEntry(
-        'subordinate',
-        subordinate.toString(),
-      ));
+      _data.fields.add(MapEntry('subordinate', subordinate.toString()));
     }
-    final _options = _setStreamType<SubordinateAndSuperior>(Options(
-      method: 'PATCH',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/subordinates_superiors/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<SubordinateAndSuperior>(
+      Options(
+        method: 'PATCH',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/subordinates_superiors/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late SubordinateAndSuperior _value;
     try {
@@ -1144,22 +948,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(Options(
-      method: 'DELETE',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/subordinates_superiors/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<void>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/subordinates_superiors/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     await _dio.fetch<void>(_options);
   }
 
@@ -1184,22 +982,16 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<PaginatedUserList>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/users/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<PaginatedUserList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/users/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late PaginatedUserList _value;
     try {
@@ -1228,80 +1020,59 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'email',
-      email,
-    ));
-    _data.fields.add(MapEntry(
-      'role',
-      role,
-    ));
+    _data.fields.add(MapEntry('email', email));
+    _data.fields.add(MapEntry('role', role));
     if (firstName != null) {
-      _data.fields.add(MapEntry(
-        'first_name',
-        firstName,
-      ));
+      _data.fields.add(MapEntry('first_name', firstName));
     }
     if (lastName != null) {
-      _data.fields.add(MapEntry(
-        'last_name',
-        lastName,
-      ));
+      _data.fields.add(MapEntry('last_name', lastName));
     }
     if (username != null) {
-      _data.fields.add(MapEntry(
-        'username',
-        username,
-      ));
+      _data.fields.add(MapEntry('username', username));
     }
     if (password != null) {
-      _data.fields.add(MapEntry(
-        'password',
-        password,
-      ));
+      _data.fields.add(MapEntry('password', password));
     }
     if (phoneNumber != null) {
-      _data.fields.add(MapEntry(
-        'phone_number',
-        phoneNumber,
-      ));
+      _data.fields.add(MapEntry('phone_number', phoneNumber));
     }
     if (avatar != null) {
       if (avatar != null) {
-        _data.files.add(MapEntry(
-          'avatar',
-          MultipartFile.fromFileSync(
-            avatar.path,
-            filename: avatar.path.split(Platform.pathSeparator).last,
+        _data.files.add(
+          MapEntry(
+            'avatar',
+            MultipartFile.fromFileSync(
+              avatar.path,
+              filename: avatar.path.split(Platform.pathSeparator).last,
+            ),
           ),
-        ));
+        );
       }
     }
     if (userPermissions != null) {
-      _data.files.add(MapEntry(
+      _data.files.add(
+        MapEntry(
           'user_permissions',
-          MultipartFile.fromBytes(
-            userPermissions,
-            filename: null,
-          )));
+          MultipartFile.fromBytes(userPermissions, filename: null),
+        ),
+      );
     }
-    final _options = _setStreamType<User>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/users/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<User>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/users/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late User _value;
     try {
@@ -1319,22 +1090,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<User>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/users/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<User>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/users/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late User _value;
     try {
@@ -1364,80 +1129,59 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'email',
-      email,
-    ));
-    _data.fields.add(MapEntry(
-      'role',
-      role,
-    ));
+    _data.fields.add(MapEntry('email', email));
+    _data.fields.add(MapEntry('role', role));
     if (firstName != null) {
-      _data.fields.add(MapEntry(
-        'first_name',
-        firstName,
-      ));
+      _data.fields.add(MapEntry('first_name', firstName));
     }
     if (lastName != null) {
-      _data.fields.add(MapEntry(
-        'last_name',
-        lastName,
-      ));
+      _data.fields.add(MapEntry('last_name', lastName));
     }
     if (username != null) {
-      _data.fields.add(MapEntry(
-        'username',
-        username,
-      ));
+      _data.fields.add(MapEntry('username', username));
     }
     if (password != null) {
-      _data.fields.add(MapEntry(
-        'password',
-        password,
-      ));
+      _data.fields.add(MapEntry('password', password));
     }
     if (phoneNumber != null) {
-      _data.fields.add(MapEntry(
-        'phone_number',
-        phoneNumber,
-      ));
+      _data.fields.add(MapEntry('phone_number', phoneNumber));
     }
     if (avatar != null) {
       if (avatar != null) {
-        _data.files.add(MapEntry(
-          'avatar',
-          MultipartFile.fromFileSync(
-            avatar.path,
-            filename: avatar.path.split(Platform.pathSeparator).last,
+        _data.files.add(
+          MapEntry(
+            'avatar',
+            MultipartFile.fromFileSync(
+              avatar.path,
+              filename: avatar.path.split(Platform.pathSeparator).last,
+            ),
           ),
-        ));
+        );
       }
     }
     if (userPermissions != null) {
-      _data.files.add(MapEntry(
+      _data.files.add(
+        MapEntry(
           'user_permissions',
-          MultipartFile.fromBytes(
-            userPermissions,
-            filename: null,
-          )));
+          MultipartFile.fromBytes(userPermissions, filename: null),
+        ),
+      );
     }
-    final _options = _setStreamType<User>(Options(
-      method: 'PUT',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/users/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<User>(
+      Options(
+        method: 'PUT',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/users/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late User _value;
     try {
@@ -1468,83 +1212,62 @@ class _IbdmApiClient implements IbdmApiClient {
     final _headers = <String, dynamic>{};
     final _data = FormData();
     if (firstName != null) {
-      _data.fields.add(MapEntry(
-        'first_name',
-        firstName,
-      ));
+      _data.fields.add(MapEntry('first_name', firstName));
     }
     if (lastName != null) {
-      _data.fields.add(MapEntry(
-        'last_name',
-        lastName,
-      ));
+      _data.fields.add(MapEntry('last_name', lastName));
     }
     if (username != null) {
-      _data.fields.add(MapEntry(
-        'username',
-        username,
-      ));
+      _data.fields.add(MapEntry('username', username));
     }
     if (email != null) {
-      _data.fields.add(MapEntry(
-        'email',
-        email,
-      ));
+      _data.fields.add(MapEntry('email', email));
     }
     if (password != null) {
-      _data.fields.add(MapEntry(
-        'password',
-        password,
-      ));
+      _data.fields.add(MapEntry('password', password));
     }
     if (phoneNumber != null) {
-      _data.fields.add(MapEntry(
-        'phone_number',
-        phoneNumber,
-      ));
+      _data.fields.add(MapEntry('phone_number', phoneNumber));
     }
     if (avatar != null) {
       if (avatar != null) {
-        _data.files.add(MapEntry(
-          'avatar',
-          MultipartFile.fromFileSync(
-            avatar.path,
-            filename: avatar.path.split(Platform.pathSeparator).last,
+        _data.files.add(
+          MapEntry(
+            'avatar',
+            MultipartFile.fromFileSync(
+              avatar.path,
+              filename: avatar.path.split(Platform.pathSeparator).last,
+            ),
           ),
-        ));
+        );
       }
     }
     if (role != null) {
-      _data.fields.add(MapEntry(
-        'role',
-        role,
-      ));
+      _data.fields.add(MapEntry('role', role));
     }
     if (userPermissions != null) {
-      _data.files.add(MapEntry(
+      _data.files.add(
+        MapEntry(
           'user_permissions',
-          MultipartFile.fromBytes(
-            userPermissions,
-            filename: null,
-          )));
+          MultipartFile.fromBytes(userPermissions, filename: null),
+        ),
+      );
     }
-    final _options = _setStreamType<User>(Options(
-      method: 'PATCH',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/users/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<User>(
+      Options(
+        method: 'PATCH',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/users/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late User _value;
     try {
@@ -1562,22 +1285,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(Options(
-      method: 'DELETE',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/user-management/users/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<void>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/users/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     await _dio.fetch<void>(_options);
   }
 
@@ -1594,10 +1311,7 @@ class _IbdmApiClient implements IbdmApiClient {
     return requestOptions;
   }
 
-  String _combineBaseUrls(
-    String dioBaseUrl,
-    String? baseUrl,
-  ) {
+  String _combineBaseUrls(String dioBaseUrl, String? baseUrl) {
     if (baseUrl == null || baseUrl.trim().isEmpty) {
       return dioBaseUrl;
     }

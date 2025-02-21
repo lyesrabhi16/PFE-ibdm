@@ -50,7 +50,7 @@ class LoginActions {
       final response = await apiClient.login(
         email: emailController.text,
         password: passwordController.text,
-        // todo: rememberMe: rememberMe,
+        rememberMe: rememberMe,
       );
       logger.d("Login Response: $response");
       // set login progress to success
