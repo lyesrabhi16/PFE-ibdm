@@ -78,6 +78,8 @@
     "superior": "Superior",
     "selectSuperior": "Select a Superior",
     "delete_users": "Are you sure you want to delete {count} user(s)?",
+    "ibdm": "IBDM",
+    "ifri_bdd": "Ifri Machine Database",
     "options": "Options",
     "me": "Me"
 }

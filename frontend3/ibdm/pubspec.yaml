@@ -69,6 +69,7 @@
     #ibdm_api_client:
     #  path: n/
     universal_html: ^2.2.4
+    image_picker: ^1.0.7
 
   dev_dependencies:
     flutter_test:

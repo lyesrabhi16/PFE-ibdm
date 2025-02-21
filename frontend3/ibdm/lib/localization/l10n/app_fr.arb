@@ -78,6 +78,9 @@
     "superior": "Supérieur",
     "selectSuperior": "Selectionner le Supérieur",
     "delete_users": "Êtes-vous sûr de vouloir supprimer {count} utilisateur(s) ?",
+    "ibdm": "IBDM",
+    "ifri_bdd": "Ifri Base de Données Machines"
+,
     "options": "Options",
     "me": "Moi"
 }
