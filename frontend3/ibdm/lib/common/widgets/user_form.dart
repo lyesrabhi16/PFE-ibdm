@@ -86,17 +86,17 @@ class UserForm extends StatelessWidget {
   }
 
   Iterable<Widget> getRoleOptions(BuildContext context) {
-    final user_role =
+    final userRole =
         roles.firstWhereOrNull((r) => r.name == userController.user?.role);
 
-    logger.e("user_role: $user_role ${userController.user?.role} ${roles}");
+    logger.e("user_role: $userRole ${userController.user?.role} $roles");
 
-    return user_role?.managedRoles.map((role_name) => ShadOption(
-              value: roles.firstWhere((r) => r.name == role_name),
+    return userRole?.managedRoles.map((roleName) => ShadOption(
+              value: roles.firstWhere((r) => r.name == roleName),
               child: Text(
-                role_name,
+                roleName,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.getRoleColorWithRoleValue(role_name),
+                      color: AppColors.getRoleColorWithRoleValue(roleName),
                     ),
               ),
             )) ??
@@ -107,8 +107,8 @@ class UserForm extends StatelessWidget {
   Future<void> _load(context) async {
     _loaded.value = false;
     roles.clear();
-    final List<Role> _roles = await userController.getRoles(context);
-    roles.addAll(_roles);
+    final List<Role> localRoles = await userController.getRoles(context);
+    roles.addAll(localRoles);
     await getInitialValueOfSuperior();
     _loaded.value = true;
   }
@@ -116,7 +116,7 @@ class UserForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     logger.d("building user form");
-    final __userRole = _addUserRole;
+    final userRole = _addUserRole;
     _load(context);
 
     return Obx(() {
@@ -125,7 +125,7 @@ class UserForm extends StatelessWidget {
           child: CircularProgressIndicator(),
         );
       }
-      __userRole.value ??= role ?? roles.firstOrNull;
+      userRole.value ??= role ?? roles.firstOrNull;
       logger
           .e("User: $user ${user?.avatarUrl} ${_addUserAvatarSelected.value}");
       return Form(
@@ -136,7 +136,7 @@ class UserForm extends StatelessWidget {
             addUserNameController.text,
             addUserPasswordController.text,
             addUserPhoneController.text,
-            __userRole.value!,
+            userRole.value!,
             addUserSuperiorOptions.firstOrNull?.value,
             addFirstNameController.text,
             addLastNameController.text,
@@ -144,299 +144,307 @@ class UserForm extends StatelessWidget {
             _addUserAvatarFile,
           );
         },
-        child: Column(
-          children: [
-            _addUserAvatarSelected.value
-                ? IconButton(
-                    padding: EdgeInsets.all(AppSizes.sm),
-                    onPressed: editable
-                        ? () {
-                            _addUserAvatarSelected.value = false;
-                            _addUserAvatarBytes = null;
-                          }
-                        : null,
-                    icon: SizedBox(
-                      width: AppSizes.xl * 6,
-                      height: AppSizes.xl * 6,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: Image.memory(
-                          getSelectedAvatar()!,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
-                  )
-                : _showUserAvatar.value && user?.avatarUrl != null
-                    ? IconButton(
-                        padding: EdgeInsets.all(AppSizes.sm),
-                        onPressed: editable
-                            ? () {
-                                _addUserAvatarSelected.value = false;
-                                _addUserAvatarBytes = null;
-                                _addUserAvatarFile = null;
-                                _showUserAvatar.value = false;
-                              }
-                            : null,
-                        icon: SizedBox(
-                          width: AppSizes.xl * 6,
-                          height: AppSizes.xl * 6,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: CachedNetworkImage(
-                              imageUrl: user!.avatarUrl!,
-                              errorWidget: (context, url, error) => Icon(
-                                LucideIcons.circleUserRound,
-                                size: AppSizes.xl * 3,
-                              ),
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              fit: BoxFit.fill,
-                            ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _addUserAvatarSelected.value
+                  ? IconButton(
+                      padding: EdgeInsets.all(AppSizes.sm),
+                      onPressed: editable
+                          ? () {
+                              _addUserAvatarSelected.value = false;
+                              _addUserAvatarBytes = null;
+                            }
+                          : null,
+                      icon: SizedBox(
+                        width: AppSizes.xl * 6,
+                        height: AppSizes.xl * 6,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Image.memory(
+                            getSelectedAvatar()!,
+                            fit: BoxFit.fill,
                           ),
                         ),
-                      )
-                    : TextButton(
-                        style: Theme.of(context)
-                            .textButtonTheme
-                            .style
-                            ?.copyWith(
-                              iconColor: editable
-                                  ? null
-                                  : WidgetStatePropertyAll(role != null
-                                      ? AppColors.getRoleColorWithRole(role!)
-                                      : Colors.white),
+                      ),
+                    )
+                  : _showUserAvatar.value && user?.avatarUrl != null
+                      ? IconButton(
+                          padding: EdgeInsets.all(AppSizes.sm),
+                          onPressed: editable
+                              ? () {
+                                  _addUserAvatarSelected.value = false;
+                                  _addUserAvatarBytes = null;
+                                  _addUserAvatarFile = null;
+                                  _showUserAvatar.value = false;
+                                }
+                              : null,
+                          icon: SizedBox(
+                            width: AppSizes.xl * 6,
+                            height: AppSizes.xl * 6,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: CachedNetworkImage(
+                                imageUrl: user!.avatarUrl!,
+                                errorWidget: (context, url, error) => Icon(
+                                  LucideIcons.circleUserRound,
+                                  size: AppSizes.xl * 3,
+                                ),
+                                placeholder: (context, url) =>
+                                    CircularProgressIndicator(),
+                                fit: BoxFit.fill,
+                              ),
                             ),
-                        onPressed: !editable
-                            ? () {}
-                            : () async {
-                                Rx<FutureState> openFilePickerToast =
-                                    FutureState.loading.obs;
-                                final toast = Toasts.showStatefulToast(
-                                  context: context,
-                                  message: "Opening File Picker...",
-                                  messageError: "Canceled",
-                                  messageSuccess: "File Selected",
-                                  state: openFilePickerToast,
-                                );
-                                // show image picker
-                                FilePickerResult? result =
-                                    await FilePicker.platform.pickFiles(
-                                  type: FileType.image,
-                                );
-
-                                if (result != null) {
-                                  // set image file
-                                  if (result.files.first.bytes != null) {
-                                    _addUserAvatarBytes =
-                                        result.files.first.bytes!;
-                                    _addUserAvatarSelected.value = true;
-                                  } else if (!kIsWeb) {
-                                    _addUserAvatarFile =
-                                        File(result.files.first.path!);
-                                    _addUserAvatarSelected.value = true;
-                                  }
-
-                                  onAddUser?.call(
-                                    addUserEmailController.text,
-                                    addUserNameController.text,
-                                    addUserPasswordController.text,
-                                    addUserPhoneController.text,
-                                    __userRole.value!,
-                                    addUserSuperiorOptions.firstOrNull?.value,
-                                    addFirstNameController.text,
-                                    addLastNameController.text,
-                                    _addUserAvatarBytes,
-                                    _addUserAvatarFile,
+                          ),
+                        )
+                      : TextButton(
+                          style: Theme.of(context)
+                              .textButtonTheme
+                              .style
+                              ?.copyWith(
+                                iconColor: editable
+                                    ? null
+                                    : WidgetStatePropertyAll(role != null
+                                        ? AppColors.getRoleColorWithRole(role!)
+                                        : Colors.white),
+                              ),
+                          onPressed: !editable
+                              ? () {}
+                              : () async {
+                                  Rx<FutureState> openFilePickerToast =
+                                      FutureState.loading.obs;
+                                  final toast = Toasts.showStatefulToast(
+                                    context: context,
+                                    message: "Opening File Picker...",
+                                    messageError: "Canceled",
+                                    messageSuccess: "File Selected",
+                                    state: openFilePickerToast,
+                                  );
+                                  // show image picker
+                                  FilePickerResult? result =
+                                      await FilePicker.platform.pickFiles(
+                                    type: FileType.image,
                                   );
 
-                                  openFilePickerToast.value =
-                                      FutureState.success;
-                                  Future.delayed(
-                                      Duration(seconds: 1),
-                                      () => Toastification()
-                                          .dismissById(toast.id));
+                                  if (result != null) {
+                                    // set image file
+                                    if (result.files.first.bytes != null) {
+                                      _addUserAvatarBytes =
+                                          result.files.first.bytes!;
+                                      _addUserAvatarSelected.value = true;
+                                    } else if (!kIsWeb) {
+                                      _addUserAvatarFile =
+                                          File(result.files.first.path!);
+                                      _addUserAvatarSelected.value = true;
+                                    }
 
-                                  // close toast after delay
-                                } else {
-                                  // User canceled the picker
-                                  openFilePickerToast.value = FutureState.error;
-                                  // close toast after delay
-                                  Future.delayed(
-                                      Duration(seconds: 1),
-                                      () => Toastification()
-                                          .dismissById(toast.id));
-                                }
-                              },
-                        child: _addUserPlaceHolderAvatar.value,
+                                    onAddUser?.call(
+                                      addUserEmailController.text,
+                                      addUserNameController.text,
+                                      addUserPasswordController.text,
+                                      addUserPhoneController.text,
+                                      userRole.value!,
+                                      addUserSuperiorOptions.firstOrNull?.value,
+                                      addFirstNameController.text,
+                                      addLastNameController.text,
+                                      _addUserAvatarBytes,
+                                      _addUserAvatarFile,
+                                    );
+
+                                    openFilePickerToast.value =
+                                        FutureState.success;
+                                    Future.delayed(
+                                        Duration(seconds: 1),
+                                        () => Toastification()
+                                            .dismissById(toast.id));
+
+                                    // close toast after delay
+                                  } else {
+                                    // User canceled the picker
+                                    openFilePickerToast.value =
+                                        FutureState.error;
+                                    // close toast after delay
+                                    Future.delayed(
+                                        Duration(seconds: 1),
+                                        () => Toastification()
+                                            .dismissById(toast.id));
+                                  }
+                                },
+                          child: _addUserPlaceHolderAvatar.value,
+                        ),
+              SizedBox(height: AppSizes.sm),
+              // email
+              ShadInputFormField(
+                enabled: editable,
+                controller: addUserEmailController,
+                keyboardType: TextInputType.emailAddress,
+                validator: FormBuilderValidators.email(),
+                label: Text("Email"),
+                placeholder: Text("account@exmaple.com"),
+              ),
+              SizedBox(height: AppSizes.sm),
+              // password
+              ShadInputFormField(
+                enabled: editable,
+                controller: addUserPasswordController,
+                keyboardType: TextInputType.visiblePassword,
+                validator: (v) => AppValidators.customPasswordValidator(v,
+                    optional: !isEditing),
+                obscureText: true,
+                label: Text(isEditing ? "New Password" : "Password"),
+                placeholder: Text("********"),
+              ),
+              SizedBox(height: AppSizes.sm),
+              // first_name
+              ShadInputFormField(
+                enabled: editable,
+                controller: addFirstNameController,
+                keyboardType: TextInputType.name,
+                label: Text("First Name"),
+                placeholder: showPlaceHolders ? Text("Lyes") : null,
+              ),
+              // last_name
+              ShadInputFormField(
+                enabled: editable,
+                controller: addLastNameController,
+                keyboardType: TextInputType.name,
+                label: Text("Last Name"),
+                placeholder: showPlaceHolders ? Text("Rabhi") : null,
+              ),
+              // username
+              ShadInputFormField(
+                enabled: editable,
+                controller: addUserNameController,
+                keyboardType: TextInputType.name,
+                label: Text("Username"),
+                placeholder: showPlaceHolders ? Text("Lyes Rabhi") : null,
+              ),
+              SizedBox(height: AppSizes.sm),
+              // role
+              Container(
+                constraints: BoxConstraints(
+                  minWidth: context.width,
+                ),
+                child: ShadSelectFormField<Role>(
+                  initialValue: userRole.value,
+                  enabled: editable,
+                  validator: (v) =>
+                      AppValidators.roleSelectionValidator(v?.name),
+                  options: getRoleOptions(context),
+                  label: Text("Role"),
+                  onChanged: (value) {
+                    logger.e(
+                        "before value: ${value?.name} __userRole: ${userRole.value?.name}");
+                    userRole.value = value;
+                    onAddUser?.call(
+                      addUserEmailController.text,
+                      addUserNameController.text,
+                      addUserPasswordController.text,
+                      addUserPhoneController.text,
+                      userRole.value!,
+                      addUserSuperiorOptions.firstOrNull?.value,
+                      addFirstNameController.text,
+                      addLastNameController.text,
+                      _addUserAvatarBytes,
+                      _addUserAvatarFile,
+                    );
+                    logger.e(
+                        "after value: ${value?.name} __userRole: ${userRole.value?.name}");
+                  },
+                  selectedOptionBuilder: (context, value) {
+                    return Container(
+                      constraints: BoxConstraints(
+                        minWidth: context.width,
                       ),
-            SizedBox(height: AppSizes.sm),
-            // email
-            ShadInputFormField(
-              enabled: editable,
-              controller: addUserEmailController,
-              keyboardType: TextInputType.emailAddress,
-              validator: FormBuilderValidators.email(),
-              label: Text("Email"),
-              placeholder: Text("account@exmaple.com"),
-            ),
-            SizedBox(height: AppSizes.sm),
-            // password
-            ShadInputFormField(
-              enabled: editable,
-              controller: addUserPasswordController,
-              keyboardType: TextInputType.visiblePassword,
-              validator: (v) => AppValidators.customPasswordValidator(v,
-                  optional: !isEditing),
-              obscureText: true,
-              label: Text(isEditing ? "New Password" : "Password"),
-              placeholder: Text("********"),
-            ),
-            SizedBox(height: AppSizes.sm),
-            // first_name
-            ShadInputFormField(
-              enabled: editable,
-              controller: addFirstNameController,
-              keyboardType: TextInputType.name,
-              label: Text("First Name"),
-              placeholder: showPlaceHolders ? Text("Lyes") : null,
-            ),
-            // last_name
-            ShadInputFormField(
-              enabled: editable,
-              controller: addLastNameController,
-              keyboardType: TextInputType.name,
-              label: Text("Last Name"),
-              placeholder: showPlaceHolders ? Text("Rabhi") : null,
-            ),
-            // username
-            ShadInputFormField(
-              enabled: editable,
-              controller: addUserNameController,
-              keyboardType: TextInputType.name,
-              label: Text("Username"),
-              placeholder: showPlaceHolders ? Text("Lyes Rabhi") : null,
-            ),
-            SizedBox(height: AppSizes.sm),
-            // role
-            Container(
-              constraints: BoxConstraints(
-                minWidth: context.width,
+                      child: Text("Role: ${value.name.toUpperCase()}",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall
+                              ?.copyWith(
+                                color: AppColors.getRoleColorWithRole(value),
+                              )),
+                    );
+                  },
+                  placeholder: Text("Role"),
+                  shrinkWrap: false,
+                ),
               ),
-              child: ShadSelectFormField<Role>(
-                initialValue: __userRole.value,
+              SizedBox(height: AppSizes.sm),
+              // phone number
+              ShadInputFormField(
                 enabled: editable,
-                validator: (v) => AppValidators.roleSelectionValidator(v?.name),
-                options: getRoleOptions(context),
-                label: Text("Role"),
-                onChanged: (value) {
-                  logger.e(
-                      "before value: ${value?.name} __userRole: ${__userRole.value?.name}");
-                  __userRole.value = value;
-                  onAddUser?.call(
-                    addUserEmailController.text,
-                    addUserNameController.text,
-                    addUserPasswordController.text,
-                    addUserPhoneController.text,
-                    __userRole.value!,
-                    addUserSuperiorOptions.firstOrNull?.value,
-                    addFirstNameController.text,
-                    addLastNameController.text,
-                    _addUserAvatarBytes,
-                    _addUserAvatarFile,
-                  );
-                  logger.e(
-                      "after value: ${value?.name} __userRole: ${__userRole.value?.name}");
-                },
-                selectedOptionBuilder: (context, value) {
-                  return Container(
-                    constraints: BoxConstraints(
-                      minWidth: context.width,
-                    ),
-                    child: Text("Role: ${value.name.toUpperCase()}",
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: AppColors.getRoleColorWithRole(value),
-                            )),
-                  );
-                },
-                placeholder: Text("Role"),
-                shrinkWrap: false,
+                controller: addUserPhoneController,
+                keyboardType: TextInputType.phone,
+                validator: (v) => AppValidators.phoneNumberValidator(v),
+                label: Text("Phone number"),
+                placeholder: showPlaceHolders ? Text("0549267381") : null,
               ),
-            ),
-            SizedBox(height: AppSizes.sm),
-            // phone number
-            ShadInputFormField(
-              enabled: editable,
-              controller: addUserPhoneController,
-              keyboardType: TextInputType.phone,
-              validator: (v) => AppValidators.phoneNumberValidator(v),
-              label: Text("Phone number"),
-              placeholder: showPlaceHolders ? Text("0549267381") : null,
-            ),
 
-            SizedBox(height: AppSizes.sm),
-            // superior
-            Container(
-              constraints: BoxConstraints(
-                minWidth: context.width,
-              ),
-              child: ShadSelectFormField<User>.withSearch(
-                initialValue: _superiorInitialValue,
-                enabled: editable,
-                label: Text("Superior"),
-                validator: (value) => AppValidators.superiorSelectionValidator(
-                  "${value?.userId}",
-                  addUserSuperiorOptions.map((o) => o.value).toList(),
+              SizedBox(height: AppSizes.sm),
+              // superior
+              Container(
+                constraints: BoxConstraints(
+                  minWidth: context.width,
                 ),
-                allowDeselection: true,
-                options: _searchAddUserSuperior.value
-                    ? _searchAddUserSuperiorOptions
-                    : addUserSuperiorOptions,
-                placeholder: Container(
+                child: ShadSelectFormField<User>.withSearch(
+                  initialValue: _superiorInitialValue,
+                  enabled: editable,
+                  label: Text("Superior"),
+                  validator: (value) =>
+                      AppValidators.superiorSelectionValidator(
+                    "${value?.userId}",
+                    addUserSuperiorOptions.map((o) => o.value).toList(),
+                  ),
+                  allowDeselection: true,
+                  options: _searchAddUserSuperior.value
+                      ? _searchAddUserSuperiorOptions
+                      : addUserSuperiorOptions,
+                  placeholder: Container(
+                      constraints: BoxConstraints(
+                        minWidth: context.width,
+                      ),
+                      child: Text("Select a Superior")),
+                  anchor: ShadAnchorAuto(
+                    preferBelow: false,
+                  ),
+                  onChanged: (value) {
+                    logger.d("value: $value");
+                  },
+                  selectedOptionBuilder: (context, value) => Container(
                     constraints: BoxConstraints(
                       minWidth: context.width,
                     ),
-                    child: Text("Select a Superior")),
-                anchor: ShadAnchorAuto(
-                  preferBelow: false,
-                ),
-                onChanged: (value) {
-                  print("value: $value");
-                },
-                selectedOptionBuilder: (context, value) => Container(
-                  constraints: BoxConstraints(
-                    minWidth: context.width,
+                    child: Text(
+                        "Superior: ${value.role} ${value.username.isNotEmpty ? value.username : value.email}",
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              color: AppColors.getRoleColorWithRoleValue(
+                                  value.role),
+                            )),
                   ),
-                  child: Text(
-                      "Superior: ${value.role} ${value.username.isNotEmpty ? value.username : value.email}",
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color:
-                                AppColors.getRoleColorWithRoleValue(value.role),
-                          )),
+                  onSearchChanged: (value) {
+                    if (value.isNotEmpty) {
+                      _searchAddUserSuperior.value =
+                          false; // turn it off to trigger update later
+                      _searchAddUserSuperiorOptions.clear();
+                      _searchAddUserSuperiorOptions
+                          .addAll(addUserSuperiorOptions.where((o) {
+                        if (o.value.username.contains(value)) {
+                          return true;
+                        }
+                        return o.value.email.contains(value);
+                      }));
+                      _searchAddUserSuperior.value =
+                          true; // turning it back on to trigger update
+                    } else {
+                      _searchAddUserSuperior.value = false;
+                      _searchAddUserSuperiorOptions.clear();
+                    }
+                  },
                 ),
-                onSearchChanged: (value) {
-                  if (value.isNotEmpty) {
-                    _searchAddUserSuperior.value =
-                        false; // turn it off to trigger update later
-                    _searchAddUserSuperiorOptions.clear();
-                    _searchAddUserSuperiorOptions
-                        .addAll(addUserSuperiorOptions.where((o) {
-                      if (o.value.username.contains(value)) {
-                        return true;
-                      }
-                      return o.value.email.contains(value);
-                    }));
-                    _searchAddUserSuperior.value =
-                        true; // turning it back on to trigger update
-                  } else {
-                    _searchAddUserSuperior.value = false;
-                    _searchAddUserSuperiorOptions.clear();
-                  }
-                },
               ),
-            ),
-            SizedBox(height: AppSizes.md),
-          ],
+              SizedBox(height: AppSizes.md),
+            ],
+          ),
         ),
       );
     });
@@ -466,5 +474,6 @@ class UserForm extends StatelessWidget {
           ? _addUserAvatarBytes!
           : _addUserAvatarFile!.readAsBytesSync();
     }
+    return null;
   }
 }
