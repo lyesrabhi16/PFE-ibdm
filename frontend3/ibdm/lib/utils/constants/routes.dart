@@ -17,6 +17,8 @@ class Routes {
 
   static final UserController userController = Get.find<UserController>();
 
+  static final UserController userController = Get.find<UserController>();
+
   static const String home = '/';
   static const String login = '/login';
   static const String settings = '/settings';

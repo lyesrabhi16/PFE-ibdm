@@ -1,19 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
+<!DOCTYPE html><html><head>
+ 
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
@@ -27,12 +13,138 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png">
 
   <title>ibdm</title>
   <link rel="manifest" href="manifest.json">
+  
+  
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+  
+  <style>
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 9999;
+    }
+    .splash-content {
+      text-align: center;
+    }
+  
+   
+    .splash-logo {
+      width: 150px;
+      height: 150px;
+    }
+    .text-content {
+      font-size: 30px;
+      font-weight: 20;
+    }
+    .loader {
+      margin: auto;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ddd;
+      border-top: 4px solid #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .footer-image {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px; 
+    opacity: 0.6; 
+  }
+
+  .footer-image img {
+    width: 100%;
+    height: auto;
+  }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+  
+  <script id="splash-screen-script">
+    function removeSplashFromWeb() {
+      document.getElementById("splash")?.remove();
+      document.getElementById("splash-branding")?.remove();
+      document.body.style.background = "transparent";
+    }
+  </script>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
-</body>
-</html>
+  
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+      <div class="splash-content">
+        <img src="assets/images/logo.png" alt="Logo" class="splash-logo">
+        <p class="text-content" id="text-id" >Welcome to your app</p>
+        <div class="loader"></div>
+      </div>
+      <footer class="footer-image">
+        <img src="assets/images/ifruit.png" alt="Footer Image">
+      </footer>
+    </div>
+    
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Charger les paramètres depuis le localStorage
+        const darkThemeMode = localStorage.getItem("darkThemeMode") === "true";
+        const locale = localStorage.getItem("locale") || "en";
+        const body = document.body;
+        const splashscreen = document.getElementById("splash-screen");
+        // uuse dark mode
+        if (darkThemeMode) {
+          splashscreen.style.background = "#121212"
+          document.body.style.background = "#121212"
+          document.body.style.color = "#ffffff";
+        }
+    
+        // use fr language 
+        // const textContent = document.querySelector(".text-content");
+        // if (textCntent) {
+        //   textContent.textContent = locale === "fr" ? "Bienvenue dans votre application" : "Welcome to your app";
+        // }
+        const text_language = document.getElementById("text-id");
+        console.log(text_language.textContent, locale === '"fr"');
+        if (locale === '"fr"') {
+          text_language.textContent = "Bienvenue dans votre application";
+        }
+        console.log(text_language.textContent);
+        
+        {{flutter_js}}
+        {{flutter_build_config}}
+        // Cacher le splash screen après le chargement de Flutter
+        const splashScreen = document.getElementById("splash-screen");
+    
+        _flutter.loader.load({
+          onEntrypointLoaded: async function (engineInitializer) {
+            const appRunner = await engineInitializer.initializeEngine();
+            await appRunner.runApp();
+    
+            // Masquer le splash screen après le chargement
+            if (splashScreen) {
+              splashScreen.style.display = "none";
+            }
+          }
+        });
+      });
+    </script>
+    
+    
+
+</body></html>
