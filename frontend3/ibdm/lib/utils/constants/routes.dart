@@ -8,7 +8,7 @@ import 'package:ibdm/common/middlewares/protected_route_middleware.dart';
 class Routes {
   Routes._();
 
-  static const String home = '/';
+  static const String home = '/home';
   static const String login = '/login';
 
   static final router = [
