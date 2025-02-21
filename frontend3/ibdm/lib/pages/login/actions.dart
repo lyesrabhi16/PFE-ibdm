@@ -18,6 +18,7 @@ class LoginActions {
     required Rx<FutureState> loginProgress,
     required TextEditingController emailController,
     required TextEditingController passwordController,
+    required bool rememberMe,
   }) async {
     final strings = getTranslations(context);
     // validate form
@@ -49,6 +50,7 @@ class LoginActions {
       final response = await apiClient.login(
         email: emailController.text,
         password: passwordController.text,
+        // todo: rememberMe: rememberMe,
       );
       logger.d("Login Response: $response");
       // set login progress to success
