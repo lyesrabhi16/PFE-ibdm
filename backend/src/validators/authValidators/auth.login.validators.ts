@@ -11,7 +11,8 @@ const loginValidator = async (req: Request, res: Response, next: NextFunction) =
         console.log("Body: ", req.body);
         
         // validate the request body using the loginInput schema validator
-        await loginInputValidator.validate(req.body);
+        const validated_data = await loginInputValidator.validate(req.body);
+        req.body = validated_data;
         // if no error occurs, proceed
         next();
     }
