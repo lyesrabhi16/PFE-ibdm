@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
 import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
+//import 'package:ibdm/pages/login/loading_page.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
@@ -16,11 +17,9 @@ class MyApp extends StatelessWidget {
       Get.put(ThemeModeController());
   final UserController userController = Get.put(UserController());
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = createTextTheme(context, "Poppins", "Poppins");
-
     MaterialTheme theme = MaterialTheme(textTheme);
 
     return Obx(

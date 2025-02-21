@@ -1,19 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
+import 'package:ibdm/pages/loading_page.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 10), () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
     final localecontroller = Get.find<LocaleController>();
+
+    if (_isLoading) {
+      return LoadingPage();
+    }
+
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -34,7 +59,6 @@ class Home extends StatelessWidget {
             FilledButton(
               child: Obx(() => Text(strings.value.login)),
               onPressed: () {
-                // go to login page
                 Get.toNamed(Routes.login);
               },
             ),
@@ -53,7 +77,21 @@ class Home extends StatelessWidget {
               },
             ),
             SizedBox(height: AppSizes.md),
-            ActionsRow(),
+            FilledButton(
+              child: Text(strings.value.logout),
+              onPressed: () {
+                Get.find<UserController>().logoutUser();
+                Get.offAllNamed(Routes.login);
+              },
+            ),
+            FilledButton(
+              child: Text("protected"),
+              onPressed: () {
+                Get.toNamed("/protected");
+              },
+            ),
+            SizedBox(height: AppSizes.md),
+            const ActionsRow(),
           ],
         ),
       ),
@@ -67,7 +105,6 @@ class ActionsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      spacing: AppSizes.md,
       children: <Widget>[
         ThemeModeSwitchButton(),
         LanguageSwitchButton(),
