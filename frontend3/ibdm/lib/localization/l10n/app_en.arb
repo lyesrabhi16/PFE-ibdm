@@ -77,12 +77,7 @@
     "phoneNumber": "Phone number",
     "superior": "Superior",
     "selectSuperior": "Select a Superior",
-    "role_ADMIN_SYSTEM": "System Admin",
-    "role_ADMIN": "Administrator",
-    "role_SUPERVISOR": "Supervisor",
-    "role_OPERATEUR": "Operator",
-    "delete_users": "Are you sure you want to delete {count} user(s)?"
-
-
-
+    "delete_users": "Are you sure you want to delete {count} user(s)?",
+    "options": "Options",
+    "me": "Me"
 }

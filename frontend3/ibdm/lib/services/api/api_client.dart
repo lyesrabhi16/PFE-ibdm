@@ -154,8 +154,8 @@ extension WebUsersFixedApis on IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final headers = <String, dynamic>{};
-    final data = FormData();
-    data.fields.add(MapEntry(
+    final _data = FormData();
+    _data.fields.add(MapEntry(
       'email',
       email,
     ));
@@ -188,7 +188,7 @@ extension WebUsersFixedApis on IbdmApiClient {
       ));
     }
     if (phoneNumber != null) {
-      data.fields.add(MapEntry(
+      _data.fields.add(MapEntry(
         'phone_number',
         phoneNumber,
       ));
@@ -235,7 +235,7 @@ extension WebUsersFixedApis on IbdmApiClient {
           ApiClientInstance.dio.options,
           '/api/v1/user-management/users/',
           queryParameters: queryParameters,
-          data: data,
+          data: _data,
         )
         .copyWith(
             baseUrl: _combineBaseUrls(
@@ -244,7 +244,7 @@ extension WebUsersFixedApis on IbdmApiClient {
         )));
     logger.i("addUsersOnWeb: options");
     final result =
-        await ApiClientInstance.dio.fetch<Map<String, dynamic>>(options);
+        await ApiClientInstance.dio.fetch<Map<String, dynamic>>(_options);
 
     //final result = await ApiClientInstance.dio.fetch(options);
 
