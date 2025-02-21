@@ -6,4 +6,5 @@ urlpatterns = [
     path('docs/', include('documentation.urls'), name='documentation'),
     path('user-management/', include('users.urls'), name='users'),
     path("siroperie/", include("siroperie.urls"), name="siroperie"),
+    path("emails/", include("emails.urls"), name="emails"),
 ]

@@ -62,7 +62,7 @@ class UserManager(BaseUserManager):
 
 class Role(models.Model):
     group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name="role", unique=True)
-    managed_roles = models.ManyToManyField("Role")
+    managed_roles = models.ManyToManyField("Role", blank=True)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

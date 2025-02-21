@@ -234,6 +234,572 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
+  Future<PaginatedEmailScheduleList> getEmailSchedules({
+    bool? enablePagination,
+    int? page,
+    int? perPage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'page': page,
+      r'per_page': perPage,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedEmailScheduleList>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/schedules/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedEmailScheduleList _value;
+    try {
+      _value = PaginatedEmailScheduleList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<EmailSchedule> addEmailSchedule({
+    required RapportEnum rapport,
+    required String tempsEnvoi,
+    required IntervalEnum interval,
+    required List<String> scheduledUsers,
+    int? intervalManual,
+    DateTime? nextRunTime,
+    List<int>? scheduledRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry(
+      'rapport',
+      rapport.name,
+    ));
+    _data.fields.add(MapEntry(
+      'temps_envoi',
+      tempsEnvoi,
+    ));
+    _data.fields.add(MapEntry(
+      'interval',
+      interval.name,
+    ));
+    scheduledUsers.forEach((i) {
+      _data.fields.add(MapEntry('scheduled_users', i));
+    });
+    if (intervalManual != null) {
+      _data.fields.add(MapEntry(
+        'interval_manual',
+        intervalManual.toString(),
+      ));
+    }
+    if (scheduledRoles != null) {
+      _data.files.add(MapEntry(
+          'scheduled_roles',
+          MultipartFile.fromBytes(
+            scheduledRoles,
+            filename: null,
+          )));
+    }
+    final _options = _setStreamType<EmailSchedule>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/schedules/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late EmailSchedule _value;
+    try {
+      _value = EmailSchedule.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<EmailSchedule> getEmailSchedule({required int id}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<EmailSchedule>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/schedules/${id}/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late EmailSchedule _value;
+    try {
+      _value = EmailSchedule.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<EmailSchedule> updateEmailSchedule({
+    required int id,
+    required RapportEnum rapport,
+    required String tempsEnvoi,
+    required IntervalEnum interval,
+    required List<String> scheduledUsers,
+    int? intervalManual,
+    DateTime? nextRunTime,
+    List<int>? scheduledRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry(
+      'rapport',
+      rapport.name,
+    ));
+    _data.fields.add(MapEntry(
+      'temps_envoi',
+      tempsEnvoi,
+    ));
+    _data.fields.add(MapEntry(
+      'interval',
+      interval.name,
+    ));
+    scheduledUsers.forEach((i) {
+      _data.fields.add(MapEntry('scheduled_users', i));
+    });
+    if (intervalManual != null) {
+      _data.fields.add(MapEntry(
+        'interval_manual',
+        intervalManual.toString(),
+      ));
+    }
+    if (scheduledRoles != null) {
+      _data.files.add(MapEntry(
+          'scheduled_roles',
+          MultipartFile.fromBytes(
+            scheduledRoles,
+            filename: null,
+          )));
+    }
+    final _options = _setStreamType<EmailSchedule>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/schedules/${id}/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late EmailSchedule _value;
+    try {
+      _value = EmailSchedule.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<EmailSchedule> partialUpdateEmailSchedule({
+    required int id,
+    RapportEnum? rapport,
+    String? tempsEnvoi,
+    IntervalEnum? interval,
+    int? intervalManual,
+    DateTime? nextRunTime,
+    List<String>? scheduledUsers,
+    List<int>? scheduledRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (rapport != null) {
+      _data.fields.add(MapEntry(
+        'rapport',
+        rapport.name,
+      ));
+    }
+    if (tempsEnvoi != null) {
+      _data.fields.add(MapEntry(
+        'temps_envoi',
+        tempsEnvoi,
+      ));
+    }
+    if (interval != null) {
+      _data.fields.add(MapEntry(
+        'interval',
+        interval.name,
+      ));
+    }
+    if (intervalManual != null) {
+      _data.fields.add(MapEntry(
+        'interval_manual',
+        intervalManual.toString(),
+      ));
+    }
+    scheduledUsers?.forEach((i) {
+      _data.fields.add(MapEntry('scheduled_users', i));
+    });
+    if (scheduledRoles != null) {
+      _data.files.add(MapEntry(
+          'scheduled_roles',
+          MultipartFile.fromBytes(
+            scheduledRoles,
+            filename: null,
+          )));
+    }
+    final _options = _setStreamType<EmailSchedule>(Options(
+      method: 'PATCH',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/schedules/${id}/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late EmailSchedule _value;
+    try {
+      _value = EmailSchedule.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<void> destroyEmailSchedule({required int id}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<void>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/schedules/${id}/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
+  Future<PaginatedSentEmailList> getSentEmails({
+    bool? enablePagination,
+    int? page,
+    int? perPage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'page': page,
+      r'per_page': perPage,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedSentEmailList>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/sent/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedSentEmailList _value;
+    try {
+      _value = PaginatedSentEmailList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<SentEmail> addSentEmail({
+    required String receptionist,
+    required int schedule,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry(
+      'receptionist',
+      receptionist,
+    ));
+    _data.fields.add(MapEntry(
+      'schedule',
+      schedule.toString(),
+    ));
+    final _options = _setStreamType<SentEmail>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/sent/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SentEmail _value;
+    try {
+      _value = SentEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<SentEmail> getSentEmail({required int id}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<SentEmail>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/sent/${id}/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SentEmail _value;
+    try {
+      _value = SentEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<SentEmail> updateSentEmail({
+    required int id,
+    required String receptionist,
+    required int schedule,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry(
+      'receptionist',
+      receptionist,
+    ));
+    _data.fields.add(MapEntry(
+      'schedule',
+      schedule.toString(),
+    ));
+    final _options = _setStreamType<SentEmail>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/sent/${id}/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SentEmail _value;
+    try {
+      _value = SentEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<SentEmail> partialUpdateSentEmail({
+    required int id,
+    String? receptionist,
+    int? schedule,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (receptionist != null) {
+      _data.fields.add(MapEntry(
+        'receptionist',
+        receptionist,
+      ));
+    }
+    if (schedule != null) {
+      _data.fields.add(MapEntry(
+        'schedule',
+        schedule.toString(),
+      ));
+    }
+    final _options = _setStreamType<SentEmail>(Options(
+      method: 'PATCH',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/sent/${id}/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SentEmail _value;
+    try {
+      _value = SentEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<void> destroySentEmail({required int id}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<void>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/emails/sent/${id}/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
   Future<PaginatedSucreList> getSucreList({
     bool? enablePagination,
     int? page,

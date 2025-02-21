@@ -8,19 +8,25 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
+import '../models/email_schedule.dart';
 import '../models/format.dart';
 import '../models/group.dart';
 import '../models/has_perm_response.dart';
+import '../models/interval_enum.dart';
 import '../models/lang.dart';
 import '../models/login_response.dart';
+import '../models/paginated_email_schedule_list.dart';
 import '../models/paginated_group_list.dart';
 import '../models/paginated_permission_list.dart';
 import '../models/paginated_role_list.dart';
+import '../models/paginated_sent_email_list.dart';
 import '../models/paginated_subordinate_and_superior_list.dart';
 import '../models/paginated_sucre_list.dart';
 import '../models/paginated_user_list.dart';
 import '../models/permission.dart';
+import '../models/rapport_enum.dart';
 import '../models/role.dart';
+import '../models/sent_email.dart';
 import '../models/subordinate_and_superior.dart';
 import '../models/success_response.dart';
 import '../models/sucre.dart';
@@ -69,6 +75,119 @@ abstract class IbdmApiClient {
   Future<dynamic> retrieveApiV1DocumentationSchema({
     @Query('format') Format? format,
     @Query('lang') Lang? lang,
+  });
+
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/emails/schedules/')
+  Future<PaginatedEmailScheduleList> getEmailSchedules({
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
+  @MultiPart()
+  @POST('/api/v1/emails/schedules/')
+  Future<EmailSchedule> addEmailSchedule({
+    @Part(name: 'rapport') required RapportEnum rapport,
+    @Part(name: 'temps_envoi') required String tempsEnvoi,
+    @Part(name: 'interval') required IntervalEnum interval,
+    @Part(name: 'scheduled_users') required List<String> scheduledUsers,
+    @Part(name: 'interval_manual') int? intervalManual,
+    @Part(name: 'next_run_time') DateTime? nextRunTime,
+    @Part(name: 'scheduled_roles') List<int>? scheduledRoles,
+  });
+
+  /// [id] - A unique integer value identifying this email schedule.
+  @GET('/api/v1/emails/schedules/{id}/')
+  Future<EmailSchedule> getEmailSchedule({
+    @Path('id') required int id,
+  });
+
+  /// [id] - A unique integer value identifying this email schedule.
+  @MultiPart()
+  @PUT('/api/v1/emails/schedules/{id}/')
+  Future<EmailSchedule> updateEmailSchedule({
+    @Path('id') required int id,
+    @Part(name: 'rapport') required RapportEnum rapport,
+    @Part(name: 'temps_envoi') required String tempsEnvoi,
+    @Part(name: 'interval') required IntervalEnum interval,
+    @Part(name: 'scheduled_users') required List<String> scheduledUsers,
+    @Part(name: 'interval_manual') int? intervalManual,
+    @Part(name: 'next_run_time') DateTime? nextRunTime,
+    @Part(name: 'scheduled_roles') List<int>? scheduledRoles,
+  });
+
+  /// [id] - A unique integer value identifying this email schedule.
+  @MultiPart()
+  @PATCH('/api/v1/emails/schedules/{id}/')
+  Future<EmailSchedule> partialUpdateEmailSchedule({
+    @Path('id') required int id,
+    @Part(name: 'rapport') RapportEnum? rapport,
+    @Part(name: 'temps_envoi') String? tempsEnvoi,
+    @Part(name: 'interval') IntervalEnum? interval,
+    @Part(name: 'interval_manual') int? intervalManual,
+    @Part(name: 'next_run_time') DateTime? nextRunTime,
+    @Part(name: 'scheduled_users') List<String>? scheduledUsers,
+    @Part(name: 'scheduled_roles') List<int>? scheduledRoles,
+  });
+
+  /// [id] - A unique integer value identifying this email schedule.
+  @DELETE('/api/v1/emails/schedules/{id}/')
+  Future<void> destroyEmailSchedule({
+    @Path('id') required int id,
+  });
+
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/emails/sent/')
+  Future<PaginatedSentEmailList> getSentEmails({
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
+  @MultiPart()
+  @POST('/api/v1/emails/sent/')
+  Future<SentEmail> addSentEmail({
+    @Part(name: 'receptionist') required String receptionist,
+    @Part(name: 'schedule') required int schedule,
+  });
+
+  /// [id] - A unique integer value identifying this sent email.
+  @GET('/api/v1/emails/sent/{id}/')
+  Future<SentEmail> getSentEmail({
+    @Path('id') required int id,
+  });
+
+  /// [id] - A unique integer value identifying this sent email.
+  @MultiPart()
+  @PUT('/api/v1/emails/sent/{id}/')
+  Future<SentEmail> updateSentEmail({
+    @Path('id') required int id,
+    @Part(name: 'receptionist') required String receptionist,
+    @Part(name: 'schedule') required int schedule,
+  });
+
+  /// [id] - A unique integer value identifying this sent email.
+  @MultiPart()
+  @PATCH('/api/v1/emails/sent/{id}/')
+  Future<SentEmail> partialUpdateSentEmail({
+    @Path('id') required int id,
+    @Part(name: 'receptionist') String? receptionist,
+    @Part(name: 'schedule') int? schedule,
+  });
+
+  /// [id] - A unique integer value identifying this sent email.
+  @DELETE('/api/v1/emails/sent/{id}/')
+  Future<void> destroySentEmail({
+    @Path('id') required int id,
   });
 
   /// [enablePagination] - Enable or disable pagination.

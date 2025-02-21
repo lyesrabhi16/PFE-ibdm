@@ -500,6 +500,540 @@
                 }
             }
         },
+        "/api/v1/emails/schedules/": {
+            "get": {
+                "operationId": "getEmailSchedules",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "emails"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedEmailScheduleList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "addEmailSchedule",
+                "tags": [
+                    "emails"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailScheduleRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailScheduleRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailScheduleRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmailSchedule"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/emails/schedules/{id}/": {
+            "get": {
+                "operationId": "getEmailSchedule",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this email schedule.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "emails"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmailSchedule"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "updateEmailSchedule",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this email schedule.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "emails"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailScheduleRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailScheduleRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailScheduleRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmailSchedule"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "partialUpdateEmailSchedule",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this email schedule.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "emails"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedEmailScheduleRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedEmailScheduleRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedEmailScheduleRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmailSchedule"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "destroyEmailSchedule",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this email schedule.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "emails"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/emails/sent/": {
+            "get": {
+                "operationId": "getSentEmails",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "emails"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedSentEmailList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "addSentEmail",
+                "tags": [
+                    "emails"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SentEmailRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SentEmailRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SentEmailRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SentEmail"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/emails/sent/{id}/": {
+            "get": {
+                "operationId": "getSentEmail",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this sent email.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "emails"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SentEmail"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "updateSentEmail",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this sent email.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "emails"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SentEmailRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SentEmailRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SentEmailRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SentEmail"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "partialUpdateSentEmail",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this sent email.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "emails"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedSentEmailRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedSentEmailRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedSentEmailRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SentEmail"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "destroySentEmail",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this sent email.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "emails"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
         "/api/v1/siroperie/sucre/": {
             "get": {
                 "operationId": "getSucreList",
@@ -2082,6 +2616,115 @@
                 "type": "string",
                 "description": "* `invalid_input` - invalid_input\n* `invalid_credentials` - invalid_credentials"
             },
+            "EmailSchedule": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
+                    },
+                    "rapport": {
+                        "$ref": "#/components/schemas/RapportEnum"
+                    },
+                    "temps_envoi": {
+                        "type": "string",
+                        "format": "time"
+                    },
+                    "interval": {
+                        "$ref": "#/components/schemas/IntervalEnum"
+                    },
+                    "interval_manual": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "nullable": true
+                    },
+                    "next_run_time": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "scheduled_users": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "email"
+                        }
+                    },
+                    "scheduled_roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "interval",
+                    "rapport",
+                    "scheduled_users",
+                    "temps_envoi",
+                    "updated_at",
+                    "url"
+                ]
+            },
+            "EmailScheduleRequest": {
+                "type": "object",
+                "properties": {
+                    "rapport": {
+                        "$ref": "#/components/schemas/RapportEnum"
+                    },
+                    "temps_envoi": {
+                        "type": "string",
+                        "format": "time"
+                    },
+                    "interval": {
+                        "$ref": "#/components/schemas/IntervalEnum"
+                    },
+                    "interval_manual": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "nullable": true
+                    },
+                    "next_run_time": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "scheduled_users": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "email",
+                            "minLength": 1
+                        }
+                    },
+                    "scheduled_roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "required": [
+                    "interval",
+                    "rapport",
+                    "scheduled_users",
+                    "temps_envoi"
+                ]
+            },
             "ErrorResponse": {
                 "type": "object",
                 "properties": {
@@ -2144,6 +2787,16 @@
                     "has_perm"
                 ]
             },
+            "IntervalEnum": {
+                "enum": [
+                    "jour",
+                    "semaine",
+                    "mois",
+                    "manual"
+                ],
+                "type": "string",
+                "description": "* `jour` - jour\n* `semaine` - semaine\n* `mois` - mois\n* `manual` - manual"
+            },
             "LoginRequestRequest": {
                 "type": "object",
                 "properties": {
@@ -2175,6 +2828,45 @@
                     "status",
                     "user"
                 ]
+            },
+            "PaginatedEmailScheduleList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmailSchedule"
+                        }
+                    }
+                }
             },
             "PaginatedGroupList": {
                 "type": "object",
@@ -2289,6 +2981,45 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Role"
+                        }
+                    }
+                }
+            },
+            "PaginatedSentEmailList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SentEmail"
                         }
                     }
                 }
@@ -2410,6 +3141,46 @@
                     }
                 }
             },
+            "PatchedEmailScheduleRequest": {
+                "type": "object",
+                "properties": {
+                    "rapport": {
+                        "$ref": "#/components/schemas/RapportEnum"
+                    },
+                    "temps_envoi": {
+                        "type": "string",
+                        "format": "time"
+                    },
+                    "interval": {
+                        "$ref": "#/components/schemas/IntervalEnum"
+                    },
+                    "interval_manual": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "nullable": true
+                    },
+                    "next_run_time": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "scheduled_users": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "email",
+                            "minLength": 1
+                        }
+                    },
+                    "scheduled_roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            },
             "PatchedGroupRequest": {
                 "type": "object",
                 "properties": {
@@ -2450,6 +3221,19 @@
                         "items": {
                             "type": "string"
                         }
+                    }
+                }
+            },
+            "PatchedSentEmailRequest": {
+                "type": "object",
+                "properties": {
+                    "receptionist": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1
+                    },
+                    "schedule": {
+                        "type": "integer"
                     }
                 }
             },
@@ -2569,6 +3353,13 @@
                     "name"
                 ]
             },
+            "RapportEnum": {
+                "enum": [
+                    "inventaire-sucre"
+                ],
+                "type": "string",
+                "description": "* `inventaire-sucre` - inventaire-sucre"
+            },
             "Role": {
                 "type": "object",
                 "properties": {
@@ -2649,6 +3440,51 @@
                 "required": [
                     "group_id",
                     "managed_roles"
+                ]
+            },
+            "SentEmail": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
+                    },
+                    "temps_envoi": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "receptionist": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "schedule": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "receptionist",
+                    "schedule",
+                    "temps_envoi",
+                    "url"
+                ]
+            },
+            "SentEmailRequest": {
+                "type": "object",
+                "properties": {
+                    "receptionist": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1
+                    },
+                    "schedule": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "receptionist",
+                    "schedule"
                 ]
             },
             "SubordinateAndSuperior": {
