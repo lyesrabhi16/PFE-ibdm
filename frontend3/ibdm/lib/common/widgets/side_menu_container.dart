@@ -11,8 +11,6 @@ import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
-import 'package:ibdm/common/controllers/user_controller.dart';
-import 'package:ibdm/common/widgets/responsive_appbar.dart';
 
 class SideMenuContainer extends StatelessWidget {
   const SideMenuContainer({super.key, required this.child});
@@ -39,7 +37,6 @@ class SideMenuContainer extends StatelessWidget {
       _added = true;
     }
     final strings = getTranslations(context).obs;
-    final userController = Get.find<UserController>();
 
     // activate current page
     int startIndexOffset = 1; // actual index of the first page in items list
@@ -111,8 +108,7 @@ class SideMenuContainer extends StatelessWidget {
                                   Get.find<UserController>().logoutUser();
                                   Get.offAllNamed(Routes.login);
                                 },
-                                child:
-                                    _open ? Text(strings.value.logout) : null,
+                                child: open ? Text(strings.value.logout) : null,
                               ),
                               SizedBox(
                                 height: AppSizes.sm,

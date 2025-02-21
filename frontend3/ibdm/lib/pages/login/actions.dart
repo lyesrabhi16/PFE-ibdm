@@ -43,7 +43,6 @@ class LoginActions {
 
     // make api request
     try {
-      
       logger.d("Creating Api Client...");
       logger.d("Requesting Login...");
 
@@ -98,7 +97,7 @@ class LoginActions {
             errorToastMessage = strings.cancelMessage;
             break;
           default:
-            errorToastMessage = strings.uknownError;
+            errorToastMessage = strings.unknownError;
         }
 
         if (e.response != null) {
@@ -115,7 +114,7 @@ class LoginActions {
         // show uncaught error toast
         Toasts.showErrorToastNotification(
             context: context,
-            message: strings.uknownError,
+            message: strings.unknownError,
             title: strings.connectionFailed);
       }
     }
