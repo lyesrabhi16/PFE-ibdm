@@ -14,9 +14,7 @@ import 'package:ibdm/utils/constants/destinations.dart';
 
 class Routes {
   Routes._();
-
-  static final UserController userController = Get.find<UserController>();
-
+  
   static final UserController userController = Get.find<UserController>();
 
   static const String home = '/';

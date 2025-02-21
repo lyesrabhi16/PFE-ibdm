@@ -43,6 +43,7 @@ class LoginActions {
 
     // make api request
     try {
+      
       logger.d("Creating Api Client...");
       logger.d("Requesting Login...");
 

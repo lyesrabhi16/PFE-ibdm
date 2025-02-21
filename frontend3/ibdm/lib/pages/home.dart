@@ -104,17 +104,3 @@ class _HomeState extends State<Home> {
     );
   }
 }
-
-class ActionsRow extends StatelessWidget {
-  const ActionsRow({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        ThemeModeSwitchButton(),
-        LanguageSwitchButton(),
-      ],
-    );
-  }
-}
