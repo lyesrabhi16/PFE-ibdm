@@ -12,7 +12,7 @@ class ScreenSizes {
 
   static double xs = 320.0;
   static double sm = 600.0;
-  static double md = 960.0;
+  static double md = 768.0;
   static double lg = 1280.0;
   static double xl = 1920.0;
 }

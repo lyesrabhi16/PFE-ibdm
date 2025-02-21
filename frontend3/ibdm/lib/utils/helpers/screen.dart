@@ -7,13 +7,33 @@ bool isLargeScreen(BuildContext context) {
 }
 
 bool isMediumScreen(BuildContext context) {
-  return context.width >= ScreenSizes.md;
+  return context.width >= ScreenSizes.md && context.width < ScreenSizes.lg;
 }
 
 bool isSmallScreen(BuildContext context) {
-  return context.width < ScreenSizes.md;
+  return context.width >= ScreenSizes.sm && context.width < ScreenSizes.md;
 }
 
 bool isExtraSmallScreen(BuildContext context) {
   return context.width < ScreenSizes.sm;
+}
+
+bool isAtLeastSmallScreen(BuildContext context) {
+  return context.width >= ScreenSizes.sm;
+}
+
+bool isAtLeastMediumScreen(BuildContext context) {
+  return context.width >= ScreenSizes.md;
+}
+
+bool isAtLeastLargeScreen(BuildContext context) {
+  return context.width >= ScreenSizes.lg;
+}
+
+bool isAtMostSmallScreen(BuildContext context) {
+  return context.width < ScreenSizes.md;
+}
+
+bool isAtMostMediumScreen(BuildContext context) {
+  return context.width < ScreenSizes.lg;
 }

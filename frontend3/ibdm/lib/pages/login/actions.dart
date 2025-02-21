@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api/api_client.dart';
-import 'package:ibdm/services/api/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/types.dart';
@@ -19,6 +18,7 @@ class LoginActions {
     required Rx<FutureState> loginProgress,
     required TextEditingController emailController,
     required TextEditingController passwordController,
+    required bool rememberMe,
   }) async {
     final strings = getTranslations(context);
     // validate form
@@ -43,14 +43,14 @@ class LoginActions {
 
     // make api request
     try {
-      
       logger.d("Creating Api Client...");
       logger.d("Requesting Login...");
 
-      IbdmApiClient apiClient = await ApiClientInstance.getApiClient();
+      final apiClient = await ApiClientInstance.getApiClient();
       final response = await apiClient.login(
-        body: LoginRequest(
-            email: emailController.text, password: passwordController.text),
+        email: emailController.text,
+        password: passwordController.text,
+        rememberMe: rememberMe,
       );
       logger.d("Login Response: $response");
       // set login progress to success
@@ -97,7 +97,7 @@ class LoginActions {
             errorToastMessage = strings.cancelMessage;
             break;
           default:
-            errorToastMessage = strings.uknownError;
+            errorToastMessage = strings.unknownError;
         }
 
         if (e.response != null) {
@@ -114,7 +114,7 @@ class LoginActions {
         // show uncaught error toast
         Toasts.showErrorToastNotification(
             context: context,
-            message: strings.uknownError,
+            message: strings.unknownError,
             title: strings.connectionFailed);
       }
     }

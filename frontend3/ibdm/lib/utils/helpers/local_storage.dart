@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:ibdm/services/api/api_client/models/user.dart';
+import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,7 +35,8 @@ class LocalStorage {
   }
 
   static Future<void> setUser(User user) async {
-    return perfs.setString(storageKeys.user.name, jsonEncode(user));
+    return perfs.setString(
+        storageKeys.user.name, JsonCodec().encode(user.toJson()));
   }
 
   static Future<void> removeUser() async {
@@ -48,9 +49,7 @@ class LocalStorage {
       if (userStr == null) {
         return null;
       }
-      final userJson = jsonDecode(userStr);
-
-      return User.fromJson(userJson);
+      return User.fromJson(JsonCodec().decode(userStr));
     } catch (e) {
       logger.e("Error getting user from local storage: $e");
       return null;
