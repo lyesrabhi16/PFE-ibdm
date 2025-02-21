@@ -6,6 +6,7 @@
     "login": "S'identifier",
     "loginToContinue": "Connectez-vous pour continuer",
     "email": "Email",
+    "emailExemple": "compte@exemple.com",
     "password": "Mot de passe",
     "forgotPassword": "Mot de passe oublié",
     "rememberMe": "Se souvenir de moi",
@@ -37,5 +38,60 @@
     "connectionFailed": "Échec de la connexion",
     "accessDenied": "Accès refusé",
     "loginRequired": "Authentification requise",
-    "logoutRequired": "Déconnexion requise"
+    "logoutRequired": "Déconnexion requise",
+    "search": "Rechercher...",
+    "userManagement": "Management des Utilisateurs",
+    "addUser": "Ajouter Utilisateur",
+    "addOneUser": "Ajouter Un Utilisateur",
+    "delete": "Supprimer",
+    "filters": "Filtres",
+    "filterUser": "Filtrer les utilisateurs",
+    "filterByRole": "Filtrer par Role",
+    "role": "Role",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "sortUser": "Trier utilisateurs",
+    "sortBy": "Trier par:",
+    "id": "ID",
+    "name": "Nom",
+    "perPage": "Par Page",
+    "no": "No",
+    "avatar": "Avatar",
+    "actions": "Actions",
+    "page": "Page",
+    "PrevPage": "Précédente",
+    "NextPage": "Suivante",
+    "users": "Utilisateurs",
+    "deleteUser": "Supprimer Utilisateurs",
+    "selectUserDelete": "Selectionner l'Utilisateur à Supprimer",
+    "cancel": "Annuler",
+    "repFav": "Oui",
+    "repDeFav": "Non",
+    "pleaseFixErrorsInTheForm": "SVP fixer les erreurs dans le formulaire",
+    "addinsUserMessage": "Ajout de l'utilisateur...",
+    "failedToAddUserMessage": "Ajout Utilisateur échoué",
+    "successAddUserMessage": "Utilisateur Ajouté Avec Succès",
+    "openingFilePicher": "Ouverture de Sélecteur de Fichier...",
+    "canceled": "Annulée",
+    "fileSelected": "Fichier Choisi",
+    "phoneNumber": "Numero de Téléphone",
+    "superior": "Supérieur",
+    "selectSuperior": "Selectionner le Supérieur",
+    "role_ADMIN_SYSTEM": "Administrateur système",
+    "role_ADMIN": "Administrateur",
+    "role_SUPERVISOR": "Superviseur",
+    "role_OPERATEUR": "Opérateur",
+    "delete_users": "Êtes-vous sûr de vouloir supprimer {count} utilisateur(s) ?"
+
+
+
+
+
+
+
+
+
+
+
+
 }
