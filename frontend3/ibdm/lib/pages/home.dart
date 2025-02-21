@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
-import 'package:ibdm/common/widgets/language_switch_button.dart';
-import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
+import 'package:ibdm/common/widgets/actions_row.dart';
+import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
 import 'package:ibdm/pages/loading_page.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
+import 'package:ibdm/common/widgets/responsive_appbar.dart';
+import 'dart:io';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -33,20 +35,34 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
-    final localecontroller = Get.find<LocaleController>();
+    final localeController = Get.find<LocaleController>();
 
     if (_isLoading) {
       return LoadingPage();
     }
 
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
+    final userController = Get.find<UserController>();
+
+    return Scaffold(
+      appBar: ResponsiveAppBar(
+        userName: userController.user?.name ?? "No Name",
+        userImage: (userController.user?.avatarUrl != null &&
+                userController.user!.avatarUrl!.isNotEmpty)
+            ? userController.user!.avatarUrl!
+            : '',
+        onLogout: () {
+          userController.logoutUser();
+          Get.offAllNamed(Routes.login);
+        },
+      ),
+      body: AppCustomContainer(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Obx(
               () => Center(
                 child: Text(
+                  textAlign: TextAlign.center,
                   strings.value.homePageWelcomeMessage,
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
@@ -54,7 +70,7 @@ class _HomeState extends State<Home> {
             ),
             SizedBox(height: AppSizes.sm),
             Text(
-                "Current Language: ${localecontroller.locale.value.languageCode}"),
+                "Current Language: ${localeController.locale.value.languageCode}"),
             SizedBox(height: AppSizes.md),
             FilledButton(
               child: Obx(() => Text(strings.value.login)),
@@ -64,51 +80,27 @@ class _HomeState extends State<Home> {
             ),
             SizedBox(height: AppSizes.md),
             FilledButton(
-              child: Text(strings.value.logout),
+              style: const ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(Colors.red),
+              ),
               onPressed: () {
-                Get.find<UserController>().logoutUser();
+                userController.logoutUser();
                 Get.offAllNamed(Routes.login);
               },
+              child: Text(strings.value.logout),
             ),
+            SizedBox(height: AppSizes.md),
             FilledButton(
-              child: Text("protected"),
+              child: const Text("protected"),
               onPressed: () {
                 Get.toNamed("/protected");
               },
             ),
             SizedBox(height: AppSizes.md),
-            FilledButton(
-              child: Text(strings.value.logout),
-              onPressed: () {
-                Get.find<UserController>().logoutUser();
-                Get.offAllNamed(Routes.login);
-              },
-            ),
-            FilledButton(
-              child: Text("protected"),
-              onPressed: () {
-                Get.toNamed("/protected");
-              },
-            ),
-            SizedBox(height: AppSizes.md),
-            const ActionsRow(),
+            ActionsRow(wrap: true),
           ],
         ),
       ),
-    );
-  }
-}
-
-class ActionsRow extends StatelessWidget {
-  const ActionsRow({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        ThemeModeSwitchButton(),
-        LanguageSwitchButton(),
-      ],
     );
   }
 }

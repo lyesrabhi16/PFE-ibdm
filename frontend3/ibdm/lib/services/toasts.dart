@@ -93,6 +93,7 @@ class Toasts {
       title: title != null ? Text(title) : null,
       position: Alignment.bottomRight,
       animation: AnimationType.fromRight,
+      toastDuration: Duration(seconds: 5),
     );
     toast.show(context);
     return toast;

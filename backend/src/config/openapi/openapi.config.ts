@@ -13,7 +13,7 @@ export const generateOpenApiSpecification = () => {
                 description: "API for the IBDM project",
             },
         },
-        apis: ["./src/routes/**/*.ts", "./src/routes/**/*.js", "./src/routes/**/*.yaml", "./src/routes/**/*.yml"],
+        apis: ["./src/routes/**/*.ts", "./src/routes/**/*.js", "./src/routes/**/*.yaml", "./src/routes/**/*.yml", "./src/routes/**/*.json", "./src/routes/**/*.json",],
     });
 
     // write the openapi specification to a file

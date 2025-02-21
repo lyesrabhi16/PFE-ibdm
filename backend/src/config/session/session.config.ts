@@ -25,8 +25,8 @@ const SessionConfig:SessionOptions ={
     store: mongo_store,
     cookie: {
         httpOnly: true,
-        secure: true,
-        sameSite: env.NODE_ENV === "production"? "strict": undefined,
+        secure: true,//true
+        sameSite: "none",//env.NODE_ENV === "production"? "strict": undefined,
         maxAge: 24 * 60 * 60 * 1000, // 1 jour
     },
     name: "sid",

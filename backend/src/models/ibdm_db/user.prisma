@@ -1,9 +1,22 @@
 model User {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  email String  @unique @db.String @map("email")
-  name  String?
-  password String
+  id           String                   @id @default(auto()) @map("_id") @db.ObjectId
+  email        String                   @unique @map("email") @db.String
+  role         Role                     @default(OPERATEUR)
+  permissions  Permission[]
+  name         String?
+  password     String
   phone_number String?
+  avatar_url    String?
+  subordinates SuperiorAndSubordinate[] @relation("Superior")
+  superiors    SuperiorAndSubordinate[] @relation("Subordinate")
+}
 
-  
+model SuperiorAndSubordinate {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  superior       User   @relation("Superior", fields: [superior_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  superior_id    String @db.ObjectId
+  subordinate    User   @relation("Subordinate", fields: [subordinate_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  subordinate_id String @db.ObjectId
+
+  @@unique([superior_id, subordinate_id])
 }

@@ -1,8 +1,10 @@
 import { db_client } from "#config/db/db";
+import SessionConfig from "#config/session/session.config";
 import { comparePassword } from "#models/user_actions";
 import { LOGLEVELS } from "#types/logger.types";
 import { logger } from "#utils";
 import { Request, Response } from "express";
+import session from "express-session";
 
 
 // Fonction de login avec sessions
@@ -42,7 +44,7 @@ export const loginUser = async (req: Request, res: Response) => {
     logger.log({ level: LOGLEVELS.INFO, label: "LOGIN", message: `Session created for user ${email}` });
 
     // Répondre avec un message de succès
-    res.status(200).json({ message: "Login successful", user: { email: user.email, id: user.id }, sid: req.sessionID });
+    res.status(200).json({ message: "Login successful", user: { ...user, password:undefined }, sid: req.sessionID });
   } catch (error) {
     logger.log({ level: LOGLEVELS.ERROR, label: "LOGIN", message: "loginUser error", error: error });
 
@@ -60,6 +62,7 @@ export const logoutUser = async (req: Request, res: Response) => {
       console.error("Erreur lors de la déconnexion :", err);
       return res.status(500).json({ message: "Erreur lors de la déconnexion." });
     }
+    res.clearCookie(SessionConfig.name ?? "sid");
     res.status(200).json({ message: "Déconnexion réussie." });
   });
 };
