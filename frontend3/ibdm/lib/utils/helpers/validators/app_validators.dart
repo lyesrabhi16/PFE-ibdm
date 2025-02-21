@@ -1,6 +1,6 @@
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/services/api/api_client/export.dart';
+import 'package:ibdm/services/api_django/api_client/export.dart';
 
 class AppValidators {
   const AppValidators._();
@@ -15,12 +15,13 @@ class AppValidators {
   }
 
   static String? roleSelectionValidator(String? v) {
+    return null; /* 
     return FormBuilderValidators.compose([
       FormBuilderValidators.required(),
       FormBuilderValidators.containsElement(
           Role.values.map((r) => r.name).toList(),
           errorText: "Invalid Role")
-    ])(v);
+    ])(v); */
   }
 
   static String? perPageValidator(String? value, Rx<bool> expandPerPage) {
@@ -40,20 +41,25 @@ class AppValidators {
       FormBuilderValidators.conditional(
           (String? id) => id != null ? id.isNotEmpty : false,
           FormBuilderValidators.containsElement(
-            superiorOptions.map((u) => u.id).toList(),
+            superiorOptions.map((u) => "${u.userId}").toList(),
           ))
     ])(id);
   }
 
-  static String? customPasswordValidator(String v) {
-    return FormBuilderValidators.compose([
-      FormBuilderValidators.required(),
-      FormBuilderValidators.minLength(8),
-      FormBuilderValidators.maxLength(255),
-      FormBuilderValidators.hasLowercaseChars(atLeast: 1),
-      FormBuilderValidators.hasUppercaseChars(atLeast: 1),
-      FormBuilderValidators.hasNumericChars(atLeast: 1),
-      FormBuilderValidators.hasSpecialChars(atLeast: 1),
-    ])(v);
+  static String? customPasswordValidator(
+    String v, {
+    bool optional = false,
+  }) {
+    return optional && v.isEmpty
+        ? null
+        : FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            FormBuilderValidators.minLength(8),
+            FormBuilderValidators.maxLength(255),
+            FormBuilderValidators.hasLowercaseChars(atLeast: 1),
+            FormBuilderValidators.hasUppercaseChars(atLeast: 1),
+            FormBuilderValidators.hasNumericChars(atLeast: 1),
+            FormBuilderValidators.hasSpecialChars(atLeast: 1),
+          ])(v);
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ibdm/services/api/api_client/export.dart';
+import 'package:ibdm/services/api_django/api_client/export.dart';
 
 class AppColors {
   AppColors._();
@@ -28,18 +28,33 @@ class AppColors {
   static const Color roleSupervisorColor = Colors.green;
   static const Color roleOperateurColor = Colors.blue;
 
-  static Color getRoleColor(Role role) {
-    switch (role) {
-      case Role.adminSystem:
+  static Color getRoleColorWithRole(Role role) {
+    switch (role.name) {
+      case "ADMIN_SYSTEM":
         return roleAdminSystemColor;
-      case Role.admin:
+      case "ADMIN":
         return roleAdminColor;
-      case Role.supervisor:
+      case "SUPERVISOR":
         return roleSupervisorColor;
-      case Role.operateur:
+      case "OPERATOR":
         return roleOperateurColor;
       default:
-        return Colors.transparent;
+        return Colors.grey;
+    }
+  }
+
+  static Color getRoleColorWithRoleValue(String role) {
+    switch (role) {
+      case "ADMIN_SYSTEM":
+        return roleAdminSystemColor;
+      case "ADMIN":
+        return roleAdminColor;
+      case "SUPERVISOR":
+        return roleSupervisorColor;
+      case "OPERATOR":
+        return roleOperateurColor;
+      default:
+        return Colors.grey;
     }
   }
 }

@@ -1,20 +1,20 @@
 import { db_client } from "#config/db/db";
+import env from "#config/env.config";
 import SessionConfig from "#config/session/session.config";
 import { comparePassword } from "#models/user_actions";
 import { LOGLEVELS } from "#types/logger.types";
 import { logger } from "#utils";
-import { Request, Response } from "express";
-import session from "express-session";
+import { CookieOptions, Request, Response } from "express";
 
 
 // Fonction de login avec sessions
 export const loginUser = async (req: Request, res: Response) => {
   logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: "loginUser started" });
   logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: "Request body", body: req.body });
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body; //rememberMe
 
   try {
-    logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: `User ${email} is trying to log in` });
+    logger.log({ level: LOGLEVELS.DEBUG, label: "LOGIN", message: `User ${email} is trying to log in with remember me set to: ${rememberMe}` });
 
     // Recherche l'utilisateur par son email
     const user = await db_client.ibdm.user.findUnique({
@@ -41,6 +41,14 @@ export const loginUser = async (req: Request, res: Response) => {
     req.session.userId = user.id; // Stocke l'ID de l'utilisateur dans la session
     req.session.isAuthenticated = true;
 
+    // Définir la durée de la session
+
+  if (rememberMe) {
+     req.session.cookie.maxAge = env.REMEMBER_DURATION // 30 jours
+   } else {
+     req.session.cookie.maxAge = env.NOT_REMEMBER_DURATION // 1 jour
+   }
+
     logger.log({ level: LOGLEVELS.INFO, label: "LOGIN", message: `Session created for user ${email}` });
 
     // Répondre avec un message de succès
@@ -62,7 +70,10 @@ export const logoutUser = async (req: Request, res: Response) => {
       console.error("Erreur lors de la déconnexion :", err);
       return res.status(500).json({ message: "Erreur lors de la déconnexion." });
     }
-    res.clearCookie(SessionConfig.name ?? "sid");
+    res.clearCookie(SessionConfig.name ?? "sid", {
+      ...(SessionConfig.cookie as CookieOptions),
+      maxAge: undefined,
+    });
     res.status(200).json({ message: "Déconnexion réussie." });
   });
 };

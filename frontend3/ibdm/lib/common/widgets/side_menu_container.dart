@@ -1,6 +1,7 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/side_menu_state_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/actions_row.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
@@ -10,8 +11,6 @@ import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
-import 'package:ibdm/common/controllers/user_controller.dart';
-import 'package:ibdm/common/widgets/responsive_appbar.dart';
 
 class SideMenuContainer extends StatelessWidget {
   const SideMenuContainer({super.key, required this.child});
@@ -22,8 +21,13 @@ class SideMenuContainer extends StatelessWidget {
     logger.d("index: $index");
   }
 
+  static SideMenuStateController sideMenuStateController =
+      Get.find<SideMenuStateController>();
   static bool _added = false;
-  static bool _open = true;
+
+  static bool get open => sideMenuStateController.isOpen;
+  static set open(bool value) => sideMenuStateController.isOpen = value;
+
   static Rx<SideMenuDisplayMode> displayMode = SideMenuDisplayMode.auto.obs;
 
   @override
@@ -33,7 +37,6 @@ class SideMenuContainer extends StatelessWidget {
       _added = true;
     }
     final strings = getTranslations(context).obs;
-    final userController = Get.find<UserController>();
 
     // activate current page
     int startIndexOffset = 1; // actual index of the first page in items list
@@ -62,8 +65,12 @@ class SideMenuContainer extends StatelessWidget {
             body: Row(
               children: [
                 SideMenu(
-                  onDisplayModeChanged: (value) =>
-                      _open = (value == SideMenuDisplayMode.open),
+                  onDisplayModeChanged: (value) {
+                    final isOpen = value == SideMenuDisplayMode.open;
+                    if (isOpen != open) {
+                      open = isOpen;
+                    }
+                  },
                   displayModeToggleDuration: Durations.short4,
                   items: [
                     SideMenuItem(
@@ -75,17 +82,17 @@ class SideMenuContainer extends StatelessWidget {
                             children: [
                               IconButton(
                                 icon: Icon(
-                                  _open
+                                  open
                                       ? Icons.arrow_back_ios_rounded
                                       : Icons.arrow_forward_ios_rounded,
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
                                 ),
                                 onPressed: () {
-                                  displayMode.value = _open
+                                  displayMode.value = open
                                       ? SideMenuDisplayMode.compact
                                       : SideMenuDisplayMode.open;
-                                  _open = !_open;
+                                  open = !open;
                                 },
                               ),
                               Padding(
@@ -101,8 +108,7 @@ class SideMenuContainer extends StatelessWidget {
                                   Get.find<UserController>().logoutUser();
                                   Get.offAllNamed(Routes.login);
                                 },
-                                child:
-                                    _open ? Text(strings.value.logout) : null,
+                                child: open ? Text(strings.value.logout) : null,
                               ),
                               SizedBox(
                                 height: AppSizes.sm,
@@ -141,7 +147,7 @@ class SideMenuContainer extends StatelessWidget {
                               ),
                             ),
                           ),
-                          isLargeScreen(context) && _open
+                          isLargeScreen(context) && open
                               ? Text(strings.value.ifri_bdd)
                               : SizedBox.shrink(),
                         ],

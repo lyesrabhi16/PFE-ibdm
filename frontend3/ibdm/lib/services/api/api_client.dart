@@ -21,13 +21,13 @@ import 'package:dio/io.dart' show IOHttpClientAdapter;
 import 'package:flutter/foundation.dart'
     show ByteData, TargetPlatform, Uint8List, defaultTargetPlatform, kIsWeb;
 import 'package:ibdm/config/api.config.dart' show ApiConfig;
-import 'package:ibdm/services/api/api_client/export.dart'
-    show ApiClient, IbdmApiClient, Role, RoleMapper;
-import 'package:cookie_jar/cookie_jar.dart' show FileStorage, PersistCookieJar;
-import 'package:ibdm/services/api/api_client/models/post_api_users_response.dart';
+import 'package:cookie_jar/cookie_jar.dart'
+    show CookieJar, FileStorage, PersistCookieJar;
+import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
+import 'package:universal_html/html.dart' as uhtml;
 /* 
 extension RoleExtension on Role {
   String get name {
@@ -44,12 +44,13 @@ class ApiClientInstance {
 
   static init() async {
     // set default configurations
+    dio.options.baseUrl = ApiConfig.base_url;
     dio.options.headers['Content-Type'] = 'application/json';
     dio.options.headers['Accept'] = 'application/json';
     dio.options.extra["withCredentials"] = true;
-
     dio.interceptors.add(TestInterceptor());
-    dio.interceptors.add(RoleFixInterceptor());
+    dio.interceptors.add(CsrfInterceptor());
+    //dio.interceptors.add(RoleFixInterceptor());
 
     if (kIsWeb) {
       (dio.httpClientAdapter as dynamic).withCredentials = true;
@@ -74,26 +75,74 @@ class ApiClientInstance {
         });
       }
     }
+    //dio.interceptors.add(CsrfInterceptor());
 
     print("ApiClientInstance: Initialized");
   }
 
   static Future<IbdmApiClient> getApiClient() async {
     await init();
-    return ApiClient(dio, baseUrl: ApiConfig.base_url).ibdmApi;
+    return IbdmApiClient(
+      dio,
+      baseUrl: ApiConfig.base_url,
+    );
   }
 }
 
-extension WebAddUsers on IbdmApiClient {
-  Future<PostApiUsersResponse> addUsersOnWeb({
+class CsrfInterceptor extends Interceptor {
+  final headerName = "X-CSRFToken";
+  final cookieName = "csrftoken";
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    print("CsrfInterceptor: Start");
+
+    Map<String, String> getCookies() {
+      String cookieStr = "";
+      if (kIsWeb) {
+        cookieStr = uhtml.document.cookie ?? "";
+      } else {
+        cookieStr = options.headers['cookie'] ?? "";
+      }
+
+      //logger.d("Cookies: $cookieStr");
+      final regexCookieNameAndValueExtractor = RegExp(r'(\w+)=([^;]+)');
+
+      final matches = regexCookieNameAndValueExtractor.allMatches(cookieStr);
+// Map to store the cookies
+      Map<String, String> cookies = {};
+      for (var match in matches) {
+        String cookieName = match.group(1)!;
+        String cookieValue = match.group(2)!;
+        cookies[cookieName] = cookieValue;
+      }
+
+      // Print the cookies map
+      //print(cookies);
+      return cookies;
+    }
+
+    final cookies = getCookies();
+    if (cookies.containsKey(cookieName) && cookies[cookieName] != null) {
+      options.headers[headerName] = cookies[cookieName];
+      print("CsrfInterceptor: Added Header '$headerName'");
+    }
+    print("CsrfInterceptor: End");
+    super.onRequest(options, handler);
+  }
+}
+
+extension WebUsersFixedApis on IbdmApiClient {
+  Future<User> addUsersOnWeb({
     required String email,
-    required String password,
-    required Role role,
+    required String role,
+    String? firstName,
+    String? lastName,
+    String? username,
+    String? password,
+    String? phoneNumber,
+    List<int>? userPermissions,
     Uint8List? avatar,
     String? avatarFileName = "avatar.jpg",
-    String? name,
-    String? phoneNumber,
-    String? superiorId,
   }) async {
     if (avatar != null && avatarFileName == null) {
       throw Exception(
@@ -105,43 +154,66 @@ extension WebAddUsers on IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final headers = <String, dynamic>{};
-    final data = FormData();
-    data.fields.add(MapEntry(
+    final _data = FormData();
+    _data.fields.add(MapEntry(
       'email',
       email,
     ));
-    data.fields.add(MapEntry(
-      'password',
-      password,
-    ));
-    data.fields.add(MapEntry(
+    _data.fields.add(MapEntry(
       'role',
-      role.name,
+      role,
     ));
-    if (avatar != null) {
-      data.files.add(MapEntry(
-        'avatar',
-        MultipartFile.fromBytes(avatar, filename: avatarFileName),
+    if (firstName != null) {
+      _data.fields.add(MapEntry(
+        'first_name',
+        firstName,
       ));
     }
-    if (name != null) {
-      data.fields.add(MapEntry(
-        'name',
-        name,
+    if (lastName != null) {
+      _data.fields.add(MapEntry(
+        'last_name',
+        lastName,
       ));
     }
-
+    if (username != null) {
+      _data.fields.add(MapEntry(
+        'username',
+        username,
+      ));
+    }
+    if (password != null) {
+      _data.fields.add(MapEntry(
+        'password',
+        password,
+      ));
+    }
     if (phoneNumber != null) {
-      data.fields.add(MapEntry(
+      _data.fields.add(MapEntry(
         'phone_number',
         phoneNumber,
       ));
     }
-    if (superiorId != null) {
-      data.fields.add(MapEntry(
-        'superior_id',
-        superiorId,
+    if (avatar != null) {
+      _data.files.add(MapEntry(
+        'avatar',
+        MultipartFile.fromBytes(avatar, filename: avatarFileName),
       ));
+    }
+    if (userPermissions != null) {
+      _data.files.add(MapEntry(
+          'user_permissions',
+          MultipartFile.fromBytes(
+            userPermissions,
+            filename: null,
+          )));
+    }
+    if (userPermissions != null) {
+      _data.files.add(MapEntry(
+          'user_permissions',
+          MultipartFile.fromBytes(
+            userPermissions,
+            filename: null,
+          )));
     }
     logger.i("addUsersOnWeb: Added all");
     /* final options = RequestOptions(
@@ -153,7 +225,7 @@ extension WebAddUsers on IbdmApiClient {
       data: _data,
       queryParameters: queryParameters,
     ); */
-    final options = _setStreamType<PostApiUsersResponse>(Options(
+    final _options = _setStreamType<User>(Options(
       method: 'POST',
       headers: headers,
       extra: extra,
@@ -161,9 +233,9 @@ extension WebAddUsers on IbdmApiClient {
     )
         .compose(
           ApiClientInstance.dio.options,
-          '/api/users',
+          '/api/v1/user-management/users/',
           queryParameters: queryParameters,
-          data: data,
+          data: _data,
         )
         .copyWith(
             baseUrl: _combineBaseUrls(
@@ -172,14 +244,14 @@ extension WebAddUsers on IbdmApiClient {
         )));
     logger.i("addUsersOnWeb: options");
     final result =
-        await ApiClientInstance.dio.fetch<Map<String, dynamic>>(options);
+        await ApiClientInstance.dio.fetch<Map<String, dynamic>>(_options);
 
     //final result = await ApiClientInstance.dio.fetch(options);
 
     logger.i("addUsersOnWeb: fetched");
-    late PostApiUsersResponse value;
+    late User value;
     try {
-      value = PostApiUsersResponse.fromJson(result.data!);
+      value = User.fromJson(result.data!);
     } on Object catch (e, s) {
       //errorLogger?.logError(e, s, options);
       logger.e("add users web failed", stackTrace: s, error: e);
@@ -187,6 +259,118 @@ extension WebAddUsers on IbdmApiClient {
     }
     logger.d("addUsersOnWeb: End");
     return value;
+  }
+
+  Future<User> partialUpdateUserOnWeb({
+    required int id,
+    String? firstName,
+    String? lastName,
+    String? username,
+    String? email,
+    String? password,
+    String? phoneNumber,
+    Uint8List? avatar,
+    String? role,
+    List<int>? userPermissions,
+    String? avatarFileName,
+  }) async {
+    logger.e("avatar: ${avatar}");
+    if (avatar != null && avatarFileName == null) {
+      throw Exception(
+          "partialUpdateUserOnWeb: avatarFileName must be provided when avatar is provided");
+    }
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (firstName != null) {
+      _data.fields.add(MapEntry(
+        'first_name',
+        firstName,
+      ));
+    }
+    if (lastName != null) {
+      _data.fields.add(MapEntry(
+        'last_name',
+        lastName,
+      ));
+    }
+    if (username != null) {
+      _data.fields.add(MapEntry(
+        'username',
+        username,
+      ));
+    }
+    if (email != null) {
+      _data.fields.add(MapEntry(
+        'email',
+        email,
+      ));
+    }
+    if (password != null) {
+      _data.fields.add(MapEntry(
+        'password',
+        password,
+      ));
+    }
+    if (phoneNumber != null) {
+      _data.fields.add(MapEntry(
+        'phone_number',
+        phoneNumber,
+      ));
+    }
+    if (avatar != null) {
+      if (avatar != null) {
+        logger.d("avatar in api request: ${avatar} ${avatarFileName}");
+        _data.files.add(MapEntry(
+          'avatar',
+          MultipartFile.fromBytes(avatar, filename: avatarFileName),
+        ));
+      }
+    }
+    if (role != null) {
+      _data.fields.add(MapEntry(
+        'role',
+        role,
+      ));
+    }
+    if (userPermissions != null) {
+      _data.files.add(MapEntry(
+          'user_permissions',
+          MultipartFile.fromBytes(
+            userPermissions,
+            filename: null,
+          )));
+    }
+    final _options = _setStreamType<User>(Options(
+      method: 'PATCH',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          ApiClientInstance.dio.options,
+          '/api/v1/user-management/users/${id}/',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          ApiClientInstance.dio.options.baseUrl,
+          ApiConfig.base_url,
+        )));
+    final _result =
+        await ApiClientInstance.dio.fetch<Map<String, dynamic>>(_options);
+    late User _value;
+    try {
+      _value = User.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      logger.e("partialUpdateUserOnWeb failed", stackTrace: s, error: e);
+      //errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
@@ -235,11 +419,11 @@ class TestInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    print("Interceptor Error: ${err.message}");
+    print("Interceptor Error: ${err.message} ${err.response?.data}");
     super.onError(err, handler);
   }
 }
-
+/* 
 class RoleFixInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -297,3 +481,4 @@ class RoleFixInterceptor extends Interceptor {
     return false;
   }
 }
+ */

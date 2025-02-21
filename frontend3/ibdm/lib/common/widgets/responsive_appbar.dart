@@ -4,8 +4,6 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/colors.dart';
-import 'package:ibdm/utils/constants/sizes.dart';
-import 'package:toastification/toastification.dart';
 
 class ResponsiveAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String userName;
@@ -27,19 +25,10 @@ class ResponsiveAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
-  bool _isPopoverVisible = false;
-
-  void _togglePopover() {
-    setState(() {
-      _isPopoverVisible = !_isPopoverVisible;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     bool isSmallScreen = MediaQuery.of(context).size.width < 600;
     final userController = Get.find<UserController>();
-    bool _isHoveringLogout = false;
 
     return AppBar(
       automaticallyImplyLeading: false,
@@ -81,7 +70,7 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                 ),
               ),
             PopupMenuButton<String>(
-              offset: const Offset(0, 40), 
+              offset: const Offset(0, 40),
               onSelected: (String value) {
                 if (value == 'Logout') {
                   Get.find<UserController>().logoutUser();
@@ -94,15 +83,15 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                     value: 'Logout',
                     child: StatefulBuilder(
                       builder: (context, setState) {
-                        bool _isHovering = false;
+                        Rx<bool> isHovering = false.obs;
                         return MouseRegion(
-                          onEnter: (_) => setState(() => _isHovering = true),
-                          onHover: (_) => setState(() => _isHovering = true),
-                          onExit: (_) => setState(() => _isHovering = false),
+                          onEnter: (_) => isHovering.value = true,
+                          onHover: (_) => isHovering.value = true,
+                          onExit: (_) => isHovering.value = false,
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             decoration: BoxDecoration(
-                              color: _isHovering
+                              color: isHovering.value
                                   ? Theme.of(context).colorScheme.error
                                   : Theme.of(context)
                                       .colorScheme
@@ -138,8 +127,8 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                     : ShadAvatar(
                         LucideIcons.circleUserRound,
                         fit: BoxFit.cover,
-                        backgroundColor:
-                            AppColors.getRoleColor(userController.user!.role),
+                        backgroundColor: AppColors.getRoleColorWithRoleValue(
+                            userController.user!.role),
                       ),
               ),
             ),
