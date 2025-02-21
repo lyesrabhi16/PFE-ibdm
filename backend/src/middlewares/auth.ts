@@ -1,4 +1,7 @@
 import { db_client } from "#config/db/db";
+import { LOGLEVELS } from "#types/logger.types";
+import { logger } from "#utils";
+import { $Enums } from "@prisma/client";
 import { Request, Response, NextFunction } from "express";
 
 // Middleware pour vérifier si l'utilisateur est connecté avec une session
@@ -7,6 +10,15 @@ export const isAuthenticated = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("cookie: ",req.session.cookie);
+  console.log("session:" ,req.session);
+  console.log("sessionid:", req.sessionID);
+  console.log("userid:", req.session.userId);
+  
+  
+  
+  
+  logger.log({level:LOGLEVELS.INFO, message:"checking isAuthenticated Permission", label: "isAuthenticated"})
   try {
     // Vérifie si la session contient un ID utilisateur
     if (!req.session || !req.session.userId) {
@@ -17,11 +29,11 @@ export const isAuthenticated = async (
     const user = await db_client.ibdm.user.findUnique({
       where: { id: req.session.userId, },
       omit: {
+
         password: true,
       },
       
     });
-
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }

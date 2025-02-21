@@ -5,11 +5,7 @@ import 'package:ibdm/services/api/api_client/models/user.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum storageKeys {
-  locale,
-  darkThemeMode,
-  user,
-}
+enum storageKeys { locale, darkThemeMode, user, perPage }
 
 class LocalStorage {
   LocalStorage._();
@@ -59,5 +55,13 @@ class LocalStorage {
       logger.e("Error getting user from local storage: $e");
       return null;
     }
+  }
+
+  static Future<void> setPerPage(int perPage) async {
+    return await perfs.setInt(storageKeys.perPage.name, perPage);
+  }
+
+  static Future<int?> getPerPage() async {
+    return await perfs.getInt(storageKeys.perPage.name);
   }
 }

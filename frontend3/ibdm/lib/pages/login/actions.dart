@@ -43,11 +43,11 @@ class LoginActions {
 
     // make api request
     try {
+      
       logger.d("Creating Api Client...");
       logger.d("Requesting Login...");
 
       IbdmApiClient apiClient = await ApiClientInstance.getApiClient();
-
       final response = await apiClient.login(
         body: LoginRequest(
             email: emailController.text, password: passwordController.text),
@@ -81,7 +81,7 @@ class LoginActions {
       });
 
       if (e is DioException) {
-        logger.e("Login Failed: ${e.message}");
+        logger.e("Login Failed: ${e.message}", error: e);
 
         // show error toast
         // error toast message

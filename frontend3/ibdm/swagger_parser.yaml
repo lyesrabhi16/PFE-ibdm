@@ -5,3 +5,4 @@ swagger_parser:
   root_client: true
   root_client_name: ApiClient
   merge_clients: true
+  
