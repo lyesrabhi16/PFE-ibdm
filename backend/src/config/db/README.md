@@ -19,7 +19,7 @@ This guide will help you set up and run the database using the [`docker-compose.
     1. Create a keyfile named `keyfile`:
 
         ```sh
-        openssl rand -base64 756 > files/keyfile
+        openssl rand -base64 756 > files/keyfile.txt
         ```
 
         This keyfile will be used for MongoDB replica set authentication. It is required.
