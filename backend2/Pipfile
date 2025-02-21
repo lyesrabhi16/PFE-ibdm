@@ -18,6 +18,7 @@ django-filter = "*"
 python-decouple = "*"
 django-crispy-forms = "*"
 apscheduler = "*"
+channels-redis = "*"
 
 [requires]
 python_version = "3.12.9"

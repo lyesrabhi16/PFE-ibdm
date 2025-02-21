@@ -2,7 +2,8 @@ class DB_Router:
     db_apps = {
         'ibdm': [
             'ibdm_api',
-            'users',            
+            'users',
+            "emails",            
         ],
         "siroperie":[
             "siroperie",

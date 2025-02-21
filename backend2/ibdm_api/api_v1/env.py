@@ -12,6 +12,11 @@ class Env:
     SECRET_KEY = config("SECRET_KEY")
     ENV_MODE = config("ENV_MODE", default="development", cast=Choices(EnvModes.getValues()))
     DEBUG = config("DEBUG", default=True, cast=bool)
+
+    # ibdm redis db
+    DATABASE_IBDM_REDIS_HOST = config("DATABASE_IBDM_REDIS_HOST")
+    DATABASE_IBDM_REDIS_PORT = config("DATABASE_IBDM_REDIS_PORT")
+
     # ibdm db
     DATABASE_IBDM_NAME = config("DATABASE_IBDM_NAME")
     DATABASE_IBDM_USER = config("DATABASE_IBDM_USER")
