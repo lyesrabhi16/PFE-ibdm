@@ -7,8 +7,9 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCustomContainer(
-        child: Center(
-      child: Text("Page: Settings"),
-    ));
+      child: Center(
+        child: Text("Page: Settings"),
+      ),
+    );
   }
 }

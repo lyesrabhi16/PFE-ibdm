@@ -52,7 +52,6 @@ class UserController extends GetxController {
   }
 
   void fetchUser() async {
-    // fetch user from api
     User? user = await LocalStorage.getUser();
     if (user == null) {
       fetchUserFromApi();
@@ -71,4 +70,19 @@ class UserController extends GetxController {
       onFail?.call(e);
     }
   }
+
+  // Future<void> changeProfilePicture(File newImage) async {
+  //    try {
+  //      IbdmApiClient apiClient = await ApiClientInstance.getApiClient();
+
+  //      String newAvatarUrl = await apiClient.uploadAvatar(newImage);
+
+  //      if (_user.value != null) {
+  //        User updatedUser = _user.value!.copyWith(avatarUrl: newAvatarUrl);
+  //        setUser(updatedUser); // Mise à jour locale
+  //      }
+  //    } catch (e) {
+  //      logger.e("Erreur lors du changement de photo : $e");
+  //    }
+  //  }
 }

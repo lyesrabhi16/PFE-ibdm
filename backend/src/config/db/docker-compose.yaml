@@ -12,11 +12,11 @@ services:
       - bash
       - -c
       - |
-          cp /keyfile.txt /mongo_keyfile.text
-          chmod 400 /mongo_keyfile.text
-          chown 999:999 /mongo_keyfile.text
+          cp /keyfile.txt /mongo_keyfile.txt
+          chmod 400 /mongo_keyfile.txt
+          chown 999:999 /mongo_keyfile.txt
           exec docker-entrypoint.sh $$@
-    command: mongod --bind_ip 0.0.0.0 --port 27017 --replSet rs0 --keyFile /mongo_keyfile.text 
+    command: mongod --bind_ip 0.0.0.0 --port 27017 --replSet rs0 --keyFile /mongo_keyfile.txt 
     volumes:
       - ./data:/data/db
       - ./scripts/db_init_script.js:/docker-entrypoint-initdb.d/db_init_script.js

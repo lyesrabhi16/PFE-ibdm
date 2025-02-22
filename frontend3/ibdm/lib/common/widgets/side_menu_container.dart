@@ -10,6 +10,7 @@ import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
 
 class SideMenuContainer extends StatelessWidget {
   const SideMenuContainer({super.key, required this.child});
@@ -35,6 +36,7 @@ class SideMenuContainer extends StatelessWidget {
       controller.addListener(onItemTap);
       _added = true;
     }
+    final strings = getTranslations(context).obs;
 
     // activate current page
     int startIndexOffset = 1; // actual index of the first page in items list
@@ -106,7 +108,7 @@ class SideMenuContainer extends StatelessWidget {
                                   Get.find<UserController>().logoutUser();
                                   Get.offAllNamed(Routes.login);
                                 },
-                                child: open ? Text("Logout") : null,
+                                child: open ? Text(strings.value.logout) : null,
                               ),
                               SizedBox(
                                 height: AppSizes.sm,
@@ -138,7 +140,7 @@ class SideMenuContainer extends StatelessWidget {
                             child: Padding(
                               padding: EdgeInsets.all(AppSizes.sm / 2),
                               child: Text(
-                                "IBDM",
+                                strings.value.ibdm,
                                 style:
                                     Theme.of(context).textTheme.headlineLarge,
                                 softWrap: false,
@@ -146,7 +148,7 @@ class SideMenuContainer extends StatelessWidget {
                             ),
                           ),
                           isLargeScreen(context) && open
-                              ? Text("Ifri Base de Données Machines")
+                              ? Text(strings.value.ifri_bdd)
                               : SizedBox.shrink(),
                         ],
                       ),
@@ -178,7 +180,6 @@ class SideMenuContainer extends StatelessWidget {
                     showTooltip: true,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(15),
                         bottomRight: Radius.circular(15),
                       ),
                       color: Theme.of(context).colorScheme.surfaceContainerHigh,

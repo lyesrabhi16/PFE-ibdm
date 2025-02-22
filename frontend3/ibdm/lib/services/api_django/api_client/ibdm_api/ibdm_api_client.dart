@@ -44,6 +44,7 @@ abstract class IbdmApiClient {
   Future<LoginResponse> login({
     @Part(name: 'email') required String email,
     @Part(name: 'password') required String password,
+    @Part(name: 'remember_me') bool rememberMe = false,
   });
 
   @POST('/api/v1/auth/logout')

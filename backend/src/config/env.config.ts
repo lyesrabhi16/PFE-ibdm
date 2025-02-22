@@ -1,6 +1,5 @@
 import { z } from "zod";
 import dotenv from "dotenv";
-import { ALL } from "dns";
 
 dotenv.config();
 
@@ -18,6 +17,12 @@ const EnvSchemaDefinition = z.object({
     DATABASE_URL: z.string(),
     ALLOWED_ORIGINS: z.array(z.string()).default(["*"]),
     BASE_URL: z.string().url().default("http://localhost:8080"),
+    REMEMBER_DURATION: z.number( {
+        coerce: true,
+    }),
+    NOT_REMEMBER_DURATION: z.number( {
+        coerce: true,
+    }),
 });
 
 

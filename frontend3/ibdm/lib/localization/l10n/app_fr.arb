@@ -3,42 +3,330 @@
     "@@locale": "fr",
 
     "homePageWelcomeMessage": "Bienvenue dans l'application",
+    "@homePageWelcomeMessage": {
+        "description": "Welcome message on the home page"
+    },
     "login": "S'identifier",
+    "@login": {
+        "description": "Login button text"
+    },
     "loginToContinue": "Connectez-vous pour continuer",
+    "@loginToContinue": {
+        "description": "Prompt to login to continue"
+    },
     "email": "Email",
+    "@email": {
+        "description": "Email field label"
+    },
+    "emailExemple": "compte@exemple.com",
+    "@emailExemple": {
+        "description": "Example email address"
+    },
     "password": "Mot de passe",
+    "@password": {
+        "description": "Password field label"
+    },
     "forgotPassword": "Mot de passe oublié",
+    "@forgotPassword": {
+        "description": "Forgot password link text"
+    },
     "rememberMe": "Se souvenir de moi",
+    "@rememberMe": {
+        "description": "Remember me checkbox label"
+    },
     "invalidEmail": "Email invalide",
+    "@invalidEmail": {
+        "description": "Error message for invalid email"
+    },
     "invalidPassword": "Mot de passe invalide",
+    "@invalidPassword": {
+        "description": "Error message for invalid password"
+    },
     "requiredEmail": "Email est requis",
+    "@requiredEmail": {
+        "description": "Error message for required email"
+    },
     "requiredPassword": "Mot de passe est requis",
+    "@requiredPassword": {
+        "description": "Error message for required password"
+    },
     "enterYourEmail": "Entrez votre email",
+    "@enterYourEmail": {
+        "description": "Prompt to enter email"
+    },
     "enterYourPassword": "Entrez votre mot de passe",
+    "@enterYourPassword": {
+        "description": "Prompt to enter password"
+    },
     "loginFailed": "Échec de la connexion",
+    "@loginFailed": {
+        "description": "Login failed message"
+    },
     "loginSuccess": "Connexion réussie",
+    "@loginSuccess": {
+        "description": "Login success message"
+    },
     "logout": "Se déconnecter",
+    "@logout": {
+        "description": "Logout button text"
+    },
     "logoutSuccess": "Déconnexion réussie",
+    "@logoutSuccess": {
+        "description": "Logout success message"
+    },
     "logoutFailed": "Échec de la déconnexion",
+    "@logoutFailed": {
+        "description": "Logout failed message"
+    },
     "pleaseFillInAllFields": "Veuillez remplir tous les champs",
+    "@pleaseFillInAllFields": {
+        "description": "Prompt to fill in all fields"
+    },
     "logginIn": "Connexion...",
+    "@logginIn": {
+        "description": "Logging in message"
+    },
     "loginSuccessful": "Connexion réussie",
+    "@loginSuccessful": {
+        "description": "Login successful message"
+    },
     "logoutSuccessMessage": "Vous vous êtes déconnecté avec succès",
+    "@logoutSuccessMessage": {
+        "description": "Logout success detailed message"
+    },
     "logoutFailedMessage": "Une erreur s'est produite lors de la déconnexion",
+    "@logoutFailedMessage": {
+        "description": "Logout failed detailed message"
+    },
     "loginFailedMessage": "Une erreur s'est produite lors de la connexion",
+    "@loginFailedMessage": {
+        "description": "Login failed detailed message"
+    },
     "loginSuccessMessage": "Vous vous êtes connecté avec succès",
+    "@loginSuccessMessage": {
+        "description": "Login success detailed message"
+    },
     "connectionFailedError": "Une erreur de connexion s'est produite, veuillez vérifier votre connexion Internet et réessayer",
+    "@connectionFailedError": {
+        "description": "Connection failed error message"
+    },
     "serverError": "Une erreur de serveur s'est produite, veuillez réessayer plus tard",
+    "@serverError": {
+        "description": "Server error message"
+    },
     "noInternetConnection": "Pas de connexion Internet",
+    "@noInternetConnection": {
+        "description": "No internet connection message"
+    },
     "noInternetConnectionMessage": "Veuillez vérifier votre connexion Internet et réessayer",
+    "@noInternetConnectionMessage": {
+        "description": "Detailed no internet connection message"
+    },
     "timeOutError": "Délai d'attente de la demande dépassé, veuillez réessayer plus tard",
+    "@timeOutError": {
+        "description": "Timeout error message"
+    },
     "cancelMessage": "Demande annulée",
-    "uknownError": "Une erreur inconnue s'est produite, veuillez réessayer plus tard",
+    "@cancelMessage": {
+        "description": "Request cancelled message"
+    },
+    "unknownError": "Une erreur inconnue s'est produite, veuillez réessayer plus tard",
+    "@unknownError": {
+        "description": "Unknown error message"
+    },
     "connectionFailed": "Échec de la connexion",
+    "@connectionFailed": {
+        "description": "Connection failed message"
+    },
     "accessDenied": "Accès refusé",
+    "@accessDenied": {
+        "description": "Access denied message"
+    },
     "loginRequired": "Authentification requise",
+    "@loginRequired": {
+        "description": "Login required message"
+    },
     "logoutRequired": "Déconnexion requise",
-    "siroperieTitle": "Siroperie",
+    "@logoutRequired": {
+        "description": "Logout required message"
+    },
+    "search": "Rechercher...",
+    "@search": {
+        "description": "Search placeholder text"
+    },
+    "userManagement": "Management des Utilisateurs",
+    "@userManagement": {
+        "description": "User management section title"
+    },
+    "addUser": "Ajouter Utilisateur",
+    "@addUser": {
+        "description": "Add user button text"
+    },
+    "addOneUser": "Ajouter Un Utilisateur",
+    "@addOneUser": {
+        "description": "Add one user button text"
+    },
+    "delete": "Supprimer",
+    "@delete": {
+        "description": "Delete button text"
+    },
+    "filters": "Filtres",
+    "@filters": {
+        "description": "Filters section title"
+    },
+    "filterUser": "Filtrer les utilisateurs",
+    "@filterUser": {
+        "description": "Filter users button text"
+    },
+    "filterByRole": "Filtrer par Role",
+    "@filterByRole": {
+        "description": "Filter by role button text"
+    },
+    "role": "Role",
+    "@role": {
+        "description": "Role field label"
+    },
+    "filter": "Filtrer",
+    "@filter": {
+        "description": "Filter button text"
+    },
+    "sort": "Trier",
+    "@sort": {
+        "description": "Sort button text"
+    },
+    "sortUser": "Trier utilisateurs",
+    "@sortUser": {
+        "description": "Sort users button text"
+    },
+    "sortBy": "Trier par:",
+    "@sortBy": {
+        "description": "Sort by label"
+    },
+    "id": "ID",
+    "@id": {
+        "description": "ID field label"
+    },
+    "name": "Nom",
+    "@name": {
+        "description": "Name field label"
+    },
+    "perPage": "Par Page",
+    "@perPage": {
+        "description": "Per page label"
+    },
+    "no": "No",
+    "@no": {
+        "description": "No field label"
+    },
+    "avatar": "Avatar",
+    "@avatar": {
+        "description": "Avatar field label"
+    },
+    "actions": "Actions",
+    "@actions": {
+        "description": "Actions field label"
+    },
+    "page": "Page",
+    "@page": {
+        "description": "Page field label"
+    },
+    "prevPage": "Précédente",
+    "@prevPage": {
+        "description": "Previous page button text"
+    },
+    "nextPage": "Suivante",
+    "@nextPage": {
+        "description": "Next page button text"
+    },
+    "users": "Utilisateurs",
+    "@users": {
+        "description": "Users section title"
+    },
+    "deleteUser": "Supprimer Utilisateurs",
+    "@deleteUser": {
+        "description": "Delete users button text"
+    },
+    "selectUserDelete": "Selectionner l'Utilisateur à Supprimer",
+    "@selectUserDelete": {
+        "description": "Select user to delete prompt"
+    },
+    "cancel": "Annuler",
+    "@cancel": {
+        "description": "Cancel button text"
+    },
+    "repFav": "Oui",
+    "@repFav": {
+        "description": "Yes option text"
+    },
+    "repDeFav": "Non",
+    "@repDeFav": {
+        "description": "No option text"
+    },
+    "pleaseFixErrorsInTheForm": "SVP fixer les erreurs dans le formulaire",
+    "@pleaseFixErrorsInTheForm": {
+        "description": "Prompt to fix errors in the form"
+    },
+    "addUserMessage": "Ajout de l'utilisateur...",
+    "@addUserMessage": {
+        "description": "Adding user message"
+    },
+    "failedToAddUserMessage": "Ajout Utilisateur échoué",
+    "@failedToAddUserMessage": {
+        "description": "Failed to add user message"
+    },
+    "successAddUserMessage": "Utilisateur Ajouté Avec Succès",
+    "@successAddUserMessage": {
+        "description": "User added successfully message"
+    },
+    "openingFilePicker": "Ouverture de Sélecteur de Fichier...",
+    "@openingFilePicker": {
+        "description": "Opening file picker message"
+    },
+    "canceled": "Annulée",
+    "@canceled": {
+        "description": "Cancelled message"
+    },
+    "fileSelected": "Fichier Choisi",
+    "@fileSelected": {
+        "description": "File selected message"
+    },
+    "phoneNumber": "Numero de Téléphone",
+    "@phoneNumber": {
+        "description": "Phone number field label"
+    },
+    "superior": "Supérieur",
+    "@superior": {
+        "description": "Superior field label"
+    },
+    "selectSuperior": "Selectionner le Supérieur",
+    "@selectSuperior": {
+        "description": "Select superior prompt"
+    },
+    "delete_users": "Êtes-vous sûr de vouloir supprimer {count, plural, one{utilisateur} other {utilisateurs}} ?",
+    "@delete_users": {
+        "description": "Delete users confirmation message",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "ibdm": "IBDM",
+    "@ibdm": {
+        "description": "IBDM acronym"
+    },
+    "ifri_bdd": "Ifri Base de Données Machines",
+    "@ifri_bdd": {
+        "description": "Ifri Database Machines"
+    },
+    "options": "Options",
+    "@options": {
+        "description": "Options section title"
+    },
+    "me": "Moi",
+    "@me": {
+        "description": "Me option text"
+    },"siroperieTitle": "Siroperie",
     "january": "Janvier",
     "february": "Février",
     "march": "Mars",

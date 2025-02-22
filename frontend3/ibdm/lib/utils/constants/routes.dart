@@ -16,7 +16,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 class Routes {
   Routes._();
-
+  
   static final UserController userController = Get.find<UserController>();
 
   static const String home = '/';
