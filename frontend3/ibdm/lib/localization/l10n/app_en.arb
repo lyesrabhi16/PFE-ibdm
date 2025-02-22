@@ -1,43 +1,332 @@
 {
-	"@@author": "lyes rabhi",
-	"@@locale": "en",
-	"homePageWelcomeMessage": "Welcome to the app",
-	"login": "Login",
-	"loginToContinue": "Login to continue",
-	"email": "Email",
-	"password": "Password",
-	"forgotPassword": "Forgot password",
-	"rememberMe": "Remember me",
-	"invalidEmail": "Invalid email",
-	"invalidPassword": "Invalid password",
-	"requiredEmail": "Email is required",
-	"requiredPassword": "Password is required",
-	"enterYourEmail": "Enter your email",
-	"enterYourPassword": "Enter your password",
-	"loginFailed": "Login failed",
-	"loginSuccess": "Login success",
-	"logout": "Logout",
-	"logoutSuccess": "Logout success",
-	"logoutFailed": "Logout failed",
-	"pleaseFillInAllFields": "Please fill in all fields",
-	"logginIn": "Logging in...",
-	"loginSuccessful": "Login successful",
-	"logoutSuccessMessage": "You have successfully logged out",
-	"logoutFailedMessage": "An error occurred while logging out",
-	"loginFailedMessage": "An error occurred while logging in",
-	"loginSuccessMessage": "You have successfully logged in",
-	"connectionFailedError": "A Connection Error occurred, please check your internet connection and try again",
-	"serverError": "A Server Error occurred, please try again later",
-	"noInternetConnection": "No internet connection",
-	"noInternetConnectionMessage": "Please check your internet connection and try again",
-	"timeOutError": "Request Timed Out, please try again later",
-	"cancelMessage": "Request Cancelled",
-	"uknownError": "An unknown error occurred, please try again later",
-	"connectionFailed": "Connection Failed",
-	"accessDenied": "Access Denied",
-	"loginRequired": "You must be Logged In",
-	"logoutRequired": "You must be Logged Out",
-	"siroperieTitle": "Siroperie",
+    "@@author": "lyes rabhi",
+    "@@locale": "en",
+    
+    "homePageWelcomeMessage": "Welcome to the app",
+    "@homePageWelcomeMessage": {
+        "description": "Welcome message on the home page"
+    },
+    "login": "Login",
+    "@login": {
+        "description": "Login button text"
+    },
+    "loginToContinue": "Login to continue",
+    "@loginToContinue": {
+        "description": "Prompt to login to continue"
+    },
+    "email": "Email",
+    "@email": {
+        "description": "Email field label"
+    },
+    "emailExemple": "account@exmaple.com",
+    "@emailExemple": {
+        "description": "Example email address"
+    },
+    "password": "Password",
+    "@password": {
+        "description": "Password field label"
+    },
+    "forgotPassword": "Forgot password",
+    "@forgotPassword": {
+        "description": "Forgot password link text"
+    },
+    "rememberMe": "Remember me",
+    "@rememberMe": {
+        "description": "Remember me checkbox label"
+    },
+    "invalidEmail": "Invalid email",
+    "@invalidEmail": {
+        "description": "Error message for invalid email"
+    },
+    "invalidPassword": "Invalid password",
+    "@invalidPassword": {
+        "description": "Error message for invalid password"
+    },
+    "requiredEmail": "Email is required",
+    "@requiredEmail": {
+        "description": "Error message for required email"
+    },
+    "requiredPassword": "Password is required",
+    "@requiredPassword": {
+        "description": "Error message for required password"
+    },
+    "enterYourEmail": "Enter your email",
+    "@enterYourEmail": {
+        "description": "Placeholder text for email field"
+    },
+    "enterYourPassword": "Enter your password",
+    "@enterYourPassword": {
+        "description": "Placeholder text for password field"
+    },
+    "loginFailed": "Login failed",
+    "@loginFailed": {
+        "description": "Login failed message"
+    },
+    "loginSuccess": "Login success",
+    "@loginSuccess": {
+        "description": "Login success message"
+    },
+    "logout": "Logout",
+    "@logout": {
+        "description": "Logout button text"
+    },
+    "logoutSuccess": "Logout success",
+    "@logoutSuccess": {
+        "description": "Logout success message"
+    },
+    "logoutFailed": "Logout failed",
+    "@logoutFailed": {
+        "description": "Logout failed message"
+    },
+    "pleaseFillInAllFields": "Please fill in all fields",
+    "@pleaseFillInAllFields": {
+        "description": "Prompt to fill in all fields"
+    },
+    "logginIn": "Logging in...",
+    "@logginIn": {
+        "description": "Logging in status message"
+    },
+    "loginSuccessful": "Login successful",
+    "@loginSuccessful": {
+        "description": "Login successful message"
+    },
+    "logoutSuccessMessage": "You have successfully logged out",
+    "@logoutSuccessMessage": {
+        "description": "Logout success detailed message"
+    },
+    "logoutFailedMessage": "An error occurred while logging out",
+    "@logoutFailedMessage": {
+        "description": "Logout failed detailed message"
+    },
+    "loginFailedMessage": "An error occurred while logging in",
+    "@loginFailedMessage": {
+        "description": "Login failed detailed message"
+    },
+    "loginSuccessMessage": "You have successfully logged in",
+    "@loginSuccessMessage": {
+        "description": "Login success detailed message"
+    },
+    "connectionFailedError": "A Connection Error occurred, please check your internet connection and try again",
+    "@connectionFailedError": {
+        "description": "Connection failed error message"
+    },
+    "serverError": "A Server Error occurred, please try again later",
+    "@serverError": {
+        "description": "Server error message"
+    },
+    "noInternetConnection": "No internet connection",
+    "@noInternetConnection": {
+        "description": "No internet connection message"
+    },
+    "noInternetConnectionMessage": "Please check your internet connection and try again",
+    "@noInternetConnectionMessage": {
+        "description": "Detailed no internet connection message"
+    },
+    "timeOutError": "Request Timed Out, please try again later",
+    "@timeOutError": {
+        "description": "Timeout error message"
+    },
+    "cancelMessage": "Request Cancelled",
+    "@cancelMessage": {
+        "description": "Request cancelled message"
+    },
+    "unknownError": "An unknown error occurred, please try again later",
+    "@unknownError": {
+        "description": "Unknown error message"
+    },
+    "connectionFailed": "Connection Failed",
+    "@connectionFailed": {
+        "description": "Connection failed message"
+    },
+    "accessDenied": "Access Denied",
+    "@accessDenied": {
+        "description": "Access denied message"
+    },
+    "loginRequired": "You must be Logged In",
+    "@loginRequired": {
+        "description": "Login required message"
+    },
+    "logoutRequired": "You must be Logged Out",
+    "@logoutRequired": {
+        "description": "Logout required message"
+    },
+    "search": "Search...",
+    "@search": {
+        "description": "Search placeholder text"
+    },
+    "userManagement": "User Management",
+    "@userManagement": {
+        "description": "User management section title"
+    },
+    "addUser": "Add User",
+    "@addUser": {
+        "description": "Add user button text"
+    },
+    "addOneUser": "Add one user",
+    "@addOneUser": {
+        "description": "Add one user button text"
+    },
+    "delete": "Delete",
+    "@delete": {
+        "description": "Delete button text"
+    },
+    "filters": "Filters",
+    "@filters": {
+        "description": "Filters section title"
+    },
+    "filterUser": "Filter users",
+    "@filterUser": {
+        "description": "Filter users button text"
+    },
+    "filterByRole": "Filter by Role",
+    "@filterByRole": {
+        "description": "Filter by role option"
+    },
+    "role": "Role",
+    "@role": {
+        "description": "Role field label"
+    },
+    "filter": "Filter",
+    "@filter": {
+        "description": "Filter button text"
+    },
+    "sort": "Sort",
+    "@sort": {
+        "description": "Sort section title"
+    },
+    "sortUser": "Sort users",
+    "@sortUser": {
+        "description": "Sort users button text"
+    },
+    "sortBy": "Sort by:",
+    "@sortBy": {
+        "description": "Sort by label"
+    },
+    "id": "ID",
+    "@id": {
+        "description": "ID field label"
+    },
+    "name": "Name",
+    "@name": {
+        "description": "Name field label"
+    },
+    "perPage": "Per Page",
+    "@perPage": {
+        "description": "Per page label"
+    },
+    "no": "No",
+    "@no": {
+        "description": "No option"
+    },
+    "avatar": "Avatar",
+    "@avatar": {
+        "description": "Avatar field label"
+    },
+    "actions": "Actions",
+    "@actions": {
+        "description": "Actions field label"
+    },
+    "page": "Page",
+    "@page": {
+        "description": "Page label"
+    },
+    "prevPage": "Prev",
+    "@prevPage": {
+        "description": "Previous page button text"
+    },
+    "nextPage": "Next",
+    "@nextPage": {
+        "description": "Next page button text"
+    },
+    "users": "Users",
+    "@users": {
+        "description": "Users section title"
+    },
+    "deleteUser": "Delete Users",
+    "@deleteUser": {
+        "description": "Delete users button text"
+    },
+    "selectUserDelete": "Select users to delete",
+    "@selectUserDelete": {
+        "description": "Prompt to select users to delete"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "Cancel button text"
+    },
+    "repFav": "Yes",
+    "@repFav": {
+        "description": "Yes option"
+    },
+    "repDeFav": "No",
+    "@repDeFav": {
+        "description": "No option"
+    },
+    "pleaseFixErrorsInTheForm": "¨Please fix the errors in the form",
+    "@pleaseFixErrorsInTheForm": {
+        "description": "Prompt to fix errors in the form"
+    },
+    "addUserMessage": "Adding user...",
+    "@addUserMessage": {
+        "description": "Adding user status message"
+    },
+    "failedToAddUserMessage": "Failed to add user",
+    "@failedToAddUserMessage": {
+        "description": "Failed to add user message"
+    },
+    "successAddUserMessage": "User Added Successfully",
+    "@successAddUserMessage": {
+        "description": "User added successfully message"
+    },
+    "openingFilePicker": "Opening File Picker...",
+    "@openingFilePicker": {
+        "description": "Opening file picker status message"
+    },
+    "canceled": "Canceled",
+    "@canceled": {
+        "description": "Canceled status message"
+    },
+    "fileSelected": "File Selected",
+    "@fileSelected": {
+        "description": "File selected status message"
+    },
+    "phoneNumber": "Phone number",
+    "@phoneNumber": {
+        "description": "Phone number field label"
+    },
+    "superior": "Superior",
+    "@superior": {
+        "description": "Superior field label"
+    },
+    "selectSuperior": "Select a Superior",
+    "@selectSuperior": {
+        "description": "Prompt to select a superior"
+    },
+    "delete_users": "Are you sure you want to delete {count, plural, one {user} other {users}}?",
+    "@delete_users": {
+        "description": "Confirmation message for deleting users",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "ibdm": "IBDM",
+    "@ibdm": {
+        "description": "IBDM acronym"
+    },
+    "ifri_bdd": "Ifri Machine Database",
+    "@ifri_bdd": {
+        "description": "Ifri Machine Database full name"
+    },
+    "options": "Options",
+    "@options": {
+        "description": "Options section title"
+    },
+    "me": "Me",
+    "@me": {
+        "description": "Me section title"
+    },"siroperieTitle": "Siroperie",
 	"january": "January",
 	"february": "February",
 	"march": "March",

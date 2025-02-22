@@ -18,6 +18,7 @@ class LoginActions {
     required Rx<FutureState> loginProgress,
     required TextEditingController emailController,
     required TextEditingController passwordController,
+    required bool rememberMe,
   }) async {
     final strings = getTranslations(context);
     // validate form
@@ -49,6 +50,7 @@ class LoginActions {
       final response = await apiClient.login(
         email: emailController.text,
         password: passwordController.text,
+        rememberMe: rememberMe,
       );
       logger.d("Login Response: $response");
       // set login progress to success
@@ -95,7 +97,7 @@ class LoginActions {
             errorToastMessage = strings.cancelMessage;
             break;
           default:
-            errorToastMessage = strings.uknownError;
+            errorToastMessage = strings.unknownError;
         }
 
         if (e.response != null) {
@@ -112,7 +114,7 @@ class LoginActions {
         // show uncaught error toast
         Toasts.showErrorToastNotification(
             context: context,
-            message: strings.uknownError,
+            message: strings.unknownError,
             title: strings.connectionFailed);
       }
     }
