@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/loading_page_controller.dart';
+import 'package:ibdm/common/controllers/permissions_controler.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/toasts.dart';
@@ -70,8 +72,14 @@ class LoginActions {
         title: strings.loginSuccessful,
       );
 
+      LoadingPageController loadingPageController =
+          Get.find<LoadingPageController>();
+      loadingPageController.isLoading.value = true;
+      logger.e(
+          "Loading page is ${loadingPageController.isLoading.value} after login");
+
       // go to home page for now
-      Get.toNamed(Routes.home);
+      Get.offAllNamed(Routes.home);
     } catch (e) {
       // set login progress to error
       loginProgress.value = FutureState.error;
