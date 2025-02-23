@@ -8,6 +8,9 @@ class DB_Router:
         "siroperie":[
             "siroperie",
         ],
+        "filtration":[
+            "filtration",
+        ],
         'automate': [
             'automate',
         ],
