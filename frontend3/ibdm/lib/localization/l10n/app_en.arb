@@ -37,6 +37,11 @@
     "connectionFailed": "Connection Failed",
     "accessDenied": "Access Denied",
     "loginRequired": "You must be Logged In",
-    "logoutRequired": "You must be Logged Out"
+    "logoutRequired": "You must be Logged Out",
+    "settings": "Settings",
+    "lightmode": "Light mode",
+    "darkmode": "Dark mode",
+    "language": "Language",
+    "helpAssistance": "Help and Assistance"
 
 }

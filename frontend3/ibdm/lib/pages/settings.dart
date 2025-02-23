@@ -17,6 +17,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
+    final strings = getTranslations(context).obs;
     final localecontroller = Get.find<LocaleController>();
 
     return AppCustomContainer(
@@ -26,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Paramètres",
+              strings.value.settings,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 20),
@@ -35,17 +36,19 @@ class _SettingsPageState extends State<SettingsPage> {
                 children: [
                   _buildSettingCard(
                     icon: Icons.email,
-                    title: "Email",
+                    title: strings.value.email,
                     onTap: () => Get.toNamed(Routes.emailSettings),
                   ),
                   _buildSettingCard(
                     icon: Get.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                    title: Get.isDarkMode ? "Mode clair" : "Mode sombre",
+                    title: Get.isDarkMode
+                        ? strings.value.lightmode
+                        : strings.value.darkmode,
                     trailing: ThemeModeSwitchButton(),
                   ),
                   _buildSettingCard(
                     icon: Icons.language,
-                    title: "Langue",
+                    title: strings.value.language,
                     subtitle: localecontroller.locale.value.languageCode,
                     trailing: SizedBox(
                       height: 30,
@@ -55,7 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   _buildSettingCard(
                     icon: Icons.help,
-                    title: "Aide et Assistance",
+                    title: strings.value.helpAssistance,
                     onTap: () {},
                   ),
                 ],
