@@ -8,6 +8,7 @@ import 'package:ibdm/pages/login/login_page.dart';
 import 'package:ibdm/common/middlewares/protected_route_middleware.dart';
 import 'package:ibdm/pages/settings.dart';
 import 'package:ibdm/pages/users.dart';
+import 'package:ibdm/pages/EmailSettingsPage.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 
 class Routes {
@@ -19,6 +20,7 @@ class Routes {
   static const String login = '/login';
   static const String settings = '/settings';
   static const String users = '/users';
+  static const String emailSettings = '/settings/emailsettings';
 
   static List<Destination> get destinations => [
         Destination(
@@ -76,11 +78,20 @@ class Routes {
         ),
       ].nonNulls.toList();
 
+  static final custumRoutes = {
+    emailSettings: settings,
+  };
+
   static final List<GetPage> routesWithoutNavigation = [
     GetPage(
       name: Routes.login,
       page: () => LoginPage(),
       middlewares: [RequireUnAuthenticatedRouteMiddleware()],
+    ),
+    GetPage(
+      name: emailSettings,
+      page: () => EmailSettingsPage(),
+      middlewares: [ProtectedRouteMiddleware()],
     ),
   ].nonNulls.toList();
 
