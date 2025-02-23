@@ -481,7 +481,7 @@ class UsersPage extends StatelessWidget {
                                           },
                                           active: _optionsActive.value,
                                         ),
-                                      ).optionalWhen(
+                                      ).removeWhen(
                                           isAtLeastMediumScreen(context)),
                                     ),
                                   ].nonNulls.toList(),
@@ -494,14 +494,16 @@ class UsersPage extends StatelessWidget {
                         SizedBox(height: AppSizes.sm),
                         // top actions
                         Container(
-                                width: context.width,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainer,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: _getTopActionBar(context, colorScheme,
-                                    expandPerPage: _expandPerPage.value))
-                            .removeWhen(isAtMostSmallScreen(context)),
+                                    width: context.width,
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.surfaceContainer,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: _getTopActionBar(
+                                        context, colorScheme,
+                                        expandPerPage: _expandPerPage.value))
+                                .removeWhen(isAtMostSmallScreen(context)) ??
+                            SizedBox.shrink(),
 
                         SizedBox(
                           height: AppSizes.sm,
@@ -929,7 +931,7 @@ class UsersPage extends StatelessWidget {
               color: Colors.grey,
               fontWeight: FontWeight.bold,
             ),
-      )).optionalWhen(isAtMostSmallScreen(context)),
+      )).removeWhen(isAtMostSmallScreen(context)),
       DataColumn2(
           label: Expanded(
               child: Text(
@@ -938,7 +940,7 @@ class UsersPage extends StatelessWidget {
               color: Colors.grey,
               fontWeight: FontWeight.bold,
             ),
-      ))).optionalWhen(isAtMostSmallScreen(context)),
+      ))).removeWhen(isAtMostSmallScreen(context)),
       DataColumn2(
           label: Expanded(
               child: Text(
@@ -947,7 +949,7 @@ class UsersPage extends StatelessWidget {
               color: Colors.grey,
               fontWeight: FontWeight.bold,
             ),
-      ))).optionalWhen(isAtMostMediumScreen(context)),
+      ))).removeWhen(isAtMostMediumScreen(context)),
       DataColumn2(
           label: Expanded(
               child: Text(
@@ -965,7 +967,7 @@ class UsersPage extends StatelessWidget {
               color: Colors.grey,
               fontWeight: FontWeight.bold,
             ),
-      ))).optionalWhen(isAtMostMediumScreen(context)),
+      ))).removeWhen(isAtMostMediumScreen(context)),
       DataColumn2(
         label: Expanded(
           child: Text(
@@ -1134,7 +1136,7 @@ class UsersPage extends StatelessWidget {
               (usersData.indexOf(user) + 1).toString(),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-          ).optionalWhen(isAtMostSmallScreen(context)),
+          ).removeWhen(isAtMostSmallScreen(context)),
           DataCell(
             Center(
               child: Padding(
@@ -1142,7 +1144,7 @@ class UsersPage extends StatelessWidget {
                 child: Avatar(user: user),
               ),
             ),
-          ).optionalWhen(isAtMostSmallScreen(context)),
+          ).removeWhen(isAtMostSmallScreen(context)),
           DataCell(
             Text(
               "${user.userId}",
@@ -1150,7 +1152,7 @@ class UsersPage extends StatelessWidget {
               softWrap: false,
               overflow: TextOverflow.ellipsis,
             ),
-          ).optionalWhen(isAtMostMediumScreen(context)),
+          ).removeWhen(isAtMostMediumScreen(context)),
           DataCell(
             Text(
               user.email,
@@ -1170,7 +1172,7 @@ class UsersPage extends StatelessWidget {
               softWrap: false,
               overflow: TextOverflow.ellipsis,
             ),
-          ).optionalWhen(isAtMostMediumScreen(context)),
+          ).removeWhen(isAtMostMediumScreen(context)),
           DataCell(
             MouseRegion(
               onEnter: (p) => _hovered[user.userId] = true,
@@ -1578,7 +1580,7 @@ class UsersPage extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pop();
             },
-          ).optionalWhen(isAtLeastMediumScreen(context)),
+          ).removeWhen(isAtLeastMediumScreen(context)),
           Obx(() {
             return loadedUserDetails.value
                 ? ShadButton.destructive(
@@ -1592,7 +1594,7 @@ class UsersPage extends StatelessWidget {
                     },
                   )
                 : SizedBox.shrink();
-          }).optionalWhen(isAtLeastMediumScreen(context)),
+          }).removeWhen(isAtLeastMediumScreen(context)),
           Obx(() {
             return loadedUserDetails.value
                 ? ShadButton(
@@ -1604,7 +1606,7 @@ class UsersPage extends StatelessWidget {
                     },
                   )
                 : SizedBox.shrink();
-          }).optionalWhen(isAtLeastMediumScreen(context)),
+          }).removeWhen(isAtLeastMediumScreen(context)),
           Obx(() => Expanded(
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
@@ -1644,7 +1646,7 @@ class UsersPage extends StatelessWidget {
                     ),
                   ],
                 ),
-              )).optionalWhen(isAtMostSmallScreen(context))
+              )).removeWhen(isAtMostSmallScreen(context))
         ].nonNulls.toList(),
         child: ConstrainedBox(
           constraints: BoxConstraints(
@@ -1844,17 +1846,17 @@ class Sorter {
   final bool isSelected;
   final String orderingValue;
 
-  Sorter({required this.isSelected, required this.ordering_value});
+  Sorter({required this.isSelected, required this.orderingValue});
 }
 
-extension DataColumnOptionalWhen on DataColumn2 {
-  DataColumn2? optionalWhen(bool condition) {
+extension DataColumnremoveWhen on DataColumn2 {
+  DataColumn2? removeWhen(bool condition) {
     return condition ? null : this;
   }
 }
 
-extension DataCellOptionalWhen on DataCell {
-  DataCell? optionalWhen(bool condition) {
+extension DataCellremoveWhen on DataCell {
+  DataCell? removeWhen(bool condition) {
     return condition ? null : this;
   }
 }

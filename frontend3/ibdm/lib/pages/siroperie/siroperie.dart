@@ -21,14 +21,8 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class SiroperiePage extends StatefulWidget {
-  const SiroperiePage({super.key});
-
-  @override
-  State<SiroperiePage> createState() => _SiroperiePageState();
-}
-
-class _SiroperiePageState extends State<SiroperiePage> {
+class SiroperiePage extends StatelessWidget {
+  SiroperiePage({super.key});
   final Rx<bool> loaded = false.obs;
 
   double TS21_value = 80;
@@ -60,19 +54,14 @@ class _SiroperiePageState extends State<SiroperiePage> {
 
   int retries = 3;
 
-  @override
-  void dispose() {
-    _channel?.sink.close();
-    super.dispose();
-  }
-
   int? year;
   int? month;
   int? day;
   int? hour;
   int? minute;
   int? second;
-
+  Function? _getContext;
+  BuildContext get context => _getContext!.call()!;
   _getSucreData() async {
     final _state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
@@ -115,13 +104,16 @@ class _SiroperiePageState extends State<SiroperiePage> {
 
   @override
   Widget build(BuildContext context) {
+    _getContext = () => context;
     final strings = getTranslations(context).obs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return AppCustomContainer(
       child: Obx(
         () {
+          print("loaded: ${loaded.value}");
           if (!loaded.value) {
+            print("loading because of loaded value");
             _load();
             logger.e("loading because of loaded value");
             return Center(
@@ -134,6 +126,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
           return StreamBuilder(
               stream: _stream,
               builder: (context, snapshot) {
+                print("snapshot: $snapshot");
                 if (isLive.value &&
                     (snapshot == null ||
                         snapshot.connectionState == ConnectionState.waiting ||
@@ -141,8 +134,9 @@ class _SiroperiePageState extends State<SiroperiePage> {
                         snapshot.data == "" ||
                         JsonCodec().decode(snapshot.data) == null ||
                         JsonCodec().decode(snapshot.data)["data"] == null)) {
-                  _load();
-                  logger.e("loading instead of stream builder");
+                  print("loading inside of stream builder");
+                  //_load();
+                  logger.e("loading inside of stream builder");
                   return Center(
                     child: CircularProgressIndicator(),
                   );
@@ -218,13 +212,20 @@ class _SiroperiePageState extends State<SiroperiePage> {
                                   // sucre tetra
                                   Column(
                                     children: [
-                                      Text(strings.value.sucreTetraTitle,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleLarge
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              )).marginAll(AppSizes.sm),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(strings.value.sucreTetraTitle,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  )).marginAll(AppSizes.sm),
+                                          _getBottomDataBarTetra(label: false),
+                                        ],
+                                      ),
                                       Wrap(
                                         alignment: WrapAlignment.spaceEvenly,
                                         children: [
@@ -275,13 +276,21 @@ class _SiroperiePageState extends State<SiroperiePage> {
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
-                                        Text(strings.value.sucreAdueTitle,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleLarge
-                                                ?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                )).marginAll(AppSizes.sm),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(strings.value.sucreAdueTitle,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleLarge
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    )).marginAll(AppSizes.sm),
+                                            _getBottomDataBarAdue(label: false),
+                                          ],
+                                        ),
                                         Wrap(
                                           alignment: WrapAlignment.spaceEvenly,
                                           children: [
@@ -352,23 +361,29 @@ class _SiroperiePageState extends State<SiroperiePage> {
   }
 
   _load() async {
+    print("siroperie page loading");
     loaded.value = false;
     if (_stream == null) {
       try {
+        print("connecting to sucre broadcast");
         _channel = WebSocketChannel.connect(
             Uri.parse(ApiConfig.sucre_broadcast_websocket_url));
         final res =
             await (await ApiClientInstance.getApiClient()).getSucreMetaData();
-
+        print("sucre broadcast connected");
         sucre_start_date.value = res.startDate;
         sucre_end_date.value = res.endDate;
         await _channel!.ready;
+        print("sucre broadcast ready");
         _stream = _channel!.stream.asBroadcastStream();
         loaded.value = true;
+        print("sucre broadcast loaded");
       } catch (e) {
+        print("error connecting to sucre broadcast: $e");
         logger.e(
             "Error connecting to sucre broadcast${retries > 0 ? ',retrying' : ''}");
         if (retries > 0) {
+          print("retrying in 1 second");
           retries--;
           Future.delayed(Duration(seconds: 1), _load);
         } else {
@@ -766,84 +781,88 @@ class _SiroperiePageState extends State<SiroperiePage> {
         ));
   }
 
-  _getBottomDataBarTetra() {
+  _getBottomDataBarTetra({bool label = true}) {
     final strings = getTranslations(context).obs;
-    return Obx(() => Padding(
-          padding: EdgeInsets.all(AppSizes.sm),
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            children: [
-              Text(strings.value.totalSucreTetra,
+    return Padding(
+      padding: EdgeInsets.all(AppSizes.sm),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        children: [
+          if (label)
+            Obx(() {
+              return Text(strings.value.totalSucreTetra,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                      )),
-              Text(
-                " ${sommeTetraL.toStringAsFixed(2)} L",
-                softWrap: false,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: sommeTetraL < 30000 ? errorColor : successColor,
-                      fontStyle: FontStyle.italic,
-                    ),
-              ),
-              Text(
-                ",",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              Text(
-                " ${sommeTetraKG.toStringAsFixed(2)} KG",
-                softWrap: false,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color:
-                          sommeTetraKG < 30000 * 3 ? errorColor : successColor,
-                      fontStyle: FontStyle.italic,
-                    ),
-              ),
-            ],
+                      ));
+            }),
+          Text(
+            " ${sommeTetraL.toStringAsFixed(2)} L",
+            softWrap: false,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: sommeTetraL < 30000 ? errorColor : successColor,
+                  fontStyle: FontStyle.italic,
+                ),
           ),
-        ));
+          Text(
+            ",",
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          Text(
+            " ${sommeTetraKG.toStringAsFixed(2)} KG",
+            softWrap: false,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: sommeTetraKG < 30000 * 3 ? errorColor : successColor,
+                  fontStyle: FontStyle.italic,
+                ),
+          ),
+        ],
+      ),
+    );
   }
 
-  _getBottomDataBarAdue() {
+  _getBottomDataBarAdue({bool label = true}) {
     final strings = getTranslations(context).obs;
-    return Obx(() => Padding(
-          padding: EdgeInsets.all(AppSizes.sm),
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            children: [
-              Text(strings.value.totalSucreAdue,
+    return Padding(
+      padding: EdgeInsets.all(AppSizes.sm),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        children: [
+          if (label)
+            Obx(() {
+              return Text(strings.value.totalSucreAdue,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                      )),
-              Text(
-                " ${sommeAdueL.toStringAsFixed(2)} L",
-                softWrap: false,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: sommeAdueL < 54000 ? errorColor : successColor,
-                      fontStyle: FontStyle.italic,
-                    ),
-              ),
-              Text(
-                ",",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              Text(
-                " ${sommeAdueKG.toStringAsFixed(2)} KG",
-                softWrap: false,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color:
-                          sommeAdueKG < 54000 * 3 ? errorColor : successColor,
-                      fontStyle: FontStyle.italic,
-                    ),
-              ),
-            ],
+                      ));
+            }),
+          Text(
+            " ${sommeAdueL.toStringAsFixed(2)} L",
+            softWrap: false,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: sommeAdueL < 54000 ? errorColor : successColor,
+                  fontStyle: FontStyle.italic,
+                ),
           ),
-        ));
+          Text(
+            ",",
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          Text(
+            " ${sommeAdueKG.toStringAsFixed(2)} KG",
+            softWrap: false,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: sommeAdueKG < 54000 * 3 ? errorColor : successColor,
+                  fontStyle: FontStyle.italic,
+                ),
+          ),
+        ],
+      ),
+    );
   }
 
   _openInventoryDialog() async {

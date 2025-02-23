@@ -111,28 +111,21 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-<<<<<<< HEAD
   Future<HasPermResponse> hasPerm({required String codename}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<HasPermResponse>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/auth/user/permission/${codename}',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<HasPermResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/auth/user/permission/${codename}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late HasPermResponse _value;
     try {
@@ -145,13 +138,7 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<dynamic> retrieveApiV1DocsSchema({
-    Format? format,
-    Lang? lang,
-  }) async {
-=======
   Future<dynamic> retrieveApiV1DocsSchema({Format? format, Lang? lang}) async {
->>>>>>> a7bdd0fa3527b4ec11055fdcc8e5972e17bad297
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'format': format?.name,
@@ -218,22 +205,16 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<PaginatedEmailScheduleList>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/schedules/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<PaginatedEmailScheduleList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late PaginatedEmailScheduleList _value;
     try {
@@ -260,52 +241,38 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'rapport',
-      rapport.name,
-    ));
-    _data.fields.add(MapEntry(
-      'temps_envoi',
-      tempsEnvoi,
-    ));
-    _data.fields.add(MapEntry(
-      'interval',
-      interval.name,
-    ));
+    _data.fields.add(MapEntry('rapport', rapport.name));
+    _data.fields.add(MapEntry('temps_envoi', tempsEnvoi));
+    _data.fields.add(MapEntry('interval', interval.name));
     scheduledUsers.forEach((i) {
       _data.fields.add(MapEntry('scheduled_users', i));
     });
     if (intervalManual != null) {
-      _data.fields.add(MapEntry(
-        'interval_manual',
-        intervalManual.toString(),
-      ));
+      _data.fields.add(MapEntry('interval_manual', intervalManual.toString()));
     }
     if (scheduledRoles != null) {
-      _data.files.add(MapEntry(
+      _data.files.add(
+        MapEntry(
           'scheduled_roles',
-          MultipartFile.fromBytes(
-            scheduledRoles,
-            filename: null,
-          )));
+          MultipartFile.fromBytes(scheduledRoles, filename: null),
+        ),
+      );
     }
-    final _options = _setStreamType<EmailSchedule>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/schedules/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<EmailSchedule>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late EmailSchedule _value;
     try {
@@ -323,22 +290,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<EmailSchedule>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/schedules/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<EmailSchedule>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late EmailSchedule _value;
     try {
@@ -366,52 +327,38 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'rapport',
-      rapport.name,
-    ));
-    _data.fields.add(MapEntry(
-      'temps_envoi',
-      tempsEnvoi,
-    ));
-    _data.fields.add(MapEntry(
-      'interval',
-      interval.name,
-    ));
+    _data.fields.add(MapEntry('rapport', rapport.name));
+    _data.fields.add(MapEntry('temps_envoi', tempsEnvoi));
+    _data.fields.add(MapEntry('interval', interval.name));
     scheduledUsers.forEach((i) {
       _data.fields.add(MapEntry('scheduled_users', i));
     });
     if (intervalManual != null) {
-      _data.fields.add(MapEntry(
-        'interval_manual',
-        intervalManual.toString(),
-      ));
+      _data.fields.add(MapEntry('interval_manual', intervalManual.toString()));
     }
     if (scheduledRoles != null) {
-      _data.files.add(MapEntry(
+      _data.files.add(
+        MapEntry(
           'scheduled_roles',
-          MultipartFile.fromBytes(
-            scheduledRoles,
-            filename: null,
-          )));
+          MultipartFile.fromBytes(scheduledRoles, filename: null),
+        ),
+      );
     }
-    final _options = _setStreamType<EmailSchedule>(Options(
-      method: 'PUT',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/schedules/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<EmailSchedule>(
+      Options(
+        method: 'PUT',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late EmailSchedule _value;
     try {
@@ -440,57 +387,43 @@ class _IbdmApiClient implements IbdmApiClient {
     final _headers = <String, dynamic>{};
     final _data = FormData();
     if (rapport != null) {
-      _data.fields.add(MapEntry(
-        'rapport',
-        rapport.name,
-      ));
+      _data.fields.add(MapEntry('rapport', rapport.name));
     }
     if (tempsEnvoi != null) {
-      _data.fields.add(MapEntry(
-        'temps_envoi',
-        tempsEnvoi,
-      ));
+      _data.fields.add(MapEntry('temps_envoi', tempsEnvoi));
     }
     if (interval != null) {
-      _data.fields.add(MapEntry(
-        'interval',
-        interval.name,
-      ));
+      _data.fields.add(MapEntry('interval', interval.name));
     }
     if (intervalManual != null) {
-      _data.fields.add(MapEntry(
-        'interval_manual',
-        intervalManual.toString(),
-      ));
+      _data.fields.add(MapEntry('interval_manual', intervalManual.toString()));
     }
     scheduledUsers?.forEach((i) {
       _data.fields.add(MapEntry('scheduled_users', i));
     });
     if (scheduledRoles != null) {
-      _data.files.add(MapEntry(
+      _data.files.add(
+        MapEntry(
           'scheduled_roles',
-          MultipartFile.fromBytes(
-            scheduledRoles,
-            filename: null,
-          )));
+          MultipartFile.fromBytes(scheduledRoles, filename: null),
+        ),
+      );
     }
-    final _options = _setStreamType<EmailSchedule>(Options(
-      method: 'PATCH',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/schedules/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<EmailSchedule>(
+      Options(
+        method: 'PATCH',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late EmailSchedule _value;
     try {
@@ -508,22 +441,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(Options(
-      method: 'DELETE',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/schedules/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<void>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     await _dio.fetch<void>(_options);
   }
 
@@ -542,22 +469,16 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<PaginatedSentEmailList>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/sent/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<PaginatedSentEmailList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/sent/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late PaginatedSentEmailList _value;
     try {
@@ -578,31 +499,23 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'receptionist',
-      receptionist,
-    ));
-    _data.fields.add(MapEntry(
-      'schedule',
-      schedule.toString(),
-    ));
-    final _options = _setStreamType<SentEmail>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/sent/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    _data.fields.add(MapEntry('receptionist', receptionist));
+    _data.fields.add(MapEntry('schedule', schedule.toString()));
+    final _options = _setStreamType<SentEmail>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/sent/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late SentEmail _value;
     try {
@@ -620,22 +533,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<SentEmail>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/sent/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<SentEmail>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/sent/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late SentEmail _value;
     try {
@@ -657,31 +564,23 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'receptionist',
-      receptionist,
-    ));
-    _data.fields.add(MapEntry(
-      'schedule',
-      schedule.toString(),
-    ));
-    final _options = _setStreamType<SentEmail>(Options(
-      method: 'PUT',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/sent/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    _data.fields.add(MapEntry('receptionist', receptionist));
+    _data.fields.add(MapEntry('schedule', schedule.toString()));
+    final _options = _setStreamType<SentEmail>(
+      Options(
+        method: 'PUT',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/sent/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late SentEmail _value;
     try {
@@ -705,34 +604,26 @@ class _IbdmApiClient implements IbdmApiClient {
     final _headers = <String, dynamic>{};
     final _data = FormData();
     if (receptionist != null) {
-      _data.fields.add(MapEntry(
-        'receptionist',
-        receptionist,
-      ));
+      _data.fields.add(MapEntry('receptionist', receptionist));
     }
     if (schedule != null) {
-      _data.fields.add(MapEntry(
-        'schedule',
-        schedule.toString(),
-      ));
+      _data.fields.add(MapEntry('schedule', schedule.toString()));
     }
-    final _options = _setStreamType<SentEmail>(Options(
-      method: 'PATCH',
-      headers: _headers,
-      extra: _extra,
-      contentType: 'multipart/form-data',
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/sent/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<SentEmail>(
+      Options(
+        method: 'PATCH',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/sent/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late SentEmail _value;
     try {
@@ -750,22 +641,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(Options(
-      method: 'DELETE',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/emails/sent/${id}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<void>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/sent/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     await _dio.fetch<void>(_options);
   }
 
@@ -784,22 +669,16 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<PaginatedSucreList>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/siroperie/sucre/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<PaginatedSucreList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/siroperie/sucre/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late PaginatedSucreList _value;
     try {
@@ -817,22 +696,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<Sucre>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/siroperie/sucre/${date}/',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<Sucre>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/siroperie/sucre/${date}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Sucre _value;
     try {
@@ -850,22 +723,16 @@ class _IbdmApiClient implements IbdmApiClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<SucreMetaData>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/siroperie/sucre/meta',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<SucreMetaData>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/siroperie/sucre/meta',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late SucreMetaData _value;
     try {
@@ -898,22 +765,16 @@ class _IbdmApiClient implements IbdmApiClient {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<Sucre>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/v1/siroperie/sucre/specific',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
+    final _options = _setStreamType<Sucre>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/siroperie/sucre/specific',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
     late Sucre _value;
     try {
