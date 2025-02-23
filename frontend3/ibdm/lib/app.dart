@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/loading_page_controller.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
+import 'package:ibdm/common/controllers/permissions_controler.dart';
 import 'package:ibdm/common/controllers/routes_controller.dart';
 import 'package:ibdm/common/controllers/side_menu_state_controller.dart';
 import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/initial_binding.dart';
+import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ibdm/utils/theme/theme.dart';
@@ -21,6 +24,10 @@ class MyApp extends StatelessWidget {
   final RoutesController routesController = Get.put(RoutesController());
   final SideMenuStateController sideMenuStateController = Get.put(
       SideMenuStateController()); // This widget is the root of your application.
+  final PermissionsController permissionsController =
+      Get.put(PermissionsController());
+  final LoadingPageController loadingPageController =
+      Get.put(LoadingPageController());
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = createTextTheme(context, "Poppins", "Poppins");
@@ -41,7 +48,7 @@ class MyApp extends StatelessWidget {
             supportedLocales: AppLocalizations.supportedLocales,
             debugShowCheckedModeBanner: false,
             initialRoute: Routes.home,
-            getPages: routesController.routes,
+            getPages: routesController.routes.value,
             textDirection: TextDirection.ltr,
             builder: (context, child) {
               return ShadToaster(child: child!);

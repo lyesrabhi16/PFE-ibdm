@@ -18,7 +18,8 @@ class SideMenuContainer extends StatelessWidget {
   static final SideMenuController controller = SideMenuController();
   final Widget child;
   static void onItemTap(int index) {
-    logger.d("index: $index");
+    logger.d(
+        "index: $index ${Get.currentRoute} ${Destination.getDestinationsMap(Get.context!)[Get.currentRoute]?.title}");
   }
 
   static SideMenuStateController sideMenuStateController =

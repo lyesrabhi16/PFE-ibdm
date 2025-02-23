@@ -16,7 +16,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 class Routes {
   Routes._();
-  
+
   static final UserController userController = Get.find<UserController>();
 
   static const String home = '/';
@@ -30,77 +30,55 @@ class Routes {
           title: "Home",
           icon: Icons.home,
           route: Routes.home,
-          page: GetPage(
-            name: Routes.home,
-            page: () => Home(),
-            middlewares: [ProtectedRouteMiddleware()],
-          ),
-        ),
-        Destination(
-          title: "Protected",
-          icon: Icons.lock,
-          route: "/protected",
-          page: GetPage(
-            name: "/protected",
-            middlewares: [ProtectedRouteMiddleware()],
-            page: () => AppCustomContainer(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Protected Route"),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed(Routes.home);
-                    },
-                    child: Text("Home"),
-                  )
-                ],
-              ),
-            ),
-          ),
+          page: route_pages[Routes.home]!,
         ),
         Destination(
           title: "Users",
           icon: Icons.people,
           route: Routes.users,
-          page: GetPage(
-            name: Routes.users,
-            page: () => UsersPage(),
-            middlewares: [ProtectedRouteMiddleware()],
-          ),
+          page: route_pages[Routes.users]!,
         ).withPermission(Permissions.viewUsersPage),
         Destination(
           title: "Siroperie",
           icon: LucideIcons.boxes,
           route: Routes.siroperie,
-          page: GetPage(
-            name: Routes.siroperie,
-            page: () => SiroperiePage(),
-            middlewares: [ProtectedRouteMiddleware()],
-          ),
+          page: route_pages[Routes.siroperie]!,
         ).withPermission(Permissions.viewSiroperiePage),
         Destination(
           title: "Settings",
           icon: Icons.settings,
           route: Routes.settings,
-          page: GetPage(
-            name: Routes.settings,
-            page: () => SettingsPage(),
-            middlewares: [ProtectedRouteMiddleware()],
-          ),
+          page: route_pages[Routes.settings]!,
         ),
       ].nonNulls.toList();
 
-  static final List<GetPage> routesWithoutNavigation = [
-    GetPage(
+  static final route_pages = {
+    Routes.home: GetPage(
+      name: Routes.home,
+      page: () => Home(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    Routes.login: GetPage(
       name: Routes.login,
       page: () => LoginPage(),
       middlewares: [RequireUnAuthenticatedRouteMiddleware()],
     ),
-  ].nonNulls.toList();
+    Routes.siroperie: GetPage(
+      name: Routes.siroperie,
+      page: () => SiroperiePage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    Routes.settings: GetPage(
+      name: Routes.settings,
+      page: () => SettingsPage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    Routes.users: GetPage(
+      name: Routes.users,
+      page: () => UsersPage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+  };
 
-  static List<GetPage> get router => [
-        ...routesWithoutNavigation,
-        ...destinations.map((e) => e.page),
-      ].nonNulls.toList();
+  static List<GetPage> router = route_pages.values.toList();
 }
