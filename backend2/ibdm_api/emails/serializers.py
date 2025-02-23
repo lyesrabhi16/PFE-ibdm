@@ -7,7 +7,7 @@ class EmailScheduleSerializer(serializers.ModelSerializer):
     scheduled_users = serializers.SlugRelatedField(slug_field="email", queryset=User.objects.all(), many=True)
     class Meta:
         model = EmailSchedule
-        fields = ["url", "rapport", "temps_envoi", "interval", "interval_manual", "next_run_time", "scheduled_users", "scheduled_roles", "created_at", "updated_at"]
+        fields = ["url", "id","rapport", "temps_envoi", "interval", "interval_manual", "next_run_time", "scheduled_users", "scheduled_roles", "created_at", "updated_at"]
 
 class SentEmailSerializer(serializers.ModelSerializer):
     receptionist = serializers.SlugRelatedField(slug_field="email", queryset=User.objects.all())
@@ -15,6 +15,7 @@ class SentEmailSerializer(serializers.ModelSerializer):
         model = sentEmail
         fields = [
             "url",
+            "id",
             "temps_envoi",
             "receptionist",
             "schedule",

@@ -70,7 +70,7 @@ class SucreView(viewsets.ReadOnlyModelViewSet):
 @permission_classes([permissions.IsAuthenticated])
 def getSucreAtSpecificTime(request):
     """
-    getAtSpecificTime
+    getSucreAtSpecificTime
     """
     year = request.query_params.get('year', None)
     month = request.query_params.get('month', "01")
