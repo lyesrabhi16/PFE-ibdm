@@ -66,7 +66,8 @@ INSTALLED_APPS = [
     "users",
     "siroperie",
     "automate",
-    "emails"
+    "emails",
+    "filtration"
 ]
 
 MIDDLEWARE = [
@@ -134,6 +135,18 @@ DATABASES = {
         "PASSWORD": Env.DATABASE_SIROPERIE_PASSWORD,
         "HOST": Env.DATABASE_SIROPERIE_HOST,
         "PORT": Env.DATABASE_SIROPERIE_PORT,
+        "OPTIONS": {
+            "driver": "ODBC Driver 17 for SQL Server",
+        },
+},
+
+    "filtration": {
+        "ENGINE": "mssql",
+        "NAME": Env.DATABASE_FILTRATION_NAME,
+        "USER": Env.DATABASE_FILTRATION_USER,
+        "PASSWORD": Env.DATABASE_FILTRATION_PASSWORD,
+        "HOST": Env.DATABASE_FILTRATION_HOST,
+        "PORT": Env.DATABASE_FILTRATION_PORT,
         "OPTIONS": {
             "driver": "ODBC Driver 17 for SQL Server",
         },

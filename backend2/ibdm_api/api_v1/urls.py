@@ -115,5 +115,7 @@ urlpatterns = [
     path('user-management/', include('users.urls'), name='users'),
     path("siroperie/", include("siroperie.urls"), name="siroperie"),
     path("emails/", include("emails.urls"), name="emails"),
+    path("filtration/", include("filtration.urls"), name="filtration"),
     path("test/", test)
+
 ]
