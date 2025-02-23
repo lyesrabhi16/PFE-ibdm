@@ -37,5 +37,10 @@
     "connectionFailed": "Échec de la connexion",
     "accessDenied": "Accès refusé",
     "loginRequired": "Authentification requise",
-    "logoutRequired": "Déconnexion requise"
+    "logoutRequired": "Déconnexion requise",
+    "settings": "Paramètres",
+    "lightmode": "Mode clair",
+    "darkmode": "Mode sombre",
+    "language": "Langue",
+    "helpAssistance": "Aide et Assistance"
 }
