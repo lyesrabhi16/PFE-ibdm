@@ -1034,6 +1034,679 @@
                 }
             }
         },
+        "/api/v1/filtration/debit/": {
+            "get": {
+                "operationId": "getDebits",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedDebitList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/debit/{date}/": {
+            "get": {
+                "operationId": "getDebit",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "date",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "description": "A unique value identifying this debit.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Debit"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/debit/specific": {
+            "get": {
+                "operationId": "getDebitAtSpecificTime",
+                "description": "getDebitAtSpecificTime",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "day",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "hour",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "minute",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "month",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "second",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "year",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Debit"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/metadata": {
+            "get": {
+                "operationId": "getFiltrationMetaData",
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FeedMetaData"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/niveau/": {
+            "get": {
+                "operationId": "getNiveaux",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedNiveauList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/niveau/{date}/": {
+            "get": {
+                "operationId": "getNiveau",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "date",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "description": "A unique value identifying this niveau.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Niveau"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/niveau/specific": {
+            "get": {
+                "operationId": "getNiveauAtSpecificTime",
+                "description": "getNiveauAtSpecificTime",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "day",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "hour",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "minute",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "month",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "second",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "year",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Niveau"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/pres-cond/": {
+            "get": {
+                "operationId": "getPresConds",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedPresCondList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/pres-cond/{date}/": {
+            "get": {
+                "operationId": "getPresCond",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "date",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "description": "A unique value identifying this pres cond.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PresCond"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/pres-cond/specific": {
+            "get": {
+                "operationId": "getPresCondAtSpecificTime",
+                "description": "getPresCondAtSpecificTime",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "day",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "hour",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "minute",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "month",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "second",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "year",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PresCond"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/volume/": {
+            "get": {
+                "operationId": "getVolumes",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedVolumeList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/volume/{date}/": {
+            "get": {
+                "operationId": "getVolume",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "date",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "description": "A unique value identifying this volume.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Volume"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/volume/specific": {
+            "get": {
+                "operationId": "getVolumeAtSpecificTime",
+                "description": "getVolumeAtSpecificTime",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "day",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "hour",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "minute",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "month",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "second",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "year",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Volume"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/siroperie/sucre/": {
             "get": {
                 "operationId": "getSucreList",
@@ -1141,7 +1814,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/SucreMetaData"
+                                    "$ref": "#/components/schemas/FeedMetaData"
                                 }
                             }
                         },
@@ -1153,7 +1826,7 @@
         "/api/v1/siroperie/sucre/specific": {
             "get": {
                 "operationId": "getSucreAtSpecificTime",
-                "description": "getAtSpecificTime",
+                "description": "getSucreAtSpecificTime",
                 "parameters": [
                     {
                         "in": "query",
@@ -2616,12 +3289,105 @@
                 "type": "string",
                 "description": "* `invalid_input` - invalid_input\n* `invalid_credentials` - invalid_credentials"
             },
+            "Debit": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "d_f1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_f2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_uf1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_uf2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_uf3": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_uf4": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_uf5": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_uf6": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_os1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_os2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_os3": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_os4": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_os5": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_os6": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_os7": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_os8": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "d_os9": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    }
+                }
+            },
             "EmailSchedule": {
                 "type": "object",
                 "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "uri",
+                    "id": {
+                        "type": "integer",
                         "readOnly": true
                     },
                     "rapport": {
@@ -2671,12 +3437,12 @@
                 },
                 "required": [
                     "created_at",
+                    "id",
                     "interval",
                     "rapport",
                     "scheduled_users",
                     "temps_envoi",
-                    "updated_at",
-                    "url"
+                    "updated_at"
                 ]
             },
             "EmailScheduleRequest": {
@@ -2740,14 +3506,26 @@
                     "status"
                 ]
             },
+            "FeedMetaData": {
+                "type": "object",
+                "properties": {
+                    "start_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "end_date",
+                    "start_date"
+                ]
+            },
             "Group": {
                 "type": "object",
                 "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "uri",
-                        "readOnly": true
-                    },
                     "group_id": {
                         "type": "integer",
                         "readOnly": true
@@ -2759,8 +3537,7 @@
                 },
                 "required": [
                     "group_id",
-                    "name",
-                    "url"
+                    "name"
                 ]
             },
             "GroupRequest": {
@@ -2832,6 +3609,109 @@
                     "status",
                     "user"
                 ]
+            },
+            "Niveau": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "niv_f1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "niv_f2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "niv_uf1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "niv_uf2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "niv_os1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "niv_os2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "niv_os3": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "niv_os4": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "niv_os5": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "niv_os6": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "niv_os7": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    }
+                }
+            },
+            "PaginatedDebitList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Debit"
+                        }
+                    }
+                }
             },
             "PaginatedEmailScheduleList": {
                 "type": "object",
@@ -2911,6 +3791,45 @@
                     }
                 }
             },
+            "PaginatedNiveauList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Niveau"
+                        }
+                    }
+                }
+            },
             "PaginatedPermissionList": {
                 "type": "object",
                 "properties": {
@@ -2946,6 +3865,45 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Permission"
+                        }
+                    }
+                }
+            },
+            "PaginatedPresCondList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PresCond"
                         }
                     }
                 }
@@ -3145,6 +4103,45 @@
                     }
                 }
             },
+            "PaginatedVolumeList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Volume"
+                        }
+                    }
+                }
+            },
             "PatchedEmailScheduleRequest": {
                 "type": "object",
                 "properties": {
@@ -3303,11 +4300,6 @@
             "Permission": {
                 "type": "object",
                 "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "uri",
-                        "readOnly": true
-                    },
                     "permission_id": {
                         "type": "integer",
                         "readOnly": true
@@ -3329,8 +4321,7 @@
                     "codename",
                     "content_type_name",
                     "name",
-                    "permission_id",
-                    "url"
+                    "permission_id"
                 ]
             },
             "PermissionRequest": {
@@ -3357,6 +4348,75 @@
                     "name"
                 ]
             },
+            "PresCond": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "p_uf": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_uf4": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_uf6": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_os1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_os2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_os3": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_os4": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_os5": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_os6": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_os7": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_os71": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_os8": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    }
+                }
+            },
             "RapportEnum": {
                 "enum": [
                     "inventaire-sucre"
@@ -3367,11 +4427,6 @@
             "Role": {
                 "type": "object",
                 "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "uri",
-                        "readOnly": true
-                    },
                     "role_id": {
                         "type": "integer",
                         "readOnly": true
@@ -3386,9 +4441,6 @@
                     "group": {
                         "type": "object",
                         "properties": {
-                            "url": {
-                                "type": "string"
-                            },
                             "group_id": {
                                 "type": "integer"
                             },
@@ -3397,7 +4449,6 @@
                             }
                         },
                         "required": [
-                            "url",
                             "group_id",
                             "name"
                         ],
@@ -3424,8 +4475,7 @@
                     "managed_roles",
                     "name",
                     "permissions",
-                    "role_id",
-                    "url"
+                    "role_id"
                 ]
             },
             "RoleRequest": {
@@ -3449,9 +4499,8 @@
             "SentEmail": {
                 "type": "object",
                 "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "uri",
+                    "id": {
+                        "type": "integer",
                         "readOnly": true
                     },
                     "temps_envoi": {
@@ -3468,10 +4517,10 @@
                     }
                 },
                 "required": [
+                    "id",
                     "receptionist",
                     "schedule",
-                    "temps_envoi",
-                    "url"
+                    "temps_envoi"
                 ]
             },
             "SentEmailRequest": {
@@ -3494,11 +4543,6 @@
             "SubordinateAndSuperior": {
                 "type": "object",
                 "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "uri",
-                        "readOnly": true
-                    },
                     "superior": {
                         "type": "integer"
                     },
@@ -3508,8 +4552,7 @@
                 },
                 "required": [
                     "subordinate",
-                    "superior",
-                    "url"
+                    "superior"
                 ]
             },
             "SubordinateAndSuperiorRequest": {
@@ -3545,11 +4588,6 @@
             "Sucre": {
                 "type": "object",
                 "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "uri",
-                        "readOnly": true
-                    },
                     "date": {
                         "type": "string",
                         "format": "date-time"
@@ -3604,36 +4642,11 @@
                         "format": "double",
                         "nullable": true
                     }
-                },
-                "required": [
-                    "url"
-                ]
-            },
-            "SucreMetaData": {
-                "type": "object",
-                "properties": {
-                    "start_date": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "end_date": {
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                },
-                "required": [
-                    "end_date",
-                    "start_date"
-                ]
+                }
             },
             "User": {
                 "type": "object",
                 "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "uri",
-                        "readOnly": true
-                    },
                     "user_id": {
                         "type": "integer",
                         "readOnly": true
@@ -3698,7 +4711,6 @@
                     "role",
                     "subordinates",
                     "superiors",
-                    "url",
                     "user_id"
                 ]
             },
@@ -3757,11 +4769,6 @@
             "UserSerializerWithSubordinates": {
                 "type": "object",
                 "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "uri",
-                        "readOnly": true
-                    },
                     "user_id": {
                         "type": "integer",
                         "readOnly": true
@@ -3786,18 +4793,12 @@
                 "required": [
                     "email",
                     "subordinates",
-                    "url",
                     "user_id"
                 ]
             },
             "UserSerializerWithSuperiors": {
                 "type": "object",
                 "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "uri",
-                        "readOnly": true
-                    },
                     "user_id": {
                         "type": "integer",
                         "readOnly": true
@@ -3822,9 +4823,97 @@
                 "required": [
                     "email",
                     "superiors",
-                    "url",
                     "user_id"
                 ]
+            },
+            "Volume": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "vol_for": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_uf1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_uf2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_uf3": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_uf4": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_uf5": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_uf6": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_os1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_os2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_os3": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_os4": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_os5": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_os6": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_os7": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_os8": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "vol_os9": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    }
+                }
             }
         },
         "securitySchemes": {

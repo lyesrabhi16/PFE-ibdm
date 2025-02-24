@@ -9,3 +9,7 @@ class ErrorResponseSerializer(serializers.Serializer):
 class SuccessResponseSerializer(serializers.Serializer):
     status = serializers.CharField()
     message = serializers.CharField()
+
+class FeedMetaDataSerializer(serializers.Serializer):
+    start_date = serializers.DateTimeField()
+    end_date = serializers.DateTimeField()
