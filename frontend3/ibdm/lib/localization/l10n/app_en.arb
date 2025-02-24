@@ -42,6 +42,7 @@
     "lightmode": "Light mode",
     "darkmode": "Dark mode",
     "language": "Language",
-    "helpAssistance": "Help and Assistance"
+    "helpAssistance": "Help and Assistance",
+    "about": "About"
 
 }
