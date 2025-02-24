@@ -42,5 +42,6 @@
     "lightmode": "Mode clair",
     "darkmode": "Mode sombre",
     "language": "Langue",
-    "helpAssistance": "Aide et Assistance"
+    "helpAssistance": "Aide et Assistance",
+    "about": "À propos"
 }

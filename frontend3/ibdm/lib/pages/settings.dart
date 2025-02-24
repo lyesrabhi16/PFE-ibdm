@@ -59,7 +59,12 @@ class _SettingsPageState extends State<SettingsPage> {
                   _buildSettingCard(
                     icon: Icons.help,
                     title: strings.value.helpAssistance,
-                    onTap: () {},
+                    onTap: () => Get.toNamed(Routes.help),
+                  ),
+                  _buildSettingCard(
+                    icon: Icons.info,
+                    title: strings.value.about,
+                    onTap: () => Get.toNamed(Routes.about),
                   ),
                 ],
               ),
