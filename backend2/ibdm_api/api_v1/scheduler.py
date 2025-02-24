@@ -1,17 +1,16 @@
 import logging
-from typing import cast
-from urllib.request import Request
 from apscheduler.schedulers.twisted import TwistedScheduler
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.conf import settings
 
 from emails.models import EmailSchedule, sentEmail
-from siroperie.views import getSucreAtSpecificTime
+from filtration.consumers import FiltrationConsumer
+from filtration.models import Debit, Niveau, PresCond, Volume
+from filtration.serializers import DebitSerializer, NiveauSerializer, PresCondSerializer, VolumeSerializer
 from siroperie.consumers import SucreConsumer
 from siroperie.serializers import SucreSerializer
 from siroperie.models import Sucre
-from channels_redis.core import RedisChannelLayer
 from django.core.mail import send_mail
 from datetime import datetime
 from datetime import timedelta
@@ -36,15 +35,59 @@ def broadcast_sucre():
             "data": SucreSerializer(data, context={ "request": None }).data,
         },
     )
-
 scheduler.add_job(
     broadcast_sucre,
     "cron",
     #minute="*/1", works
-    second="*/10",
+    second="*/1",
     id="broadcast_sucre",
 )
 scheduler.pause_job("broadcast_sucre")
+
+def broadcast_filtration():
+    
+    channel_layer = get_channel_layer()
+
+
+    niveau_latest = Niveau.objects.latest("date")
+    logging.info(f"latest niveau: {str(niveau_latest)}")
+    
+    debit_latest = Debit.objects.latest("date")
+    logging.info(f"latest debit_latest: {str(debit_latest)}")
+
+    volume_latest = Volume.objects.latest("date")
+    logging.info(f"latest volume_latest: {str(volume_latest)}")
+
+    pres_cond_latest = PresCond.objects.latest("date")
+    logging.info(f"latest pres_cond_latest: {str(pres_cond_latest)}")
+
+    logging.info("broadcast_filtration done retrieving data and now broadcasting")
+
+    data = {
+                "niveau": NiveauSerializer(niveau_latest).data,
+                "debit": DebitSerializer(debit_latest).data,
+                "pres_cond": PresCondSerializer(pres_cond_latest).data,
+                "volume": VolumeSerializer(volume_latest).data,
+            }
+
+    async_to_sync(channel_layer.group_send)(
+        "filtration",
+        {
+            "type": "filtration.data",
+            "data": data,
+        },
+    )
+scheduler.add_job(
+    broadcast_filtration,
+    "cron",
+    #minute="*/1", works
+    second="*/1",
+    id="broadcast_filtration",
+)
+scheduler.pause_job("broadcast_filtration")
+
+
+
 def Manager():
 
     sucre_broadcast_job =  scheduler.get_job("broadcast_sucre")
@@ -55,6 +98,15 @@ def Manager():
     elif (SucreConsumer.connected_count > 0 and sucre_broadcast_job.next_run_time is None):
         logging.log(logging.INFO, "manager starting broadcast_sucre")
         scheduler.resume_job("broadcast_sucre")
+
+    filtration_broadcast_job =  scheduler.get_job("broadcast_filtration")
+    if(FiltrationConsumer.connected_count == 0 and filtration_broadcast_job.next_run_time is not None):
+        logging.log(logging.INFO, "manager stopping broadcast_filtration")
+
+        scheduler.pause_job("broadcast_filtration")
+    elif (FiltrationConsumer.connected_count > 0 and filtration_broadcast_job.next_run_time is None):
+        logging.log(logging.INFO, "manager starting broadcast_filtration")
+        scheduler.resume_job("broadcast_filtration")
         
 scheduler.add_job(
     Manager,

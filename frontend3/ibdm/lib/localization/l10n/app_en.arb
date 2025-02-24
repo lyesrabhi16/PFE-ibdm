@@ -423,5 +423,10 @@
 				"example": "5"
 			}
 		}
-	}
+	},
+        "filtrationTitle": "Filtration",
+        "eauBrute": "Eau Brute",
+        "eauFiltrer": "Eau Filtrer",
+        "eauOsmose": "Eau Osmose"
+        
 }

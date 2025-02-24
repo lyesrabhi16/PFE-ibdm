@@ -4,6 +4,7 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/pages/filtration.dart/filtration.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
 import 'package:ibdm/common/middlewares/protected_route_middleware.dart';
@@ -22,6 +23,7 @@ class Routes {
   static const String home = '/';
   static const String login = '/login';
   static const String siroperie = '/siroperie';
+  static const String filtration = '/filtration';
   static const String settings = '/settings';
   static const String users = '/users';
 
@@ -45,6 +47,12 @@ class Routes {
           page: route_pages[Routes.siroperie]!,
         ).withPermission(Permissions.viewSiroperiePage),
         Destination(
+          title: "Filtration",
+          icon: Icons.battery_full_outlined,
+          route: Routes.filtration,
+          page: route_pages[Routes.filtration]!,
+        ), // Todo: Add permission for this page
+        Destination(
           title: "Settings",
           icon: Icons.settings,
           route: Routes.settings,
@@ -66,6 +74,11 @@ class Routes {
     Routes.siroperie: GetPage(
       name: Routes.siroperie,
       page: () => SiroperiePage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    Routes.filtration: GetPage(
+      name: Routes.filtration,
+      page: () => FiltrationPage(),
       middlewares: [ProtectedRouteMiddleware()],
     ),
     Routes.settings: GetPage(

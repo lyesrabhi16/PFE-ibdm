@@ -10,6 +10,7 @@ part 'sent_email.g.dart';
 class SentEmail {
   const SentEmail({
     required this.url,
+    required this.id,
     required this.tempsEnvoi,
     required this.receptionist,
     required this.schedule,
@@ -18,6 +19,7 @@ class SentEmail {
   factory SentEmail.fromJson(Map<String, Object?> json) => _$SentEmailFromJson(json);
   
   final String url;
+  final int id;
   @JsonKey(name: 'temps_envoi')
   final DateTime tempsEnvoi;
   final String receptionist;

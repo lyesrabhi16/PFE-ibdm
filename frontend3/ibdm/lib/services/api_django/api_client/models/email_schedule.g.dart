@@ -9,6 +9,7 @@ part of 'email_schedule.dart';
 EmailSchedule _$EmailScheduleFromJson(Map<String, dynamic> json) =>
     EmailSchedule(
       url: json['url'] as String,
+      id: (json['id'] as num).toInt(),
       rapport: RapportEnum.fromJson(json['rapport'] as String),
       tempsEnvoi: json['temps_envoi'] as String,
       interval: IntervalEnum.fromJson(json['interval'] as String),
@@ -29,6 +30,7 @@ EmailSchedule _$EmailScheduleFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$EmailScheduleToJson(EmailSchedule instance) =>
     <String, dynamic>{
       'url': instance.url,
+      'id': instance.id,
       'rapport': _$RapportEnumEnumMap[instance.rapport]!,
       'temps_envoi': instance.tempsEnvoi,
       'interval': _$IntervalEnumEnumMap[instance.interval]!,

@@ -8,7 +8,6 @@ class SucreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sucre
         fields = [
-            "url",
             "date",
             "t_s21",
             "t_s22",
@@ -21,6 +20,3 @@ class SucreSerializer(serializers.ModelSerializer):
             "a_t05",
             "a_t06",
         ]
-class SucreMetaDataSerializer(serializers.Serializer):
-    start_date = serializers.DateTimeField()
-    end_date = serializers.DateTimeField()

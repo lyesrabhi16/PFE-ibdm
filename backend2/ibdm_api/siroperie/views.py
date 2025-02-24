@@ -6,7 +6,8 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from api_v1.utils import with_operation_ids
 from siroperie.models import Sucre
-from siroperie.serializers import SucreMetaDataSerializer, SucreSerializer
+from siroperie.serializers import SucreSerializer
+from api_v1.serializers import FeedMetaDataSerializer
 from rest_framework.decorators import api_view, permission_classes
 @extend_schema(
     tags=["Sucre"]
@@ -103,7 +104,7 @@ def getSucreAtSpecificTime(request):
     operation_id="getSucreMetaData",
     request=None,
     responses={
-        200: SucreMetaDataSerializer,
+        200: FeedMetaDataSerializer,
     },
 )
 @api_view(["GET"])
@@ -115,7 +116,7 @@ def getSucreMetaData(request):
     if (not sucreFirst or not sucreLast):
         return JsonResponse({}, status=404)
     return JsonResponse(
-        SucreMetaDataSerializer({
+        FeedMetaDataSerializer({
             "start_date": sucreFirst.date,
             "end_date": sucreLast.date
         }).data

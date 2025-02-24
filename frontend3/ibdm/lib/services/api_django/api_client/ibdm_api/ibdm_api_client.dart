@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
+import '../models/debit.dart';
 import '../models/email_schedule.dart';
 import '../models/format.dart';
 import '../models/group.dart';
@@ -15,15 +16,21 @@ import '../models/has_perm_response.dart';
 import '../models/interval_enum.dart';
 import '../models/lang.dart';
 import '../models/login_response.dart';
+import '../models/niveau.dart';
+import '../models/paginated_debit_list.dart';
 import '../models/paginated_email_schedule_list.dart';
 import '../models/paginated_group_list.dart';
+import '../models/paginated_niveau_list.dart';
 import '../models/paginated_permission_list.dart';
+import '../models/paginated_pres_cond_list.dart';
 import '../models/paginated_role_list.dart';
 import '../models/paginated_sent_email_list.dart';
 import '../models/paginated_subordinate_and_superior_list.dart';
 import '../models/paginated_sucre_list.dart';
 import '../models/paginated_user_list.dart';
+import '../models/paginated_volume_list.dart';
 import '../models/permission.dart';
+import '../models/pres_cond.dart';
 import '../models/rapport_enum.dart';
 import '../models/role.dart';
 import '../models/sent_email.dart';
@@ -32,6 +39,7 @@ import '../models/success_response.dart';
 import '../models/sucre.dart';
 import '../models/sucre_meta_data.dart';
 import '../models/user.dart';
+import '../models/volume.dart';
 
 part 'ibdm_api_client.g.dart';
 
@@ -196,6 +204,78 @@ abstract class IbdmApiClient {
   /// [page] - Page number.
   ///
   /// [perPage] - Number of results per page.
+  @GET('/api/v1/filtration/debit/')
+  Future<PaginatedDebitList> getDebits({
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
+  /// [date] - A unique value identifying this debit.
+  @GET('/api/v1/filtration/debit/{date}/')
+  Future<Debit> getDebit({
+    @Path('date') required DateTime date,
+  });
+
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/filtration/niveau/')
+  Future<PaginatedNiveauList> getNiveaux({
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
+  /// [date] - A unique value identifying this niveau.
+  @GET('/api/v1/filtration/niveau/{date}/')
+  Future<Niveau> getNiveau({
+    @Path('date') required DateTime date,
+  });
+
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/filtration/pres-cond/')
+  Future<PaginatedPresCondList> getPresConds({
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
+  /// [date] - A unique value identifying this pres cond.
+  @GET('/api/v1/filtration/pres-cond/{date}/')
+  Future<PresCond> getPresCond({
+    @Path('date') required DateTime date,
+  });
+
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/filtration/volume/')
+  Future<PaginatedVolumeList> getVolumes({
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
+  /// [date] - A unique value identifying this volume.
+  @GET('/api/v1/filtration/volume/{date}/')
+  Future<Volume> getVolume({
+    @Path('date') required DateTime date,
+  });
+
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
   @GET('/api/v1/siroperie/sucre/')
   Future<PaginatedSucreList> getSucreList({
     @Query('enable_pagination') bool? enablePagination,
@@ -212,7 +292,7 @@ abstract class IbdmApiClient {
   @GET('/api/v1/siroperie/sucre/meta')
   Future<SucreMetaData> getSucreMetaData();
 
-  /// getAtSpecificTime
+  /// getSucreAtSpecificTime
   @GET('/api/v1/siroperie/sucre/specific')
   Future<Sucre> getSucreAtSpecificTime({
     @Query('year') required int year,
