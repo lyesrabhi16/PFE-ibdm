@@ -366,8 +366,8 @@ class SiroperiePage extends StatelessWidget {
     if (_stream == null) {
       try {
         print("connecting to sucre broadcast");
-        _channel = WebSocketChannel.connect(
-            Uri.parse(ApiConfig.sucre_broadcast_websocket_url));
+        // _channel = WebSocketChannel.connect(
+        //     Uri.parse(ApiConfig.sucre_broadcast_websocket_url));
         final res =
             await (await ApiClientInstance.getApiClient()).getSucreMetaData();
         print("sucre broadcast connected");

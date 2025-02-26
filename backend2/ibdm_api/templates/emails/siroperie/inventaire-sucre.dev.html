@@ -1,0 +1,176 @@
+{% load static tailwind_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% tailwind_css %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventaire Sucre {{ sucre.date }}</title>
+</head>
+<body class="bg-gray-100 p-6">
+
+
+  <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold text-center mb-4">Inventaire Sucre {{ date }}</h1>
+    <p class="text-center font-semibold text-gray-700 mb-4">Synthèse: {{ a_commander }}</p>
+</div>
+<div class="overflow-x-auto mt-6">
+    <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm shadow-md rounded-lg">
+      <thead class="ltr:text-left rtl:text-right">
+        <tr>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Cuve</th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Niveau en L</th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Niveau en KG</th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Fill</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        <tr 
+        {% if ts21.danger != False %}
+                class="text-red-500"
+        {% endif %}    
+        >
+          <td class="whitespace-nowrap px-4 py-2 font-medium">TS21</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ ts21.inL }} L</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ ts21.inKG }} KG</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ ts21.Fill }} % </td>
+        </tr>
+        <tr 
+        {% if ts22.danger != False %}
+                class="text-red-500"
+        {% endif %}
+        >
+          <td class="whitespace
+            -nowrap px-4 py-2 font-medium">TS22</td>
+            <td class="whitespace-nowrap px-4 py-2">{{ ts22.inL }} L</td>
+            <td class="whitespace-nowrap px-4 py-2">{{ ts22.inKG }} KG</td>
+            <td class="whitespace-nowrap px-4 py-2">{{ ts22.Fill }} % </td>
+        </tr>
+        <tr 
+        {% if ts23.danger != False %}
+                class="text-red-500"
+        {% endif %}
+        >
+          <td class="whitespace
+            -nowrap px-4 py-2 font-medium">TS23</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ ts23.inL }} L</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ ts23.inKG }} KG</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ ts23.Fill }} % </td>
+        </tr>
+        <tr 
+        {% if ts24.danger != False %}
+                class="text-red-500"
+        {% endif %}
+        >
+          <td class="whitespace
+            -nowrap px-4 py-2 font-medium">TS24</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ ts24.inL }} L</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ ts24.inKG }} KG</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ ts24.Fill }} % </td>
+        </tr>
+        <tr 
+        {% if ts25.danger != False %}
+                class="text-red-500"
+        {% endif %}
+        >
+          <td class="whitespace
+            -nowrap px-4 py-2 font-medium">TS25</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ ts25.inL }} L</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ ts25.inKG }} KG</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ ts25.Fill }} % </td>
+        </tr>
+        <tr 
+        {% if total_tetra.danger != False %}
+                class="bg-gray-200 text-red-500"
+        {% else %}
+                class="bg-gray-200"
+        {% endif %}
+        >
+          <td class="whitespace
+            -nowrap px-4 py-2 font-medium">Total Tetra</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ total_tetra.inL }} L</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ total_tetra.inKG }} KG</td>
+            <td class="whitespace
+            -nowrap px-4 py-2">{{ total_tetra.Fill }} % </td>
+        </tr>
+        <tr 
+        {% if at02.danger != False %}
+                class="text-red-500"
+        {% endif %}
+        >
+          <td class="whitespace-nowrap px-4 py-2 font-medium">AT02</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at02.inL }} L</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at02.inKG }} KG</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at02.Fill }} % </td>
+        </tr>
+        <tr 
+        {% if at03.danger != False %}
+                class="text-red-500"
+        {% endif %}
+        >
+          <td class="whitespace-nowrap px-4 py-2 font-medium">AT03</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at03.inL }} L</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at03.inKG }} KG</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at03.Fill }} % </td>
+        </tr>
+        <tr 
+        {% if at04.danger != False %}
+                class="text-red-500"
+        {% endif %}
+        >
+          <td class="whitespace-nowrap px-4 py-2 font-medium">AT04</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at04.inL }} L</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at04.inKG }} KG</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at04.Fill }} % </td>
+        </tr>
+        <tr 
+        {% if at05.danger != False %}
+                class="text-red-500"
+        {% endif %}
+        >
+          <td class="whitespace-nowrap px-4 py-2 font-medium">AT05</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at05.inL }} L</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at05.inKG }} KG</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ at05.Fill }} % </td>
+        </tr>
+        <tr 
+        {% if total_adue.danger != False %}
+                class="bg-gray-200 text-red-500"
+        {% else %}
+                class="bg-gray-200"
+        {% endif %}
+        >
+          <td class="whitespace-nowrap px-4 py-2 font-medium">Total Adue</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ total_adue.inL }} L</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ total_adue.inKG }} KG</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ total_adue.Fill }} % </td>
+        </tr>  
+        <tr
+         {% if total_sucre.danger != False %}
+                  class="bg-gray-200 text-red-500"
+          {% else %}
+                  class="bg-gray-200"
+          {% endif %}
+        >
+          <td class="whitespace-nowrap px-4 py-2 font-medium">Total Sucre</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ total.inL }} L</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ total.inKG }} KG</td>
+          <td class="whitespace-nowrap px-4 py-2">{{ total.Fill }} % </td>
+        </tr>       
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
