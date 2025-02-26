@@ -43,8 +43,11 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SAMESITE = "None"
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 # Application definition
-
+NPM_BIN_PATH="C:\\Program Files\\nodejs\\npm.cmd"
 INSTALLED_APPS = [
     "jazzmin",
     "django.contrib.admin",
@@ -60,13 +63,15 @@ INSTALLED_APPS = [
     # "djoser",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "tailwind",
+    "theme",
     "api_v1",
     "app_auth",
     "documentation",
     "users",
     "siroperie",
     "automate",
-    "emails"
+    "emails",
 ]
 
 MIDDLEWARE = [
@@ -100,6 +105,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ibdm_api.wsgi.application"
 
+TAILWIND_APP_NAME = "theme"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -265,8 +271,8 @@ MEDIA_URL = "/media/"
 
 ## Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.mailersend.net'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "MS_nUiX7m@trial-z86org8qxxzgew13.mlsender.net" #sender's email-id
-EMAIL_HOST_PASSWORD = "mssp.YjPMlrM.3yxj6lj69y14do2r.dX0Wzay" #password associated with above email-id (not the regular password)
+EMAIL_HOST_USER = "lyesrabhi16@gmail.com" #sender's email-id
+EMAIL_HOST_PASSWORD = "jhvy injv puxg iswg" #password associated with above email-id (not the regular password)
