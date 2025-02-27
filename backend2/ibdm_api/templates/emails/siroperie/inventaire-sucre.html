@@ -1,107 +1,123 @@
+{% load static tailwind_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% tailwind_css %}
     <meta charset="UTF-8">
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventaire Sucre {{ sucre.date }}</title>
 </head>
-<body>
+<body class="bg-gray-100 p-6" style="background-color: #f3f4f6; padding: 24px;">
 
 
-<h1 class="text-2xl font-bold text-center">Inventaire Sucre {{ date }}</h1>
-<p>Synthése: {{ a_commander }}</p>
-<div class="overflow-x-auto">
-    <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+  <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md" style="margin-left: auto; margin-right: auto; max-width: 48rem; border-radius: 0.5rem; background-color: #fff; padding: 24px; --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color); box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);">
+    <h1 class="text-2xl font-bold text-center mb-4 xs:hidden" style="margin-bottom: 16px; text-align: center; font-size: 24px; font-weight: 700;">
+      Inventaire Sucre <span class="block xs:inline"> {{ date }} </span>  
+    </h1>
+    
+    <p class="text-center font-semibold text-gray-700 mb-4" style="margin-bottom: 16px; text-align: center; font-weight: 600; color: #374151;">Synthèse: {{ a_commander }}</p>
+</div>
+<div class="overflow-x-auto mt-2" style="margin-top: 24px;">
+      <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm shadow-md rounded-lg" style="min-width: 100%; border-radius: 0.5rem; background-color: #fff; font-size: 14px; --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color); box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);">
       <thead class="ltr:text-left rtl:text-right">
         <tr>
-          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Cuve</th>
-          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Niveau en L</th>
-          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Niveau en KG</th>
-          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Fill</th>
+          <th class="whitespace-nowrap px-4 py-2 font-semibold text-gray-900" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500; color: #111827;">Cuve</th>
+          <th class="whitespace-nowrap px-4 py-2 font-semibold text-gray-900" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500; color: #111827;">Niveau en L</th>
+          <th class="whitespace-nowrap px-4 py-2 font-semibold text-gray-900" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500; color: #111827;">Niveau en KG</th>
+          <th class="whitespace-nowrap px-4 py-2 font-semibold text-gray-900" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500; color: #111827;">Fill</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-200">
-        <tr 
-        {% if ts21.danger != False %}
-                class="text-red-500"
-        {% endif %}    
-        >
-          <td class="whitespace-nowrap px-4 py-2 font-medium">TS21</td>
-          <td class="whitespace-nowrap px-4 py-2">{{ ts21.inL }} L</td>
-          <td class="whitespace-nowrap px-4 py-2">{{ ts21.inKG }} KG</td>
-          <td class="whitespace-nowrap px-4 py-2">{{ ts21.Fill }} % </td>
+      <tbody class="divide-y divide-gray-200" style="--tw-divide-y-reverse: 0; border-top-width: calc(2px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(2px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;">
+        <tr {% if ts21.danger != False %} class="text-red-500" style="color: #ef4444;" {% endif %} >
+          <td class="whitespace-nowrap px-2 py-1 font-medium" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">TS21</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts21.inL }} L</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts21.inKG }} KG</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts21.Fill }} % </td>
         </tr>
-        <tr 
-        {% if ts22.danger != False %}
-                class="text-red-500"
-        {% endif %}
-        >
+        <tr {% if ts22.danger != False %} class="text-red-500" style="color: #ef4444; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% endif%} >
           <td class="whitespace
-            -nowrap px-4 py-2 font-medium">TS22</td>
-            <td class="whitespace-nowrap px-4 py-2">{{ ts22.inL }} L</td>
-            <td class="whitespace-nowrap px-4 py-2">{{ ts22.inKG }} KG</td>
-            <td class="whitespace-nowrap px-4 py-2">{{ ts22.Fill }} % </td>
+            -nowrap px-2 py-1 font-medium" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">TS22</td>
+            <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts22.inL }} L</td>
+            <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts22.inKG }} KG</td>
+            <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts22.Fill }} % </td>
         </tr>
-        <tr 
-        {% if ts23.danger != False %}
-                class="text-red-500"
-        {% endif %}
-        >
+        <tr {% if ts23.danger != False %} class="text-red-500" style="color: #ef4444; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% endif %}>
           <td class="whitespace
-            -nowrap px-4 py-2 font-medium">TS23</td>
+            -nowrap px-2 py-1 font-medium" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">TS23</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ ts23.inL }} L</td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts23.inL }} L</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ ts23.inKG }} KG</td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts23.inKG }} KG</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ ts23.Fill }} % </td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts23.Fill }} % </td>
         </tr>
-        <tr 
-        {% if ts24.danger != False %}
-                class="text-red-500"
-        {% endif %}
-        >
+        <tr {% if ts24.danger != False %} class="text-red-500" {% endif %} style="color: #ef4444; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;">
           <td class="whitespace
-            -nowrap px-4 py-2 font-medium">TS24</td>
+            -nowrap px-2 py-1 font-medium" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">TS24</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ ts24.inL }} L</td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts24.inL }} L</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ ts24.inKG }} KG</td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts24.inKG }} KG</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ ts24.Fill }} % </td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts24.Fill }} % </td>
         </tr>
-        <tr 
-        {% if ts25.danger != False %}
-                class="text-red-500"
-        {% endif %}
-        >
+        <tr {% if ts25.danger != False %} class="text-red-500" style="color: #ef4444; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% endif %} >
           <td class="whitespace
-            -nowrap px-4 py-2 font-medium">TS25</td>
+            -nowrap px-2 py-1 font-medium" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">TS25</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ ts25.inL }} L</td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts25.inL }} L</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ ts25.inKG }} KG</td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts25.inKG }} KG</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ ts25.Fill }} % </td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ ts25.Fill }} % </td>
         </tr>
-        <tr 
-        {% if total_tetra.danger != False %}
-                class="bg-gray-200 text-red-500"
-        {% else %}
-                class="bg-gray-200"
-        {% endif %}
-        >
+        <tr {% if total_tetra.danger != False %} class="bg-gray-200 text-red-500" style="background-color: #e5e7eb; color: #ef4444; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% else %} class="bg-gray-200" style="background-color: #e5e7eb; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% endif %} >
           <td class="whitespace
-            -nowrap px-4 py-2 font-medium">Total Tetra</td>
+            -nowrap px-2 py-1 font-medium" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">Total Tetra</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ total_tetra.inL }} L</td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ total_tetra.inL }} L</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ total_tetra.inKG }} KG</td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ total_tetra.inKG }} KG</td>
             <td class="whitespace
-            -nowrap px-4 py-2">{{ total_tetra.Fill }} % </td>
+            -nowrap px-2 py-1" style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ total_tetra.Fill }} % </td>
         </tr>
-        
+        <tr {% if at02.danger != False %} class="text-red-500" style="color: #ef4444; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% endif %} >
+          <td class="whitespace-nowrap px-2 py-1 font-medium" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">AT02</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at02.inL }} L</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at02.inKG }} KG</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at02.Fill }} % </td>
+        </tr>
+        <tr {% if at03.danger != False %} class="text-red-500" style="color: #ef4444; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% endif %} >
+          <td class="whitespace-nowrap px-2 py-1 font-medium" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">AT03</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at03.inL }} L</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at03.inKG }} KG</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at03.Fill }} % </td>
+        </tr>
+        <tr {% if at04.danger != False %} class="text-red-500" style="color: #ef4444; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% endif %} >
+          <td class="whitespace-nowrap px-2 py-1 font-medium" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">AT04</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at04.inL }} L</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at04.inKG }} KG</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at04.Fill }} % </td>
+        </tr>
+        <tr {% if at05.danger != False %} class="text-red-500" style="color: #ef4444; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% endif %}>
+          <td class="whitespace-nowrap px-2 py-1 font-medium" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">AT05</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at05.inL }} L</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at05.inKG }} KG</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ at05.Fill }} % </td>
+        </tr>
+        <tr {% if total_adue.danger != False %} class="bg-gray-200 text-red-500" style="background-color: #e5e7eb; color: #ef4444; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% else %} style="background-color: #e5e7eb;  --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% endif %} >
+          <td class="whitespace-nowrap px-2 py-1 font-medium" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">Total Adue</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ total_adue.inL }} L</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ total_adue.inKG }} KG</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ total_adue.Fill }} % </td>
+        </tr>  
+        <tr {% if total_sucre.danger != False %} class="bg-gray-200 text-red-500" style="background-color: #e5e7eb; color: #ef4444; --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% else %} style="background-color: #e5e7eb;  --tw-divide-y-reverse: 0; border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse))); border-bottom-width: calc(1px * var(--tw-divide-y-reverse)); border-color: #e5e7eb;" {% endif %} >
+          <td class="whitespace-nowrap px-2 py-1 font-medium" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; font-weight: 500;">Total Sucre</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ total.inL }} L</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ total.inKG }} KG</td>
+          <td class="whitespace-nowrap px-2 py-1" style="white-space: nowrap; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">{{ total.Fill }} % </td>
+        </tr>       
       </tbody>
     </table>
   </div>
