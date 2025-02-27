@@ -9,13 +9,14 @@ def test(request):
     from datetime import datetime
 
     now = datetime.now()
-    sucre = Sucre.objects.filter(
+        sucre = Sucre.objects.filter(
                         date__year= now.year,
                         date__month= now.month,
                         date__day= now.day,
                         date__hour= 0,
                         date__minute= 0
-                    ).first()
+                    ).first() 
+    """sucre = Sucre.objects.first()"""
     total_tetra = (sucre.t_s21 or 0) + (sucre.t_s22 or 0) + (sucre.t_s23 or 0) + (sucre.t_s24 or 0) + (sucre.t_s25 or 0)
     total_adue = (sucre.a_t02 or 0) + (sucre.a_t03 or 0) + (sucre.a_t04 or 0) + (sucre.a_t05 or 0) + (sucre.a_t06 or 0)
     a_commander = math.floor((840000 - (total_tetra + total_adue)) / 20000)

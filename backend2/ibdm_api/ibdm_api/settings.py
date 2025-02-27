@@ -43,8 +43,11 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SAMESITE = "None"
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 # Application definition
-
+NPM_BIN_PATH="C:\\Program Files\\nodejs\\npm.cmd"
 INSTALLED_APPS = [
     "jazzmin",
     "django.contrib.admin",
@@ -60,6 +63,8 @@ INSTALLED_APPS = [
     # "djoser",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "tailwind",
+    "theme",
     "api_v1",
     "app_auth",
     "documentation",
@@ -101,6 +106,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ibdm_api.wsgi.application"
 
+TAILWIND_APP_NAME = "theme"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

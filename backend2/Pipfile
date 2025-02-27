@@ -18,8 +18,9 @@ django-filter = "*"
 python-decouple = "*"
 django-crispy-forms = "*"
 daphne = "*"
-apscheduler = "*"
 channels-redis = "*"
+apscheduler = "*"
+django-tailwind = "*"
 
 [requires]
 python_version = "3.12.9"
