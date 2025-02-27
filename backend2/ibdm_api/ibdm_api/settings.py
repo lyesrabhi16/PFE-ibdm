@@ -278,8 +278,9 @@ MEDIA_URL = "/media/"
 
 ## Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.mailersend.net'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "MS_nUiX7m@trial-z86org8qxxzgew13.mlsender.net" #sender's email-id
-EMAIL_HOST_PASSWORD = "mssp.YjPMlrM.3yxj6lj69y14do2r.dX0Wzay" #password associated with above email-id (not the regular password)
+EMAIL_HOST =  Env.EMAIL_HOST
+EMAIL_USE_TLS = Env.EMAIL_USE_TLS
+EMAIL_PORT = Env.EMAIL_PORT
+EMAIL_HOST_USER =  Env.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD =  Env.EMAIL_HOST_PASSWORD
+

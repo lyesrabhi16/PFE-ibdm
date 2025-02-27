@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from emails.models import EmailSchedule, sentEmail
-from users.models import User
+from emails.models import AlertEmail, EmailSchedule, sentEmail
+from users.models import Role, User
 
 class EmailScheduleSerializer(serializers.ModelSerializer):
     scheduled_users = serializers.SlugRelatedField(slug_field="email", queryset=User.objects.all(), many=True)
@@ -18,4 +18,11 @@ class SentEmailSerializer(serializers.ModelSerializer):
             "temps_envoi",
             "receptionist",
             "schedule",
+            "alert",
         ]
+
+class AlertEmailSerializer(serializers.ModelSerializer):
+    send_to_users = serializers.SlugRelatedField(slug_field="email", queryset=User.objects.all() ,many=True)
+    class Meta:
+        model = AlertEmail
+        fields = "__all__"

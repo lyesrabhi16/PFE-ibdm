@@ -29,12 +29,6 @@ class _HomeState extends State<Home> {
     final userController = Get.find<UserController>();
 
     return Obx(() {
-      logger.e("Loading page is ${loadingPageController.isLoading.value}");
-      if (loadingPageController.isLoading.value) {
-        logger.e("Loading page");
-        return LoadingPage();
-      }
-
       return AppCustomContainer(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

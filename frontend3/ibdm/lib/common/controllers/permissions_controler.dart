@@ -10,13 +10,13 @@ class PermissionsController extends GetxController {
     loadPermissions();
   }
 
-  bool ready = false;
+  Rx<bool> ready = false.obs;
   bool? hasViewSiroperiePage;
   bool? hasViewUsersPage;
 
   Future<void> loadPermissions() async {
     try {
-      ready = false;
+      ready.value = false;
 
       final api = await ApiClientInstance.getApiClient();
       final perm_siroperie = await api
@@ -32,7 +32,7 @@ class PermissionsController extends GetxController {
       });
       hasViewUsersPage = perm_users.hasPerm;
 
-      ready = true;
+      ready.value = true;
     } catch (e) {
       logger.e("Failed to get permissions: $e");
     }
@@ -40,7 +40,7 @@ class PermissionsController extends GetxController {
 
   bool hasPerm(String permission) {
     try {
-      if (ready == false) {
+      if (ready.value == false) {
         throw ("Permissions not ready");
       }
 

@@ -718,6 +718,75 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
+  Future<Debit> getDebitAtSpecificTime({
+    required int year,
+    int? day,
+    int? hour,
+    int? minute,
+    int? month,
+    int? second,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'year': year,
+      r'day': day,
+      r'hour': hour,
+      r'minute': minute,
+      r'month': month,
+      r'second': second,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Debit>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/debit/specific',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Debit _value;
+    try {
+      _value = Debit.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<FeedMetaData> getFiltrationMetaData() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<FeedMetaData>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/metadata',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late FeedMetaData _value;
+    try {
+      _value = FeedMetaData.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<PaginatedNiveauList> getNiveaux({
     bool? enablePagination,
     int? page,
@@ -764,6 +833,48 @@ class _IbdmApiClient implements IbdmApiClient {
           .compose(
             _dio.options,
             '/api/v1/filtration/niveau/${date}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Niveau _value;
+    try {
+      _value = Niveau.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Niveau> getNiveauAtSpecificTime({
+    required int year,
+    int? day,
+    int? hour,
+    int? minute,
+    int? month,
+    int? second,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'year': year,
+      r'day': day,
+      r'hour': hour,
+      r'minute': minute,
+      r'month': month,
+      r'second': second,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Niveau>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/niveau/specific',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -844,6 +955,48 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
+  Future<PresCond> getPresCondAtSpecificTime({
+    required int year,
+    int? day,
+    int? hour,
+    int? minute,
+    int? month,
+    int? second,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'year': year,
+      r'day': day,
+      r'hour': hour,
+      r'minute': minute,
+      r'month': month,
+      r'second': second,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PresCond>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/pres-cond/specific',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PresCond _value;
+    try {
+      _value = PresCond.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<PaginatedVolumeList> getVolumes({
     bool? enablePagination,
     int? page,
@@ -890,6 +1043,48 @@ class _IbdmApiClient implements IbdmApiClient {
           .compose(
             _dio.options,
             '/api/v1/filtration/volume/${date}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Volume _value;
+    try {
+      _value = Volume.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Volume> getVolumeAtSpecificTime({
+    required int year,
+    int? day,
+    int? hour,
+    int? minute,
+    int? month,
+    int? second,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'year': year,
+      r'day': day,
+      r'hour': hour,
+      r'minute': minute,
+      r'month': month,
+      r'second': second,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Volume>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/volume/specific',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -970,12 +1165,12 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<SucreMetaData> getSucreMetaData() async {
+  Future<FeedMetaData> getSucreMetaData() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<SucreMetaData>(
+    final _options = _setStreamType<FeedMetaData>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -986,9 +1181,9 @@ class _IbdmApiClient implements IbdmApiClient {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late SucreMetaData _value;
+    late FeedMetaData _value;
     try {
-      _value = SucreMetaData.fromJson(_result.data!);
+      _value = FeedMetaData.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

@@ -72,6 +72,7 @@
     image_picker: ^1.0.7
     geekyants_flutter_gauges: ^1.0.4
     web_socket_channel: ^3.0.2
+    widget_arrows: ^0.6.0
 
   dev_dependencies:
     flutter_test:

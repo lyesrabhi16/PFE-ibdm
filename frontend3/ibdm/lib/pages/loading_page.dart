@@ -26,12 +26,6 @@ class LoadingPage extends StatelessWidget {
 
     return Obx(
       () {
-        if (!loadingPageController.isLoading.value) {
-          return Container(
-            child: Text("Not Loading"),
-          );
-        }
-
         return Scaffold(
           body: Column(
             mainAxisAlignment: MainAxisAlignment.center,

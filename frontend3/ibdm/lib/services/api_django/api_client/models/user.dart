@@ -12,7 +12,6 @@ part 'user.g.dart';
 @JsonSerializable()
 class User {
   const User({
-    required this.url,
     required this.userId,
     required this.firstName,
     required this.lastName,
@@ -28,7 +27,6 @@ class User {
   
   factory User.fromJson(Map<String, Object?> json) => _$UserFromJson(json);
   
-  final String url;
   @JsonKey(name: 'user_id')
   final int userId;
   @JsonKey(name: 'first_name')

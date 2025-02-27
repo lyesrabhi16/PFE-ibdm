@@ -10,6 +10,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../models/debit.dart';
 import '../models/email_schedule.dart';
+import '../models/feed_meta_data.dart';
 import '../models/format.dart';
 import '../models/group.dart';
 import '../models/has_perm_response.dart';
@@ -37,7 +38,6 @@ import '../models/sent_email.dart';
 import '../models/subordinate_and_superior.dart';
 import '../models/success_response.dart';
 import '../models/sucre.dart';
-import '../models/sucre_meta_data.dart';
 import '../models/user.dart';
 import '../models/volume.dart';
 
@@ -217,6 +217,20 @@ abstract class IbdmApiClient {
     @Path('date') required DateTime date,
   });
 
+  /// getDebitAtSpecificTime
+  @GET('/api/v1/filtration/debit/specific')
+  Future<Debit> getDebitAtSpecificTime({
+    @Query('year') required int year,
+    @Query('day') int? day,
+    @Query('hour') int? hour,
+    @Query('minute') int? minute,
+    @Query('month') int? month,
+    @Query('second') int? second,
+  });
+
+  @GET('/api/v1/filtration/metadata')
+  Future<FeedMetaData> getFiltrationMetaData();
+
   /// [enablePagination] - Enable or disable pagination.
   ///
   /// [page] - Page number.
@@ -233,6 +247,17 @@ abstract class IbdmApiClient {
   @GET('/api/v1/filtration/niveau/{date}/')
   Future<Niveau> getNiveau({
     @Path('date') required DateTime date,
+  });
+
+  /// getNiveauAtSpecificTime
+  @GET('/api/v1/filtration/niveau/specific')
+  Future<Niveau> getNiveauAtSpecificTime({
+    @Query('year') required int year,
+    @Query('day') int? day,
+    @Query('hour') int? hour,
+    @Query('minute') int? minute,
+    @Query('month') int? month,
+    @Query('second') int? second,
   });
 
   /// [enablePagination] - Enable or disable pagination.
@@ -253,6 +278,17 @@ abstract class IbdmApiClient {
     @Path('date') required DateTime date,
   });
 
+  /// getPresCondAtSpecificTime
+  @GET('/api/v1/filtration/pres-cond/specific')
+  Future<PresCond> getPresCondAtSpecificTime({
+    @Query('year') required int year,
+    @Query('day') int? day,
+    @Query('hour') int? hour,
+    @Query('minute') int? minute,
+    @Query('month') int? month,
+    @Query('second') int? second,
+  });
+
   /// [enablePagination] - Enable or disable pagination.
   ///
   /// [page] - Page number.
@@ -269,6 +305,17 @@ abstract class IbdmApiClient {
   @GET('/api/v1/filtration/volume/{date}/')
   Future<Volume> getVolume({
     @Path('date') required DateTime date,
+  });
+
+  /// getVolumeAtSpecificTime
+  @GET('/api/v1/filtration/volume/specific')
+  Future<Volume> getVolumeAtSpecificTime({
+    @Query('year') required int year,
+    @Query('day') int? day,
+    @Query('hour') int? hour,
+    @Query('minute') int? minute,
+    @Query('month') int? month,
+    @Query('second') int? second,
   });
 
   /// [enablePagination] - Enable or disable pagination.
@@ -290,7 +337,7 @@ abstract class IbdmApiClient {
   });
 
   @GET('/api/v1/siroperie/sucre/meta')
-  Future<SucreMetaData> getSucreMetaData();
+  Future<FeedMetaData> getSucreMetaData();
 
   /// getSucreAtSpecificTime
   @GET('/api/v1/siroperie/sucre/specific')

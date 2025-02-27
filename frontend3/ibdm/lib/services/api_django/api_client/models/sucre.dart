@@ -9,7 +9,6 @@ part 'sucre.g.dart';
 @JsonSerializable()
 class Sucre {
   const Sucre({
-    required this.url,
     required this.date,
     this.tS21,
     this.tS22,
@@ -25,7 +24,6 @@ class Sucre {
   
   factory Sucre.fromJson(Map<String, Object?> json) => _$SucreFromJson(json);
   
-  final String url;
   final DateTime date;
   @JsonKey(name: 't_s21')
   final double? tS21;

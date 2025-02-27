@@ -12,7 +12,6 @@ part 'email_schedule.g.dart';
 @JsonSerializable()
 class EmailSchedule {
   const EmailSchedule({
-    required this.url,
     required this.id,
     required this.rapport,
     required this.tempsEnvoi,
@@ -27,7 +26,6 @@ class EmailSchedule {
   
   factory EmailSchedule.fromJson(Map<String, Object?> json) => _$EmailScheduleFromJson(json);
   
-  final String url;
   final int id;
   final RapportEnum rapport;
   @JsonKey(name: 'temps_envoi')

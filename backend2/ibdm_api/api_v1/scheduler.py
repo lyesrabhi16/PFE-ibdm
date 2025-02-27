@@ -4,7 +4,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.conf import settings
 
-from emails.models import EmailSchedule, sentEmail
+from emails.models import AlertEmail, EmailSchedule, sentEmail
 from filtration.consumers import FiltrationConsumer
 from filtration.models import Debit, Niveau, PresCond, Volume
 from filtration.serializers import DebitSerializer, NiveauSerializer, PresCondSerializer, VolumeSerializer
@@ -28,6 +28,9 @@ def broadcast_sucre():
 
     data = get_sucre_latest_data()
     print("data:", data)
+    
+    sucreMonitor(data)
+    
     async_to_sync(channel_layer.group_send)(
         "sucre",
         {
@@ -42,7 +45,49 @@ scheduler.add_job(
     second="*/1",
     id="broadcast_sucre",
 )
-scheduler.pause_job("broadcast_sucre")
+#scheduler.pause_job("broadcast_sucre")
+
+def sucreMonitor(sucre: Sucre):
+    logging.info("sucreMonitor: checking...")
+    alerts = AlertEmail.objects.filter(monitored_value__startswith="sucre")
+    for alert in alerts:
+        if not alert.enabled:
+            continue
+        monitered_value = alert.monitored_value.split(".")[1]
+        value = getattr(sucre, monitered_value) or 0
+        if value <= alert.danger_point:
+            recipients = set().union(
+                alert.send_to_users.all(),
+                User.objects.filter(role__in=alert.send_to_roles.all())
+            )
+
+            for user in recipients:
+
+                if sentEmail.objects.filter(alert=alert, receptionist=user, temps_envoi__gte=datetime.now() - timedelta(days=alert.danger_reminder_interval)).count() == 0:
+                    send_mail(
+                        subject= f"IBDM Alert Danger: {alert.monitored_value}",
+                        message= alert.custom_alert_message or f"Alert: {alert.monitored_value} has reached a dangerous point of {value}",
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[user.email]
+                    )
+                    sentEmail.objects.create(alert=alert, receptionist=user)
+                    logging.info(f"sucreMonitor : {alert.monitored_value} sent danger alert email to '{user.email}'")
+        elif value >= alert.warning_point:
+            recipients = set().union(
+                alert.send_to_users.all(),
+                User.objects.filter(role__in=alert.send_to_roles.all())
+            )
+            for user in recipients:
+                if sentEmail.objects.filter(alert=alert, receptionist=user, temps_envoi__gte=datetime.now() - timedelta(days=alert.warning_reminder_interval)).count() == 0:
+                    send_mail(
+                        subject= f"IBDM Alert Warning: {alert.monitored_value}",
+                        message= alert.custom_alert_message or f"Alert: {alert.monitored_value} has reached a warning point of {value}",
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[user.email]
+                    )
+                    sentEmail.objects.create(alert=alert, receptionist=user)
+                    logging.info(f"sucreMonitor : {alert.monitored_value} sent warning alert email to '{user.email}'")
+
 
 def broadcast_filtration():
     
@@ -84,7 +129,7 @@ scheduler.add_job(
     second="*/1",
     id="broadcast_filtration",
 )
-scheduler.pause_job("broadcast_filtration")
+#scheduler.pause_job("broadcast_filtration")
 
 
 
@@ -108,7 +153,7 @@ def Manager():
         logging.log(logging.INFO, "manager starting broadcast_filtration")
         scheduler.resume_job("broadcast_filtration")
         
-scheduler.add_job(
+""" scheduler.add_job(
     Manager,
     "interval",
     seconds=0.1,
@@ -116,7 +161,7 @@ scheduler.add_job(
     replace_existing=True,
     
 )
-
+ """
 
 def getHtmlMessage(email: EmailSchedule):
     now = datetime.now()
@@ -217,7 +262,6 @@ def getHtmlMessage(email: EmailSchedule):
                 }
             )
 
-
 def sendEmail(email: EmailSchedule):
 
     logging.log(logging.WARNING, f"send email: {email}")
@@ -255,8 +299,6 @@ def sendEmail(email: EmailSchedule):
         raise ValueError("next_run_time is None, how did this happen?")
     
         
-
-
 
 
 def email_scheduler():
@@ -305,5 +347,6 @@ scheduler.add_job(
     seconds=20,
     id="email_scheduler",
 )
+
 logging.getLogger('apscheduler.executors.default').setLevel(logging.WARNING)
 scheduler.start()

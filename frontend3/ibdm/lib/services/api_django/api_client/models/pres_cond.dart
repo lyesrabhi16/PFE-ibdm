@@ -22,6 +22,21 @@ class PresCond {
     this.pOs7,
     this.pOs71,
     this.pOs8,
+    this.pOs9,
+    this.pOse1,
+    this.pOse2,
+    this.pConc,
+    this.cUf,
+    this.cOs1,
+    this.cOs2,
+    this.cOs3,
+    this.cOs4,
+    this.cOs5,
+    this.cOs6,
+    this.cOs7,
+    this.cOs8,
+    this.cOs9,
+    this.cOse,
   });
   
   factory PresCond.fromJson(Map<String, Object?> json) => _$PresCondFromJson(json);
@@ -51,6 +66,36 @@ class PresCond {
   final double? pOs71;
   @JsonKey(name: 'p_os8')
   final double? pOs8;
+  @JsonKey(name: 'p_os9')
+  final double? pOs9;
+  @JsonKey(name: 'p_ose1')
+  final double? pOse1;
+  @JsonKey(name: 'p_ose2')
+  final double? pOse2;
+  @JsonKey(name: 'p_conc')
+  final double? pConc;
+  @JsonKey(name: 'c_uf')
+  final double? cUf;
+  @JsonKey(name: 'c_os1')
+  final double? cOs1;
+  @JsonKey(name: 'c_os2')
+  final double? cOs2;
+  @JsonKey(name: 'c_os3')
+  final double? cOs3;
+  @JsonKey(name: 'c_os4')
+  final double? cOs4;
+  @JsonKey(name: 'c_os5')
+  final double? cOs5;
+  @JsonKey(name: 'c_os6')
+  final double? cOs6;
+  @JsonKey(name: 'c_os7')
+  final double? cOs7;
+  @JsonKey(name: 'c_os8')
+  final double? cOs8;
+  @JsonKey(name: 'c_os9')
+  final double? cOs9;
+  @JsonKey(name: 'c_ose')
+  final double? cOse;
 
   Map<String, Object?> toJson() => _$PresCondToJson(this);
 }
