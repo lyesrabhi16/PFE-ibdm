@@ -4414,6 +4414,81 @@
                         "type": "number",
                         "format": "double",
                         "nullable": true
+                    },
+                    "p_os9": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_ose1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_ose2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "p_conc": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "c_uf": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "c_os1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "c_os2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "c_os3": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "c_os4": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "c_os5": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "c_os6": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "c_os7": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "c_os8": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "c_os9": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "c_ose": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
                     }
                 }
             },

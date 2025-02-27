@@ -89,6 +89,7 @@ class LoginActions {
       });
 
       if (e is DioException) {
+        print("Login Failed: ${e.message}");
         logger.e("Login Failed: ${e.message}", error: e);
 
         // show error toast
@@ -117,6 +118,7 @@ class LoginActions {
             message: errorToastMessage,
             title: strings.loginFailed);
       } else {
+        print("Login Failed uncaught exception: $e");
         logger.f("Login Failed uncaught exception: $e");
 
         // show uncaught error toast

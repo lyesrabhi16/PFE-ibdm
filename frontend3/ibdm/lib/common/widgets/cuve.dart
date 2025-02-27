@@ -3,40 +3,51 @@ import 'package:geekyants_flutter_gauges/geekyants_flutter_gauges.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 
 class Cuve extends StatelessWidget {
   const Cuve({
     super.key,
     this.title = "Title",
     this.value = 0,
-    this.niveauInKG = 0,
-    this.niveauInL = 0,
+    this.niveau2 = 0,
+    this.niveau1 = 0,
+    this.niveau1Trailing = "L",
+    this.niveau2Trailing = "KG",
     this.okColor = AppColors.successColor,
     this.dangerColor = AppColors.errorColor,
     this.dangerPoint = 10,
+    this.height = 250,
+    this.padding = AppSizes.md,
   });
 
   final String title;
   final double value;
-  final double niveauInL;
-  final double niveauInKG;
+  final double niveau1;
+  final double niveau2;
+  final String niveau1Trailing;
+  final String niveau2Trailing;
   final Color okColor;
   final Color dangerColor;
   final double dangerPoint;
+  final double height;
+  final double padding;
   Color get color => value > dangerPoint ? okColor : dangerColor;
 
   @override
   Widget build(BuildContext context) {
+    double _value = value <= 100 ? value : 100;
+
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: AppSizes.md,
+        horizontal: padding,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 250,
+            height: height,
             child: LinearGauge(
               start: 0,
               end: 100,
@@ -57,16 +68,18 @@ class Cuve extends StatelessWidget {
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           title,
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: color,
                           ),
                         ).marginAll(AppSizes.sm),
                         FittedBox(
                           child: Text(
-                            "${niveauInL.toStringAsFixed(2)} L",
+                            "${niveau1.toStringAsFixed(2)} ${niveau1Trailing}",
                             softWrap: false,
                             style: TextStyle(
                               color: color,
@@ -75,7 +88,7 @@ class Cuve extends StatelessWidget {
                         ),
                         FittedBox(
                           child: Text(
-                            "${niveauInKG.toStringAsFixed(2)} KG",
+                            "${niveau2.toStringAsFixed(2)} ${niveau2Trailing}",
                             softWrap: false,
                             style: TextStyle(
                               color: color,
@@ -87,7 +100,7 @@ class Cuve extends StatelessWidget {
                   ).marginAll(AppSizes.sm),
                 ),
                 WidgetPointer(
-                    value: value,
+                    value: _value,
                     isInteractive: true,
                     pointerPosition: PointerPosition.left,
                     child: Row(
@@ -117,7 +130,7 @@ class Cuve extends StatelessWidget {
               rangeLinearGauge: [
                 RangeLinearGauge(
                   start: 0,
-                  end: value,
+                  end: _value,
                   color: color,
                 )
               ],

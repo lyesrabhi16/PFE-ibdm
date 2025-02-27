@@ -423,6 +423,6 @@
 	},
 	"filtrationTitle": "Filtration",
 	"eauBrute": "Eau Brute",
-	"eauFiltrer": "Eau Filtrer",
-	"eauOsmose": "Eau Osmose"
+	"eauFiltrer": "Eau Filtrée",
+	"eauOsmose": "Eau Osmosée"
 }

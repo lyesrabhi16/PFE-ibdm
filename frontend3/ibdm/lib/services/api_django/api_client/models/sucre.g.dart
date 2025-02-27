@@ -7,7 +7,6 @@ part of 'sucre.dart';
 // **************************************************************************
 
 Sucre _$SucreFromJson(Map<String, dynamic> json) => Sucre(
-      url: json['url'] as String,
       date: DateTime.parse(json['date'] as String),
       tS21: (json['t_s21'] as num?)?.toDouble(),
       tS22: (json['t_s22'] as num?)?.toDouble(),
@@ -22,7 +21,6 @@ Sucre _$SucreFromJson(Map<String, dynamic> json) => Sucre(
     );
 
 Map<String, dynamic> _$SucreToJson(Sucre instance) => <String, dynamic>{
-      'url': instance.url,
       'date': instance.date.toIso8601String(),
       't_s21': instance.tS21,
       't_s22': instance.tS22,

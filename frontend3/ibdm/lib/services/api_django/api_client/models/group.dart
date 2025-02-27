@@ -9,14 +9,12 @@ part 'group.g.dart';
 @JsonSerializable()
 class Group {
   const Group({
-    required this.url,
     required this.groupId,
     required this.name,
   });
   
   factory Group.fromJson(Map<String, Object?> json) => _$GroupFromJson(json);
   
-  final String url;
   @JsonKey(name: 'group_id')
   final int groupId;
   final String name;

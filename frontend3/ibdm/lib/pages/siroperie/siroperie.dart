@@ -8,6 +8,7 @@ import 'package:ibdm/common/extensions/widget_remove_when.dart';
 
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/cuve.dart';
+import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
@@ -22,32 +23,67 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class SiroperiePage extends StatelessWidget {
+class SiroperiePage extends StatefulWidget {
   SiroperiePage({super.key});
+  static WebSocketChannel? channel;
+  static Stream? stream;
+
+  @override
+  State<SiroperiePage> createState() => _SiroperiePageState();
+}
+
+class _SiroperiePageState extends State<SiroperiePage> {
+  @override
+  void dispose() {
+    logger.e("running dispose siroperie");
+    SiroperiePage.channel?.sink.close();
+    SiroperiePage.stream = null;
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    logger.e("running deactivate siroperie");
+    SiroperiePage.channel?.sink.close();
+    SiroperiePage.stream = null;
+    super.deactivate();
+  }
+
   final Rx<bool> loaded = false.obs;
 
   double TS21_value = 80;
+
   double TS22_value = 50;
+
   double TS23_value = 20;
+
   double TS24_value = 21;
+
   double TS25_value = 0;
+
   double T02_value = 65;
+
   double T03_value = 100;
+
   double T04_value = 39;
+
   double T05_value = 15;
+
   double T06_value = 8;
 
   double sommeTetraL = 0;
+
   double get sommeTetraKG => convertSugarLToKG(sommeTetraL);
+
   double sommeAdueL = 0;
+
   double get sommeAdueKG => convertSugarLToKG(sommeAdueL);
 
   final Rx<DateTime> sucre_start_date = DateTime.now().obs;
+
   final Rx<DateTime> sucre_end_date = DateTime.now().obs;
 
-  static WebSocketChannel? _channel;
-  Rx<bool> isLive = true.obs;
-  static Stream? _stream;
+  RxBool isLive = true.obs;
 
   double convertSugarLToKG(double inL) {
     return inL * 1.33;
@@ -56,17 +92,25 @@ class SiroperiePage extends StatelessWidget {
   int retries = 3;
 
   int? year;
+
   int? month;
+
   int? day;
+
   int? hour;
+
   int? minute;
+
   int? second;
+
   Function? _getContext;
-  BuildContext get context => _getContext!.call()!;
+
+  BuildContext get getContext => _getContext!.call()!;
+
   _getSucreData() async {
     final _state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
-        context: context,
+        context: getContext,
         messageSuccess: "data found",
         message: "getting data...",
         messageError: "data not found",
@@ -101,6 +145,7 @@ class SiroperiePage extends StatelessWidget {
   }
 
   late Sucre sucre;
+
   Rx<bool> refresh = false.obs;
 
   @override
@@ -125,7 +170,7 @@ class SiroperiePage extends StatelessWidget {
             refresh.value = false;
           }
           return StreamBuilder(
-              stream: _stream,
+              stream: SiroperiePage.stream,
               builder: (context, snapshot) {
                 print("snapshot: $snapshot");
                 if (isLive.value &&
@@ -136,7 +181,11 @@ class SiroperiePage extends StatelessWidget {
                         JsonCodec().decode(snapshot.data) == null ||
                         JsonCodec().decode(snapshot.data)["data"] == null)) {
                   print("loading inside of stream builder");
-                  //_load();
+                  if (snapshot.connectionState == ConnectionState.none ||
+                      snapshot.connectionState == ConnectionState.done) {
+                    print("loading because of connection state");
+                    _load();
+                  }
                   logger.e("loading inside of stream builder");
                   return Center(
                     child: CircularProgressIndicator(),
@@ -238,36 +287,36 @@ class SiroperiePage extends StatelessWidget {
                                           Cuve(
                                             title: "TS21",
                                             value: TS21_value,
-                                            niveauInL: sucre.tS21 ?? 0,
-                                            niveauInKG: convertSugarLToKG(
+                                            niveau1: sucre.tS21 ?? 0,
+                                            niveau2: convertSugarLToKG(
                                                 sucre.tS21 ?? 0),
                                           ),
                                           Cuve(
                                             title: "TS22",
                                             value: TS22_value,
-                                            niveauInL: sucre.tS22 ?? 0,
-                                            niveauInKG: convertSugarLToKG(
+                                            niveau1: sucre.tS22 ?? 0,
+                                            niveau2: convertSugarLToKG(
                                                 sucre.tS22 ?? 0),
                                           ),
                                           Cuve(
                                             title: "TS23",
                                             value: TS23_value,
-                                            niveauInL: sucre.tS23 ?? 0,
-                                            niveauInKG: convertSugarLToKG(
+                                            niveau1: sucre.tS23 ?? 0,
+                                            niveau2: convertSugarLToKG(
                                                 sucre.tS23 ?? 0),
                                           ),
                                           Cuve(
                                             title: "TS24",
                                             value: TS24_value,
-                                            niveauInL: sucre.tS24 ?? 0,
-                                            niveauInKG: convertSugarLToKG(
+                                            niveau1: sucre.tS24 ?? 0,
+                                            niveau2: convertSugarLToKG(
                                                 sucre.tS24 ?? 0),
                                           ),
                                           Cuve(
                                             title: "TS25",
                                             value: TS25_value,
-                                            niveauInL: sucre.tS25 ?? 0,
-                                            niveauInKG: convertSugarLToKG(
+                                            niveau1: sucre.tS25 ?? 0,
+                                            niveau2: convertSugarLToKG(
                                                 sucre.tS25 ?? 0),
                                           ),
                                         ],
@@ -303,36 +352,36 @@ class SiroperiePage extends StatelessWidget {
                                             Cuve(
                                               title: "T02",
                                               value: T02_value,
-                                              niveauInL: sucre.aT02 ?? 0,
-                                              niveauInKG: convertSugarLToKG(
+                                              niveau1: sucre.aT02 ?? 0,
+                                              niveau2: convertSugarLToKG(
                                                   sucre.aT02 ?? 0),
                                             ),
                                             Cuve(
                                               title: "T03",
                                               value: T03_value,
-                                              niveauInL: sucre.aT03 ?? 0,
-                                              niveauInKG: convertSugarLToKG(
+                                              niveau1: sucre.aT03 ?? 0,
+                                              niveau2: convertSugarLToKG(
                                                   sucre.aT03 ?? 0),
                                             ),
                                             Cuve(
                                               title: "T04",
                                               value: T04_value,
-                                              niveauInL: sucre.aT04 ?? 0,
-                                              niveauInKG: convertSugarLToKG(
+                                              niveau1: sucre.aT04 ?? 0,
+                                              niveau2: convertSugarLToKG(
                                                   sucre.aT04 ?? 0),
                                             ),
                                             Cuve(
                                               title: "T05",
                                               value: T05_value,
-                                              niveauInL: sucre.aT05 ?? 0,
-                                              niveauInKG: convertSugarLToKG(
+                                              niveau1: sucre.aT05 ?? 0,
+                                              niveau2: convertSugarLToKG(
                                                   sucre.aT05 ?? 0),
                                             ),
                                             Cuve(
                                               title: "T06",
                                               value: T06_value,
-                                              niveauInL: sucre.aT06 ?? 0,
-                                              niveauInKG: convertSugarLToKG(
+                                              niveau1: sucre.aT06 ?? 0,
+                                              niveau2: convertSugarLToKG(
                                                   sucre.aT06 ?? 0),
                                             ),
                                           ],
@@ -369,19 +418,20 @@ class SiroperiePage extends StatelessWidget {
   _load() async {
     print("siroperie page loading");
     loaded.value = false;
-    if (_stream == null) {
+    if (SiroperiePage.stream == null) {
       try {
         print("connecting to sucre broadcast");
-        _channel = WebSocketChannel.connect(
+        SiroperiePage.channel = WebSocketChannel.connect(
             Uri.parse(ApiConfig.sucre_broadcast_websocket_url));
         final res =
             await (await ApiClientInstance.getApiClient()).getSucreMetaData();
         print("sucre broadcast connected");
         sucre_start_date.value = res.startDate;
         sucre_end_date.value = res.endDate;
-        await _channel!.ready;
+        await SiroperiePage.channel!.ready;
         print("sucre broadcast ready");
-        _stream = _channel!.stream.asBroadcastStream();
+        SiroperiePage.stream =
+            SiroperiePage.channel!.stream.asBroadcastStream();
         loaded.value = true;
         print("sucre broadcast loaded");
       } catch (e) {
@@ -404,343 +454,65 @@ class SiroperiePage extends StatelessWidget {
     loaded.value = true;
   }
 
-  _getMonthFromInt(int month) {
-    final strings = getTranslations(context).obs;
-    switch (month) {
-      case 1:
-        return strings.value.january;
-      case 2:
-        return strings.value.february;
-      case 3:
-        return strings.value.march;
-      case 4:
-        return strings.value.april;
-      case 5:
-        return strings.value.may;
-      case 6:
-        return strings.value.june;
-      case 7:
-        return strings.value.july;
-      case 8:
-        return strings.value.august;
-      case 9:
-        return strings.value.september;
-      case 10:
-        return strings.value.october;
-      case 11:
-        return strings.value.november;
-      case 12:
-        return strings.value.december;
-    }
-  }
-
-  List<ShadOption> _getMonths() {
-    final strings = getTranslations(context).obs;
-    return List.generate(12, (index) => index + 1)
-        .map((month) {
-          return ShadOption(value: month, child: Text(_getMonthFromInt(month)));
-        })
-        .nonNulls
-        .toList();
-  }
-
-  List<ShadOption> _getDays() {
-    return List.generate(31, (index) => index + 1)
-        .map((day) {
-          return ShadOption(value: day, child: Text(day.toString()));
-        })
-        .nonNulls
-        .toList();
-  }
-
-  List<ShadOption> _getHours() {
-    return List.generate(24, (index) => index)
-        .map((hour) {
-          return ShadOption(value: hour, child: Text(hour.toString()));
-        })
-        .nonNulls
-        .toList();
-  }
-
-  List<ShadOption> _getMinutes() {
-    return List.generate(60, (index) => index)
-        .map((minute) {
-          return ShadOption(value: minute, child: Text(minute.toString()));
-        })
-        .nonNulls
-        .toList();
-  }
-
-  List<ShadOption> _getSeconds() {
-    return List.generate(60, (index) => index)
-        .map((second) {
-          return ShadOption(value: second, child: Text(second.toString()));
-        })
-        .nonNulls
-        .toList();
-  }
-
-  _getBackgroundColor(bool active) {
-    return active
-        ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.surfaceContainerLow;
-  }
-
-  _getForgroundColor(bool active) {
-    return active
-        ? Theme.of(context).colorScheme.onPrimary
-        : Theme.of(context).colorScheme.onSurface;
-  }
-
   _getTopActionsBar() {
-    final strings = getTranslations(context).obs;
-
-    return Obx(
-      () {
-        return Padding(
-          padding: EdgeInsets.all(AppSizes.sm),
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            runAlignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              // show live data
-              ShadButton(
-                backgroundColor: _getBackgroundColor(isLive.value),
-                hoverBackgroundColor: isLive.value
-                    ? Theme.of(context).colorScheme.surfaceContainerLow
-                    : Theme.of(context).colorScheme.primary,
-                hoverForegroundColor: isLive.value
-                    ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(context).colorScheme.onPrimary,
-                foregroundColor: isLive.value
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.onSurface,
-                onPressed: () {
-                  isLive.value = !isLive.value;
-                },
-                child: Text(isLive.value
-                    ? strings.value.showingLiveData
-                    : strings.value.showLiveData),
-              ),
-              Wrap(
-                alignment: WrapAlignment.center,
-                children: [
-                  // year
-                  ShadSelect(
-                    enabled: !isLive.value,
-                    decoration: ShadDecoration(
-                        border: ShadBorder.all(
-                          width: 0,
-                          radius: BorderRadius.circular(5),
-                        ),
-                        color: _getBackgroundColor(!isLive.value),
-                        labelStyle: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            )),
-                    options: [
-                      for (var year in List.generate(
-                          sucre_end_date.value.year -
-                              sucre_start_date.value.year +
-                              1,
-                          (index) => sucre_start_date.value.year + index))
-                        ShadOption(
-                          value: year.toString(),
-                          child: Text(
-                            year.toString(),
-                          ),
-                        ),
-                    ],
-                    onChanged: (value) {
-                      year = int.parse(value!);
-                      _getSucreData();
-                    },
-                    selectedOptionBuilder: (context, option) {
-                      return Text(
-                        strings.value.year(int.parse(option)),
-                        style: TextTheme.of(context).bodyMedium?.copyWith(
-                              color: _getForgroundColor(!isLive.value),
-                            ),
-                      );
-                    },
-                    initialValue: sucre_end_date.value.year.toString(),
-                  ),
-                  // month
-                  ShadSelect(
-                    enabled: !isLive.value,
-                    options: _getMonths(),
-                    decoration: ShadDecoration(
-                        border: ShadBorder.all(
-                          width: 0,
-                          radius: BorderRadius.circular(5),
-                        ),
-                        color: _getBackgroundColor(!isLive.value),
-                        labelStyle: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            )),
-                    onChanged: (value) {
-                      month = value;
-                      _getSucreData();
-                    },
-                    selectedOptionBuilder: (context, option) {
-                      return Text(
-                        strings.value.month(_getMonthFromInt(option)),
-                        style: TextTheme.of(context).bodyMedium?.copyWith(
-                              color: _getForgroundColor(!isLive.value),
-                            ),
-                      );
-                    },
-                    initialValue: sucre_end_date.value.month,
-                  ),
-                  // day
-                  ShadSelect(
-                    enabled: !isLive.value,
-                    decoration: ShadDecoration(
-                        border: ShadBorder.all(
-                          width: 0,
-                          radius: BorderRadius.circular(5),
-                        ),
-                        color: _getBackgroundColor(!isLive.value),
-                        labelStyle: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            )),
-                    options: _getDays(),
-                    onChanged: (value) {
-                      day = value;
-                      _getSucreData();
-                    },
-                    selectedOptionBuilder: (context, option) {
-                      return Text(
-                        strings.value.day(option.toString()),
-                        style: TextTheme.of(context).bodyMedium?.copyWith(
-                              color: _getForgroundColor(!isLive.value),
-                            ),
-                      );
-                    },
-                    initialValue: sucre_end_date.value.day,
-                  ),
-                  // hour
-                  ShadSelect(
-                    enabled: !isLive.value,
-                    decoration: ShadDecoration(
-                        border: ShadBorder.all(
-                          width: 0,
-                          radius: BorderRadius.circular(5),
-                        ),
-                        color: _getBackgroundColor(!isLive.value),
-                        labelStyle: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            )),
-                    options: _getHours(),
-                    onChanged: (value) {
-                      hour = value;
-                      _getSucreData();
-                    },
-                    selectedOptionBuilder: (context, option) {
-                      return Text(
-                        strings.value.hour(option.toString()),
-                        style: TextTheme.of(context).bodyMedium?.copyWith(
-                              color: _getForgroundColor(!isLive.value),
-                            ),
-                      );
-                    },
-                    initialValue: sucre_end_date.value.hour,
-                  ),
-                  // minute
-                  ShadSelect(
-                    enabled: !isLive.value,
-                    decoration: ShadDecoration(
-                        border: ShadBorder.all(
-                          width: 0,
-                          radius: BorderRadius.circular(5),
-                        ),
-                        color: _getBackgroundColor(!isLive.value),
-                        labelStyle: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            )),
-                    options: _getMinutes(),
-                    onChanged: (value) {
-                      minute = value;
-                      _getSucreData();
-                    },
-                    selectedOptionBuilder: (context, option) {
-                      return Text(
-                        strings.value.minute(option.toString()),
-                        style: TextTheme.of(context).bodyMedium?.copyWith(
-                              color: _getForgroundColor(!isLive.value),
-                            ),
-                      );
-                    },
-                    initialValue: sucre_end_date.value.minute,
-                  ),
-                  // second
-                  ShadSelect(
-                    enabled: !isLive.value,
-                    decoration: ShadDecoration(
-                        border: ShadBorder.all(
-                          width: 0,
-                          radius: BorderRadius.circular(5),
-                        ),
-                        color: _getBackgroundColor(!isLive.value),
-                        labelStyle: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            )),
-                    options: _getSeconds(),
-                    onChanged: (value) {
-                      second = value;
-                      _getSucreData();
-                    },
-                    selectedOptionBuilder: (context, option) {
-                      return Text(
-                        strings.value.second(
-                          option.toString(),
-                        ),
-                        style: TextTheme.of(context).bodyMedium?.copyWith(
-                              color: _getForgroundColor(!isLive.value),
-                            ),
-                      );
-                    },
-                    initialValue: sucre_end_date.value.second,
-                  ),
-                ],
-              ),
-              // inventory button
-              ShadButton(
-                onPressed: () => _openInventoryDialog(),
-                child: Text(strings.value.inventory),
-              )
-            ],
-          ),
-        );
+    final strings = getTranslations(getContext).obs;
+    return LiveDataTopActionBar(
+      isLive: isLive,
+      years: List.generate(
+          sucre_end_date.value.year - sucre_start_date.value.year + 1,
+          (index) => sucre_start_date.value.year + index),
+      months: List.generate(12, (index) => index + 1),
+      days: List.generate(31, (index) => index + 1),
+      hours: List.generate(24, (index) => index),
+      minutes: List.generate(60, (index) => index),
+      seconds: List.generate(60, (index) => index),
+      onYearChanged: (value) {
+        year = value!;
+        _getSucreData();
       },
+      onMonthChanged: (value) {
+        month = value;
+        _getSucreData();
+      },
+      onDayChanged: (value) {
+        day = value;
+        _getSucreData();
+      },
+      onHourChanged: (value) {
+        hour = value;
+        _getSucreData();
+      },
+      onMinuteChanged: (value) {
+        minute = value;
+        _getSucreData();
+      },
+      onSecondChanged: (value) {
+        second = value;
+        _getSucreData();
+      },
+      yearInitialValue: sucre_end_date.value.year,
+      monthInitialValue: sucre_end_date.value.month,
+      dayInitialValue: sucre_end_date.value.day,
+      hourInitialValue: sucre_end_date.value.hour,
+      minuteInitialValue: sucre_end_date.value.minute,
+      secondInitialValue: sucre_end_date.value.second,
+      afterDataDisplayWidgets: [
+        // inventory button
+        ShadButton(
+          onPressed: () => _openInventoryDialog(),
+          child: Text(strings.value.inventory),
+        )
+      ],
     );
   }
 
   _getBottomDataBar() {
-    final strings = getTranslations(context).obs;
+    final strings = getTranslations(getContext).obs;
     return Obx(() => Padding(
           padding: EdgeInsets.all(AppSizes.sm),
           child: Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(getContext).colorScheme.primary,
               borderRadius: BorderRadius.circular(5),
             ),
             child: Padding(
@@ -750,28 +522,32 @@ class SiroperiePage extends StatelessWidget {
                 children: [
                   Text(
                     strings.value.totalSucre,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    style: Theme.of(getContext).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          color: Theme.of(getContext).colorScheme.onPrimary,
                         ),
                   ),
                   Wrap(
                     children: [
                       SizedBox(width: AppSizes.lg)
-                          .removeWhen(isAtLeastMediumScreen(context)),
+                          .removeWhen(isAtLeastMediumScreen(getContext)),
                       Text(
                         " ${(sommeTetraL + sommeAdueL).toStringAsFixed(2)} L",
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: (sommeTetraL + sommeAdueL) < 84000
-                                  ? errorColor
-                                  : successColor,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style:
+                            Theme.of(getContext).textTheme.titleLarge?.copyWith(
+                                  color: (sommeTetraL + sommeAdueL) < 84000
+                                      ? errorColor
+                                      : successColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                       ),
                       SizedBox(width: AppSizes.lg),
                       Text(
                         " ${(sommeTetraKG + sommeAdueKG).toStringAsFixed(2)} KG",
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        style: Theme.of(getContext)
+                            .textTheme
+                            .titleLarge
+                            ?.copyWith(
                               color: (sommeTetraKG + sommeAdueKG) < (84000 * 3)
                                   ? errorColor
                                   : successColor,
@@ -788,7 +564,7 @@ class SiroperiePage extends StatelessWidget {
   }
 
   _getBottomDataBarTetra({bool label = true}) {
-    final strings = getTranslations(context).obs;
+    final strings = getTranslations(getContext).obs;
     return Padding(
       padding: EdgeInsets.all(AppSizes.sm),
       child: Wrap(
@@ -797,21 +573,21 @@ class SiroperiePage extends StatelessWidget {
           if (label)
             Obx(() {
               return Text(strings.value.totalSucreTetra,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  style: Theme.of(getContext).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ));
             }),
           Text(
             " ${sommeTetraL.toStringAsFixed(2)} L",
             softWrap: false,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
                   color: sommeTetraL < 30000 ? errorColor : successColor,
                   fontStyle: FontStyle.italic,
                 ),
           ),
           Text(
             ",",
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.bold,
                 ),
@@ -819,7 +595,7 @@ class SiroperiePage extends StatelessWidget {
           Text(
             " ${sommeTetraKG.toStringAsFixed(2)} KG",
             softWrap: false,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
                   color: sommeTetraKG < 30000 * 3 ? errorColor : successColor,
                   fontStyle: FontStyle.italic,
                 ),
@@ -830,7 +606,7 @@ class SiroperiePage extends StatelessWidget {
   }
 
   _getBottomDataBarAdue({bool label = true}) {
-    final strings = getTranslations(context).obs;
+    final strings = getTranslations(getContext).obs;
     return Padding(
       padding: EdgeInsets.all(AppSizes.sm),
       child: Wrap(
@@ -839,21 +615,21 @@ class SiroperiePage extends StatelessWidget {
           if (label)
             Obx(() {
               return Text(strings.value.totalSucreAdue,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  style: Theme.of(getContext).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ));
             }),
           Text(
             " ${sommeAdueL.toStringAsFixed(2)} L",
             softWrap: false,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
                   color: sommeAdueL < 54000 ? errorColor : successColor,
                   fontStyle: FontStyle.italic,
                 ),
           ),
           Text(
             ",",
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.bold,
                 ),
@@ -861,7 +637,7 @@ class SiroperiePage extends StatelessWidget {
           Text(
             " ${sommeAdueKG.toStringAsFixed(2)} KG",
             softWrap: false,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
                   color: sommeAdueKG < 54000 * 3 ? errorColor : successColor,
                   fontStyle: FontStyle.italic,
                 ),
@@ -872,7 +648,7 @@ class SiroperiePage extends StatelessWidget {
   }
 
   _openInventoryDialog() async {
-    final strings = getTranslations(context).obs;
+    final strings = getTranslations(getContext).obs;
     Sucre? sucre;
 
     final Rx<DateTime> _selectedDate = DateTime.now().obs;
@@ -901,7 +677,7 @@ class SiroperiePage extends StatelessWidget {
           _failed.value = true;
           _dataLoaded.value = true;
           Toasts.showErrorToast(
-            context: context,
+            context: getContext,
             message: strings.value.failedToGetInventory,
           );
         }
@@ -909,7 +685,7 @@ class SiroperiePage extends StatelessWidget {
     }
 
     return showShadDialog(
-      context: context,
+      context: getContext,
       builder: (context) => ShadDialog(
         title: Text(
           strings.value.inventory,

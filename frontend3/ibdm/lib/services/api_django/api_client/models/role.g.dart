@@ -7,7 +7,6 @@ part of 'role.dart';
 // **************************************************************************
 
 Role _$RoleFromJson(Map<String, dynamic> json) => Role(
-      url: json['url'] as String,
       roleId: (json['role_id'] as num).toInt(),
       name: json['name'] as String,
       groupId: (json['group_id'] as num).toInt(),
@@ -21,7 +20,6 @@ Role _$RoleFromJson(Map<String, dynamic> json) => Role(
     );
 
 Map<String, dynamic> _$RoleToJson(Role instance) => <String, dynamic>{
-      'url': instance.url,
       'role_id': instance.roleId,
       'name': instance.name,
       'group_id': instance.groupId,

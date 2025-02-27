@@ -1384,7 +1384,6 @@ class UsersPage extends StatelessWidget {
     _loadSuperiorsOptions(context);
     logger.d("showing edit dialog");
     User newUser = User(
-      url: user.url,
       userId: user.userId,
       email: user.email,
       username: user.username,
@@ -1499,7 +1498,6 @@ class UsersPage extends StatelessWidget {
                 editUserAvatarFile = avatarFile,
                 password = password,
                 newUser = User(
-                  url: newUser.url,
                   userId: newUser.userId,
                   email: email,
                   username: username,
@@ -1508,7 +1506,6 @@ class UsersPage extends StatelessWidget {
                   superiors: superior != null
                       ? [
                           UserSerializerWithSuperiors(
-                              url: superior.url,
                               userId: superior.userId,
                               email: superior.email,
                               username: superior.username,

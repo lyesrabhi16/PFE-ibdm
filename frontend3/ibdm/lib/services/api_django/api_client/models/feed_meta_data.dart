@@ -4,21 +4,21 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-part 'sucre_meta_data.g.dart';
+part 'feed_meta_data.g.dart';
 
 @JsonSerializable()
-class SucreMetaData {
-  const SucreMetaData({
+class FeedMetaData {
+  const FeedMetaData({
     required this.startDate,
     required this.endDate,
   });
   
-  factory SucreMetaData.fromJson(Map<String, Object?> json) => _$SucreMetaDataFromJson(json);
+  factory FeedMetaData.fromJson(Map<String, Object?> json) => _$FeedMetaDataFromJson(json);
   
   @JsonKey(name: 'start_date')
   final DateTime startDate;
   @JsonKey(name: 'end_date')
   final DateTime endDate;
 
-  Map<String, Object?> toJson() => _$SucreMetaDataToJson(this);
+  Map<String, Object?> toJson() => _$FeedMetaDataToJson(this);
 }

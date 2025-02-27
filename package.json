@@ -8,7 +8,7 @@
 		"dev:app": "cd frontend3/ibdm && flutter run",
 		"dev:web": "cd frontend3/ibdm && flutter run -d chrome",
 		"dev:web:external": "cd frontend3/ibdm && flutter run -d chrome --web-hostname app.ibdm.local.ifri --web-port 8001",
-		"deploy:copy-assets": "cp -r frontend3/ibdm/build/web/* backend2/ibdm_api/assets/ &&  mv backend2/ibdm_api/assets/index.html backend2/ibdm_api/templates/web/index.html",
+		"deploy:copy-assets": "cp -r frontend3/ibdm/build/web/* backend2/ibdm_api/assets/",
 		"deploy:web": "pnpm run build:web && pnpm run deploy:copy-assets",
 		"dev:windows": "cd frontend3/ibdm && flutter run -d windows",
 		"dev:macos": "cd frontend3/ibdm && flutter run -d macos",
@@ -21,7 +21,7 @@
 		"build:macos": "cd frontend3/ibdm && flutter build macos",
 		"build:linux": "cd frontend3/ibdm && flutter build linux",
         "sql_server_db:up": "cd backend/config/db && docker compose -f sql_server.yaml up -d",
-		"generate:api-client": "cd backend2 && pipenv run generate_schema_json && cd .. && copy .\\backend2\\ibdm_api\\openapi\\openapi.spec.json .\\frontend3\\ibdm\\lib\\api\\ && cd frontend3/ibdm && rmdir /S /Q lib\\services\\api_django && dart run swagger_parser && dart run build_runner build"
+		"generate:api-client": "cd backend2 && pipenv run generate_schema_json && cd .. && copy .\\backend2\\ibdm_api\\openapi\\openapi.spec.json .\\frontend3\\ibdm\\lib\\api\\ && cd frontend3/ibdm && rmdir /S /Q lib\\services\\api_django"
 	},
 	"keywords": [],
 	"author": "",
