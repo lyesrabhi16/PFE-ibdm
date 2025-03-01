@@ -24,6 +24,3 @@ class Sucre(models.Model):
     class Meta:
         managed = False
         db_table = 'Sucre'
-        permissions = [
-            ('can_view_siroperie_page', 'Can view siroperie page'),
-        ]

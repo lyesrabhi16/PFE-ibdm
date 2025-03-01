@@ -14,21 +14,34 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from urllib.request import Request
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
+from django.shortcuts import redirect
+from django.urls import include, path, re_path
 from .views import index
+
+
+def redirect_home(request: Request):
+    path = request.META['PATH_INFO'].split(
+        "app/"
+    )[1]
+    return redirect(f'/{path}')
 
 urlpatterns = [
     path('admin', admin.site.urls),
     path('api/v1/', include('api_v1.urls')),
     path('drf/auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path("", index),
-    # redirect frontend routes to index
-    path("login", index),
-    path("protected", index),
-    path("settings", index),
-    path("users", index),
-    
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    path("app/", index),
+    re_path(r"^app/siroperie.*$", redirect_home),
+    re_path(r"^app/filtration.*$", redirect_home),
+    re_path(r"^app/settings.*$", redirect_home),
+
+    *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
+    *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+
+
+    re_path(r'^.*$', index),
+]  

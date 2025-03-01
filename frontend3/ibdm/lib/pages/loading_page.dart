@@ -2,26 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/loading_page_controller.dart';
 import 'package:ibdm/common/controllers/permissions_controler.dart';
+import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 
 class LoadingPage extends StatelessWidget {
-  const LoadingPage({super.key});
+  LoadingPage({super.key});
+
+  PermissionsController permissionsController =
+      Get.find<PermissionsController>();
+
+  LoadingPageController loadingPageController =
+      Get.find<LoadingPageController>();
+  UserController userController = Get.find<UserController>();
+
+  bool _permissions_loaded = false;
+  bool _roles_loaded = false;
+
+  _loadFinished() {
+    if (_permissions_loaded && _roles_loaded) {
+      Future.delayed(Duration(seconds: 1), () {
+        loadingPageController.isLoading.value = false;
+        logger
+            .e("Loading page set to ${loadingPageController.isLoading.value}");
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
 
-    PermissionsController permissionsController =
-        Get.find<PermissionsController>();
-
-    LoadingPageController loadingPageController =
-        Get.find<LoadingPageController>();
-
+    userController.getRoles(context).then((value) {
+      logger.e("Roles loaded: ${userController.roles.length}");
+      
+      _roles_loaded = true;
+      _loadFinished();
+    });
     permissionsController.loadPermissions().then((value) {
       logger.e("Permissions loaded: ${permissionsController.ready}");
-      loadingPageController.isLoading.value = false;
-      logger.e("Loading page set to ${loadingPageController.isLoading.value}");
+      _permissions_loaded = true;
+      _loadFinished();
     });
 
     return Obx(

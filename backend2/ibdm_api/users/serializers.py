@@ -1,8 +1,6 @@
-from math import e
 from django.contrib.auth.models import Permission, Group
 from django.contrib.contenttypes.models import ContentType
-from drf_spectacular.utils import extend_schema_field, extend_schema_serializer
-from pkg_resources import require
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from users.models import SubordinateAndSuperior
@@ -84,7 +82,7 @@ class RoleSerializer(serializers.HyperlinkedModelSerializer):
     permissions = PermissionSerializer(many=True, source="group__permissions",read_only=True, default=[])
     class Meta:
         model = Role
-        fields = [ "role_id","name", "group_id","group", "permissions", "managed_roles"]
+        fields = [ "role_id","name", "group_id","group", "permissions", "managed_roles", "color"]
 
 class SubordinateAndSuperiorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -164,3 +162,14 @@ class UserSerializer(serializers.ModelSerializer, SuperiorsAndSubordinatesFields
             "password": {"write_only": True, "required": False},
             "avatar": {"write_only": True},
         }
+
+class GetSubordinateAndSuperiorIdRequestSerializer(serializers.Serializer):
+    superior_id = serializers.IntegerField()
+    subordinate_id = serializers.IntegerField()
+    class Meta:
+        fields = ["superior_id", "subordinate_id"]
+
+class GetSubordinateAndSuperiorIdResponseSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    class Meta:
+        fields = ["id"]

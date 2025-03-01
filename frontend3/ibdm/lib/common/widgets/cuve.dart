@@ -3,7 +3,6 @@ import 'package:geekyants_flutter_gauges/geekyants_flutter_gauges.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
-import 'package:ibdm/utils/helpers/logger.dart';
 
 class Cuve extends StatelessWidget {
   const Cuve({

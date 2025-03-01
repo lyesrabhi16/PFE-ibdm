@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 
 class AppColors {
   AppColors._();
@@ -22,39 +25,18 @@ class AppColors {
   static const Color grey = Color(0xFF9E9E9E);
   static const Color lightGrey = Color(0xFFE0E0E0);
 
-  // gold color in hex
-  static const Color roleAdminSystemColor = Color(0xFFD4AF37);
-  static const Color roleAdminColor = Colors.deepPurple;
-  static const Color roleSupervisorColor = Colors.green;
-  static const Color roleOperateurColor = Colors.blue;
-
   static Color getRoleColorWithRole(Role role) {
-    switch (role.name) {
-      case "ADMIN_SYSTEM":
-        return roleAdminSystemColor;
-      case "ADMIN":
-        return roleAdminColor;
-      case "SUPERVISOR":
-        return roleSupervisorColor;
-      case "OPERATOR":
-        return roleOperateurColor;
-      default:
-        return Colors.grey;
-    }
+    int colorValue = int.parse("FF${role.color.split("#")[1]}", radix: 16);
+    logger.e("Color value for role $role: $colorValue");
+    return Color(colorValue);
   }
 
   static Color getRoleColorWithRoleValue(String role) {
-    switch (role) {
-      case "ADMIN_SYSTEM":
-        return roleAdminSystemColor;
-      case "ADMIN":
-        return roleAdminColor;
-      case "SUPERVISOR":
-        return roleSupervisorColor;
-      case "OPERATOR":
-        return roleOperateurColor;
-      default:
-        return Colors.grey;
-    }
+    UserController userController = Get.find();
+    Role? roleObj = userController.roles.firstWhereOrNull(
+      (element) => element.name == role,
+    );
+    logger.e("Role object for role $role: $roleObj");
+    return roleObj != null ? getRoleColorWithRole(roleObj) : Colors.grey;
   }
 }

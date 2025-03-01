@@ -191,6 +191,332 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
+  Future<PaginatedAlertEmailList> getAlertEmails({
+    bool? enablePagination,
+    int? page,
+    int? perPage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'page': page,
+      r'per_page': perPage,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedAlertEmailList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedAlertEmailList _value;
+    try {
+      _value = PaginatedAlertEmailList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AlertEmail> addAlertEmail({
+    required List<String> sendToUsers,
+    required MonitoredValueEnum monitoredValue,
+    int? dangerPoint,
+    int? warningPoint,
+    int? dangerReminderInterval,
+    int? warningReminderInterval,
+    String? customAlertMessage,
+    bool? enabled,
+    List<int>? sendToRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    sendToUsers.forEach((i) {
+      _data.fields.add(MapEntry('send_to_users', i));
+    });
+    _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
+    if (dangerPoint != null) {
+      _data.fields.add(MapEntry('danger_point', dangerPoint.toString()));
+    }
+    if (warningPoint != null) {
+      _data.fields.add(MapEntry('warning_point', warningPoint.toString()));
+    }
+    if (dangerReminderInterval != null) {
+      _data.fields.add(
+        MapEntry('danger_reminder_interval', dangerReminderInterval.toString()),
+      );
+    }
+    if (warningReminderInterval != null) {
+      _data.fields.add(
+        MapEntry(
+          'warning_reminder_interval',
+          warningReminderInterval.toString(),
+        ),
+      );
+    }
+    if (customAlertMessage != null) {
+      _data.fields.add(MapEntry('custom_alert_message', customAlertMessage));
+    }
+    if (enabled != null) {
+      _data.fields.add(MapEntry('enabled', enabled.toString()));
+    }
+    if (sendToRoles != null) {
+      _data.files.add(
+        MapEntry(
+          'send_to_roles',
+          MultipartFile.fromBytes(sendToRoles, filename: null),
+        ),
+      );
+    }
+    final _options = _setStreamType<AlertEmail>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AlertEmail _value;
+    try {
+      _value = AlertEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AlertEmail> getAlertEmail({required int id}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<AlertEmail>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AlertEmail _value;
+    try {
+      _value = AlertEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AlertEmail> updateAlertEmail({
+    required int id,
+    required List<String> sendToUsers,
+    required MonitoredValueEnum monitoredValue,
+    int? dangerPoint,
+    int? warningPoint,
+    int? dangerReminderInterval,
+    int? warningReminderInterval,
+    String? customAlertMessage,
+    bool? enabled,
+    List<int>? sendToRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    sendToUsers.forEach((i) {
+      _data.fields.add(MapEntry('send_to_users', i));
+    });
+    _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
+    if (dangerPoint != null) {
+      _data.fields.add(MapEntry('danger_point', dangerPoint.toString()));
+    }
+    if (warningPoint != null) {
+      _data.fields.add(MapEntry('warning_point', warningPoint.toString()));
+    }
+    if (dangerReminderInterval != null) {
+      _data.fields.add(
+        MapEntry('danger_reminder_interval', dangerReminderInterval.toString()),
+      );
+    }
+    if (warningReminderInterval != null) {
+      _data.fields.add(
+        MapEntry(
+          'warning_reminder_interval',
+          warningReminderInterval.toString(),
+        ),
+      );
+    }
+    if (customAlertMessage != null) {
+      _data.fields.add(MapEntry('custom_alert_message', customAlertMessage));
+    }
+    if (enabled != null) {
+      _data.fields.add(MapEntry('enabled', enabled.toString()));
+    }
+    if (sendToRoles != null) {
+      _data.files.add(
+        MapEntry(
+          'send_to_roles',
+          MultipartFile.fromBytes(sendToRoles, filename: null),
+        ),
+      );
+    }
+    final _options = _setStreamType<AlertEmail>(
+      Options(
+        method: 'PUT',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AlertEmail _value;
+    try {
+      _value = AlertEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AlertEmail> partialUpdateAlertEmail({
+    required int id,
+    List<String>? sendToUsers,
+    MonitoredValueEnum? monitoredValue,
+    int? dangerPoint,
+    int? warningPoint,
+    int? dangerReminderInterval,
+    int? warningReminderInterval,
+    String? customAlertMessage,
+    bool? enabled,
+    List<int>? sendToRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    sendToUsers?.forEach((i) {
+      _data.fields.add(MapEntry('send_to_users', i));
+    });
+    if (monitoredValue != null) {
+      _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
+    }
+    if (dangerPoint != null) {
+      _data.fields.add(MapEntry('danger_point', dangerPoint.toString()));
+    }
+    if (warningPoint != null) {
+      _data.fields.add(MapEntry('warning_point', warningPoint.toString()));
+    }
+    if (dangerReminderInterval != null) {
+      _data.fields.add(
+        MapEntry('danger_reminder_interval', dangerReminderInterval.toString()),
+      );
+    }
+    if (warningReminderInterval != null) {
+      _data.fields.add(
+        MapEntry(
+          'warning_reminder_interval',
+          warningReminderInterval.toString(),
+        ),
+      );
+    }
+    if (customAlertMessage != null) {
+      _data.fields.add(MapEntry('custom_alert_message', customAlertMessage));
+    }
+    if (enabled != null) {
+      _data.fields.add(MapEntry('enabled', enabled.toString()));
+    }
+    if (sendToRoles != null) {
+      _data.files.add(
+        MapEntry(
+          'send_to_roles',
+          MultipartFile.fromBytes(sendToRoles, filename: null),
+        ),
+      );
+    }
+    final _options = _setStreamType<AlertEmail>(
+      Options(
+        method: 'PATCH',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AlertEmail _value;
+    try {
+      _value = AlertEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<void> destroyAlertEmail({required int id}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<void>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
   Future<PaginatedEmailScheduleList> getEmailSchedules({
     bool? enablePagination,
     int? page,
@@ -491,43 +817,6 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<SentEmail> addSentEmail({
-    required String receptionist,
-    required int schedule,
-  }) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('receptionist', receptionist));
-    _data.fields.add(MapEntry('schedule', schedule.toString()));
-    final _options = _setStreamType<SentEmail>(
-      Options(
-        method: 'POST',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
-          .compose(
-            _dio.options,
-            '/api/v1/emails/sent/',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late SentEmail _value;
-    try {
-      _value = SentEmail.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
   Future<SentEmail> getSentEmail({required int id}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -552,106 +841,6 @@ class _IbdmApiClient implements IbdmApiClient {
       rethrow;
     }
     return _value;
-  }
-
-  @override
-  Future<SentEmail> updateSentEmail({
-    required int id,
-    required String receptionist,
-    required int schedule,
-  }) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('receptionist', receptionist));
-    _data.fields.add(MapEntry('schedule', schedule.toString()));
-    final _options = _setStreamType<SentEmail>(
-      Options(
-        method: 'PUT',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
-          .compose(
-            _dio.options,
-            '/api/v1/emails/sent/${id}/',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late SentEmail _value;
-    try {
-      _value = SentEmail.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
-  Future<SentEmail> partialUpdateSentEmail({
-    required int id,
-    String? receptionist,
-    int? schedule,
-  }) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (receptionist != null) {
-      _data.fields.add(MapEntry('receptionist', receptionist));
-    }
-    if (schedule != null) {
-      _data.fields.add(MapEntry('schedule', schedule.toString()));
-    }
-    final _options = _setStreamType<SentEmail>(
-      Options(
-        method: 'PATCH',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
-          .compose(
-            _dio.options,
-            '/api/v1/emails/sent/${id}/',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late SentEmail _value;
-    try {
-      _value = SentEmail.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
-  Future<void> destroySentEmail({required int id}) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(
-      Options(method: 'DELETE', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/api/v1/emails/sent/${id}/',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    await _dio.fetch<void>(_options);
   }
 
   @override
@@ -1665,15 +1854,20 @@ class _IbdmApiClient implements IbdmApiClient {
   Future<Role> addRole({
     required int groupId,
     required List<String> managedRoles,
+    String? color,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
     _data.fields.add(MapEntry('group_id', groupId.toString()));
     managedRoles.forEach((i) {
       _data.fields.add(MapEntry('managed_roles', i));
     });
+    if (color != null) {
+      _data.fields.add(MapEntry('color', color));
+    }
     final _options = _setStreamType<Role>(
       Options(
         method: 'POST',
@@ -1732,15 +1926,20 @@ class _IbdmApiClient implements IbdmApiClient {
     required int id,
     required int groupId,
     required List<String> managedRoles,
+    String? color,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
     _data.fields.add(MapEntry('group_id', groupId.toString()));
     managedRoles.forEach((i) {
       _data.fields.add(MapEntry('managed_roles', i));
     });
+    if (color != null) {
+      _data.fields.add(MapEntry('color', color));
+    }
     final _options = _setStreamType<Role>(
       Options(
         method: 'PUT',
@@ -1772,6 +1971,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required int id,
     int? groupId,
     List<String>? managedRoles,
+    String? color,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1784,6 +1984,9 @@ class _IbdmApiClient implements IbdmApiClient {
     managedRoles?.forEach((i) {
       _data.fields.add(MapEntry('managed_roles', i));
     });
+    if (color != null) {
+      _data.fields.add(MapEntry('color', color));
+    }
     final _options = _setStreamType<Role>(
       Options(
         method: 'PATCH',
@@ -2029,6 +2232,36 @@ class _IbdmApiClient implements IbdmApiClient {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     await _dio.fetch<void>(_options);
+  }
+
+  @override
+  Future<GetSubordinateAndSuperiorIdResponse> getSubordinateAndSuperiorId({
+    required int subordinate,
+    required int superior,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetSubordinateAndSuperiorIdResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/subordinates_superiors/${subordinate}/${superior}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetSubordinateAndSuperiorIdResponse _value;
+    try {
+      _value = GetSubordinateAndSuperiorIdResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override

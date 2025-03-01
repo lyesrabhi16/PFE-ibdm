@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
@@ -24,11 +23,10 @@ import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:widget_arrows/arrows.dart';
 import 'package:widget_arrows/widget_arrows.dart';
 
 class FiltrationPage extends StatefulWidget {
-  FiltrationPage({super.key});
+  const FiltrationPage({super.key});
 
   static WebSocketChannel? channel;
   static Stream? stream;
@@ -177,37 +175,41 @@ class _FiltrationPageState extends State<FiltrationPage> {
         stream: FiltrationPage.stream,
         builder: (context, snapshot) {
           //print("snapshot: $snapshot");
-          if (snapshot.connectionState == ConnectionState.waiting){
+          if (snapshot.connectionState == ConnectionState.waiting) {
             print("waiting for connection");
             return Center(
               child: CircularProgressIndicator(),
-            ); 
+            );
           }
           if (!snapshot.hasData ||
               snapshot.data == null ||
               snapshot.hasError ||
               snapshot.data.isEmpty) {
             logger.e("loading inside of stream builder");
-            if(FiltrationPage.channel?.closeCode != null || snapshot.connectionState != ConnectionState.active){
+            if (FiltrationPage.channel?.closeCode != null ||
+                snapshot.connectionState != ConnectionState.active) {
               logger.e("closing channel");
               FiltrationPage.channel?.sink.close();
               FiltrationPage.stream = null;
               logger.e("reopening channel...");
-              Future.delayed(Duration(seconds:1), load);
+              Future.delayed(Duration(seconds: 1), load);
             }
             return Center(
               child: CircularProgressIndicator(),
             );
           }
+          final data = JsonCodec().decode(snapshot.data);
+          if (data["data"] == null || data["data"].isEmpty) {
+            logger.e("data is null");
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
           if (isLive.value) {
-            niveau = Niveau.fromJson(
-                JsonCodec().decode(snapshot.data)["data"]["niveau"]);
-            debit = Debit.fromJson(
-                JsonCodec().decode(snapshot.data)["data"]["debit"]);
-            volume = Volume.fromJson(
-                JsonCodec().decode(snapshot.data)["data"]["volume"]);
-            presCond = PresCond.fromJson(
-                JsonCodec().decode(snapshot.data)["data"]["pres_cond"]);
+            niveau = Niveau.fromJson(data["data"]["niveau"]);
+            debit = Debit.fromJson(data["data"]["debit"]);
+            volume = Volume.fromJson(data["data"]["volume"]);
+            presCond = PresCond.fromJson(data["data"]["pres_cond"]);
 
             filtrationEndDate.value = niveau.date;
             year = niveau.date.year;

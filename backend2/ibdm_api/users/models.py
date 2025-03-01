@@ -62,6 +62,7 @@ class UserManager(BaseUserManager):
 
 class Role(models.Model):
     group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name="role", unique=True)
+    color = models.CharField(max_length=7, default="#000000")
     managed_roles = models.ManyToManyField("Role", blank=True)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -127,5 +128,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         permissions = [
             ('can_view_users_page', 'Can view users page'),
+            ('can_view_filtration_page', 'Can view filtration page'),
+            ('can_view_siroperie_page', 'Can view siroperie page'),
+            ('can_view_settings_page', 'Can view settings page'),
         ]
     

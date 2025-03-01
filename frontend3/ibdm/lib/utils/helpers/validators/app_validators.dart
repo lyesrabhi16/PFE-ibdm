@@ -1,5 +1,6 @@
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 
 class AppValidators {
@@ -37,6 +38,10 @@ class AppValidators {
 
   static String? superiorSelectionValidator(
       String? id, List<User> superiorOptions) {
+    UserController userController = Get.find<UserController>();
+    if (userController.user?.role == "ADMIN_SYSTEM") {
+      return null;
+    }
     return FormBuilderValidators.compose([
       FormBuilderValidators.conditional(
           (String? id) => id != null ? id.isNotEmpty : false,

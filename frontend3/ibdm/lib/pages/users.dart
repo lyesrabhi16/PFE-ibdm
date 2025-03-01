@@ -1497,21 +1497,15 @@ class UsersPage extends StatelessWidget {
                 editUserAvatarBytes = avatarBytes,
                 editUserAvatarFile = avatarFile,
                 password = password,
+                logger.e("superior: $superior"),
+                _addUserSuperior = superior,
                 newUser = User(
                   userId: newUser.userId,
                   email: email,
                   username: username,
                   phoneNumber: phone,
                   role: role.name,
-                  superiors: superior != null
-                      ? [
-                          UserSerializerWithSuperiors(
-                              userId: superior.userId,
-                              email: superior.email,
-                              username: superior.username,
-                              superiors: superior.superiors)
-                        ]
-                      : [],
+                  superiors: newUser.superiors,
                   firstName: firstName,
                   lastName: lastName,
                   avatarUrl: null,
@@ -1809,12 +1803,28 @@ class UsersPage extends StatelessWidget {
           lastName: user.lastName,
         );
       }
-
+      logger.e("superior: ${_addUserSuperior?.userId}");
       if (_addUserSuperior != null) {
-        await api.addSubordinateAndSuperior(
-            superior: _addUserSuperior!.userId, subordinate: res.userId);
+        if (user.superiors.isEmpty) {
+          await api.addSubordinateAndSuperior(
+              superior: _addUserSuperior!.userId, subordinate: res.userId);
+        } else {
+          final res = await api.getSubordinateAndSuperiorId(
+              superior: user.superiors.first.userId, subordinate: user.userId);
+          await api.partialUpdateSubordinateAndSuperior(
+              id: res.id,
+              superior: _addUserSuperior!.userId,
+              subordinate: user.userId);
+        }
       } else {
         logger.e("superior is null");
+        if (user.superiors.isNotEmpty) {
+          final res = await api.getSubordinateAndSuperiorId(
+              superior: user.superiors.first.userId, subordinate: user.userId);
+          await api.removeSubordinateAndSuperior(
+            id: res.id,
+          );
+        }
       }
 
       // show success toast

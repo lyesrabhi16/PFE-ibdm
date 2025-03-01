@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
-import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/pages/filtration.dart/filtration.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
@@ -51,13 +50,13 @@ class Routes {
           icon: Icons.battery_full_outlined,
           route: Routes.filtration,
           page: route_pages[Routes.filtration]!,
-        ), // Todo: Add permission for this page
+        ).withPermission(Permissions.viewFiltrationPage),
         Destination(
           title: "Settings",
           icon: Icons.settings,
           route: Routes.settings,
           page: route_pages[Routes.settings]!,
-        ),
+        ).withPermission(Permissions.viewSettingsPage),
       ].nonNulls.toList();
 
   static final route_pages = {

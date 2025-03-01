@@ -7,6 +7,16 @@ class CustomPagination(PageNumberPagination):
     page_size_query_param = "per_page"
     max_page_size = 1000
 
+    def paginate_queryset(self, queryset, request, view=None):
+        self.request = request
+        enable_pagination: bool = request.query_params.get("enable_pagination", True)
+        if isinstance(enable_pagination, str):
+            enable_pagination = enable_pagination.lower() == "true"
+            if not enable_pagination:
+                return queryset
+                
+        return super().paginate_queryset(queryset, request, view)
+
     def get_paginated_response(self, data):
         enable_pagination: bool = self.request.query_params.get(
             "enable_pagination", True
@@ -15,7 +25,16 @@ class CustomPagination(PageNumberPagination):
             enable_pagination = enable_pagination.lower() == "true"
 
         if not enable_pagination:
-            return Response(data)
+            length = len(data)
+            return Response({
+                "next_url": None,
+                "previous_url": None,
+                "total_pages": 1,
+                "total_results": length,
+                "per_page": length,
+                "current_page": 1,
+                "data": data,
+            })
 
         return Response(
             {
