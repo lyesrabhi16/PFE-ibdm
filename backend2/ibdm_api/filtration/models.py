@@ -32,7 +32,6 @@ class Debit(models.Model):
         managed = False
         db_table = 'Debit'
 
-
 class Niveau(models.Model):
     date = models.DateTimeField(blank=True, primary_key=True)
     niv_f1 = models.FloatField(db_column='Niv_F1', blank=True, null=True)  # Field name made lowercase.

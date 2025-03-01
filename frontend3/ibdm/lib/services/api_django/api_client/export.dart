@@ -5,16 +5,20 @@
 // Clients
 export 'ibdm_api/ibdm_api_client.dart';
 // Data classes
+export 'models/alert_email.dart';
 export 'models/code_enum.dart';
 export 'models/debit.dart';
 export 'models/email_schedule.dart';
 export 'models/error_response.dart';
 export 'models/feed_meta_data.dart';
+export 'models/get_subordinate_and_superior_id_response.dart';
 export 'models/group.dart';
 export 'models/has_perm_response.dart';
 export 'models/interval_enum.dart';
 export 'models/login_response.dart';
+export 'models/monitored_value_enum.dart';
 export 'models/niveau.dart';
+export 'models/paginated_alert_email_list.dart';
 export 'models/paginated_debit_list.dart';
 export 'models/paginated_email_schedule_list.dart';
 export 'models/paginated_group_list.dart';

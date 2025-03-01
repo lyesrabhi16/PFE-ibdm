@@ -11,31 +11,43 @@ class PermissionsController extends GetxController {
   }
 
   Rx<bool> ready = false.obs;
-  bool? hasViewSiroperiePage;
-  bool? hasViewUsersPage;
+  bool? hasViewSiroperiePagePerm;
+  bool? hasViewUsersPagePerm;
+  bool? hasViewFiltrationPagePerm;
+  bool? hasViewSettingsPagePerm;
 
   Future<void> loadPermissions() async {
     try {
       ready.value = false;
 
-      final api = await ApiClientInstance.getApiClient();
-      final perm_siroperie = await api
-          .hasPerm(codename: Permissions.viewSiroperiePage)
-          .catchError((e) {
-        return HasPermResponse.fromJson((e as DioException).response?.data);
-      });
-      hasViewSiroperiePage = perm_siroperie.hasPerm;
-      final perm_users = await api
-          .hasPerm(codename: Permissions.viewUsersPage)
-          .catchError((e) {
-        return HasPermResponse.fromJson((e as DioException).response?.data);
-      });
-      hasViewUsersPage = perm_users.hasPerm;
-
+      hasViewSiroperiePagePerm =
+          await _hasPermRequest(Permissions.viewSiroperiePage);
+      hasViewUsersPagePerm = await _hasPermRequest(Permissions.viewUsersPage);
+      hasViewFiltrationPagePerm =
+          await _hasPermRequest(Permissions.viewFiltrationPage);
+      hasViewSettingsPagePerm =
+          await _hasPermRequest(Permissions.viewSettingsPage);
+      logger.e("HasViewSettingsPagePerm: $hasViewSettingsPagePerm");
       ready.value = true;
     } catch (e) {
       logger.e("Failed to get permissions: $e");
     }
+  }
+
+  void resetPermissions() {
+    ready.value = false;
+    hasViewSiroperiePagePerm = null;
+    hasViewUsersPagePerm = null;
+    hasViewFiltrationPagePerm = null;
+    hasViewSettingsPagePerm = null;
+  }
+
+  Future<bool> _hasPermRequest(String perm) async {
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.hasPerm(codename: perm).catchError((e) {
+      return HasPermResponse.fromJson((e as DioException).response?.data);
+    });
+    return res.hasPerm;
   }
 
   bool hasPerm(String permission) {
@@ -46,9 +58,13 @@ class PermissionsController extends GetxController {
 
       switch (permission) {
         case Permissions.viewSiroperiePage:
-          return hasViewSiroperiePage!;
+          return hasViewSiroperiePagePerm!;
         case Permissions.viewUsersPage:
-          return hasViewUsersPage!;
+          return hasViewUsersPagePerm!;
+        case Permissions.viewFiltrationPage:
+          return hasViewFiltrationPagePerm!;
+        case Permissions.viewSettingsPage:
+          return hasViewSettingsPagePerm!;
         default:
           throw ("Permission not found");
       }

@@ -12,7 +12,8 @@ class SentEmail {
     required this.id,
     required this.tempsEnvoi,
     required this.receptionist,
-    required this.schedule,
+    this.schedule,
+    this.alert,
   });
   
   factory SentEmail.fromJson(Map<String, Object?> json) => _$SentEmailFromJson(json);
@@ -21,7 +22,8 @@ class SentEmail {
   @JsonKey(name: 'temps_envoi')
   final DateTime tempsEnvoi;
   final String receptionist;
-  final int schedule;
+  final int? schedule;
+  final int? alert;
 
   Map<String, Object?> toJson() => _$SentEmailToJson(this);
 }

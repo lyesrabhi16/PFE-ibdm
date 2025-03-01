@@ -8,16 +8,20 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
+import '../models/alert_email.dart';
 import '../models/debit.dart';
 import '../models/email_schedule.dart';
 import '../models/feed_meta_data.dart';
 import '../models/format.dart';
+import '../models/get_subordinate_and_superior_id_response.dart';
 import '../models/group.dart';
 import '../models/has_perm_response.dart';
 import '../models/interval_enum.dart';
 import '../models/lang.dart';
 import '../models/login_response.dart';
+import '../models/monitored_value_enum.dart';
 import '../models/niveau.dart';
+import '../models/paginated_alert_email_list.dart';
 import '../models/paginated_debit_list.dart';
 import '../models/paginated_email_schedule_list.dart';
 import '../models/paginated_group_list.dart';
@@ -84,6 +88,76 @@ abstract class IbdmApiClient {
   Future<dynamic> retrieveApiV1DocumentationSchema({
     @Query('format') Format? format,
     @Query('lang') Lang? lang,
+  });
+
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/emails/alerts/')
+  Future<PaginatedAlertEmailList> getAlertEmails({
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
+  @MultiPart()
+  @POST('/api/v1/emails/alerts/')
+  Future<AlertEmail> addAlertEmail({
+    @Part(name: 'send_to_users') required List<String> sendToUsers,
+    @Part(name: 'monitored_value') required MonitoredValueEnum monitoredValue,
+    @Part(name: 'danger_point') int? dangerPoint,
+    @Part(name: 'warning_point') int? warningPoint,
+    @Part(name: 'danger_reminder_interval') int? dangerReminderInterval,
+    @Part(name: 'warning_reminder_interval') int? warningReminderInterval,
+    @Part(name: 'custom_alert_message') String? customAlertMessage,
+    @Part(name: 'enabled') bool? enabled,
+    @Part(name: 'send_to_roles') List<int>? sendToRoles,
+  });
+
+  /// [id] - A unique integer value identifying this alert email.
+  @GET('/api/v1/emails/alerts/{id}/')
+  Future<AlertEmail> getAlertEmail({
+    @Path('id') required int id,
+  });
+
+  /// [id] - A unique integer value identifying this alert email.
+  @MultiPart()
+  @PUT('/api/v1/emails/alerts/{id}/')
+  Future<AlertEmail> updateAlertEmail({
+    @Path('id') required int id,
+    @Part(name: 'send_to_users') required List<String> sendToUsers,
+    @Part(name: 'monitored_value') required MonitoredValueEnum monitoredValue,
+    @Part(name: 'danger_point') int? dangerPoint,
+    @Part(name: 'warning_point') int? warningPoint,
+    @Part(name: 'danger_reminder_interval') int? dangerReminderInterval,
+    @Part(name: 'warning_reminder_interval') int? warningReminderInterval,
+    @Part(name: 'custom_alert_message') String? customAlertMessage,
+    @Part(name: 'enabled') bool? enabled,
+    @Part(name: 'send_to_roles') List<int>? sendToRoles,
+  });
+
+  /// [id] - A unique integer value identifying this alert email.
+  @MultiPart()
+  @PATCH('/api/v1/emails/alerts/{id}/')
+  Future<AlertEmail> partialUpdateAlertEmail({
+    @Path('id') required int id,
+    @Part(name: 'send_to_users') List<String>? sendToUsers,
+    @Part(name: 'monitored_value') MonitoredValueEnum? monitoredValue,
+    @Part(name: 'danger_point') int? dangerPoint,
+    @Part(name: 'warning_point') int? warningPoint,
+    @Part(name: 'danger_reminder_interval') int? dangerReminderInterval,
+    @Part(name: 'warning_reminder_interval') int? warningReminderInterval,
+    @Part(name: 'custom_alert_message') String? customAlertMessage,
+    @Part(name: 'enabled') bool? enabled,
+    @Part(name: 'send_to_roles') List<int>? sendToRoles,
+  });
+
+  /// [id] - A unique integer value identifying this alert email.
+  @DELETE('/api/v1/emails/alerts/{id}/')
+  Future<void> destroyAlertEmail({
+    @Path('id') required int id,
   });
 
   /// [enablePagination] - Enable or disable pagination.
@@ -162,40 +236,9 @@ abstract class IbdmApiClient {
     @Query('per_page') int? perPage,
   });
 
-  @MultiPart()
-  @POST('/api/v1/emails/sent/')
-  Future<SentEmail> addSentEmail({
-    @Part(name: 'receptionist') required String receptionist,
-    @Part(name: 'schedule') required int schedule,
-  });
-
   /// [id] - A unique integer value identifying this sent email.
   @GET('/api/v1/emails/sent/{id}/')
   Future<SentEmail> getSentEmail({
-    @Path('id') required int id,
-  });
-
-  /// [id] - A unique integer value identifying this sent email.
-  @MultiPart()
-  @PUT('/api/v1/emails/sent/{id}/')
-  Future<SentEmail> updateSentEmail({
-    @Path('id') required int id,
-    @Part(name: 'receptionist') required String receptionist,
-    @Part(name: 'schedule') required int schedule,
-  });
-
-  /// [id] - A unique integer value identifying this sent email.
-  @MultiPart()
-  @PATCH('/api/v1/emails/sent/{id}/')
-  Future<SentEmail> partialUpdateSentEmail({
-    @Path('id') required int id,
-    @Part(name: 'receptionist') String? receptionist,
-    @Part(name: 'schedule') int? schedule,
-  });
-
-  /// [id] - A unique integer value identifying this sent email.
-  @DELETE('/api/v1/emails/sent/{id}/')
-  Future<void> destroySentEmail({
     @Path('id') required int id,
   });
 
@@ -490,6 +533,7 @@ abstract class IbdmApiClient {
   Future<Role> addRole({
     @Part(name: 'group_id') required int groupId,
     @Part(name: 'managed_roles') required List<String> managedRoles,
+    @Part(name: 'color') String? color,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
@@ -509,6 +553,7 @@ abstract class IbdmApiClient {
     @Path('id') required int id,
     @Part(name: 'group_id') required int groupId,
     @Part(name: 'managed_roles') required List<String> managedRoles,
+    @Part(name: 'color') String? color,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
@@ -520,6 +565,7 @@ abstract class IbdmApiClient {
     @Path('id') required int id,
     @Part(name: 'group_id') int? groupId,
     @Part(name: 'managed_roles') List<String>? managedRoles,
+    @Part(name: 'color') String? color,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
@@ -577,6 +623,13 @@ abstract class IbdmApiClient {
   @DELETE('/api/v1/user-management/subordinates_superiors/{id}/')
   Future<void> removeSubordinateAndSuperior({
     @Path('id') required int id,
+  });
+
+  /// Get the id of the SubordinateAndSuperior object that links the current user to their superior
+  @GET('/api/v1/user-management/subordinates_superiors/{subordinate}/{superior}/')
+  Future<GetSubordinateAndSuperiorIdResponse> getSubordinateAndSuperiorId({
+    @Path('subordinate') required int subordinate,
+    @Path('superior') required int superior,
   });
 
   /// API endpoint that allows users to be viewed or edited.

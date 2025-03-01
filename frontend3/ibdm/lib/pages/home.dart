@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/common/controllers/loading_page_controller.dart';
-import 'package:ibdm/common/controllers/permissions_controler.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/actions_row.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
-import 'package:ibdm/pages/loading_page.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
-import 'package:ibdm/utils/helpers/logger.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -20,8 +16,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final LoadingPageController loadingPageController = Get.find();
-
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;

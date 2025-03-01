@@ -27,9 +27,9 @@ class Volume {
     this.volOs8,
     this.volOs9,
   });
-
+  
   factory Volume.fromJson(Map<String, Object?> json) => _$VolumeFromJson(json);
-
+  
   final DateTime date;
   @JsonKey(name: 'vol_for')
   final double? volFor;

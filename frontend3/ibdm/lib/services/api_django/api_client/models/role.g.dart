@@ -17,6 +17,7 @@ Role _$RoleFromJson(Map<String, dynamic> json) => Role(
       managedRoles: (json['managed_roles'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      color: json['color'] as String,
     );
 
 Map<String, dynamic> _$RoleToJson(Role instance) => <String, dynamic>{
@@ -26,4 +27,5 @@ Map<String, dynamic> _$RoleToJson(Role instance) => <String, dynamic>{
       'group': instance.group,
       'permissions': instance.permissions,
       'managed_roles': instance.managedRoles,
+      'color': instance.color,
     };
