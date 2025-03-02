@@ -1911,6 +1911,10 @@
                     "password": {
                         "type": "string",
                         "minLength": 1
+                    },
+                    "remember_me": {
+                        "type": "boolean",
+                        "default": false
                     }
                 },
                 "required": [

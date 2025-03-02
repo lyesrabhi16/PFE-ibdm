@@ -7,6 +7,7 @@ const {
   PrismaClientRustPanicError,
   PrismaClientInitializationError,
   PrismaClientValidationError,
+  NotFoundError,
   getPrismaClient,
   sqltag,
   empty,
@@ -31,11 +32,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.2.1
+ * Prisma Client JS version: 5.22.0
  * Query Engine version: 4123509d24aa4dede1e864b46351bf2790323b69
  */
 Prisma.prismaVersion = {
-  client: "6.2.1",
+  client: "5.22.0",
   engine: "4123509d24aa4dede1e864b46351bf2790323b69"
 }
 
@@ -44,6 +45,7 @@ Prisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError
 Prisma.PrismaClientRustPanicError = PrismaClientRustPanicError
 Prisma.PrismaClientInitializationError = PrismaClientInitializationError
 Prisma.PrismaClientValidationError = PrismaClientValidationError
+Prisma.NotFoundError = NotFoundError
 Prisma.Decimal = Decimal
 
 /**
@@ -125,7 +127,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "D:\\studies\\projects\\PFE-ibdm\\backend\\src\\models\\automates_db\\generated\\automateClient",
+      "value": "C:\\Users\\CE PC\\PFE-ibdm\\backend\\src\\models\\automates_db\\generated\\automateClient",
       "fromEnvVar": null
     },
     "config": {
@@ -143,7 +145,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "D:\\studies\\projects\\PFE-ibdm\\backend\\src\\models\\automates_db\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\CE PC\\PFE-ibdm\\backend\\src\\models\\automates_db\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -151,7 +153,7 @@ const config = {
     "schemaEnvPath": "../../../../../.env"
   },
   "relativePath": "../..",
-  "clientVersion": "6.2.1",
+  "clientVersion": "5.22.0",
   "engineVersion": "4123509d24aa4dede1e864b46351bf2790323b69",
   "datasourceNames": [
     "automate_db"
