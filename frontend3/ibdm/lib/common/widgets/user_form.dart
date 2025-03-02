@@ -81,8 +81,9 @@ class UserForm extends StatelessWidget {
 
   final RxList<ShadOption<User>> addUserSuperiorOptions;
 
-  static Role getInitialRoleValue({required List<Role> userRoles}) {
-    return userRoles.first;
+  Role getInitialRoleValue({required List<Role> userRoles}) {
+    return userController.roles.firstWhereOrNull((e) => e.name == user?.role) ??
+        userRoles.first;
   }
 
   Iterable<Widget> getRoleOptions(BuildContext context) {
@@ -104,6 +105,8 @@ class UserForm extends StatelessWidget {
   }
 
   final Rx<bool> _showUserAvatar = true.obs;
+
+  User? _addUserSuperior;
   Future<void> _load(context) async {
     _loaded.value = false;
     roles.clear();
@@ -131,13 +134,14 @@ class UserForm extends StatelessWidget {
       return Form(
         key: formKeyAddUser,
         onChanged: () {
+          logger.e("form changed: $_addUserSuperior");
           onAddUser?.call(
             addUserEmailController.text,
             addUserNameController.text,
             addUserPasswordController.text,
             addUserPhoneController.text,
             userRole.value!,
-            addUserSuperiorOptions.firstOrNull?.value,
+            _addUserSuperior,
             addFirstNameController.text,
             addLastNameController.text,
             _addUserAvatarBytes,
@@ -244,7 +248,7 @@ class UserForm extends StatelessWidget {
                                       addUserPasswordController.text,
                                       addUserPhoneController.text,
                                       userRole.value!,
-                                      addUserSuperiorOptions.firstOrNull?.value,
+                                      _addUserSuperior,
                                       addFirstNameController.text,
                                       addLastNameController.text,
                                       _addUserAvatarBytes,
@@ -289,7 +293,7 @@ class UserForm extends StatelessWidget {
                 controller: addUserPasswordController,
                 keyboardType: TextInputType.visiblePassword,
                 validator: (v) => AppValidators.customPasswordValidator(v,
-                    optional: !isEditing),
+                    optional: isEditing),
                 obscureText: true,
                 label: Text(isEditing ? "New Password" : "Password"),
                 placeholder: Text("********"),
@@ -342,7 +346,7 @@ class UserForm extends StatelessWidget {
                       addUserPasswordController.text,
                       addUserPhoneController.text,
                       userRole.value!,
-                      addUserSuperiorOptions.firstOrNull?.value,
+                      _addUserSuperior,
                       addFirstNameController.text,
                       addLastNameController.text,
                       _addUserAvatarBytes,
@@ -409,6 +413,19 @@ class UserForm extends StatelessWidget {
                   ),
                   onChanged: (value) {
                     logger.d("value: $value");
+                    _addUserSuperior = value;
+                    onAddUser?.call(
+                      addUserEmailController.text,
+                      addUserNameController.text,
+                      addUserPasswordController.text,
+                      addUserPhoneController.text,
+                      userRole.value!,
+                      _addUserSuperior,
+                      addFirstNameController.text,
+                      addLastNameController.text,
+                      _addUserAvatarBytes,
+                      _addUserAvatarFile,
+                    );
                   },
                   selectedOptionBuilder: (context, value) => Container(
                     constraints: BoxConstraints(

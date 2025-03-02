@@ -43,8 +43,11 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SAMESITE = "None"
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 # Application definition
-
+NPM_BIN_PATH="C:\\Program Files\\nodejs\\npm.cmd"
 INSTALLED_APPS = [
     "jazzmin",
     "django.contrib.admin",
@@ -60,11 +63,16 @@ INSTALLED_APPS = [
     # "djoser",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "tailwind",
+    "theme",
     "api_v1",
     "app_auth",
     "documentation",
     "users",
+    "siroperie",
     "automate",
+    "emails",
+    "filtration"
 ]
 
 MIDDLEWARE = [
@@ -98,6 +106,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ibdm_api.wsgi.application"
 
+TAILWIND_APP_NAME = "theme"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -125,6 +134,29 @@ DATABASES = {
             "driver": "ODBC Driver 17 for SQL Server",
         },
     },
+    "siroperie": {
+        "ENGINE": "mssql",
+        "NAME": Env.DATABASE_SIROPERIE_NAME,
+        "USER": Env.DATABASE_SIROPERIE_USER,
+        "PASSWORD": Env.DATABASE_SIROPERIE_PASSWORD,
+        "HOST": Env.DATABASE_SIROPERIE_HOST,
+        "PORT": Env.DATABASE_SIROPERIE_PORT,
+        "OPTIONS": {
+            "driver": "ODBC Driver 17 for SQL Server",
+        },
+},
+
+    "filtration": {
+        "ENGINE": "mssql",
+        "NAME": Env.DATABASE_FILTRATION_NAME,
+        "USER": Env.DATABASE_FILTRATION_USER,
+        "PASSWORD": Env.DATABASE_FILTRATION_PASSWORD,
+        "HOST": Env.DATABASE_FILTRATION_HOST,
+        "PORT": Env.DATABASE_FILTRATION_PORT,
+        "OPTIONS": {
+            "driver": "ODBC Driver 17 for SQL Server",
+        },
+},
     "automate": {
         "ENGINE": "mssql",
         "NAME": Env.DATABASE_AUTOMATE_NAME,
@@ -137,8 +169,16 @@ DATABASES = {
         },
     },
 }
+CONN_MAX_AGE = None
 
-"""  """
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(Env.DATABASE_IBDM_REDIS_HOST, Env.DATABASE_IBDM_REDIS_PORT)],
+        },
+    }
+}
 
 DATABASE_ROUTERS = ["ibdm_api.db_routers.DB_Router"]
 
@@ -241,3 +281,12 @@ JAZZMIN_SETTINGS = {
 }
 
 MEDIA_URL = "/media/"
+
+## Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST =  Env.EMAIL_HOST
+EMAIL_USE_TLS = Env.EMAIL_USE_TLS
+EMAIL_PORT = Env.EMAIL_PORT
+EMAIL_HOST_USER =  Env.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD =  Env.EMAIL_HOST_PASSWORD
+

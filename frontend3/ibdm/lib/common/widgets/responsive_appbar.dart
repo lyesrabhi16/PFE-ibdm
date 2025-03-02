@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/colors.dart';
+import 'package:toastification/toastification.dart';
 
 class ResponsiveAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String userName;
@@ -25,6 +26,8 @@ class ResponsiveAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
+  final _popoverController = ShadPopoverController();
+  final RxBool _logoutHover = false.obs;
   @override
   Widget build(BuildContext context) {
     bool isSmallScreen = MediaQuery.of(context).size.width < 600;
@@ -69,67 +72,82 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-            PopupMenuButton<String>(
-              offset: const Offset(0, 40),
-              onSelected: (String value) {
-                if (value == 'Logout') {
-                  Get.find<UserController>().logoutUser();
-                  Get.offAllNamed(Routes.login);
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return <PopupMenuEntry<String>>[
-                  PopupMenuItem<String>(
-                    value: 'Logout',
-                    child: StatefulBuilder(
-                      builder: (context, setState) {
-                        Rx<bool> isHovering = false.obs;
-                        return MouseRegion(
-                          onEnter: (_) => isHovering.value = true,
-                          onHover: (_) => isHovering.value = true,
-                          onExit: (_) => isHovering.value = false,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
+            ShadPopover(
+              controller: _popoverController,
+              decoration: ShadDecoration(
+                border: ShadBorder(
+                  radius: BorderRadius.circular(AppSizes.sm),
+                ),
+              ),
+              padding: EdgeInsets.zero,
+              popover: (context) {
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(AppSizes.sm),
+                  ),
+                  constraints: BoxConstraints(
+                    maxWidth: AppSizes.xl * 5,
+                  ),
+                  child: Obx(() {
+                    return ListView(
+                      shrinkWrap: true,
+                      children: [
+                        MouseRegion(
+                          onEnter: (event) => _logoutHover.value = true,
+                          onExit: (event) => _logoutHover.value = false,
+                          child: Container(
                             decoration: BoxDecoration(
-                              color: isHovering.value
-                                  ? Theme.of(context).colorScheme.error
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainer,
-                              borderRadius: BorderRadius.circular(8),
+                              color: _logoutHover.value ? errorColor : null,
+                              borderRadius: BorderRadius.circular(AppSizes.sm),
                             ),
                             child: ListTile(
                               leading: const Icon(Icons.logout, size: 18),
-                              title: const Text(
+                              iconColor: !_logoutHover.value
+                                  ? errorColor
+                                  : Theme.of(context).colorScheme.onSurface,
+                              title: Text(
                                 'Logout',
-                                style: TextStyle(fontSize: 12),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: !_logoutHover.value
+                                          ? errorColor
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                    ),
                               ),
-                              textColor:
-                                  Theme.of(context).colorScheme.onSurface,
-                              iconColor:
-                                  Theme.of(context).colorScheme.onSurface,
+                              onTap: () {
+                                widget.onLogout();
+                              },
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                ];
+                        ),
+                      ],
+                    );
+                  }),
+                );
               },
-              child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.grey[300],
-                backgroundImage: (widget.userImage.isNotEmpty)
-                    ? NetworkImage(widget.userImage)
-                    : null,
-                child: (widget.userImage.isNotEmpty)
-                    ? null
-                    : ShadAvatar(
-                        LucideIcons.circleUserRound,
-                        fit: BoxFit.cover,
-                        backgroundColor: AppColors.getRoleColorWithRoleValue(
-                            userController.user!.role),
-                      ),
+              child: IconButton(
+                onPressed: () {
+                  _popoverController.toggle();
+                },
+                icon: CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Colors.grey[300],
+                  backgroundImage: (widget.userImage.isNotEmpty)
+                      ? NetworkImage(widget.userImage)
+                      : null,
+                  child: (widget.userImage.isNotEmpty)
+                      ? null
+                      : ShadAvatar(
+                          LucideIcons.circleUserRound,
+                          fit: BoxFit.cover,
+                          backgroundColor: AppColors.getRoleColorWithRoleValue(
+                              userController.user!.role),
+                        ),
+                ),
               ),
             ),
             const SizedBox(width: 16),

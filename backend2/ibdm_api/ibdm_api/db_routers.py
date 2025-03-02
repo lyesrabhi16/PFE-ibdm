@@ -3,6 +3,13 @@ class DB_Router:
         'ibdm': [
             'ibdm_api',
             'users',
+            "emails",            
+        ],
+        "siroperie":[
+            "siroperie",
+        ],
+        "filtration":[
+            "filtration",
         ],
         'automate': [
             'automate',

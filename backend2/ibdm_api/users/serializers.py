@@ -1,8 +1,6 @@
-from math import e
 from django.contrib.auth.models import Permission, Group
 from django.contrib.contenttypes.models import ContentType
-from drf_spectacular.utils import extend_schema_field, extend_schema_serializer
-from pkg_resources import require
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from users.models import SubordinateAndSuperior
@@ -41,20 +39,18 @@ class SuperiorsAndSubordinatesFieldsSerializerMixin():
     field={
         "type":"object",
         "properties":{
-            "url": {"type": "string"},
             "group_id": {"type": "integer"},
             "name": {"type": "string"}
         },
-        "required": ["url", "group_id", "name"]
+        "required": [ "group_id", "name"]
     },
 )
 class GroupSerializer(serializers.ModelSerializer):
     group_id = serializers.IntegerField(source="id", read_only=True)
     class Meta:
         model = Group
-        fields = ["url", "group_id","name"]
+        fields = ["group_id","name"]
         extra_kwargs = {
-            "url": {"read_only": True},
             "group_id": {"read_only": True},
         }
 class PermissionSerializer(serializers.HyperlinkedModelSerializer):
@@ -69,7 +65,7 @@ class PermissionSerializer(serializers.HyperlinkedModelSerializer):
     )
     class Meta:
         model = Permission
-        fields = ["url", "permission_id","name", "codename", 'content_type', 'content_type_name']
+        fields = ["permission_id","name", "codename", 'content_type', 'content_type_name']
         
 class RoleSerializer(serializers.HyperlinkedModelSerializer):
     role_id = serializers.IntegerField(source="id", read_only=True)
@@ -86,19 +82,18 @@ class RoleSerializer(serializers.HyperlinkedModelSerializer):
     permissions = PermissionSerializer(many=True, source="group__permissions",read_only=True, default=[])
     class Meta:
         model = Role
-        fields = ["url", "role_id","name", "group_id","group", "permissions", "managed_roles"]
+        fields = [ "role_id","name", "group_id","group", "permissions", "managed_roles", "color"]
 
 class SubordinateAndSuperiorSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubordinateAndSuperior
-        fields = ["url", "superior", "subordinate"]
+        fields = [ "superior", "subordinate"]
 class UserSerializerWithSubordinates(serializers.ModelSerializer, SuperiorsAndSubordinatesFieldsSerializerMixin):
     user_id = serializers.IntegerField(source="id", read_only=True)
     subordinates = serializers.SerializerMethodField()
     class Meta():
         model = User
         fields = [
-            "url",
             "user_id",
             "email",
             "username",
@@ -111,7 +106,6 @@ class UserSerializerWithSuperiors(serializers.ModelSerializer, SuperiorsAndSubor
     class Meta():
         model = User
         fields = [
-            "url",
             "user_id",
             "email",
             "username",
@@ -149,7 +143,6 @@ class UserSerializer(serializers.ModelSerializer, SuperiorsAndSubordinatesFields
     class Meta:
         model = User
         fields = [
-            "url",
             "user_id",
             "first_name",
             "last_name",
@@ -165,8 +158,18 @@ class UserSerializer(serializers.ModelSerializer, SuperiorsAndSubordinatesFields
             "user_permissions",
         ]
         extra_kwargs = {
-            "url": {"read_only": True},
             "user_id": {"read_only": True},
             "password": {"write_only": True, "required": False},
             "avatar": {"write_only": True},
         }
+
+class GetSubordinateAndSuperiorIdRequestSerializer(serializers.Serializer):
+    superior_id = serializers.IntegerField()
+    subordinate_id = serializers.IntegerField()
+    class Meta:
+        fields = ["superior_id", "subordinate_id"]
+
+class GetSubordinateAndSuperiorIdResponseSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    class Meta:
+        fields = ["id"]

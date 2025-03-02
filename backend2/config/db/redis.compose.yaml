@@ -1,0 +1,13 @@
+services:
+  ibdm_redis_db:
+      name: ibdm_redis_db
+      container_name: ibdm_redis_db
+      image: redis:7-alpine
+      restart: always
+      ports:
+        - '6379:6379'
+      volumes:
+        - data:/data
+volumes:
+  data:
+    driver: local

@@ -1,11 +1,13 @@
 from django.contrib.auth.models import Group, Permission
+from django.http import JsonResponse
 from rest_framework import permissions, viewsets
 from api_v1.utils import with_operation_ids
 from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema_view
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-import rest_framework.pagination
+from api_v1.constants import ErrorCodes
 from users.models import SubordinateAndSuperior
+from api_v1.serializers import ErrorResponseSerializer
 from .models import Role, User
 from .serializers import (
     GroupSerializer,
@@ -13,8 +15,10 @@ from .serializers import (
     SubordinateAndSuperiorSerializer,
     UserSerializer,
     PermissionSerializer,
+    GetSubordinateAndSuperiorIdRequestSerializer,
+    GetSubordinateAndSuperiorIdResponseSerializer,
 )
-
+from rest_framework.decorators import api_view, permission_classes
 
 
 @with_operation_ids(
@@ -72,7 +76,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if sub_sup.exists():
             subordinates = [s.subordinate for s in sub_sup]
             qs = qs.filter(id__in=[u.id for u in subordinates])
-        return qs
+            return qs
+        return qs.filter(id=self.request.user.id)
     
 
 @with_operation_ids(
@@ -141,8 +146,25 @@ class PermissionViewSet(viewsets.ModelViewSet):
     on_update="updateSubordinateAndSuperior",
     on_partial_update="partialUpdateSubordinateAndSuperior",
 )
+@extend_schema(tags=["users"])
 class SubordinateAndSuperiorViewSet(viewsets.ModelViewSet):
 
     queryset = SubordinateAndSuperior.objects.all()
     serializer_class = SubordinateAndSuperiorSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+@extend_schema(tags=["users"], operation_id="getSubordinateAndSuperiorId", responses={
+    200: GetSubordinateAndSuperiorIdResponseSerializer,
+    404: ErrorResponseSerializer,
+})
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def getSubordinateAndSuperiorId(request, subordinate, superior):
+    """
+    Get the id of the SubordinateAndSuperior object that links the current user to their superior
+    """
+    sub_sup = SubordinateAndSuperior.objects.filter(subordinate=subordinate, superior=superior)
+    if sub_sup.exists():
+        return JsonResponse({"id": sub_sup[0].pk})
+    return JsonResponse(ErrorResponseSerializer({"status": "error", "code": ErrorCodes.NOT_FOUND.code}).data, status=ErrorCodes.NOT_FOUND.status_code)
+    
