@@ -122,6 +122,7 @@ class SmallLoginPage extends StatelessWidget {
                           loginProgress: _loginProgress,
                           emailController: _emailController,
                           passwordController: _passwordController,
+                          rememberMe: _rememberMe.value == CheckboxState.checked, // rememberMe
                         ),
                       ),
                     ],

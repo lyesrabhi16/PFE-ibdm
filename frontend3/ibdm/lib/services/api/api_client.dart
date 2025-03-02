@@ -150,10 +150,10 @@ extension WebUsersFixedApis on IbdmApiClient {
     }
 
     logger.i("addUsersOnWeb: Start");
-    final _extra = <String, dynamic>{};
+    final extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
+    final headers = <String, dynamic>{};
     final _data = FormData();
     _data.fields.add(MapEntry(
       'email',
@@ -207,6 +207,14 @@ extension WebUsersFixedApis on IbdmApiClient {
             filename: null,
           )));
     }
+    if (userPermissions != null) {
+      _data.files.add(MapEntry(
+          'user_permissions',
+          MultipartFile.fromBytes(
+            userPermissions,
+            filename: null,
+          )));
+    }
     logger.i("addUsersOnWeb: Added all");
     /* final options = RequestOptions(
       baseUrl: ApiConfig.base_url,
@@ -219,8 +227,8 @@ extension WebUsersFixedApis on IbdmApiClient {
     ); */
     final _options = _setStreamType<User>(Options(
       method: 'POST',
-      headers: _headers,
-      extra: _extra,
+      headers: headers,
+      extra: extra,
       contentType: 'multipart/form-data',
     )
         .compose(
@@ -429,7 +437,7 @@ class RoleFixInterceptor extends Interceptor {
     } else if (options.data is FormData) {
       if (_hasRoleField((options.data as FormData).fields)) {
         print("RoleFixInterceptor: request has role field");
-        (options.data as FormData).fields.forEach((e) {
+        for (var e in (options.data as FormData).fields) {
           if (e.key == "role") {
             print(
                 "RoleFixInterceptor: Found role field with value: ${e.value}");
@@ -457,7 +465,7 @@ class RoleFixInterceptor extends Interceptor {
             print(
                 "RoleFixInterceptor: Changed ${e.key} from ${e.value} to ${newE.value}");
           }
-        });
+        }
       }
     }
     print("RoleFixInterceptor: Finished");

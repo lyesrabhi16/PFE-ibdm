@@ -24,6 +24,7 @@ import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:universal_io/io.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
 
 class UsersPage extends StatelessWidget {
   UsersPage({super.key});
@@ -58,16 +59,16 @@ class UsersPage extends StatelessWidget {
   static final _sortPopoverController = ShadPopoverController();
   final Rx<bool> _sortASC = true.obs;
   final RxMap<String, Sorter> _sortersASC = {
-    "id": Sorter(isSelected: false, ordering_value: "id"),
-    "email": Sorter(isSelected: false, ordering_value: "email"),
-    "name": Sorter(isSelected: false, ordering_value: "username"),
-    "role": Sorter(isSelected: false, ordering_value: "role"),
+    "id": Sorter(isSelected: false, orderingValue: "id"),
+    "email": Sorter(isSelected: false, orderingValue: "email"),
+    "name": Sorter(isSelected: false, orderingValue: "username"),
+    "role": Sorter(isSelected: false, orderingValue: "role"),
   }.obs;
   final RxMap<String, Sorter> _sortersDESC = {
-    "id": Sorter(isSelected: false, ordering_value: "-id"),
-    "email": Sorter(isSelected: false, ordering_value: "-email"),
-    "name": Sorter(isSelected: false, ordering_value: "-username"),
-    "role": Sorter(isSelected: false, ordering_value: "-role"),
+    "id": Sorter(isSelected: false, orderingValue: "-id"),
+    "email": Sorter(isSelected: false, orderingValue: "-email"),
+    "name": Sorter(isSelected: false, orderingValue: "-username"),
+    "role": Sorter(isSelected: false, orderingValue: "-role"),
   }.obs;
 
   int? nbrTotalUsers;
@@ -117,7 +118,7 @@ class UsersPage extends StatelessWidget {
       if (perPageInStorage != null && perPageInStorage != perPage?.value) {
         perPage?.value = perPageInStorage;
       }
-      print("perPage?.value: ${perPage?.value}");
+      logger.d("perPage?.value: ${perPage?.value}");
       // get data from api
       PaginatedUserList res = await apiClient.getUsers(
           perPage: perPage?.value,
@@ -129,12 +130,12 @@ class UsersPage extends StatelessWidget {
                   .where((e) => e.value.isSelected)
                   .firstOrNull
                   ?.value
-                  .ordering_value
+                  .orderingValue
               : _sortersDESC.entries
                   .where((e) => e.value.isSelected)
                   .firstOrNull
                   ?.value
-                  .ordering_value);
+                  .orderingValue);
       final resContent = res.data;
       // set data
       usersData = resContent;
@@ -150,7 +151,7 @@ class UsersPage extends StatelessWidget {
           error: err,
         );
         Toasts.showErrorToastNotification(
-            context: context,
+            context: Get.context!,
             message: "Details: ${err.message}",
             title: "Error: Failed to load data of users");
         return;
@@ -160,8 +161,8 @@ class UsersPage extends StatelessWidget {
         error: err,
       );
       Toasts.showErrorToastNotification(
-          context: context,
-          message: "Details: Unknown Error Occured",
+          context: Get.context!,
+          message: "Details: Unknown Error Occurred",
           title: "Error: Failed to load data of users");
     } finally {
       _loaded.value = true;
@@ -238,24 +239,22 @@ class UsersPage extends StatelessWidget {
       for (var sorter in _sortersASC.entries) {
         if (sorter.key.toLowerCase() == s.toLowerCase()) {
           _sortersASC[s] = Sorter(
-              isSelected: selected,
-              ordering_value: sorter.value.ordering_value);
+              isSelected: selected, orderingValue: sorter.value.orderingValue);
           _loadUsers(context);
         } else {
           _sortersASC[sorter.key] = Sorter(
-              isSelected: false, ordering_value: sorter.value.ordering_value);
+              isSelected: false, orderingValue: sorter.value.orderingValue);
         }
       }
     } else {
       for (var sorter in _sortersDESC.entries) {
         if (sorter.key.toLowerCase() == s.toLowerCase()) {
           _sortersDESC[s] = Sorter(
-              isSelected: selected,
-              ordering_value: sorter.value.ordering_value);
+              isSelected: selected, orderingValue: sorter.value.orderingValue);
           _loadUsers(context);
         } else {
           _sortersDESC[sorter.key] = Sorter(
-              isSelected: false, ordering_value: sorter.value.ordering_value);
+              isSelected: false, orderingValue: sorter.value.orderingValue);
         }
       }
     }
@@ -280,6 +279,7 @@ class UsersPage extends StatelessWidget {
     _load(context);
 
     final colorScheme = Theme.of(context).colorScheme;
+    final strings = getTranslations(context).obs;
 
     return Obx(
       () {
@@ -317,8 +317,8 @@ class UsersPage extends StatelessWidget {
                 }
                 // set display to all
                 searchedPageIndexes.value = items;
-                return Obx(
-                  () => ConstrainedBox(
+                return Obx(() {
+                  return ConstrainedBox(
                     constraints: BoxConstraints(
                       minWidth: 30,
                       maxWidth: 60,
@@ -344,7 +344,7 @@ class UsersPage extends StatelessWidget {
                       ),
                       anchor: ShadAnchorAuto(preferBelow: false),
                       options: [...searchedPageIndexes.map((pi) => pi.button)],
-                      searchPlaceholder: Text("Search..."),
+                      searchPlaceholder: Text(strings.value.search),
                       onSearchChanged: (String value) {
                         if (value.isEmpty) {
                           searchedPageIndexes.value = items;
@@ -355,8 +355,8 @@ class UsersPage extends StatelessWidget {
                         }
                       },
                     ),
-                  ),
-                );
+                  );
+                });
               }
               return ShadButton(
                 backgroundColor:
@@ -379,7 +379,7 @@ class UsersPage extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Center(
-                          child: Text("User Management",
+                          child: Text(strings.value.userManagement,
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.titleLarge),
                         ),
@@ -392,114 +392,427 @@ class UsersPage extends StatelessWidget {
                             color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Wrap(
-                            alignment: WrapAlignment.spaceEvenly,
-                            runAlignment: WrapAlignment.center,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            direction: Axis.horizontal,
-                            runSpacing: AppSizes.sm,
-                            verticalDirection: VerticalDirection.down,
-                            children: [
-                              SearchBar(
-                                controller: _searchController,
-                                onSubmitted: (_) => _loadUsers(context),
-                                onTapOutside: (_) => _loadUsers(context),
-                                constraints: BoxConstraints(
-                                  maxWidth: AppSizes.lg * 8,
-                                  minHeight: AppSizes.lg * 1.5,
-                                  maxHeight: AppSizes.lg * 1.5,
-                                ),
-                                backgroundColor: WidgetStatePropertyAll(
-                                    Theme.of(context)
-                                        .colorScheme
-                                        .surfaceContainer),
-                                elevation: WidgetStatePropertyAll(0),
-                                leading: Icon(Icons.search),
-                                hintText: "Search...",
-                              ),
-                              Wrap(
-                                alignment: WrapAlignment.center,
-                                runAlignment: WrapAlignment.center,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                direction: Axis.horizontal,
-                                runSpacing: AppSizes.sm,
-                                verticalDirection: VerticalDirection.down,
-                                children: [
-                                  ShadButton(
-                                      backgroundColor:
-                                          colorScheme.surfaceContainerLow,
-                                      hoverBackgroundColor:
-                                          colorScheme.surfaceContainerHighest,
-                                      foregroundColor: colorScheme.onSurface,
-                                      onPressed: () {
-                                        _showAddUserDialog(context);
-                                      },
-                                      icon: Icon(Icons.add),
-                                      child: Text("Add User")),
-                                  ShadButton.destructive(
-                                      onPressed: () => _onDeleteButtonClick(
-                                          context,
-                                          onDeleteConfirmed: () => _loadUsers(
-                                              context,
-                                              page: currentPage ?? 1)),
-                                      enabled: !_showCheckboxColumn.value,
-                                      icon: Icon(Icons.delete),
-                                      child: Text("Delete")),
-                                  SizedBox(
-                                    width: AppSizes.xl * 4,
-                                    child: ShadPopover(
-                                      closeOnTapOutside: false,
-                                      decoration: ShadDecoration(
-                                        border: ShadBorder.all(
-                                            width: 0,
-                                            radius: BorderRadius.circular(10)),
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surfaceContainer,
-                                      ),
-                                      popover: (context) => ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          maxWidth: 300,
-                                        ),
-                                        child: _getTopActionBar(
-                                          context,
-                                          colorScheme,
-                                          alignment: WrapAlignment.center,
-                                          expandPerPage: true,
-                                          customExpandPerPage: context.width,
-                                        ),
-                                      ),
-                                      controller: _optionsPopoverController,
-                                      child: IconWithLabelButton(
-                                        icon: Icons.settings,
-                                        text: "Options",
-                                        onTap: () {
-                                          _optionsActive.value =
-                                              !_optionsActive.value;
-                                          _optionsPopoverController.toggle();
-                                        },
-                                        active: _optionsActive.value,
-                                      ),
-                                    ).optionalWhen(
-                                        isAtLeastMediumScreen(context)),
+                          child: Padding(
+                            padding: EdgeInsets.all(AppSizes.sm),
+                            child: Wrap(
+                              alignment: WrapAlignment.spaceEvenly,
+                              runAlignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              direction: Axis.horizontal,
+                              runSpacing: AppSizes.sm,
+                              verticalDirection: VerticalDirection.down,
+                              children: [
+                                SearchBar(
+                                  onChanged: (value) async {
+                                    await ApiClientInstance.getApiClient();
+                                  },
+                                  onSubmitted: (_) => _loadUsers(context),
+                                  onTapOutside: (_) => _loadUsers(context),
+                                  constraints: BoxConstraints(
+                                    maxWidth: AppSizes.lg * 8,
+                                    minHeight: AppSizes.lg * 1.5,
+                                    maxHeight: AppSizes.lg * 1.5,
                                   ),
-                                ].nonNulls.toList(),
-                              ),
-                            ].nonNulls.toList(),
+                                  backgroundColor: WidgetStatePropertyAll(
+                                      Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainer),
+                                  elevation: WidgetStatePropertyAll(0),
+                                  leading: Icon(Icons.search),
+                                  hintText: strings.value.search,
+                                ),
+                                Wrap(
+                                  alignment: WrapAlignment.spaceEvenly,
+                                  runAlignment: WrapAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  direction: Axis.horizontal,
+                                  runSpacing: AppSizes.sm,
+                                  verticalDirection: VerticalDirection.down,
+                                  children: [
+                                    ShadButton(
+                                        backgroundColor:
+                                            colorScheme.surfaceContainerLow,
+                                        hoverBackgroundColor:
+                                            colorScheme.surfaceContainerHighest,
+                                        foregroundColor: colorScheme.onSurface,
+                                        onPressed: () {
+                                          _showAddUserDialog(context);
+                                        },
+                                        child: Text(strings.value.addUser)),
+                                    ShadButton.destructive(
+                                        onPressed: () =>
+                                            _onDeleteButtonClick(context),
+                                        enabled: !_showCheckboxColumn.value,
+                                        child: Text(strings.value.delete)),
+                                    SizedBox(
+                                      width: AppSizes.xl * 4,
+                                      child: ShadPopover(
+                                        closeOnTapOutside: false,
+                                        decoration: ShadDecoration(
+                                          border: ShadBorder.all(
+                                              width: 0,
+                                              radius:
+                                                  BorderRadius.circular(10)),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surfaceContainer,
+                                        ),
+                                        popover: (context) => ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            maxWidth: 300,
+                                          ),
+                                          child: _getTopActionBar(
+                                            context,
+                                            colorScheme,
+                                            alignment: WrapAlignment.center,
+                                            expandPerPage: true,
+                                            customExpandPerPage: context.width,
+                                          ),
+                                        ),
+                                        controller: _optionsPopoverController,
+                                        child: IconWithLabelButton(
+                                          icon: Icons.settings,
+                                          text: strings.value.options,
+                                          onTap: () {
+                                            _optionsActive.value =
+                                                !_optionsActive.value;
+                                            _optionsPopoverController.toggle();
+                                          },
+                                          active: _optionsActive.value,
+                                        ),
+                                      ).optionalWhen(
+                                          isAtLeastMediumScreen(context)),
+                                    ),
+                                  ].nonNulls.toList(),
+                                ),
+                              ].nonNulls.toList(),
+                            ),
                           ),
                         ),
 
                         SizedBox(height: AppSizes.sm),
                         // top actions
                         Container(
-                                width: context.width,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainer,
-                                  borderRadius: BorderRadius.circular(20),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainer,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppSizes.md,
+                              vertical: AppSizes.sm,
+                            ),
+                            child: Row(
+                              children: [
+                                // filter button
+                                SizedBox(
+                                  width: AppSizes.xl * 4,
+                                  child: ShadPopover(
+                                    controller: _filtersPopoverController,
+                                    decoration: ShadDecoration(
+                                      border: ShadBorder.none,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainer,
+                                    ),
+                                    closeOnTapOutside: false,
+                                    popover: (context) => SizedBox(
+                                      width: AppSizes.xl * 4,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(strings.value.filter,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineMedium),
+                                          SizedBox(
+                                            height: AppSizes.sm,
+                                          ),
+                                          Text(strings.value.filterUser,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge),
+                                          SizedBox(
+                                            height: AppSizes.sm,
+                                          ),
+                                          Divider(),
+                                          SizedBox(
+                                            height: AppSizes.md,
+                                          ),
+                                          Text(strings.value.filterByRole,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium),
+                                          SizedBox(
+                                            height: AppSizes.sm,
+                                          ),
+                                          DropdownMenu<Role>(
+                                            hintText: strings.value.role,
+                                            label: Text(strings.value.role),
+                                            inputDecorationTheme:
+                                                Theme.of(context)
+                                                    .inputDecorationTheme
+                                                    .copyWith(
+                                                      filled: true,
+                                                      fillColor:
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .surface,
+                                                    ),
+                                            initialSelection:
+                                                _roleFilterSelected.value
+                                                    ? _roleFilter!
+                                                    : null,
+                                            textStyle: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                    color: AppColors
+                                                        .getRoleColorWithRoleValue(
+                                                            _roleFilter?.name ??
+                                                                "")),
+                                            onSelected: (value) {
+                                              _roleFilterSelected.value = false;
+                                              if (value == _roleFilter) {
+                                                _roleFilter = null;
+                                                _roleFilterController.clear();
+                                                _loadUsers(context);
+                                                return;
+                                              }
+                                              logger.e(
+                                                  "${strings.value.role}:${_roleFilter?.name} $value");
+                                              if (value != null) {
+                                                _roleFilter = value;
+                                                _roleFilterSelected.value =
+                                                    true;
+                                                _loadUsers(context);
+                                              }
+                                              logger.e(
+                                                  "${strings.value.role}:${_roleFilter?.name} $value");
+                                            },
+                                            dropdownMenuEntries: [
+                                              for (var role in roles)
+                                                DropdownMenuEntry(
+                                                    value: role,
+                                                    label: role.name,
+                                                    style: ButtonStyle(
+                                                      foregroundColor:
+                                                          WidgetStatePropertyAll(
+                                                              AppColors
+                                                                  .getRoleColorWithRoleValue(
+                                                                      role.name)),
+                                                    )),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    child: IconWithLabelButton(
+                                      icon: Icons.filter_alt,
+                                      active: _filtersActive.value,
+                                      text: strings.value.filter,
+                                      onTap: () {
+                                        _filtersActive.value =
+                                            !_filtersActive.value;
+                                        _filtersPopoverController.toggle();
+                                      },
+                                    ),
+                                  ),
                                 ),
-                                child: _getTopActionBar(context, colorScheme,
-                                    expandPerPage: _expandPerPage.value))
-                            .optionalWhen(isAtMostSmallScreen(context)),
+                                // sort button
+                                SizedBox(
+                                  width: AppSizes.xl * 4,
+                                  child: ShadPopover(
+                                    controller: _sortPopoverController,
+                                    decoration: ShadDecoration(
+                                      border: ShadBorder.none,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainer,
+                                    ),
+                                    closeOnTapOutside: false,
+                                    popover: (context) => SizedBox(
+                                      width: AppSizes.xl * 4,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(strings.value.sort,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineMedium),
+                                          SizedBox(
+                                            height: AppSizes.sm,
+                                          ),
+                                          Text(strings.value.sortUser,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge),
+                                          SizedBox(
+                                            height: AppSizes.sm,
+                                          ),
+                                          Divider(),
+                                          SizedBox(
+                                            height: AppSizes.md,
+                                          ),
+                                          Text(strings.value.sortBy,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium),
+                                          SizedBox(
+                                            height: AppSizes.sm,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              ShadSwitch(
+                                                uncheckedTrackColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .surfaceDim,
+                                                checkedTrackColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                value: (_sortASC.value
+                                                    ? _sortersASC["id"]!
+                                                        .isSelected
+                                                    : _sortersDESC["id"]!
+                                                        .isSelected),
+                                                label: Text(
+                                                  strings.value.id,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                                onChanged: (value) => setSorter(
+                                                    context, "id", value),
+                                              ),
+                                              ShadSwitch(
+                                                uncheckedTrackColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .surfaceDim,
+                                                checkedTrackColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                value: (_sortASC.value
+                                                    ? _sortersASC["email"]!
+                                                        .isSelected
+                                                    : _sortersDESC["email"]!
+                                                        .isSelected),
+                                                label: Text(
+                                                  strings.value.email,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                                onChanged: (value) => setSorter(
+                                                    context, "email", value),
+                                              ),
+                                              ShadSwitch(
+                                                uncheckedTrackColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .surfaceDim,
+                                                checkedTrackColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                value: (_sortASC.value
+                                                    ? _sortersASC["name"]!
+                                                        .isSelected
+                                                    : _sortersDESC["name"]!
+                                                        .isSelected),
+                                                label: Text(
+                                                  strings.value.name,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                                onChanged: (value) => setSorter(
+                                                    context, "name", value),
+                                              ),
+                                              ShadSwitch(
+                                                uncheckedTrackColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .surfaceDim,
+                                                checkedTrackColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                value: (_sortASC.value
+                                                    ? _sortersASC["role"]!
+                                                        .isSelected
+                                                    : _sortersDESC["role"]!
+                                                        .isSelected),
+                                                label: Text(
+                                                  strings.value.role,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                                onChanged: (value) => setSorter(
+                                                    context, "role", value),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    child: IconWithLabelButton(
+                                      icon: Icons.sort_rounded,
+                                      active: _sortActive.value,
+                                      text: strings.value.sort,
+                                      onTap: () {
+                                        _sortActive.value = !_sortActive.value;
+                                        _sortPopoverController.toggle();
+                                      },
+                                    ),
+                                  ),
+                                ),
+
+                                // PerPage TextField
+                                SizedBox(
+                                  width: _expandPerPage.value
+                                      ? AppSizes.xl * 8
+                                      : AppSizes.xl * 3,
+                                  child: Form(
+                                    key: _perPageFormKey,
+                                    onChanged: () {},
+                                    child: TextFormField(
+                                      validator: (value) =>
+                                          AppValidators.perPageValidator(
+                                        value,
+                                        _expandPerPage,
+                                      ),
+                                      controller: _perPageController,
+                                      onTapOutside: (_) =>
+                                          _executeChangePerPageIfPossible(
+                                              context),
+                                      onEditingComplete: () =>
+                                          _executeChangePerPageIfPossible(
+                                              context),
+                                      onChanged: (value) =>
+                                          _changePerPage(context, value),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        labelText: strings.value.perPage,
+                                        hintText: "10",
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
 
                         SizedBox(
                           height: AppSizes.sm,
@@ -517,33 +830,24 @@ class UsersPage extends StatelessWidget {
                                   .surfaceContainer,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: usersData.isEmpty
-                                ? Center(
-                                    child: Text(
-                                    "No Users Found",
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge,
-                                  ))
-                                : DataTable2(
-                                    sortAscending: true,
-                                    columnSpacing: _getColumnSpacing(context),
-                                    onSelectAll: (selectedAll) =>
-                                        selectedAll == true
-                                            ? _selectedUsers.addAll(usersData)
-                                            : _selectedUsers.clear(),
-                                    showCheckboxColumn:
-                                        _showCheckboxColumn.value,
-                                    sortColumnIndex: 0,
-                                    dataRowColor: WidgetStateProperty.fromMap({
-                                      WidgetState.hovered: Theme.of(context)
-                                          .colorScheme
-                                          .primaryContainer,
-                                      WidgetState.focused:
-                                          colorScheme.primaryContainer,
-                                    }),
-                                    columns: _getCols(context),
-                                    rows: _getRows(context),
-                                  ),
+                            child: DataTable2(
+                              sortAscending: true,
+                              columnSpacing: _getColumnSpacing(context),
+                              onSelectAll: (selectedAll) => selectedAll == true
+                                  ? _selectedUsers.addAll(usersData)
+                                  : _selectedUsers.clear(),
+                              showCheckboxColumn: _showCheckboxColumn.value,
+                              sortColumnIndex: 0,
+                              dataRowColor: WidgetStateProperty.fromMap({
+                                WidgetState.hovered: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                WidgetState.focused:
+                                    colorScheme.primaryContainer,
+                              }),
+                              columns: _getCols(context),
+                              rows: _getRows(context),
+                            ),
                           ),
                         ),
 
@@ -586,7 +890,7 @@ class UsersPage extends StatelessWidget {
                                           : false,
                                       onPressed: () => _loadUsers(context,
                                           page: currentPage! - 1),
-                                      child: Text("Prev"),
+                                      child: Text(strings.value.prevPage),
                                     ),
                                     ...pageIndexesButtons,
                                     ShadButton(
@@ -598,7 +902,7 @@ class UsersPage extends StatelessWidget {
                                           : false,
                                       onPressed: () => _loadUsers(context,
                                           page: currentPage! + 1),
-                                      child: Text("Next"),
+                                      child: Text(strings.value.nextPage),
                                     ),
                                   ],
                                 ),
@@ -606,12 +910,12 @@ class UsersPage extends StatelessWidget {
                                     SideMenuContainer.open)
                                   Text(
                                       "Page: $currentPage"), // if it is at most a small screen show it in this position
-                                Text("Users: $nbrUsersShown/$nbrTotalUsers"),
+                                Text("Users: $nbrUsersShown/$nbrTotalUsers")
                               ],
                             ),
                           ),
                         )
-                      ].nonNulls.toList(),
+                      ],
                     ),
                   )
                 : Center(child: CircularProgressIndicator()),
@@ -687,66 +991,52 @@ class UsersPage extends StatelessWidget {
                         SizedBox(
                           height: AppSizes.sm,
                         ),
-                        GestureDetector(
-                            onTap: () {
-                              logger.e("Tappedddd");
-                              logger.e("Tappedddd");
-                              logger.e("Tappedddd");
-                              logger.e("Tappedddd");
-                            },
-                            child: DropdownMenu<Role>(
-                              hintText: "Role",
-                              label: Text("Role"),
-                              controller: _roleFilterController,
-                              inputDecorationTheme: Theme.of(context)
-                                  .inputDecorationTheme
-                                  .copyWith(
+                        DropdownMenu<Role>(
+                          hintText: "Role",
+                          label: Text("Role"),
+                          controller: _roleFilterController,
+                          inputDecorationTheme:
+                              Theme.of(context).inputDecorationTheme.copyWith(
                                     filled: true,
                                     fillColor:
                                         Theme.of(context).colorScheme.surface,
                                   ),
-                              initialSelection: _roleFilterSelected.value
-                                  ? _roleFilter!
-                                  : null,
-                              textStyle: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                      color:
-                                          AppColors.getRoleColorWithRoleValue(
-                                              _roleFilter?.name ?? "")),
-                              onSelected: (value) {
-                                logger.e("Dropdown tapped: $value");
-                                _roleFilterSelected.value = false;
-                                // _roleFilterSelected.refresh();
-                                if (value == _roleFilter) {
-                                  _roleFilter = null;
-                                  _roleFilterController.clear();
-                                  _loadUsers(context);
-                                  return;
-                                }
-                                logger.e("Dropdown tapped: $value");
-                                logger.e("Role:${_roleFilter?.name} $value");
-                                if (value != null) {
-                                  _roleFilter = value;
-                                  _roleFilterSelected.value = true;
-                                  _loadUsers(context);
-                                }
-                                logger.e("Role:${_roleFilter?.name} $value");
-                              },
-                              dropdownMenuEntries: [
-                                //logger.e("Roles: ${roles.map((r) => r.name).toList()}");
-                                for (var role in roles)
-                                  DropdownMenuEntry(
-                                      value: role,
-                                      label: role.name,
-                                      style: ButtonStyle(
-                                        foregroundColor: WidgetStatePropertyAll(
-                                            AppColors.getRoleColorWithRoleValue(
-                                                role.name)),
-                                      )),
-                              ],
-                            )),
+                          initialSelection:
+                              _roleFilterSelected.value ? _roleFilter! : null,
+                          textStyle: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                  color: AppColors.getRoleColorWithRoleValue(
+                                      _roleFilter?.name ?? "")),
+                          onSelected: (value) {
+                            _roleFilterSelected.value = false;
+                            if (value == _roleFilter) {
+                              _roleFilter = null;
+                              _roleFilterController.clear();
+                              _loadUsers(context);
+                              return;
+                            }
+                            logger.e("Role:${_roleFilter?.name} $value");
+                            if (value != null) {
+                              _roleFilter = value;
+                              _roleFilterSelected.value = true;
+                              _loadUsers(context);
+                            }
+                            logger.e("Role:${_roleFilter?.name} $value");
+                          },
+                          dropdownMenuEntries: [
+                            for (var role in roles)
+                              DropdownMenuEntry(
+                                  value: role,
+                                  label: role.name,
+                                  style: ButtonStyle(
+                                    foregroundColor: WidgetStatePropertyAll(
+                                        AppColors.getRoleColorWithRoleValue(
+                                            role.name)),
+                                  )),
+                          ],
+                        )
                       ],
                     ),
                   ),
@@ -755,7 +1045,6 @@ class UsersPage extends StatelessWidget {
                     active: _filtersActive.value,
                     text: "Filter",
                     onTap: () {
-                      logger.e("filter tapped");
                       _filtersActive.value = !_filtersActive.value;
                       _filtersPopoverController.toggle();
                     },
@@ -1075,20 +1364,21 @@ class UsersPage extends StatelessWidget {
 
     _selectedUsers.clear();
     _showCheckboxColumn.value = false;
-    ShadToaster.of(context).hide();
+    ShadToaster.of(Get.context!).hide();
   }
 
   Future<dynamic> _showAddUserDialog(BuildContext context) {
     _loadSuperiorsOptions(context);
-    logger.d("showing dialog");
+    final strings = getTranslations(context).obs;
+
     return showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
-        title: Text("Add User"),
-        description: Text("Add one user"),
+        title: Text(strings.value.addUser),
+        description: Text(strings.value.addOneUser),
         actions: [
           ShadButton(
-            child: Text("Add User"),
+            child: Text(strings.value.addUser),
             onPressed: () => _onAddUserPressed(context),
           )
         ],
@@ -1182,7 +1472,11 @@ class UsersPage extends StatelessWidget {
           ),
           DataCell(
             Text(
-              user.username ?? "",
+              user.username.isNotEmpty
+                  ? user.username
+                  : user.firstName.isNotEmpty
+                      ? '${user.firstName} ${user.lastName}'
+                      : "",
               style: Theme.of(context).textTheme.bodyMedium,
               softWrap: false,
               overflow: TextOverflow.ellipsis,
@@ -1288,10 +1582,10 @@ class UsersPage extends StatelessWidget {
         selected: _selectedUsers.contains(user),
         onSelectChanged: (value) {
           if (_selectedUsers.contains(user)) {
-            print("unselected ${user.userId}: $value");
+            logger.d("unselected ${user.userId}: $value");
             _selectedUsers.remove(user);
           } else {
-            print("selected ${user.userId}: $value");
+            logger.d("selected ${user.userId}: $value");
             _selectedUsers.add(user);
           }
         },
@@ -1301,7 +1595,9 @@ class UsersPage extends StatelessWidget {
 
   void _loadSuperiorsOptions(BuildContext context) async {
     _loadedAddUserSuperiorOptions.value = false;
-    final me = "${userController.user!.username} (Me)";
+    final strings = getTranslations(context).obs;
+    final me =
+        "${userController.user!.username.isEmpty ? userController.user!.email : userController.user!.username}(${strings.value.me})";
     List<ShadOption<User>> options = [
       ShadOption(
         value: userController.user!,
@@ -1316,16 +1612,14 @@ class UsersPage extends StatelessWidget {
     ];
     // can add any kind of user
     try {
-      final api = await ApiClientInstance.getApiClient();
-
       traverseSubordinatesTree(
           User user, Function(User user) onUserFound) async {
         if (user.subordinates.isNotEmpty) {
           for (var user in user.subordinates) {
-            final sub_user = await (await ApiClientInstance.getApiClient())
+            final subUser = await (await ApiClientInstance.getApiClient())
                 .getUser(id: user.userId);
-            onUserFound(sub_user);
-            traverseSubordinatesTree(sub_user, onUserFound);
+            onUserFound(subUser);
+            traverseSubordinatesTree(subUser, onUserFound);
           }
         }
       }
@@ -1357,7 +1651,7 @@ class UsersPage extends StatelessWidget {
     } catch (e) {
       logger.e("failed to get users: $e");
       Toasts.showErrorToastNotification(
-          context: context,
+          context: Get.context!,
           message: "Failed to get users",
           title: "Error: Failed to get users");
       _addUserSuperiorOptions.value = [];
@@ -1385,6 +1679,16 @@ class UsersPage extends StatelessWidget {
     }
   }
 
+  _getName(User user, {bool orEmail = false}) {
+    return user.username.isNotEmpty
+        ? user.username
+        : user.firstName.isNotEmpty
+            ? "${user.firstName} ${user.lastName}"
+            : orEmail
+                ? user.email
+                : "";
+  }
+
   Future _showEditUserDialog(BuildContext context, User user) async {
     _loadSuperiorsOptions(context);
     logger.d("showing edit dialog");
@@ -1402,18 +1706,18 @@ class UsersPage extends StatelessWidget {
       subordinates: user.subordinates,
       userPermissions: user.userPermissions,
     );
-    Uint8List? _editUserAvatarBytes;
-    File? _editUserAvatarFile;
-    String? _password;
+    Uint8List? editUserAvatarBytes;
+    File? editUserAvatarFile;
+    String? password;
     logger.d("showing edit dialog 2");
     final loadedUserDetails = false.obs;
     User? userDetails;
-    final Rx<bool> _loadedRoles = false.obs;
-    final RxList<Role> _roles = <Role>[].obs;
+    final Rx<bool> loadedRoles = false.obs;
+    final RxList<Role> roles = <Role>[].obs;
     ApiClientInstance.getApiClient().then((api) async {
-      _roles.clear();
-      _roles.addAll((await api.getRoles()).data);
-      _loadedRoles.value = true;
+      roles.clear();
+      roles.addAll((await api.getRoles()).data);
+      loadedRoles.value = true;
       final res = await api.getUser(id: user.userId);
       userDetails = res;
       loadedUserDetails.value = true;
@@ -1421,7 +1725,7 @@ class UsersPage extends StatelessWidget {
     }).catchError((e) {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
-          context: context,
+          context: Get.context!,
           message: "Details: ${e.toString()}",
           title: "Error: Failed to get user details");
       loadedUserDetails.value = true;
@@ -1430,7 +1734,7 @@ class UsersPage extends StatelessWidget {
     return showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
-        title: Text("User: ${user.username ?? user.email}"),
+        title: Text("User: ${_getName(user, orEmail: true)}"),
         description: Text("Edit User"),
         actions: [
           Obx(() => Expanded(
@@ -1461,11 +1765,11 @@ class UsersPage extends StatelessWidget {
                                 context: context,
                                 user: newUser,
                                 password:
-                                    _password != null && _password!.isNotEmpty
-                                        ? _password
+                                    password != null && password.isNotEmpty
+                                        ? password
                                         : null,
-                                userAvatarBytes: _editUserAvatarBytes,
-                                userAvatarFile: _editUserAvatarFile,
+                                userAvatarBytes: editUserAvatarBytes,
+                                userAvatarFile: editUserAvatarFile,
                               );
                             },
                           ),
@@ -1485,13 +1789,13 @@ class UsersPage extends StatelessWidget {
         child: Obx(
           () {
             if (!loadedUserDetails.value ||
-                !_loadedRoles.value ||
+                !loadedRoles.value ||
                 !_loadedAddUserSuperiorOptions.value) {
               return Center(
                 child: CircularProgressIndicator(),
               );
             }
-            final role = _roles.firstWhereOrNull((r) => r.name == user.role);
+            final role = roles.firstWhereOrNull((r) => r.name == user.role);
             return UserForm(
               editable: true,
               showPlaceHolders: false,
@@ -1500,9 +1804,9 @@ class UsersPage extends StatelessWidget {
               onAddUser: (email, username, password, phone, role, superior,
                       firstName, lastName, avatarBytes, avatarFile) =>
                   {
-                _editUserAvatarBytes = avatarBytes,
-                _editUserAvatarFile = avatarFile,
-                _password = password,
+                editUserAvatarBytes = avatarBytes,
+                editUserAvatarFile = avatarFile,
+                password = password,
                 newUser = User(
                   url: newUser.url,
                   userId: newUser.userId,
@@ -1549,14 +1853,16 @@ class UsersPage extends StatelessWidget {
   }
 
   Future _showViewUserDialog(BuildContext context, User user) async {
+    logger.e("showing view dialog");
     final loadedUserDetails = false.obs;
     User? userDetails;
-    final Rx<bool> _loadedRoles = false.obs;
-    final RxList<Role> _roles = <Role>[].obs;
+    final Rx<bool> loadedRoles = false.obs;
+    final RxList<Role> roles = <Role>[].obs;
+
     ApiClientInstance.getApiClient().then((api) async {
-      _roles.clear();
-      _roles.addAll((await api.getRoles()).data);
-      _loadedRoles.value = false;
+      roles.clear();
+      roles.addAll((await api.getRoles()).data);
+      loadedRoles.value = false;
       final res = await api.getUser(id: user.userId);
       userDetails = res;
       loadedUserDetails.value = true;
@@ -1564,18 +1870,52 @@ class UsersPage extends StatelessWidget {
     }).catchError((e) {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
-          context: context,
+          context: Get.context!,
           message: "Details: ${e.toString()}",
           title: "Error: Failed to get user details");
       loadedUserDetails.value = true;
     });
 
     return showShadDialog(
-      context: context,
+      context: Get.context!,
       builder: (context) => ShadDialog(
-        title: Text("User: ${user.username ?? user.email}"),
+        title: Text("User: ${_getName(user, orEmail: true)}"),
         description: Text("View User Details"),
+        removeBorderRadiusWhenTiny: true,
         actions: [
+          ShadButton(
+            icon: Icon(Icons.close),
+            child: Text("Close"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ).optionalWhen(isAtLeastMediumScreen(context)),
+          Obx(() {
+            return loadedUserDetails.value
+                ? ShadButton.destructive(
+                    child: Text("Delete"),
+                    onPressed: () {
+                      _selectedUsers.add(userDetails!);
+                      _onDeleteButtonClick(
+                        context,
+                        onDeleteConfirmed: () => Navigator.of(context).pop(),
+                      );
+                    },
+                  )
+                : SizedBox.shrink();
+          }).optionalWhen(isAtLeastMediumScreen(context)),
+          Obx(() {
+            return loadedUserDetails.value
+                ? ShadButton(
+                    icon: Icon(Icons.edit),
+                    child: Text("Edit"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _showEditUserDialog(context, user);
+                    },
+                  )
+                : SizedBox.shrink();
+          }).optionalWhen(isAtLeastMediumScreen(context)),
           Obx(() => Expanded(
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
@@ -1615,39 +1955,44 @@ class UsersPage extends StatelessWidget {
                     ),
                   ],
                 ),
-              ))
-        ],
-        child: Obx(
-          () {
-            if (!loadedUserDetails.value) {
-              return Center(
-                child: CircularProgressIndicator(),
+              )).optionalWhen(isAtMostSmallScreen(context))
+        ].nonNulls.toList(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: 700,
+          ),
+          child: Obx(
+            () {
+              if (!loadedUserDetails.value) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              final role = roles.firstWhereOrNull((r) => r.name == user.role);
+              return UserForm(
+                editable: false,
+                showPlaceHolders: false,
+                role: role,
+                user: user,
+                addUserEmailController:
+                    TextEditingController(text: userDetails!.email),
+                addUserNameController:
+                    TextEditingController(text: userDetails!.username),
+                addFirstNameController:
+                    TextEditingController(text: userDetails!.firstName),
+                addLastNameController:
+                    TextEditingController(text: userDetails!.lastName),
+                addUserPasswordController:
+                    TextEditingController(text: "Hashed Value"),
+                addUserPhoneController:
+                    TextEditingController(text: userDetails!.phoneNumber),
+                formKeyAddUser: GlobalKey<FormState>(),
+                addUserSuperiorOptions: <ShadOption<User>>[].obs,
+                loadSuperiorsOptions: (context) =>
+                    _loadSuperiors(context, userDetails!),
               );
-            }
-            final role = _roles.firstWhereOrNull((r) => r.name == user.role);
-            return UserForm(
-              editable: false,
-              showPlaceHolders: false,
-              role: role,
-              user: user,
-              addUserEmailController:
-                  TextEditingController(text: userDetails!.email),
-              addUserNameController:
-                  TextEditingController(text: userDetails!.username),
-              addFirstNameController:
-                  TextEditingController(text: userDetails!.firstName),
-              addLastNameController:
-                  TextEditingController(text: userDetails!.lastName),
-              addUserPasswordController:
-                  TextEditingController(text: "Hashed Value"),
-              addUserPhoneController:
-                  TextEditingController(text: userDetails!.phoneNumber),
-              formKeyAddUser: GlobalKey<FormState>(),
-              addUserSuperiorOptions: <ShadOption<User>>[].obs,
-              loadSuperiorsOptions: (context) =>
-                  _loadSuperiors(context, userDetails!),
-            );
-          },
+            },
+          ),
         ),
       ),
     );
@@ -1710,7 +2055,7 @@ class UsersPage extends StatelessWidget {
       Future.delayed(
           Duration(seconds: 1), () => Toastification().dismissById(toast.id));
       // reload users list
-      _loadUsers(context);
+      _loadUsers(Get.context!);
     } catch (e) {
       logger.e("failed to add user: $e");
       // show error toast
@@ -1790,7 +2135,7 @@ class UsersPage extends StatelessWidget {
       Future.delayed(
           Duration(seconds: 1), () => Toastification().dismissById(toast.id));
       // reload users list
-      _loadUsers(context);
+      _loadUsers(Get.context!);
     } catch (e) {
       logger.e("failed to add user: $e");
       // show error toast
@@ -1808,9 +2153,9 @@ class UsersPage extends StatelessWidget {
 
 class Sorter {
   final bool isSelected;
-  final String ordering_value;
+  final String orderingValue;
 
-  Sorter({required this.isSelected, required this.ordering_value});
+  Sorter({required this.isSelected, required this.orderingValue});
 }
 
 extension WidgetOptionalWhen on Widget {

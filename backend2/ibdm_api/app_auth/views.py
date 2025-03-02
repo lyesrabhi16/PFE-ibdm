@@ -1,3 +1,4 @@
+import re
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -38,6 +39,7 @@ def login_view(request):
     
     email = serializer.data.get('email')
     password = serializer.data.get('password')
+    remember_me = serializer.data.get('remember_me')
 
     user = authenticate(request, email=email, password=password)
     if user is not None:
@@ -49,6 +51,8 @@ def login_view(request):
             },
             context={'request': request}
         )
+        if not remember_me:
+            request.session.set_expiry(0)
         return Response(serialized_data.data)
     else:
         return JsonResponse(ErrorResponseSerializer({"status": "error", "code": ErrorCodes.INVALID_CREDENTIALS.code}).data, status=ErrorCodes.INVALID_CREDENTIALS.status_code)

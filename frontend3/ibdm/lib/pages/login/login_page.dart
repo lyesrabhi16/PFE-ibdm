@@ -1,17 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'; // Pour vérifier la plateforme
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
+import 'package:ibdm/pages/loading_page.dart';
 import 'package:ibdm/pages/login/wide_login_page.dart';
 import 'package:ibdm/pages/login/small_login_page.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool isLoading = !kIsWeb;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!kIsWeb) {
+      Future.delayed(const Duration(seconds: 10), () {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (isLoading) return LoadingPage();
+
     return SafeArea(
       child: Scaffold(
         body: isSmallScreen(context)
