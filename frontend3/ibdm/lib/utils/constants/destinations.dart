@@ -27,6 +27,12 @@ class Destination {
       dest.index = i + startIndexOffset;
       destMap[dest.route] = dest;
     }
+
+    for (var e in Routes.custumRoutes.entries) {
+      Destination dest = destMap[e.value]!;
+      destMap[e.key] = dest;
+    }
+
     return destMap;
   }
 }

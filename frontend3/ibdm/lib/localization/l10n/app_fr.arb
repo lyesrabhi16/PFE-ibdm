@@ -326,5 +326,11 @@
     "me": "Moi",
     "@me": {
         "description": "Me option text"
-    }
+    },
+    "settings": "Paramètres",
+    "lightmode": "Mode clair",
+    "darkmode": "Mode sombre",
+    "language": "Langue",
+    "helpAssistance": "Aide et Assistance",
+    "about": "À propos"
 }
