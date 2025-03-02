@@ -14,7 +14,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from urllib.request import Request
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -23,7 +22,7 @@ from django.urls import include, path, re_path
 from .views import index
 
 
-def redirect_home(request: Request):
+def redirect_home(request):
     path = request.META['PATH_INFO'].split(
         "app/"
     )[1]

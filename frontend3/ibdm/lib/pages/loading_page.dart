@@ -35,7 +35,7 @@ class LoadingPage extends StatelessWidget {
 
     userController.getRoles(context).then((value) {
       logger.e("Roles loaded: ${userController.roles.length}");
-      
+
       _roles_loaded = true;
       _loadFinished();
     });

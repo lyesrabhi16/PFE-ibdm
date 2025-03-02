@@ -75,6 +75,10 @@ class LoginActions {
       LoadingPageController loadingPageController =
           Get.find<LoadingPageController>();
       loadingPageController.isLoading.value = true;
+      PermissionsController permissionsController =
+          Get.find<PermissionsController>();
+      permissionsController.ready.value = false;
+      
       logger.e(
           "Loading page is ${loadingPageController.isLoading.value} after login");
 
