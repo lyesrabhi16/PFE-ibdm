@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
+import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
-import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/pages/filtration.dart/filtration.dart';
 import 'package:ibdm/pages/AboutPage.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
 import 'package:ibdm/common/middlewares/protected_route_middleware.dart';
 import 'package:ibdm/pages/settings.dart';
+import 'package:ibdm/pages/siroperie/siroperie.dart';
 import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/pages/EmailSettingsPage.dart';
-import 'package:ibdm/pages/AboutPage.dart';
 import 'package:ibdm/pages/HelpPage.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
+import 'package:ibdm/utils/constants/permissions.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class Routes {
   Routes._();
-  
+
   static final UserController userController = Get.find<UserController>();
 
   static const String home = '/';
   static const String login = '/login';
+  static const String siroperie = '/siroperie';
+  static const String filtration = '/filtration';
   static const String settings = '/settings';
   static const String users = '/users';
   static const String emailSettings = '/settings/emailsettings';
@@ -32,86 +37,85 @@ class Routes {
           title: "Home",
           icon: Icons.home,
           route: Routes.home,
-          page: GetPage(
-            name: Routes.home,
-            page: () => Home(),
-            middlewares: [ProtectedRouteMiddleware()],
-          ),
-        ),
-        Destination(
-          title: "Protected",
-          icon: Icons.lock,
-          route: "/protected",
-          page: GetPage(
-            name: "/protected",
-            middlewares: [ProtectedRouteMiddleware()],
-            page: () => AppCustomContainer(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Protected Route"),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed(Routes.home);
-                    },
-                    child: Text("Home"),
-                  )
-                ],
-              ),
-            ),
-          ),
+          page: routePages[Routes.home]!,
         ),
         Destination(
           title: "Users",
           icon: Icons.people,
           route: Routes.users,
-          page: GetPage(
-            name: Routes.users,
-            page: () => UsersPage(),
-            middlewares: [ProtectedRouteMiddleware()],
-          ),
-        ),
+          page: routePages[Routes.users]!,
+        ).withPermission(Permissions.viewUsersPage),
+        Destination(
+          title: "Siroperie",
+          icon: LucideIcons.boxes,
+          route: Routes.siroperie,
+          page: routePages[Routes.siroperie]!,
+        ).withPermission(Permissions.viewSiroperiePage),
+        Destination(
+          title: "Filtration",
+          icon: Icons.battery_full_outlined,
+          route: Routes.filtration,
+          page: routePages[Routes.filtration]!,
+        ).withPermission(Permissions.viewFiltrationPage),
         Destination(
           title: "Settings",
           icon: Icons.settings,
           route: Routes.settings,
-          page: GetPage(
-            name: Routes.settings,
-            page: () => SettingsPage(),
-            middlewares: [ProtectedRouteMiddleware()],
-          ),
-        ),
+          page: routePages[Routes.settings]!,
+        ).withPermission(Permissions.viewSettingsPage),
       ].nonNulls.toList();
 
-  static final custumRoutes = {
+  static final customRoutes = {
     emailSettings: settings,
     about: settings,
     help: settings,
   };
 
-  static final List<GetPage> routesWithoutNavigation = [
-    GetPage(
+  static final routePages = {
+    Routes.home: GetPage(
+      name: Routes.home,
+      page: () => Home(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    Routes.login: GetPage(
       name: Routes.login,
       page: () => LoginPage(),
       middlewares: [RequireUnAuthenticatedRouteMiddleware()],
     ),
-    GetPage(
+    Routes.emailSettings: GetPage(
       name: emailSettings,
       page: () => EmailSettingsPage(),
       middlewares: [ProtectedRouteMiddleware()],
     ),
-    GetPage(
+    Routes.about: GetPage(
         name: about,
         page: () => Aboutpage(),
         middlewares: [ProtectedRouteMiddleware()]),
-    GetPage(
+    Routes.help: GetPage(
         name: help,
         page: () => Helppage(),
         middlewares: [ProtectedRouteMiddleware()]),
-  ].nonNulls.toList();
+    Routes.siroperie: GetPage(
+      name: Routes.siroperie,
+      page: () => SiroperiePage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    Routes.filtration: GetPage(
+      name: Routes.filtration,
+      page: () => FiltrationPage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    Routes.settings: GetPage(
+      name: Routes.settings,
+      page: () => SettingsPage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    Routes.users: GetPage(
+      name: Routes.users,
+      page: () => UsersPage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+  };
 
-  static List<GetPage> get router => [
-        ...routesWithoutNavigation,
-        ...destinations.map((e) => e.page),
-      ].nonNulls.toList();
+  static List<GetPage> router = routePages.values.toList();
 }

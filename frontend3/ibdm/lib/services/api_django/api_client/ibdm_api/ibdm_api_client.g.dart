@@ -111,6 +111,33 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
+  Future<HasPermResponse> hasPerm({required String codename}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<HasPermResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/auth/user/permission/${codename}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late HasPermResponse _value;
+    try {
+      _value = HasPermResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<dynamic> retrieveApiV1DocsSchema({Format? format, Lang? lang}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -160,6 +187,1238 @@ class _IbdmApiClient implements IbdmApiClient {
     );
     final _result = await _dio.fetch(_options);
     final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<PaginatedAlertEmailList> getAlertEmails({
+    bool? enablePagination,
+    int? page,
+    int? perPage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'page': page,
+      r'per_page': perPage,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedAlertEmailList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedAlertEmailList _value;
+    try {
+      _value = PaginatedAlertEmailList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AlertEmail> addAlertEmail({
+    required List<String> sendToUsers,
+    required MonitoredValueEnum monitoredValue,
+    int? dangerPoint,
+    int? warningPoint,
+    int? dangerReminderInterval,
+    int? warningReminderInterval,
+    String? customAlertMessage,
+    bool? enabled,
+    List<int>? sendToRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    sendToUsers.forEach((i) {
+      _data.fields.add(MapEntry('send_to_users', i));
+    });
+    _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
+    if (dangerPoint != null) {
+      _data.fields.add(MapEntry('danger_point', dangerPoint.toString()));
+    }
+    if (warningPoint != null) {
+      _data.fields.add(MapEntry('warning_point', warningPoint.toString()));
+    }
+    if (dangerReminderInterval != null) {
+      _data.fields.add(
+        MapEntry('danger_reminder_interval', dangerReminderInterval.toString()),
+      );
+    }
+    if (warningReminderInterval != null) {
+      _data.fields.add(
+        MapEntry(
+          'warning_reminder_interval',
+          warningReminderInterval.toString(),
+        ),
+      );
+    }
+    if (customAlertMessage != null) {
+      _data.fields.add(MapEntry('custom_alert_message', customAlertMessage));
+    }
+    if (enabled != null) {
+      _data.fields.add(MapEntry('enabled', enabled.toString()));
+    }
+    if (sendToRoles != null) {
+      _data.files.add(
+        MapEntry(
+          'send_to_roles',
+          MultipartFile.fromBytes(sendToRoles, filename: null),
+        ),
+      );
+    }
+    final _options = _setStreamType<AlertEmail>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AlertEmail _value;
+    try {
+      _value = AlertEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AlertEmail> getAlertEmail({required int id}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<AlertEmail>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AlertEmail _value;
+    try {
+      _value = AlertEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AlertEmail> updateAlertEmail({
+    required int id,
+    required List<String> sendToUsers,
+    required MonitoredValueEnum monitoredValue,
+    int? dangerPoint,
+    int? warningPoint,
+    int? dangerReminderInterval,
+    int? warningReminderInterval,
+    String? customAlertMessage,
+    bool? enabled,
+    List<int>? sendToRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    sendToUsers.forEach((i) {
+      _data.fields.add(MapEntry('send_to_users', i));
+    });
+    _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
+    if (dangerPoint != null) {
+      _data.fields.add(MapEntry('danger_point', dangerPoint.toString()));
+    }
+    if (warningPoint != null) {
+      _data.fields.add(MapEntry('warning_point', warningPoint.toString()));
+    }
+    if (dangerReminderInterval != null) {
+      _data.fields.add(
+        MapEntry('danger_reminder_interval', dangerReminderInterval.toString()),
+      );
+    }
+    if (warningReminderInterval != null) {
+      _data.fields.add(
+        MapEntry(
+          'warning_reminder_interval',
+          warningReminderInterval.toString(),
+        ),
+      );
+    }
+    if (customAlertMessage != null) {
+      _data.fields.add(MapEntry('custom_alert_message', customAlertMessage));
+    }
+    if (enabled != null) {
+      _data.fields.add(MapEntry('enabled', enabled.toString()));
+    }
+    if (sendToRoles != null) {
+      _data.files.add(
+        MapEntry(
+          'send_to_roles',
+          MultipartFile.fromBytes(sendToRoles, filename: null),
+        ),
+      );
+    }
+    final _options = _setStreamType<AlertEmail>(
+      Options(
+        method: 'PUT',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AlertEmail _value;
+    try {
+      _value = AlertEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AlertEmail> partialUpdateAlertEmail({
+    required int id,
+    List<String>? sendToUsers,
+    MonitoredValueEnum? monitoredValue,
+    int? dangerPoint,
+    int? warningPoint,
+    int? dangerReminderInterval,
+    int? warningReminderInterval,
+    String? customAlertMessage,
+    bool? enabled,
+    List<int>? sendToRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    sendToUsers?.forEach((i) {
+      _data.fields.add(MapEntry('send_to_users', i));
+    });
+    if (monitoredValue != null) {
+      _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
+    }
+    if (dangerPoint != null) {
+      _data.fields.add(MapEntry('danger_point', dangerPoint.toString()));
+    }
+    if (warningPoint != null) {
+      _data.fields.add(MapEntry('warning_point', warningPoint.toString()));
+    }
+    if (dangerReminderInterval != null) {
+      _data.fields.add(
+        MapEntry('danger_reminder_interval', dangerReminderInterval.toString()),
+      );
+    }
+    if (warningReminderInterval != null) {
+      _data.fields.add(
+        MapEntry(
+          'warning_reminder_interval',
+          warningReminderInterval.toString(),
+        ),
+      );
+    }
+    if (customAlertMessage != null) {
+      _data.fields.add(MapEntry('custom_alert_message', customAlertMessage));
+    }
+    if (enabled != null) {
+      _data.fields.add(MapEntry('enabled', enabled.toString()));
+    }
+    if (sendToRoles != null) {
+      _data.files.add(
+        MapEntry(
+          'send_to_roles',
+          MultipartFile.fromBytes(sendToRoles, filename: null),
+        ),
+      );
+    }
+    final _options = _setStreamType<AlertEmail>(
+      Options(
+        method: 'PATCH',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AlertEmail _value;
+    try {
+      _value = AlertEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<void> destroyAlertEmail({required int id}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<void>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/alerts/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
+  Future<PaginatedEmailScheduleList> getEmailSchedules({
+    bool? enablePagination,
+    int? page,
+    int? perPage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'page': page,
+      r'per_page': perPage,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedEmailScheduleList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedEmailScheduleList _value;
+    try {
+      _value = PaginatedEmailScheduleList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<EmailSchedule> addEmailSchedule({
+    required RapportEnum rapport,
+    required String tempsEnvoi,
+    required IntervalEnum interval,
+    required List<String> scheduledUsers,
+    int? intervalManual,
+    DateTime? nextRunTime,
+    List<int>? scheduledRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('rapport', rapport.name));
+    _data.fields.add(MapEntry('temps_envoi', tempsEnvoi));
+    _data.fields.add(MapEntry('interval', interval.name));
+    scheduledUsers.forEach((i) {
+      _data.fields.add(MapEntry('scheduled_users', i));
+    });
+    if (intervalManual != null) {
+      _data.fields.add(MapEntry('interval_manual', intervalManual.toString()));
+    }
+    if (scheduledRoles != null) {
+      _data.files.add(
+        MapEntry(
+          'scheduled_roles',
+          MultipartFile.fromBytes(scheduledRoles, filename: null),
+        ),
+      );
+    }
+    final _options = _setStreamType<EmailSchedule>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late EmailSchedule _value;
+    try {
+      _value = EmailSchedule.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<EmailSchedule> getEmailSchedule({required int id}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<EmailSchedule>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late EmailSchedule _value;
+    try {
+      _value = EmailSchedule.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<EmailSchedule> updateEmailSchedule({
+    required int id,
+    required RapportEnum rapport,
+    required String tempsEnvoi,
+    required IntervalEnum interval,
+    required List<String> scheduledUsers,
+    int? intervalManual,
+    DateTime? nextRunTime,
+    List<int>? scheduledRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('rapport', rapport.name));
+    _data.fields.add(MapEntry('temps_envoi', tempsEnvoi));
+    _data.fields.add(MapEntry('interval', interval.name));
+    scheduledUsers.forEach((i) {
+      _data.fields.add(MapEntry('scheduled_users', i));
+    });
+    if (intervalManual != null) {
+      _data.fields.add(MapEntry('interval_manual', intervalManual.toString()));
+    }
+    if (scheduledRoles != null) {
+      _data.files.add(
+        MapEntry(
+          'scheduled_roles',
+          MultipartFile.fromBytes(scheduledRoles, filename: null),
+        ),
+      );
+    }
+    final _options = _setStreamType<EmailSchedule>(
+      Options(
+        method: 'PUT',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late EmailSchedule _value;
+    try {
+      _value = EmailSchedule.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<EmailSchedule> partialUpdateEmailSchedule({
+    required int id,
+    RapportEnum? rapport,
+    String? tempsEnvoi,
+    IntervalEnum? interval,
+    int? intervalManual,
+    DateTime? nextRunTime,
+    List<String>? scheduledUsers,
+    List<int>? scheduledRoles,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (rapport != null) {
+      _data.fields.add(MapEntry('rapport', rapport.name));
+    }
+    if (tempsEnvoi != null) {
+      _data.fields.add(MapEntry('temps_envoi', tempsEnvoi));
+    }
+    if (interval != null) {
+      _data.fields.add(MapEntry('interval', interval.name));
+    }
+    if (intervalManual != null) {
+      _data.fields.add(MapEntry('interval_manual', intervalManual.toString()));
+    }
+    scheduledUsers?.forEach((i) {
+      _data.fields.add(MapEntry('scheduled_users', i));
+    });
+    if (scheduledRoles != null) {
+      _data.files.add(
+        MapEntry(
+          'scheduled_roles',
+          MultipartFile.fromBytes(scheduledRoles, filename: null),
+        ),
+      );
+    }
+    final _options = _setStreamType<EmailSchedule>(
+      Options(
+        method: 'PATCH',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late EmailSchedule _value;
+    try {
+      _value = EmailSchedule.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<void> destroyEmailSchedule({required int id}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<void>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/schedules/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
+  Future<PaginatedSentEmailList> getSentEmails({
+    bool? enablePagination,
+    int? page,
+    int? perPage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'page': page,
+      r'per_page': perPage,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedSentEmailList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/sent/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedSentEmailList _value;
+    try {
+      _value = PaginatedSentEmailList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<SentEmail> getSentEmail({required int id}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<SentEmail>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/sent/${id}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SentEmail _value;
+    try {
+      _value = SentEmail.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PaginatedDebitList> getDebits({
+    bool? enablePagination,
+    int? page,
+    int? perPage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'page': page,
+      r'per_page': perPage,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedDebitList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/debit/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedDebitList _value;
+    try {
+      _value = PaginatedDebitList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Debit> getDebit({required DateTime date}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Debit>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/debit/${date}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Debit _value;
+    try {
+      _value = Debit.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Debit> getDebitAtSpecificTime({
+    required int year,
+    int? day,
+    int? hour,
+    int? minute,
+    int? month,
+    int? second,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'year': year,
+      r'day': day,
+      r'hour': hour,
+      r'minute': minute,
+      r'month': month,
+      r'second': second,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Debit>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/debit/specific',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Debit _value;
+    try {
+      _value = Debit.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<FeedMetaData> getFiltrationMetaData() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<FeedMetaData>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/metadata',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late FeedMetaData _value;
+    try {
+      _value = FeedMetaData.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PaginatedNiveauList> getNiveaux({
+    bool? enablePagination,
+    int? page,
+    int? perPage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'page': page,
+      r'per_page': perPage,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedNiveauList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/niveau/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedNiveauList _value;
+    try {
+      _value = PaginatedNiveauList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Niveau> getNiveau({required DateTime date}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Niveau>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/niveau/${date}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Niveau _value;
+    try {
+      _value = Niveau.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Niveau> getNiveauAtSpecificTime({
+    required int year,
+    int? day,
+    int? hour,
+    int? minute,
+    int? month,
+    int? second,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'year': year,
+      r'day': day,
+      r'hour': hour,
+      r'minute': minute,
+      r'month': month,
+      r'second': second,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Niveau>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/niveau/specific',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Niveau _value;
+    try {
+      _value = Niveau.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PaginatedPresCondList> getPresConds({
+    bool? enablePagination,
+    int? page,
+    int? perPage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'page': page,
+      r'per_page': perPage,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedPresCondList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/pres-cond/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedPresCondList _value;
+    try {
+      _value = PaginatedPresCondList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PresCond> getPresCond({required DateTime date}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PresCond>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/pres-cond/${date}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PresCond _value;
+    try {
+      _value = PresCond.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PresCond> getPresCondAtSpecificTime({
+    required int year,
+    int? day,
+    int? hour,
+    int? minute,
+    int? month,
+    int? second,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'year': year,
+      r'day': day,
+      r'hour': hour,
+      r'minute': minute,
+      r'month': month,
+      r'second': second,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PresCond>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/pres-cond/specific',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PresCond _value;
+    try {
+      _value = PresCond.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PaginatedVolumeList> getVolumes({
+    bool? enablePagination,
+    int? page,
+    int? perPage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'page': page,
+      r'per_page': perPage,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedVolumeList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/volume/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedVolumeList _value;
+    try {
+      _value = PaginatedVolumeList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Volume> getVolume({required DateTime date}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Volume>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/volume/${date}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Volume _value;
+    try {
+      _value = Volume.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Volume> getVolumeAtSpecificTime({
+    required int year,
+    int? day,
+    int? hour,
+    int? minute,
+    int? month,
+    int? second,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'year': year,
+      r'day': day,
+      r'hour': hour,
+      r'minute': minute,
+      r'month': month,
+      r'second': second,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Volume>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/volume/specific',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Volume _value;
+    try {
+      _value = Volume.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PaginatedSucreList> getSucreList({
+    bool? enablePagination,
+    int? page,
+    int? perPage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'page': page,
+      r'per_page': perPage,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedSucreList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/siroperie/sucre/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedSucreList _value;
+    try {
+      _value = PaginatedSucreList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Sucre> getSucre({required DateTime date}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Sucre>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/siroperie/sucre/${date}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Sucre _value;
+    try {
+      _value = Sucre.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<FeedMetaData> getSucreMetaData() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<FeedMetaData>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/siroperie/sucre/meta',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late FeedMetaData _value;
+    try {
+      _value = FeedMetaData.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Sucre> getSucreAtSpecificTime({
+    required int year,
+    int? day,
+    int? hour,
+    int? minute,
+    int? month,
+    int? second,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'year': year,
+      r'day': day,
+      r'hour': hour,
+      r'minute': minute,
+      r'month': month,
+      r'second': second,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Sucre>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/siroperie/sucre/specific',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Sucre _value;
+    try {
+      _value = Sucre.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -595,15 +1854,20 @@ class _IbdmApiClient implements IbdmApiClient {
   Future<Role> addRole({
     required int groupId,
     required List<String> managedRoles,
+    String? color,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
     _data.fields.add(MapEntry('group_id', groupId.toString()));
     managedRoles.forEach((i) {
       _data.fields.add(MapEntry('managed_roles', i));
     });
+    if (color != null) {
+      _data.fields.add(MapEntry('color', color));
+    }
     final _options = _setStreamType<Role>(
       Options(
         method: 'POST',
@@ -662,15 +1926,20 @@ class _IbdmApiClient implements IbdmApiClient {
     required int id,
     required int groupId,
     required List<String> managedRoles,
+    String? color,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
     _data.fields.add(MapEntry('group_id', groupId.toString()));
     managedRoles.forEach((i) {
       _data.fields.add(MapEntry('managed_roles', i));
     });
+    if (color != null) {
+      _data.fields.add(MapEntry('color', color));
+    }
     final _options = _setStreamType<Role>(
       Options(
         method: 'PUT',
@@ -702,6 +1971,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required int id,
     int? groupId,
     List<String>? managedRoles,
+    String? color,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -714,6 +1984,9 @@ class _IbdmApiClient implements IbdmApiClient {
     managedRoles?.forEach((i) {
       _data.fields.add(MapEntry('managed_roles', i));
     });
+    if (color != null) {
+      _data.fields.add(MapEntry('color', color));
+    }
     final _options = _setStreamType<Role>(
       Options(
         method: 'PATCH',
@@ -959,6 +2232,36 @@ class _IbdmApiClient implements IbdmApiClient {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     await _dio.fetch<void>(_options);
+  }
+
+  @override
+  Future<GetSubordinateAndSuperiorIdResponse> getSubordinateAndSuperiorId({
+    required int subordinate,
+    required int superior,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetSubordinateAndSuperiorIdResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/user-management/subordinates_superiors/${subordinate}/${superior}/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetSubordinateAndSuperiorIdResponse _value;
+    try {
+      _value = GetSubordinateAndSuperiorIdResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override

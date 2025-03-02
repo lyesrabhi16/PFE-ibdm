@@ -326,11 +326,113 @@
     "me": "Me",
     "@me": {
         "description": "Me section title"
-    },
+    },"siroperieTitle": "Siroperie",
+	"january": "January",
+	"february": "February",
+	"march": "March",
+	"april": "April",
+	"may": "May",
+	"june": "June",
+	"july": "July",
+	"august": "August",
+	"september": "September",
+	"october": "October",
+	"november": "November",
+	"december": "December",
+	"year": "Year : {year}",
+	"@year": {
+		"placeholders": {
+			"year": {
+				"type": "int",
+				"description": "the year to display",
+				"example": "2025"
+			}
+		}
+	},
+	"month": "Month: {month}",
+	"@month": {
+		"placeholders": {
+			"month": {
+				"type": "String",
+				"description": "the month to display",
+				"example": "july"
+			}
+		}
+	},
+	"day": "Day: {day}",
+	"@day": {
+		"placeholders": {
+			"day": {
+				"type": "String",
+				"description": "the day to display",
+				"example": "17"
+			}
+		}
+	}
+	,
+	"hour": "Hour: {hour}",
+	"@hour": {
+		"placeholders": {
+			"hour": {
+				"type": "String",
+				"description": "the hour to display",
+				"example": "17"
+			}
+		}
+	}
+	,
+	"minute": "Minute: {minute}",
+	"@minute": {
+		"placeholders": {
+			"minute": {
+				"type": "String",
+				"description": "the minute to display",
+				"example": "17"
+			}
+		}
+	}
+	,
+	"second": "Second: {second}",
+	"@second": {
+		"placeholders": {
+			"second": {
+				"type": "String",
+				"description": "the second to display",
+				"example": "17"
+			}
+		}
+	},
+	"totalSucre": "Sucre Total :",
+	"totalSucreTetra": "Sucre Total Tetra :",
+	"totalSucreAdue": "Sucre Total Adue:",
+	"sucreTetraTitle": "Sucre Tetra",
+	"sucreAdueTitle": "Sucre Adue",
+	"showLiveData": "show Live Data",
+	"showingLiveData": "showing Live Data",
+	"inventory": "inventory",
+	"inventoryDescription": "show the inventory of a specific day.",
+	"cuve": "cuve",
+	"failedToGetInventory": "Failed to get inventory",
+	"toOrder": "To Order",
+	"tank": "{count, plural, one {Tank} other {Tanks}}",
+	"@tank": {
+		"placeholders": {
+			"count": {
+				"type": "int",
+				"description": "the number of tanks",
+				"example": "5"
+			}
+		}
+	},
+        "filtrationTitle": "Filtration",
+        "eauBrute": "Eau Brute",
+        "eauFiltrer": "Eau Filtrée",
+        "eauOsmose": "Eau Osmosée",
     "settings": "Settings",
     "lightmode": "Light mode",
     "darkmode": "Dark mode",
     "language": "Language",
     "helpAssistance": "Help and Assistance",
     "about": "About"
+        
 }

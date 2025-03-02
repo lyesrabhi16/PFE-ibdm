@@ -9,14 +9,12 @@ part 'subordinate_and_superior.g.dart';
 @JsonSerializable()
 class SubordinateAndSuperior {
   const SubordinateAndSuperior({
-    required this.url,
     required this.superior,
     required this.subordinate,
   });
   
   factory SubordinateAndSuperior.fromJson(Map<String, Object?> json) => _$SubordinateAndSuperiorFromJson(json);
   
-  final String url;
   final int superior;
   final int subordinate;
 

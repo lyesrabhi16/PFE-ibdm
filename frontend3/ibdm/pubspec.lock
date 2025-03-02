@@ -509,6 +509,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  geekyants_flutter_gauges:
+    dependency: "direct main"
+    description:
+      name: geekyants_flutter_gauges
+      sha256: "75de8caf0b067931b8da09548cef858c750c59f8390de4411d329eba257ba9c3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   get:
     dependency: "direct main"
     description:
@@ -1363,13 +1371,21 @@ packages:
     source: hosted
     version: "0.1.6"
   web_socket_channel:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: web_socket_channel
       sha256: "0b8e2457400d8a859b7b2030786835a28a8e80836ef64402abef392ff4f1d0e5"
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  widget_arrows:
+    dependency: "direct main"
+    description:
+      name: widget_arrows
+      sha256: bbac0e0a309ed75d195747e7f932c43bce55f645f6a657a9e70b2fe8f9f80926
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.0"
   win32:
     dependency: transitive
     description:

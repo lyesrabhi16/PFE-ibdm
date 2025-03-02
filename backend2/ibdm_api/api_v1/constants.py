@@ -16,6 +16,11 @@ class ErrorCodes:
         code="invalid_credentials"
     )
 
+    NOT_FOUND = ErrorCode(
+        status_code=404,
+        code="not_found"
+    )
+    
     @classmethod
     def getChoices(cls):
         codes = []

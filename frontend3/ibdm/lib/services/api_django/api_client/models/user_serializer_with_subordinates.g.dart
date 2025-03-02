@@ -9,7 +9,6 @@ part of 'user_serializer_with_subordinates.dart';
 UserSerializerWithSubordinates _$UserSerializerWithSubordinatesFromJson(
         Map<String, dynamic> json) =>
     UserSerializerWithSubordinates(
-      url: json['url'] as String,
       userId: (json['user_id'] as num).toInt(),
       email: json['email'] as String,
       username: json['username'] as String,
@@ -22,7 +21,6 @@ UserSerializerWithSubordinates _$UserSerializerWithSubordinatesFromJson(
 Map<String, dynamic> _$UserSerializerWithSubordinatesToJson(
         UserSerializerWithSubordinates instance) =>
     <String, dynamic>{
-      'url': instance.url,
       'user_id': instance.userId,
       'email': instance.email,
       'username': instance.username,

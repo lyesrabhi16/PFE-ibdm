@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/side_menu_state_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/actions_row.dart';
+import 'package:ibdm/pages/filtration.dart/filtration.dart';
+import 'package:ibdm/pages/siroperie/siroperie.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
@@ -17,8 +19,22 @@ class SideMenuContainer extends StatelessWidget {
 
   static final SideMenuController controller = SideMenuController();
   final Widget child;
-  static void onItemTap(int index) {
-    logger.d("index: $index");
+  static void onNavigationChanged({int? index, String? route}) {
+    if ((route != Routes.siroperie || Get.currentRoute != Routes.siroperie) &&
+        SiroperiePage.stream != null) {
+      logger.e("closing siroperie channel");
+      SiroperiePage.channel!.sink.close();
+      SiroperiePage.stream = null;
+    }
+
+    if ((route != Routes.filtration || Get.currentRoute != Routes.filtration) &&
+        (FiltrationPage.stream != null)) {
+      logger.e("closing filtration channel");
+      FiltrationPage.channel!.sink.close();
+      FiltrationPage.stream = null;
+    }
+    logger.d(
+        "index: $index ${Get.currentRoute} ${Destination.getDestinationsMap(Get.context!)[Get.currentRoute]?.title}");
   }
 
   static SideMenuStateController sideMenuStateController =
@@ -28,12 +44,12 @@ class SideMenuContainer extends StatelessWidget {
   static bool get open => sideMenuStateController.isOpen;
   static set open(bool value) => sideMenuStateController.isOpen = value;
 
-  static Rx<SideMenuDisplayMode> displayMode = SideMenuDisplayMode.auto.obs;
+  static Rx<SideMenuDisplayMode> displayMode = SideMenuDisplayMode.compact.obs;
 
   @override
   Widget build(BuildContext context) {
     if (!_added) {
-      controller.addListener(onItemTap);
+      controller.addListener((index) => onNavigationChanged(index: index));
       _added = true;
     }
     final strings = getTranslations(context).obs;

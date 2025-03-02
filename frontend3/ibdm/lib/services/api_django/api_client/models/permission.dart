@@ -9,7 +9,6 @@ part 'permission.g.dart';
 @JsonSerializable()
 class Permission {
   const Permission({
-    required this.url,
     required this.permissionId,
     required this.name,
     required this.codename,
@@ -18,7 +17,6 @@ class Permission {
   
   factory Permission.fromJson(Map<String, Object?> json) => _$PermissionFromJson(json);
   
-  final String url;
   @JsonKey(name: 'permission_id')
   final int permissionId;
   final String name;

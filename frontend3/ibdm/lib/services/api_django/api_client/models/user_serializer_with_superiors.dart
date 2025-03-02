@@ -11,7 +11,6 @@ part 'user_serializer_with_superiors.g.dart';
 @JsonSerializable()
 class UserSerializerWithSuperiors {
   const UserSerializerWithSuperiors({
-    required this.url,
     required this.userId,
     required this.email,
     required this.username,
@@ -20,7 +19,6 @@ class UserSerializerWithSuperiors {
   
   factory UserSerializerWithSuperiors.fromJson(Map<String, Object?> json) => _$UserSerializerWithSuperiorsFromJson(json);
   
-  final String url;
   @JsonKey(name: 'user_id')
   final int userId;
   final String email;

@@ -18,6 +18,10 @@ django-filter = "*"
 python-decouple = "*"
 django-crispy-forms = "*"
 daphne = "*"
+channels-redis = "*"
+apscheduler = "*"
+django-tailwind = "*"
+openpyxl = "*"
 
 [requires]
 python_version = "3.12.9"

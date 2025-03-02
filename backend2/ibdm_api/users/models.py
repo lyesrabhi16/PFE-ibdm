@@ -62,7 +62,8 @@ class UserManager(BaseUserManager):
 
 class Role(models.Model):
     group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name="role", unique=True)
-    managed_roles = models.ManyToManyField("Role")
+    color = models.CharField(max_length=7, default="#000000")
+    managed_roles = models.ManyToManyField("Role", blank=True)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -111,4 +112,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.email}"
 
+    def has_perm(self, perm: str, obj: models.Model | None = None) -> bool:
+        
+        if self.is_superuser:
+            return True
+        if self.role.group.permissions.filter(codename=perm).exists():
+            return True
+        if self.groups.filter(permissions__codename=perm).exists():
+            return True
+        if self.user_permissions.filter(codename=perm).exists():
+            return True
+        
+        return super().has_perm(perm, obj)
+
+    class Meta:
+        permissions = [
+            ('can_view_users_page', 'Can view users page'),
+            ('can_view_filtration_page', 'Can view filtration page'),
+            ('can_view_siroperie_page', 'Can view siroperie page'),
+            ('can_view_settings_page', 'Can view settings page'),
+        ]
     

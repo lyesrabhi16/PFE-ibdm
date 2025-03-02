@@ -5,12 +5,14 @@ from rest_framework.response import Response
 from rest_framework.decorators import permission_classes, api_view
 
 from django.contrib.auth import authenticate, login, logout
-from drf_spectacular.utils import extend_schema
-from app_auth.serializers import LoginRequestSerializer, LoginResponseSerializer
+from drf_spectacular.utils import extend_schema, inline_serializer
+from app_auth.serializers import HasPermResponseSerializer, LoginRequestSerializer, LoginResponseSerializer
 
 from api_v1.constants import ErrorCodes
 from api_v1.serializers import ErrorResponseSerializer, SuccessResponseSerializer
+from users.models import User
 from users.serializers import UserSerializer
+from rest_framework import serializers
 # Create your views here.
 
 
@@ -94,3 +96,22 @@ def get_current_user_info(request):
     return JsonResponse(
         UserSerializer(user, context={'request': request}).data
     )
+
+
+@extend_schema(tags=["Authentication"],
+               operation_id="hasPerm",
+               responses={
+                   200: HasPermResponseSerializer,
+                   400: HasPermResponseSerializer,
+               })
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def connected_user_has_perm(request, codename):
+    user : User = request.user
+    _has_perm = user.has_perm(codename)
+    return JsonResponse(
+        HasPermResponseSerializer({
+            "has_perm": _has_perm,
+        }).data, status= 200 if _has_perm else 403
+    )
+
