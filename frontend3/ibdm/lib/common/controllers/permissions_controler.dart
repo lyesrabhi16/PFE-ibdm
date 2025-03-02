@@ -17,21 +17,17 @@ class PermissionsController extends GetxController {
   bool? hasViewSettingsPagePerm;
 
   Future<void> loadPermissions() async {
-    try {
-      ready.value = false;
+    ready.value = false;
 
-      hasViewSiroperiePagePerm =
-          await _hasPermRequest(Permissions.viewSiroperiePage);
-      hasViewUsersPagePerm = await _hasPermRequest(Permissions.viewUsersPage);
-      hasViewFiltrationPagePerm =
-          await _hasPermRequest(Permissions.viewFiltrationPage);
-      hasViewSettingsPagePerm =
-          await _hasPermRequest(Permissions.viewSettingsPage);
-      logger.e("HasViewSettingsPagePerm: $hasViewSettingsPagePerm");
-      ready.value = true;
-    } catch (e) {
-      logger.e("Failed to get permissions: $e");
-    }
+    hasViewSiroperiePagePerm =
+        await _hasPermRequest(Permissions.viewSiroperiePage);
+    hasViewUsersPagePerm = await _hasPermRequest(Permissions.viewUsersPage);
+    hasViewFiltrationPagePerm =
+        await _hasPermRequest(Permissions.viewFiltrationPage);
+    hasViewSettingsPagePerm =
+        await _hasPermRequest(Permissions.viewSettingsPage);
+    logger.e("HasViewSettingsPagePerm: $hasViewSettingsPagePerm");
+    ready.value = true;
   }
 
   void resetPermissions() {
@@ -43,11 +39,16 @@ class PermissionsController extends GetxController {
   }
 
   Future<bool> _hasPermRequest(String perm) async {
-    final api = await ApiClientInstance.getApiClient();
-    final res = await api.hasPerm(codename: perm).catchError((e) {
-      return HasPermResponse.fromJson((e as DioException).response?.data);
-    });
-    return res.hasPerm;
+    try {
+      final api = await ApiClientInstance.getApiClient();
+      final res = await api.hasPerm(codename: perm).catchError((e) {
+        return HasPermResponse.fromJson((e as DioException).response?.data);
+      });
+      return res.hasPerm;
+    } catch (e) {
+      logger.e("Failed to get permission $perm: $e");
+      return false;
+    }
   }
 
   bool hasPerm(String permission) {

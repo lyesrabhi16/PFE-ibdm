@@ -66,3 +66,6 @@ class AlertEmail(models.Model):
     send_to_users = models.ManyToManyField("users.User", related_name="users", blank=True)
     send_to_roles = models.ManyToManyField("users.Role", related_name="roles", blank=True)
     enabled = models.BooleanField(default=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"ALERT: {self.monitored_value} - danger: {self.danger_point} - warning: {self.warning_point}"

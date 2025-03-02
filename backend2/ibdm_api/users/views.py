@@ -76,7 +76,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if sub_sup.exists():
             subordinates = [s.subordinate for s in sub_sup]
             qs = qs.filter(id__in=[u.id for u in subordinates])
-        return qs
+            return qs
+        return qs.filter(id=self.request.user.id)
     
 
 @with_operation_ids(
