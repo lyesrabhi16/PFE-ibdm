@@ -326,5 +326,11 @@
     "me": "Me",
     "@me": {
         "description": "Me section title"
-    }
+    },
+    "settings": "Settings",
+    "lightmode": "Light mode",
+    "darkmode": "Dark mode",
+    "language": "Language",
+    "helpAssistance": "Help and Assistance",
+    "about": "About"
 }
