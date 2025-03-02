@@ -4,12 +4,16 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
 import 'package:ibdm/pages/filtration.dart/filtration.dart';
+import 'package:ibdm/pages/AboutPage.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
 import 'package:ibdm/common/middlewares/protected_route_middleware.dart';
 import 'package:ibdm/pages/settings.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
 import 'package:ibdm/pages/users.dart';
+import 'package:ibdm/pages/EmailSettingsPage.dart';
+import 'package:ibdm/pages/AboutPage.dart';
+import 'package:ibdm/pages/HelpPage.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -25,6 +29,9 @@ class Routes {
   static const String filtration = '/filtration';
   static const String settings = '/settings';
   static const String users = '/users';
+  static const String emailSettings = '/settings/emailsettings';
+  static const String about = '/settings/about';
+  static const String help = '/settings/help';
 
   static List<Destination> get destinations => [
         Destination(
@@ -59,6 +66,12 @@ class Routes {
         ).withPermission(Permissions.viewSettingsPage),
       ].nonNulls.toList();
 
+  static final custumRoutes = {
+    emailSettings: settings,
+    about: settings,
+    help: settings,
+  };
+
   static final route_pages = {
     Routes.home: GetPage(
       name: Routes.home,
@@ -70,6 +83,19 @@ class Routes {
       page: () => LoginPage(),
       middlewares: [RequireUnAuthenticatedRouteMiddleware()],
     ),
+    GetPage(
+      name: emailSettings,
+      page: () => EmailSettingsPage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    GetPage(
+        name: about,
+        page: () => Aboutpage(),
+        middlewares: [ProtectedRouteMiddleware()]),
+    GetPage(
+        name: help,
+        page: () => Helppage(),
+        middlewares: [ProtectedRouteMiddleware()]),
     Routes.siroperie: GetPage(
       name: Routes.siroperie,
       page: () => SiroperiePage(),

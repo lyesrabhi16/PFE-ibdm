@@ -424,5 +424,17 @@
 	"filtrationTitle": "Filtration",
 	"eauBrute": "Eau Brute",
 	"eauFiltrer": "Eau Filtrée",
-	"eauOsmose": "Eau Osmosée"
+	"eauOsmose": "Eau Osmosée",
+    "settings": "Paramètres",
+    "lightmode": "Mode clair",
+    "darkmode": "Mode sombre",
+    "language": "Langue",
+    "helpAssistance": "Aide et Assistance",
+    "about": "À propos",
+    "settings": "Paramètres",
+    "lightmode": "Mode clair",
+    "darkmode": "Mode sombre",
+    "language": "Langue",
+    "helpAssistance": "Aide et Assistance",
+    "about": "À propos"
 }
