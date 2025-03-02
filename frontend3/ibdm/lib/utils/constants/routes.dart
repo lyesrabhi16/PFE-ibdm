@@ -12,7 +12,6 @@ import 'package:ibdm/pages/settings.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
 import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/pages/EmailSettingsPage.dart';
-import 'package:ibdm/pages/AboutPage.dart';
 import 'package:ibdm/pages/HelpPage.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
@@ -38,41 +37,41 @@ class Routes {
           title: "Home",
           icon: Icons.home,
           route: Routes.home,
-          page: route_pages[Routes.home]!,
+          page: routePages[Routes.home]!,
         ),
         Destination(
           title: "Users",
           icon: Icons.people,
           route: Routes.users,
-          page: route_pages[Routes.users]!,
+          page: routePages[Routes.users]!,
         ).withPermission(Permissions.viewUsersPage),
         Destination(
           title: "Siroperie",
           icon: LucideIcons.boxes,
           route: Routes.siroperie,
-          page: route_pages[Routes.siroperie]!,
+          page: routePages[Routes.siroperie]!,
         ).withPermission(Permissions.viewSiroperiePage),
         Destination(
           title: "Filtration",
           icon: Icons.battery_full_outlined,
           route: Routes.filtration,
-          page: route_pages[Routes.filtration]!,
+          page: routePages[Routes.filtration]!,
         ).withPermission(Permissions.viewFiltrationPage),
         Destination(
           title: "Settings",
           icon: Icons.settings,
           route: Routes.settings,
-          page: route_pages[Routes.settings]!,
+          page: routePages[Routes.settings]!,
         ).withPermission(Permissions.viewSettingsPage),
       ].nonNulls.toList();
 
-  static final custumRoutes = {
+  static final customRoutes = {
     emailSettings: settings,
     about: settings,
     help: settings,
   };
 
-  static final route_pages = {
+  static final routePages = {
     Routes.home: GetPage(
       name: Routes.home,
       page: () => Home(),
@@ -83,16 +82,16 @@ class Routes {
       page: () => LoginPage(),
       middlewares: [RequireUnAuthenticatedRouteMiddleware()],
     ),
-    GetPage(
+    Routes.emailSettings: GetPage(
       name: emailSettings,
       page: () => EmailSettingsPage(),
       middlewares: [ProtectedRouteMiddleware()],
     ),
-    GetPage(
+    Routes.about: GetPage(
         name: about,
         page: () => Aboutpage(),
         middlewares: [ProtectedRouteMiddleware()]),
-    GetPage(
+    Routes.help: GetPage(
         name: help,
         page: () => Helppage(),
         middlewares: [ProtectedRouteMiddleware()]),
@@ -118,5 +117,5 @@ class Routes {
     ),
   };
 
-  static List<GetPage> router = route_pages.values.toList();
+  static List<GetPage> router = routePages.values.toList();
 }

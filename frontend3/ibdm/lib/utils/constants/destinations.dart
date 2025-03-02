@@ -28,7 +28,7 @@ class Destination {
       destMap[dest.route] = dest;
     }
 
-    for (var e in Routes.custumRoutes.entries) {
+    for (var e in Routes.customRoutes.entries) {
       Destination dest = destMap[e.value]!;
       destMap[e.key] = dest;
     }
