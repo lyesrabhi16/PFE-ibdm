@@ -26,3 +26,9 @@ class AlertEmailSerializer(serializers.ModelSerializer):
     class Meta:
         model = AlertEmail
         fields = "__all__"
+
+
+class PossibleMonitorValuesAlertEmailsSerializer(serializers.Serializer):
+    all_values = serializers.ListField(child=serializers.CharField())
+    monitored_values = serializers.ListField(child=serializers.CharField())
+    possible_values = serializers.ListField(child=serializers.CharField())

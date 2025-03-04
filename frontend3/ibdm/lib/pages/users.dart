@@ -404,9 +404,7 @@ class UsersPage extends StatelessWidget {
                               verticalDirection: VerticalDirection.down,
                               children: [
                                 SearchBar(
-                                  onChanged: (value) async {
-                                    await ApiClientInstance.getApiClient();
-                                  },
+                                  controller: _searchController,
                                   onSubmitted: (_) => _loadUsers(context),
                                   onTapOutside: (_) => _loadUsers(context),
                                   constraints: BoxConstraints(

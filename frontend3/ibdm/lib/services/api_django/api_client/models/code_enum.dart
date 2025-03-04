@@ -6,12 +6,15 @@ import 'package:json_annotation/json_annotation.dart';
 
 /// * `invalid_input` - invalid_input.
 /// * `invalid_credentials` - invalid_credentials.
+/// * `not_found` - not_found.
 @JsonEnum()
 enum CodeEnum {
   @JsonValue('invalid_input')
   invalidInput('invalid_input'),
   @JsonValue('invalid_credentials')
   invalidCredentials('invalid_credentials'),
+  @JsonValue('not_found')
+  notFound('not_found'),
   /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
   $unknown(null);
 

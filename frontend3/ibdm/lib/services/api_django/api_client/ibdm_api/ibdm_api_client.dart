@@ -9,6 +9,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../models/alert_email.dart';
+import '../models/alert_enum.dart';
 import '../models/debit.dart';
 import '../models/email_schedule.dart';
 import '../models/feed_meta_data.dart';
@@ -19,7 +20,6 @@ import '../models/has_perm_response.dart';
 import '../models/interval_enum.dart';
 import '../models/lang.dart';
 import '../models/login_response.dart';
-import '../models/monitored_value_enum.dart';
 import '../models/niveau.dart';
 import '../models/paginated_alert_email_list.dart';
 import '../models/paginated_debit_list.dart';
@@ -35,6 +35,7 @@ import '../models/paginated_sucre_list.dart';
 import '../models/paginated_user_list.dart';
 import '../models/paginated_volume_list.dart';
 import '../models/permission.dart';
+import '../models/possible_monitor_values_alert_emails.dart';
 import '../models/pres_cond.dart';
 import '../models/rapport_enum.dart';
 import '../models/role.dart';
@@ -106,7 +107,7 @@ abstract class IbdmApiClient {
   @POST('/api/v1/emails/alerts/')
   Future<AlertEmail> addAlertEmail({
     @Part(name: 'send_to_users') required List<String> sendToUsers,
-    @Part(name: 'monitored_value') required MonitoredValueEnum monitoredValue,
+    @Part(name: 'monitored_value') required AlertEnum monitoredValue,
     @Part(name: 'danger_point') int? dangerPoint,
     @Part(name: 'warning_point') int? warningPoint,
     @Part(name: 'danger_reminder_interval') int? dangerReminderInterval,
@@ -128,7 +129,7 @@ abstract class IbdmApiClient {
   Future<AlertEmail> updateAlertEmail({
     @Path('id') required int id,
     @Part(name: 'send_to_users') required List<String> sendToUsers,
-    @Part(name: 'monitored_value') required MonitoredValueEnum monitoredValue,
+    @Part(name: 'monitored_value') required AlertEnum monitoredValue,
     @Part(name: 'danger_point') int? dangerPoint,
     @Part(name: 'warning_point') int? warningPoint,
     @Part(name: 'danger_reminder_interval') int? dangerReminderInterval,
@@ -144,7 +145,7 @@ abstract class IbdmApiClient {
   Future<AlertEmail> partialUpdateAlertEmail({
     @Path('id') required int id,
     @Part(name: 'send_to_users') List<String>? sendToUsers,
-    @Part(name: 'monitored_value') MonitoredValueEnum? monitoredValue,
+    @Part(name: 'monitored_value') AlertEnum? monitoredValue,
     @Part(name: 'danger_point') int? dangerPoint,
     @Part(name: 'warning_point') int? warningPoint,
     @Part(name: 'danger_reminder_interval') int? dangerReminderInterval,
@@ -159,6 +160,10 @@ abstract class IbdmApiClient {
   Future<void> destroyAlertEmail({
     @Path('id') required int id,
   });
+
+  /// Get possible monitor values for alert emails
+  @GET('/api/v1/emails/monitored-values')
+  Future<PossibleMonitorValuesAlertEmails> getPossibleMonitorValuesAlertEmails();
 
   /// [enablePagination] - Enable or disable pagination.
   ///
@@ -725,4 +730,8 @@ abstract class IbdmApiClient {
   Future<void> removeUser({
     @Path('id') required int id,
   });
+
+  /// Get the CA certificate
+  @GET('/ca')
+  Future<String> getCA();
 }

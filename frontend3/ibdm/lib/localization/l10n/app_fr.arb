@@ -431,10 +431,14 @@
     "language": "Langue",
     "helpAssistance": "Aide et Assistance",
     "about": "À propos",
-    "settings": "Paramètres",
-    "lightmode": "Mode clair",
-    "darkmode": "Mode sombre",
-    "language": "Langue",
-    "helpAssistance": "Aide et Assistance",
-    "about": "À propos"
+	"emailSchedules": "Emails Cycliques",
+	"emailSchedulesDescription": "Emails envoyés a des intervalles réguliers.",
+	"emailAlerts": "Emails D'Alertes",
+	"emailAlertsDescription": "Emails envoyés quand des valuers Surveillée attients certain points.",
+	"monitored": "Surveillée",
+	"danger": "Danger",
+	"warning": "Avertissement",
+	"active" : "Actif",
+	"addAlertEmail": "Ajouter un Email D'Alerte",
+	"addScheduleEmail": "Ajouter un Email Cyclique"
 }

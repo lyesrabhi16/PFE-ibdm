@@ -1,0 +1,175 @@
+name: site2 
+
+services:
+  site2_shard_1:
+    container_name: site2_shard_1
+    image: mongo
+    env_file: .env
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /etc/mongo/keyfile
+        chown 999:999 /etc/mongo/keyfile
+        echo "SITE2: Starting mongod..."
+        mongod --logpath /data/db/mongod.log --keyFile /etc/mongo/keyfile --shardsvr --replSet site2rs --bind_ip 0.0.0.0 --port 27017 --dbpath /data/db &
+        echo "SITE2: Waiting for mongod to start...30 seconds"
+        sleep 30
+        echo "SITE2: initiating replicaSet..."
+        mongosh --eval "rs.initiate(
+              {
+                _id:'site2rs',
+                members:[
+                  {_id: 0, host:'site2_shard_1', priority: 2},
+                  {_id: 1, host:'site2_shard_2', priority: 1},
+                  {_id: 2, host:'site2_shard_3', priority: 1}
+                ]
+              }
+        )"
+        echo "SITE2: Waiting for rs.initiate to complete...10 seconds"
+        sleep 10
+        echo "SITE2: rs.initiate completed"
+        echo "SITE2: Creating local admin user..."
+        echo '
+            rs.status()
+            use admin
+            db.createUser(
+              {
+                  user: "${SITE2_LOCAL_ADMIN_USER}",
+                  pwd: "${SITE2_LOCAL_ADMIN_PASS}",
+                  roles: [
+                      {
+                          role: "root",
+                          db: "admin"
+                      },
+                      {
+                          role: "clusterAdmin",
+                          db: "admin"
+                      },
+                      {
+                          role: "readAnyDatabase",
+                          db: "admin"
+                      },
+                      {
+                          role: "readWriteAnyDatabase",
+                          db: "admin"
+                      },
+                      {
+                          role: "userAdminAnyDatabase",
+                          db: "admin"
+                      }
+                  ]
+              }
+            )
+            exit
+        ' > /tmp/create_local_admin.js
+        mongosh < /tmp/create_local_admin.js
+        sleep 5
+        mongosh < /tmp/create_local_admin.js
+ 
+        echo "SITE2: tail mongod.log"
+        tail -f /data/db/mongod.log
+    ports:
+      - 40201:27017
+    volumes:
+      - site2_shard_1:/data/db
+      - ./files:/etc/mongo
+    networks:
+      - ibdm-mongo-cluster
+    depends_on:
+      site2_shard_2:
+        condition: service_healthy
+      site2_shard_3:
+        condition: service_healthy
+    healthcheck:
+      test: "mongosh -u ${SITE2_LOCAL_ADMIN_USER} -p ${SITE2_LOCAL_ADMIN_PASS} --eval 'rs.status()' site2_shard_1:27017"
+      interval: 30s
+      timeout: 10s
+      retries: 2
+    restart: on-failure:3
+      
+  site2_shard_2:
+    container_name: site2_shard_2
+    image: mongo
+    env_file: .env
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /etc/mongo/keyfile
+        chown 999:999 /etc/mongo/keyfile
+        exec docker-entrypoint.sh $$@
+    command: mongod --keyFile /etc/mongo/keyfile --shardsvr --replSet site2rs --bind_ip 0.0.0.0 --port 27017 --dbpath /data/db
+    ports:
+      - 40202:27017
+    volumes:
+      - site2_shard_2:/data/db
+      - ./files:/etc/mongo
+    networks:
+      - ibdm-mongo-cluster
+    healthcheck:
+      test: mongosh --eval "db.runCommand('ping').ok" site2_shard_2:27017
+      interval: 10s
+      timeout: 10s
+      retries: 2
+
+  site2_shard_3:
+    container_name: site2_shard_3
+    image: mongo
+    env_file: .env
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /etc/mongo/keyfile
+        chown 999:999 /etc/mongo/keyfile
+        exec docker-entrypoint.sh $$@
+    command: mongod --keyFile /etc/mongo/keyfile --shardsvr --replSet site2rs --bind_ip 0.0.0.0 --port 27017 --dbpath /data/db
+    ports:
+      - 40203:27017
+    volumes:
+      - site2_shard_3:/data/db
+      - ././files:/etc/mongo
+    networks:
+      - ibdm-mongo-cluster
+    healthcheck:
+      test: mongosh --eval "db.runCommand('ping').ok" site2_shard_3:27017
+      interval: 10s
+      timeout: 10s
+      retries: 2
+
+  site3_shard_4:
+    container_name: site3_shard_4
+    image: mongo
+    env_file: .env
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /etc/mongo/keyfile
+        chown 999:999 /etc/mongo/keyfile
+        exec docker-entrypoint.sh $$@
+    command: mongod --keyFile /etc/mongo/keyfile --shardsvr --replSet site3rs --bind_ip 0.0.0.0 --port 27017 --dbpath /data/db
+    ports:
+      - 40304:27017
+    volumes:
+      - site3_shard_4:/data/db
+      - ./files:/etc/mongo
+    networks:
+      - ibdm-mongo-cluster
+    healthcheck:
+      test: mongosh -u ${SITE3_LOCAL_ADMIN_USER} -p ${SITE3_LOCAL_ADMIN_PASS} --eval "rs.status()" site3_shard_4:27017
+      interval: 10s
+      timeout: 10s
+      retries: 2
+
+volumes:
+  site2_shard_1: {}
+  site2_shard_2: {}
+  site2_shard_3: {}
+  site3_shard_4: {}
+
+networks:
+  ibdm-mongo-cluster:
+    driver: bridge
+    name: ibdm-mongo-cluster

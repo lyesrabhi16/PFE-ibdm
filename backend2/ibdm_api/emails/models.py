@@ -1,5 +1,39 @@
 from django.db import models
 
+
+ALL_MONITORED_VALUES = (
+    #sucre
+    ("sucre.t_s21", "sucre.t_s21"), ("sucre.t_s22", "sucre.t_s21"), ("sucre.t_s23", "sucre.t_s23"), ("sucre.t_s24", "sucre.t_s24"), ("sucre.t_s25", "sucre.t_s25"),
+    ("sucre.t02", "sucre.t02"), ("sucre.t03", "sucre.t03"), ("sucre.t04", "sucre.t04"), ("sucre.t05", "sucre.t05"), ("sucre.t06", "sucre.t06"),
+    
+    #niveau
+    ("niveau.niv_f1", "niveau.niv_f2"), ("niveau.niv_uf1", "niveau.niv_uf1"), ("niveau.niv_uf2", "niveau.niv_uf2"), ("niveau.niv_os1", "niveau.niv_os1"),
+    ("niveau.niv_os2", "niveau.niv_os2"), ("niveau.niv_os3", "niveau.niv_os3"), ("niveau.niv_os4", "niveau.niv_os4"), ("niveau.niv_os5", "niveau.niv_os5"),
+    ("niveau.niv_os6", "niveau.niv_os6"), ("niveau.niv_os7", "niveau.niv_os7"),
+    
+    #debit
+    ("debit.d_F1", "debit.d_F1"), ("debit.d_uf1", "debit.d_uf1"), ("debit.d_uf2", "debit.d_uf2"), ("debit.d_uf3", "debit.d_uf3"), ("debit.d_uf4", "debit.d_uf4"),("debit.d_uf5", "debit.d_uf5"),("debit.d_uf6", "debit.d_uf6"), ("debit.d_os1", "debit.d_os1"),
+    ("debit.d_os2", "debit.d_os2"), ("debit.d_os3", "debit.d_os3"), ("debit.d_os4", "debit.d_os4"), ("debit.d_os5", "debit.d_os5"),
+    ("debit.d_os6", "debit.d_os6"), ("debit.d_os7", "debit.d_os7"), ("debit.d_os8", "debit.d_os8"), ("debit.d_os9", "debit.d_os9"),
+    
+    #pres cond
+    ("Pres_Cond.p_uf", "Pres_Cond.p_uf"), ("Pres_Cond.p_uf4", "Pres_Cond.p_uf4"), ("Pres_Cond.p_uf6", "Pres_Cond.p_uf6"), ("Pres_Cond.p_os1", "Pres_Cond.p_os1"),
+    ("Pres_Cond.p_os2", "Pres_Cond.p_os2"), ("Pres_Cond.p_os3", "Pres_Cond.p_os3"), ("Pres_Cond.p_os4", "Pres_Cond.p_os4"), ("Pres_Cond.p_os5", "Pres_Cond.p_os5"),
+    ("Pres_Cond.p_os6", "Pres_Cond.p_os6"), ("Pres_Cond.p_os7", "Pres_Cond.p_os7"),("Pres_Cond.p_os71", "Pres_Cond.p_os71"), ("Pres_Cond.p_os8", "Pres_Cond.p_os8"), ("Pres_Cond.p_os9", "Pres_Cond.p_os9"),
+    ("Pres_Cond.p_ose1", "Pres_Cond.p_ose1"), ("Pres_Cond.p_ose2", "Pres_Cond.p_ose2"), ("Pres_Cond.p_conc", "Pres_Cond.p_conc"),
+    ("Pres_Cond.c_uf", "Pres_Cond.c_uf"),("Pres_Cond.c_os1", "Pres_Cond.c_os1"),("Pres_Cond.c_os2", "Pres_Cond.c_os2"),("Pres_Cond.c_os3", "Pres_Cond.c_os3"),
+    ("Pres_Cond.c_os4", "Pres_Cond.c_os4"),("Pres_Cond.c_os5", "Pres_Cond.c_os5"),("Pres_Cond.c_os6", "Pres_Cond.c_os6"),("Pres_Cond.c_os7", "Pres_Cond.c_os7"),("Pres_Cond.c_os8", "Pres_Cond.c_os8"),("Pres_Cond.c_os9", "Pres_Cond.c_os9"),
+    ("Pres_Cond.c_ose", "Pres_Cond.c_ose"),
+    
+    #volume
+    ("volume.vol_for", "volume.vol_for"),("volume.vol_uf1", "volume.vol_uf1"),("volume.vol_uf2", "volume.vol_uf2"),
+    ("volume.vol_uf3", "volume.vol_uf3"),("volume.vol_uf4", "volume.vol_uf4"),("volume.vol_uf5", "volume.vol_uf5"),
+    ("volume.vol_uf6", "volume.vol_uf6"),("volume.vol_os1", "volume.vol_os1"),("volume.vol_os2", "volume.vol_os2"),
+    ("volume.vol_os3", "volume.vol_os3"),("volume.vol_os4", "volume.vol_os4"),("volume.vol_os5", "volume.vol_os5"),
+    ("volume.vol_os6", "volume.vol_os6"),("volume.vol_os7", "volume.vol_os7"),("volume.vol_os8", "volume.vol_os8"),
+    ("volume.vol_os9", "volume.vol_os9"),
+)
+
 # Create your models here.
 
 class EmailSchedule(models.Model):
@@ -34,28 +68,7 @@ class sentEmail(models.Model):
             return f"unknown email type with id: {self.pk}"
 
 class AlertEmail(models.Model):
-    monitored_value = models.CharField(max_length=255,choices=(("sucre.t_s21", "sucre.t_s21"), ("sucre.t_s22", "sucre.t_s21"), ("sucre.t_s23", "sucre.t_s23"), ("sucre.t_s24", "sucre.t_s24"), ("sucre.t_s25", "sucre.t_s25"),
-                                       ("sucre.t02", "sucre.t02"), ("sucre.t03", "sucre.t03"), ("sucre.t04", "sucre.t04"), ("sucre.t05", "sucre.t05"), ("sucre.t06", "sucre.t06"),
-                                       ("niveau.niv_f1", "niveau.niv_f2"), ("niveau.niv_uf1", "niveau.niv_uf1"), ("niveau.niv_uf2", "niveau.niv_uf2"), ("niveau.niv_os1", "niveau.niv_os1"),
-                                        ("niveau.niv_os2", "niveau.niv_os2"), ("niveau.niv_os3", "niveau.niv_os3"), ("niveau.niv_os4", "niveau.niv_os4"), ("niveau.niv_os5", "niveau.niv_os5"),
-                                        ("niveau.niv_os6", "niveau.niv_os6"), ("niveau.niv_os7", "niveau.niv_os7"),
-                                        ("debit.d_F1", "debit.d_F1"), ("debit.d_uf1", "debit.d_uf1"), ("debit.d_uf2", "debit.d_uf2"), ("debit.d_uf3", "debit.d_uf3"), ("debit.d_uf4", "debit.d_uf4"),("debit.d_uf5", "debit.d_uf5"),("debit.d_uf6", "debit.d_uf6"), ("debit.d_os1", "debit.d_os1"),
-                                        ("debit.d_os2", "debit.d_os2"), ("debit.d_os3", "debit.d_os3"), ("debit.d_os4", "debit.d_os4"), ("debit.d_os5", "debit.d_os5"),
-                                        ("debit.d_os6", "debit.d_os6"), ("debit.d_os7", "debit.d_os7"), ("debit.d_os8", "debit.d_os8"), ("debit.d_os9", "debit.d_os9"),
-                                        ("Pres_Cond.p_uf", "Pres_Cond.p_uf"), ("Pres_Cond.p_uf4", "Pres_Cond.p_uf4"), ("Pres_Cond.p_uf6", "Pres_Cond.p_uf6"), ("Pres_Cond.p_os1", "Pres_Cond.p_os1"),
-                                        ("Pres_Cond.p_os2", "Pres_Cond.p_os2"), ("Pres_Cond.p_os3", "Pres_Cond.p_os3"), ("Pres_Cond.p_os4", "Pres_Cond.p_os4"), ("Pres_Cond.p_os5", "Pres_Cond.p_os5"),
-                                        ("Pres_Cond.p_os6", "Pres_Cond.p_os6"), ("Pres_Cond.p_os7", "Pres_Cond.p_os7"),("Pres_Cond.p_os71", "Pres_Cond.p_os71"), ("Pres_Cond.p_os8", "Pres_Cond.p_os8"), ("Pres_Cond.p_os9", "Pres_Cond.p_os9"),
-                                        ("Pres_Cond.p_ose1", "Pres_Cond.p_ose1"), ("Pres_Cond.p_ose2", "Pres_Cond.p_ose2"), ("Pres_Cond.p_conc", "Pres_Cond.p_conc"),
-                                        ("Pres_Cond.c_uf", "Pres_Cond.c_uf"),("Pres_Cond.c_os1", "Pres_Cond.c_os1"),("Pres_Cond.c_os2", "Pres_Cond.c_os2"),("Pres_Cond.c_os3", "Pres_Cond.c_os3"),
-                                        ("Pres_Cond.c_os4", "Pres_Cond.c_os4"),("Pres_Cond.c_os5", "Pres_Cond.c_os5"),("Pres_Cond.c_os6", "Pres_Cond.c_os6"),("Pres_Cond.c_os7", "Pres_Cond.c_os7"),("Pres_Cond.c_os8", "Pres_Cond.c_os8"),("Pres_Cond.c_os9", "Pres_Cond.c_os9"),
-                                        ("Pres_Cond.c_ose", "Pres_Cond.c_ose"),
-                                        ("volume.vol_for", "volume.vol_for"),("volume.vol_uf1", "volume.vol_uf1"),("volume.vol_uf2", "volume.vol_uf2"),
-                                        ("volume.vol_uf3", "volume.vol_uf3"),("volume.vol_uf4", "volume.vol_uf4"),("volume.vol_uf5", "volume.vol_uf5"),
-                                        ("volume.vol_uf6", "volume.vol_uf6"),("volume.vol_os1", "volume.vol_os1"),("volume.vol_os2", "volume.vol_os2"),
-                                        ("volume.vol_os3", "volume.vol_os3"),("volume.vol_os4", "volume.vol_os4"),("volume.vol_os5", "volume.vol_os5"),
-                                        ("volume.vol_os6", "volume.vol_os6"),("volume.vol_os7", "volume.vol_os7"),("volume.vol_os8", "volume.vol_os8"),
-                                        ("volume.vol_os9", "volume.vol_os9"),
-    ))
+    monitored_value = models.CharField(max_length=255,choices=ALL_MONITORED_VALUES, unique=True)
     danger_point = models.IntegerField(default=10)
     warning_point = models.IntegerField(default=25)
     
@@ -69,3 +82,5 @@ class AlertEmail(models.Model):
 
     def __str__(self) -> str:
         return f"ALERT: {self.monitored_value} - danger: {self.danger_point} - warning: {self.warning_point}"
+
+

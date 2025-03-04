@@ -84,7 +84,7 @@ import 'package:json_annotation/json_annotation.dart';
 /// * `volume.vol_os8` - volume.vol_os8.
 /// * `volume.vol_os9` - volume.vol_os9.
 @JsonEnum()
-enum MonitoredValueEnum {
+enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `sucre.t_s21`.
   @JsonValue('sucre.t_s21')
   undefined0('sucre.t_s21'),
@@ -325,9 +325,9 @@ enum MonitoredValueEnum {
   /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
   $unknown(null);
 
-  const MonitoredValueEnum(this.json);
+  const AlertEnum(this.json);
 
-  factory MonitoredValueEnum.fromJson(String json) => values.firstWhere(
+  factory AlertEnum.fromJson(String json) => values.firstWhere(
         (e) => e.json == json,
         orElse: () => $unknown,
       );
