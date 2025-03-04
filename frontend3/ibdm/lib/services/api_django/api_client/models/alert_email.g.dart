@@ -19,7 +19,7 @@ AlertEmail _$AlertEmailFromJson(Map<String, dynamic> json) => AlertEmail(
           (json['warning_reminder_interval'] as num).toInt(),
       enabled: json['enabled'] as bool,
       sendToRoles: (json['send_to_roles'] as List<dynamic>)
-          .map((e) => (e as num).toInt())
+          .map((e) => (e as num?)?.toInt())
           .toList(),
       customAlertMessage: json['custom_alert_message'] as String?,
     );

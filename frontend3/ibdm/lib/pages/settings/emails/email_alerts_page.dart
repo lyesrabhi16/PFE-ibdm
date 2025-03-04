@@ -153,6 +153,16 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   }
 
   _showAddAlertEmailDialog() {
+    String? _addAlertCustomMessage;
+    String? _addAlertDangerAlertInterval;
+    String? _addAlertDangerPoint;
+    bool? _addAlertEnabled;
+    String? _addAlertMonitoredValue;
+    List<Role>? _addAlertRoles;
+    List<User>? _addAlertUsers;
+    String? _addAlertWarningAlertInterval;
+    String? _addAlertWarningPoint;
+
     return showShadDialog(
       context: context,
       builder: (context) {
@@ -169,11 +179,49 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               child: Text("Cancel"),
             ),
             ElevatedButton(
-              onPressed: () {},
-              child: Text("Save"),
+              onPressed: () {
+                api!.addAlertEmail(
+                  monitoredValue: AlertEnum.fromJson(_addAlertMonitoredValue!),
+                  dangerPoint: int.parse(_addAlertDangerPoint!),
+                  warningPoint: int.parse(_addAlertWarningPoint!),
+                  dangerReminderInterval: _addAlertDangerAlertInterval != null
+                      ? int.parse(_addAlertDangerAlertInterval!)
+                      : null,
+                  warningReminderInterval: _addAlertWarningAlertInterval != null
+                      ? int.parse(_addAlertWarningAlertInterval!)
+                      : null,
+                  customAlertMessage: _addAlertCustomMessage,
+                  enabled: _addAlertEnabled!,
+                  sendToUsers:
+                      _addAlertUsers!.map((e) => e.userId.toString()).toList(),
+                  sendToRoles: _addAlertRoles!.map((e) => e.roleId).toList(),
+                );
+              },
+              child: Text("Add"),
             )
           ],
-          child: AlertEmailForm(),
+          child: AlertEmailForm(
+            onValuesChanged: (
+                {customMessage,
+                dangerAlertInterval,
+                dangerPoint,
+                enabled,
+                monitoredValue,
+                roles,
+                users,
+                warningAlertInterval,
+                warningPoint}) {
+              _addAlertCustomMessage = customMessage;
+              _addAlertDangerAlertInterval = dangerAlertInterval;
+              _addAlertDangerPoint = dangerPoint;
+              _addAlertEnabled = enabled;
+              _addAlertMonitoredValue = monitoredValue;
+              _addAlertRoles = roles;
+              _addAlertUsers = users;
+              _addAlertWarningAlertInterval = warningAlertInterval;
+              _addAlertWarningPoint = warningPoint;
+            },
+          ),
         );
       },
     );
@@ -378,7 +426,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
 }
 
 class AlertEmailForm extends StatelessWidget {
-  AlertEmailForm({super.key, this.showIdField = false});
+  AlertEmailForm({super.key, this.showIdField = false, this.onValuesChanged});
 
   Function? _getContext;
 
@@ -386,11 +434,50 @@ class AlertEmailForm extends StatelessWidget {
 
   ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
 
+  final Function({
+    String? monitoredValue,
+    String? dangerPoint,
+    String? warningPoint,
+    String? dangerAlertInterval,
+    String? warningAlertInterval,
+    List<Role>? roles,
+    List<User>? users,
+    String? customMessage,
+    bool? enabled,
+  })? onValuesChanged;
+
+  _valuesChanged() {
+    onValuesChanged?.call(
+      monitoredValue: monitoredValueController.text,
+      dangerPoint: dangerPointController.text,
+      warningPoint: warningPointController.text,
+      dangerAlertInterval: dangerAlertIntervalController.text,
+      warningAlertInterval: warningAlertIntervalController.text,
+      roles: sendToRoles.toList(),
+      users: sendToUsers.toList(),
+      customMessage: customMessageController.text,
+      enabled: enabled,
+    );
+  }
+
+  final idController = TextEditingController();
+  final monitoredValueController = TextEditingController();
+  final dangerPointController = TextEditingController(text: "25000");
+  final warningPointController = TextEditingController(text: "50000");
+  final dangerAlertIntervalController = TextEditingController();
+  final warningAlertIntervalController = TextEditingController();
+  final sendToRoles = <Role>[];
+  final sendToUsers = <User>[];
+  final customMessageController = TextEditingController();
+  bool? enabled;
+
   late final strings = getTranslations(getContext).obs;
   final bool showIdField;
   final userController = Get.find<UserController>();
   IbdmApiClient? api;
   List<User> _users = [];
+  List<String> _possibleMonitorValues = [];
+  RxBool loaded = false.obs;
 
   _loadUsers() async {
     try {
@@ -406,13 +493,13 @@ class AlertEmailForm extends StatelessWidget {
     }
   }
 
-  RxBool loaded = false.obs;
   Future<void> load() async {
     if (loaded.value) {
       loaded.value = false;
     }
     api ??= await ApiClientInstance.getApiClient();
     await _loadUsers();
+    await _loadPossibleMonitorValues();
 
     loaded.value = true;
   }
@@ -431,204 +518,241 @@ class AlertEmailForm extends StatelessWidget {
         );
       }
 
-      return Form(
+      return ShadForm(
+          onChanged: _valuesChanged,
           child: Column(
-        children: [
-          SizedBox(height: AppSizes.lg),
-          if (showIdField)
-            ShadInputFormField(
-              label: Text("id"),
-            ),
-          SizedBox(height: AppSizes.sm),
-          Container(
-            constraints: BoxConstraints(
-              minWidth: context.width,
-            ),
-            child: ShadSelectFormField<String>(
-              options: [
-                ShadOption(
-                  value: "1",
-                  child: Text("Monitored Value"),
+            children: [
+              SizedBox(height: AppSizes.lg),
+              if (showIdField)
+                ShadInputFormField(
+                  controller: idController,
+                  label: Text("id"),
                 ),
-                ShadOption(
-                  value: "2",
-                  child: Text("Monitored Value 2"),
+              SizedBox(height: AppSizes.sm),
+              Container(
+                constraints: BoxConstraints(
+                  minWidth: context.width,
                 ),
-              ],
-              selectedOptionBuilder: (context, value) => Container(
-                  constraints: BoxConstraints(
-                    minWidth: context.width,
+                child: ShadSelectFormField<String>(
+                  options: _possibleMonitorValues.map(
+                    (value) => ShadOption(
+                      value: value,
+                      child: Text(value),
+                    ),
                   ),
-                  child: Text(value)),
-              initialValue: null,
-              placeholder: Container(
-                  constraints: BoxConstraints(
-                    minWidth: context.width,
+                  selectedOptionBuilder: (context, value) => Container(
+                      constraints: BoxConstraints(
+                        minWidth: context.width,
+                      ),
+                      child: Text(value)),
+                  initialValue: null,
+                  onChanged: (v) {
+                    monitoredValueController.text = v!;
+                    _valuesChanged();
+                  },
+                  placeholder: Container(
+                      constraints: BoxConstraints(
+                        minWidth: context.width,
+                      ),
+                      child: Text("Select a Value to Monitor")),
+                ),
+              ),
+              SizedBox(height: AppSizes.sm),
+              ShadInputFormField(
+                controller: dangerPointController,
+                label: Text("Danger Point"),
+                keyboardType: TextInputType.number,
+                initialValue: "1000",
+              ),
+              SizedBox(height: AppSizes.sm),
+              ShadInputFormField(
+                controller: warningPointController,
+                label: Text("Warning Point"),
+                keyboardType: TextInputType.number,
+                initialValue: "2500",
+              ),
+              SizedBox(height: AppSizes.sm),
+              ShadInputFormField(
+                controller: dangerAlertIntervalController,
+                label: Text("Danger Alert Interval (in days)"),
+                keyboardType: TextInputType.number,
+                initialValue: "1",
+              ),
+              SizedBox(height: AppSizes.sm),
+              ShadInputFormField(
+                controller: warningAlertIntervalController,
+                label: Text("Warning Alert Interval (in days)"),
+                keyboardType: TextInputType.number,
+                initialValue: "7",
+              ),
+              SizedBox(height: AppSizes.sm),
+              // tab panes to send based on users or roles
+              ShadTabs(value: "roles", tabs: [
+                ShadTab(
+                  value: "roles",
+                  content: ShadCard(
+                    child: Column(
+                      children: [
+                        Text("Send This Alert To Roles"),
+                        SizedBox(height: AppSizes.sm),
+                        ShadSelect<Role>.multiple(
+                          closeOnSelect: false,
+                          onChanged: (v) {
+                            sendToRoles.clear();
+                            sendToRoles.addAll(v);
+                            _valuesChanged();
+                          },
+                          anchor: ShadAnchorAuto(
+                            preferBelow: false,
+                          ),
+                          options: userController.roles.map(
+                            (r) => ShadOption(
+                              value: r,
+                              child: Text(r.name,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color:
+                                            AppColors.getRoleColorWithRole(r),
+                                      )),
+                            ),
+                          ),
+                          selectedOptionsBuilder: (context, values) =>
+                              Container(
+                            constraints: BoxConstraints(
+                              minWidth: context.width,
+                            ),
+                            child: Column(
+                              children: values
+                                  .map((role) => Text(
+                                        role.name,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              color: AppColors
+                                                  .getRoleColorWithRole(role),
+                                            ),
+                                      ))
+                                  .toList(),
+                            ),
+                          ),
+                          initialValues: [],
+                          placeholder: Container(
+                              constraints: BoxConstraints(
+                                minWidth: context.width,
+                              ),
+                              child: Text("Select Roles")),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Text("Select a Value to Monitor")),
-            ),
-          ),
-          SizedBox(height: AppSizes.sm),
-          ShadInputFormField(
-            label: Text("Danger Point"),
-            keyboardType: TextInputType.number,
-            initialValue: "1000",
-          ),
-          SizedBox(height: AppSizes.sm),
-          ShadInputFormField(
-            label: Text("Warning Point"),
-            keyboardType: TextInputType.number,
-            initialValue: "2500",
-          ),
-          SizedBox(height: AppSizes.sm),
-          ShadInputFormField(
-            label: Text("Danger Alert Interval (in days)"),
-            keyboardType: TextInputType.number,
-            initialValue: "1",
-          ),
-          SizedBox(height: AppSizes.sm),
-          ShadInputFormField(
-            label: Text("Warning Alert Interval (in days)"),
-            keyboardType: TextInputType.number,
-            initialValue: "7",
-          ),
-          SizedBox(height: AppSizes.sm),
-          // tab panes to send based on users or roles
-          ShadTabs(value: "roles", tabs: [
-            ShadTab(
-              value: "roles",
-              content: ShadCard(
-                child: Column(
-                  children: [
-                    Text("Send This Alert To Roles"),
-                    SizedBox(height: AppSizes.sm),
-                    ShadSelect<Role>.multiple(
-                      closeOnSelect: false,
-                      anchor: ShadAnchorAuto(
-                        preferBelow: false,
-                      ),
-                      options: userController.roles.map(
-                        (r) => ShadOption(
-                          value: r,
-                          child: Text(r.name,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: AppColors.getRoleColorWithRole(r),
-                                  )),
-                        ),
-                      ),
-                      selectedOptionsBuilder: (context, values) => Container(
-                        constraints: BoxConstraints(
-                          minWidth: context.width,
-                        ),
-                        child: Column(
-                          children: values
-                              .map((role) => Text(
-                                    role.name,
+                  child: Text("Roles"),
+                ),
+                ShadTab(
+                    value: "users",
+                    content: ShadCard(
+                      child: Column(
+                        children: [
+                          Text("Send This Alert To Users"),
+                          SizedBox(height: AppSizes.sm),
+                          ShadSelect<User>.multiple(
+                            onChanged: (v) {
+                              sendToUsers.clear();
+                              sendToUsers.addAll(v);
+                              _valuesChanged();
+                            },
+                            closeOnSelect: false,
+                            anchor: ShadAnchorAuto(
+                              preferBelow: false,
+                            ),
+                            options: _users.map(
+                              (user) => ShadOption(
+                                value: user,
+                                child: Text(getUserName(user),
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium
                                         ?.copyWith(
-                                          color: AppColors.getRoleColorWithRole(
-                                              role),
-                                        ),
-                                  ))
-                              .toList(),
-                        ),
-                      ),
-                      initialValues: [],
-                      placeholder: Container(
-                          constraints: BoxConstraints(
-                            minWidth: context.width,
-                          ),
-                          child: Text("Select Roles")),
-                    ),
-                  ],
-                ),
-              ),
-              child: Text("Roles"),
-            ),
-            ShadTab(
-                value: "users",
-                content: ShadCard(
-                  child: Column(
-                    children: [
-                      Text("Send This Alert To Users"),
-                      SizedBox(height: AppSizes.sm),
-                      ShadSelect<User>.multiple(
-                        closeOnSelect: false,
-                        anchor: ShadAnchorAuto(
-                          preferBelow: false,
-                        ),
-                        options: _users.map(
-                          (user) => ShadOption(
-                            value: user,
-                            child: Text(getUserName(user),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color:
-                                          AppColors.getRoleColorWithRoleValue(
-                                              user.role),
-                                    )),
-                          ),
-                        ),
-                        selectedOptionsBuilder: (context, values) => Container(
-                          constraints: BoxConstraints(
-                            minWidth: context.width,
-                          ),
-                          child: Column(
-                            children: values
-                                .map((user) => Text(
-                                      getUserName(user),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: AppColors
-                                                .getRoleColorWithRoleValue(
-                                                    user.role),
-                                          ),
-                                    ))
-                                .toList(),
-                          ),
-                        ),
-                        initialValues: [],
-                        placeholder: Container(
-                            constraints: BoxConstraints(
-                              minWidth: context.width,
+                                          color: AppColors
+                                              .getRoleColorWithRoleValue(
+                                                  user.role),
+                                        )),
+                              ),
                             ),
-                            child: Text("Select Users")),
+                            selectedOptionsBuilder: (context, values) =>
+                                Container(
+                              constraints: BoxConstraints(
+                                minWidth: context.width,
+                              ),
+                              child: Column(
+                                children: values
+                                    .map((user) => Text(
+                                          getUserName(user),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: AppColors
+                                                    .getRoleColorWithRoleValue(
+                                                        user.role),
+                                              ),
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                            initialValues: [],
+                            placeholder: Container(
+                                constraints: BoxConstraints(
+                                  minWidth: context.width,
+                                ),
+                                child: Text("Select Users")),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                child: Text("Users")),
-          ]),
-          SizedBox(height: AppSizes.sm),
-          ShadInputFormField(
-            minLines: 4,
-            maxLines: 30,
-            label: Text("Custom Message"),
-          ),
-          SizedBox(height: AppSizes.md),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ShadCheckboxFormField(
-                initialValue: true,
-                inputLabel: Text("Enabled"),
-                onChanged: (v) {},
+                    ),
+                    child: Text("Users")),
+              ]),
+              SizedBox(height: AppSizes.sm),
+              ShadInputFormField(
+                controller: customMessageController,
+                minLines: 4,
+                maxLines: 30,
+                label: Text("Custom Message"),
               ),
+              SizedBox(height: AppSizes.md),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ShadCheckboxFormField(
+                    initialValue: true,
+                    inputLabel: Text("Enabled"),
+                    onChanged: (v) {
+                      enabled = v;
+                      _valuesChanged();
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: AppSizes.lg),
             ],
-          ),
-          SizedBox(height: AppSizes.lg),
-        ],
-      ));
+          ));
     });
+  }
+
+  _loadPossibleMonitorValues() async {
+    // load possible monitor values
+    try {
+      final res = await api!.getPossibleMonitorValuesAlertEmails();
+      _possibleMonitorValues = res.possibleValues;
+    } catch (e) {
+      logger.e("Failed to load users : $e");
+      Toasts.showErrorToast(
+          context: getContext,
+          message: "Failed to load possible values for monitoring");
+      Navigator.of(getContext).pop();
+    }
   }
 }

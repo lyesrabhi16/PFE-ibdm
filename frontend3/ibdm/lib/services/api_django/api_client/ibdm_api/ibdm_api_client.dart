@@ -106,15 +106,15 @@ abstract class IbdmApiClient {
   @MultiPart()
   @POST('/api/v1/emails/alerts/')
   Future<AlertEmail> addAlertEmail({
-    @Part(name: 'send_to_users') required List<String> sendToUsers,
     @Part(name: 'monitored_value') required AlertEnum monitoredValue,
+    @Part(name: 'send_to_users') List<String>? sendToUsers,
     @Part(name: 'danger_point') int? dangerPoint,
     @Part(name: 'warning_point') int? warningPoint,
     @Part(name: 'danger_reminder_interval') int? dangerReminderInterval,
     @Part(name: 'warning_reminder_interval') int? warningReminderInterval,
     @Part(name: 'custom_alert_message') String? customAlertMessage,
     @Part(name: 'enabled') bool? enabled,
-    @Part(name: 'send_to_roles') List<int>? sendToRoles,
+    @Part(name: 'send_to_roles') List<int?>? sendToRoles,
   });
 
   /// [id] - A unique integer value identifying this alert email.
@@ -128,15 +128,15 @@ abstract class IbdmApiClient {
   @PUT('/api/v1/emails/alerts/{id}/')
   Future<AlertEmail> updateAlertEmail({
     @Path('id') required int id,
-    @Part(name: 'send_to_users') required List<String> sendToUsers,
     @Part(name: 'monitored_value') required AlertEnum monitoredValue,
+    @Part(name: 'send_to_users') List<String>? sendToUsers,
     @Part(name: 'danger_point') int? dangerPoint,
     @Part(name: 'warning_point') int? warningPoint,
     @Part(name: 'danger_reminder_interval') int? dangerReminderInterval,
     @Part(name: 'warning_reminder_interval') int? warningReminderInterval,
     @Part(name: 'custom_alert_message') String? customAlertMessage,
     @Part(name: 'enabled') bool? enabled,
-    @Part(name: 'send_to_roles') List<int>? sendToRoles,
+    @Part(name: 'send_to_roles') List<int?>? sendToRoles,
   });
 
   /// [id] - A unique integer value identifying this alert email.
@@ -152,7 +152,7 @@ abstract class IbdmApiClient {
     @Part(name: 'warning_reminder_interval') int? warningReminderInterval,
     @Part(name: 'custom_alert_message') String? customAlertMessage,
     @Part(name: 'enabled') bool? enabled,
-    @Part(name: 'send_to_roles') List<int>? sendToRoles,
+    @Part(name: 'send_to_roles') List<int?>? sendToRoles,
   });
 
   /// [id] - A unique integer value identifying this alert email.
