@@ -22,7 +22,7 @@ class SentEmailSerializer(serializers.ModelSerializer):
         ]
 
 class AlertEmailSerializer(serializers.ModelSerializer):
-    send_to_users = serializers.SlugRelatedField(slug_field="email", queryset=User.objects.all() ,many=True)
+    send_to_users = serializers.SlugRelatedField(slug_field="email", queryset=User.objects.all(), required=False,many=True)
     class Meta:
         model = AlertEmail
         fields = "__all__"
