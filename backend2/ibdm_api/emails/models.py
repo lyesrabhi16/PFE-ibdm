@@ -76,8 +76,8 @@ class AlertEmail(models.Model):
     warning_reminder_interval = models.IntegerField(default=7)
 
     custom_alert_message = models.TextField(blank=True, null=True)
-    send_to_users = models.ManyToManyField("users.User", related_name="users", blank=True)
-    send_to_roles = models.ManyToManyField("users.Role", related_name="roles", blank=True)
+    send_to_users = models.ManyToManyField("users.User", related_name="users", blank=True, null=True)
+    send_to_roles = models.ManyToManyField("users.Role", related_name="roles", blank=True, null=True)
     enabled = models.BooleanField(default=True, blank=True)
 
     def __str__(self) -> str:

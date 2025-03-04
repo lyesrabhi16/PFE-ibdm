@@ -3526,14 +3526,14 @@
                     "send_to_roles": {
                         "type": "array",
                         "items": {
-                            "type": "integer"
+                            "type": "integer",
+                            "nullable": true
                         }
                     }
                 },
                 "required": [
                     "id",
-                    "monitored_value",
-                    "send_to_users"
+                    "monitored_value"
                 ]
             },
             "AlertEmailRequest": {
@@ -3580,13 +3580,13 @@
                     "send_to_roles": {
                         "type": "array",
                         "items": {
-                            "type": "integer"
+                            "type": "integer",
+                            "nullable": true
                         }
                     }
                 },
                 "required": [
-                    "monitored_value",
-                    "send_to_users"
+                    "monitored_value"
                 ]
             },
             "AlertEnum": {
@@ -4630,7 +4630,8 @@
                     "send_to_roles": {
                         "type": "array",
                         "items": {
-                            "type": "integer"
+                            "type": "integer",
+                            "nullable": true
                         }
                     }
                 }

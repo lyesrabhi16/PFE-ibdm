@@ -228,25 +228,25 @@ class _IbdmApiClient implements IbdmApiClient {
 
   @override
   Future<AlertEmail> addAlertEmail({
-    required List<String> sendToUsers,
     required AlertEnum monitoredValue,
+    List<String>? sendToUsers,
     int? dangerPoint,
     int? warningPoint,
     int? dangerReminderInterval,
     int? warningReminderInterval,
     String? customAlertMessage,
     bool? enabled,
-    List<int>? sendToRoles,
+    List<int?>? sendToRoles,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    sendToUsers.forEach((i) {
+    _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
+    sendToUsers?.forEach((i) {
       _data.fields.add(MapEntry('send_to_users', i));
     });
-    _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
     if (dangerPoint != null) {
       _data.fields.add(MapEntry('danger_point', dangerPoint.toString()));
     }
@@ -272,14 +272,9 @@ class _IbdmApiClient implements IbdmApiClient {
     if (enabled != null) {
       _data.fields.add(MapEntry('enabled', enabled.toString()));
     }
-    if (sendToRoles != null) {
-      _data.files.add(
-        MapEntry(
-          'send_to_roles',
-          MultipartFile.fromBytes(sendToRoles, filename: null),
-        ),
-      );
-    }
+    sendToRoles?.forEach((i) {
+      _data.fields.add(MapEntry('send_to_roles', i.toString()));
+    });
     final _options = _setStreamType<AlertEmail>(
       Options(
         method: 'POST',
@@ -336,25 +331,25 @@ class _IbdmApiClient implements IbdmApiClient {
   @override
   Future<AlertEmail> updateAlertEmail({
     required int id,
-    required List<String> sendToUsers,
     required AlertEnum monitoredValue,
+    List<String>? sendToUsers,
     int? dangerPoint,
     int? warningPoint,
     int? dangerReminderInterval,
     int? warningReminderInterval,
     String? customAlertMessage,
     bool? enabled,
-    List<int>? sendToRoles,
+    List<int?>? sendToRoles,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    sendToUsers.forEach((i) {
+    _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
+    sendToUsers?.forEach((i) {
       _data.fields.add(MapEntry('send_to_users', i));
     });
-    _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
     if (dangerPoint != null) {
       _data.fields.add(MapEntry('danger_point', dangerPoint.toString()));
     }
@@ -380,14 +375,9 @@ class _IbdmApiClient implements IbdmApiClient {
     if (enabled != null) {
       _data.fields.add(MapEntry('enabled', enabled.toString()));
     }
-    if (sendToRoles != null) {
-      _data.files.add(
-        MapEntry(
-          'send_to_roles',
-          MultipartFile.fromBytes(sendToRoles, filename: null),
-        ),
-      );
-    }
+    sendToRoles?.forEach((i) {
+      _data.fields.add(MapEntry('send_to_roles', i.toString()));
+    });
     final _options = _setStreamType<AlertEmail>(
       Options(
         method: 'PUT',
@@ -425,7 +415,7 @@ class _IbdmApiClient implements IbdmApiClient {
     int? warningReminderInterval,
     String? customAlertMessage,
     bool? enabled,
-    List<int>? sendToRoles,
+    List<int?>? sendToRoles,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -463,14 +453,9 @@ class _IbdmApiClient implements IbdmApiClient {
     if (enabled != null) {
       _data.fields.add(MapEntry('enabled', enabled.toString()));
     }
-    if (sendToRoles != null) {
-      _data.files.add(
-        MapEntry(
-          'send_to_roles',
-          MultipartFile.fromBytes(sendToRoles, filename: null),
-        ),
-      );
-    }
+    sendToRoles?.forEach((i) {
+      _data.fields.add(MapEntry('send_to_roles', i.toString()));
+    });
     final _options = _setStreamType<AlertEmail>(
       Options(
         method: 'PATCH',
