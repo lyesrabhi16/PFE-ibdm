@@ -4,7 +4,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-import 'monitored_value_enum.dart';
+import 'alert_enum.dart';
 
 part 'alert_email.g.dart';
 
@@ -29,7 +29,7 @@ class AlertEmail {
   @JsonKey(name: 'send_to_users')
   final List<String> sendToUsers;
   @JsonKey(name: 'monitored_value')
-  final MonitoredValueEnum monitoredValue;
+  final AlertEnum monitoredValue;
   @JsonKey(name: 'danger_point')
   final int dangerPoint;
   @JsonKey(name: 'warning_point')

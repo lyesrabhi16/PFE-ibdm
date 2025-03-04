@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/widgets/setting_card.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
+import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 
@@ -22,7 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return AppCustomContainer(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(AppSizes.sm),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -34,19 +36,19 @@ class _SettingsPageState extends State<SettingsPage> {
             Expanded(
               child: ListView(
                 children: [
-                  _buildSettingCard(
+                  SettingCard(
                     icon: Icons.email,
                     title: strings.value.email,
                     onTap: () => Get.toNamed(Routes.emailSettings),
                   ),
-                  _buildSettingCard(
+                  SettingCard(
                     icon: Get.isDarkMode ? Icons.light_mode : Icons.dark_mode,
                     title: Get.isDarkMode
                         ? strings.value.lightmode
                         : strings.value.darkmode,
                     trailing: ThemeModeSwitchButton(),
                   ),
-                  _buildSettingCard(
+                  SettingCard(
                     icon: Icons.language,
                     title: strings.value.language,
                     subtitle: localecontroller.locale.value.languageCode,
@@ -56,12 +58,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: LanguageSwitchButton(),
                     ),
                   ),
-                  _buildSettingCard(
+                  SettingCard(
                     icon: Icons.help,
                     title: strings.value.helpAssistance,
                     onTap: () => Get.toNamed(Routes.help),
                   ),
-                  _buildSettingCard(
+                  SettingCard(
                     icon: Icons.info,
                     title: strings.value.about,
                     onTap: () => Get.toNamed(Routes.about),
@@ -71,27 +73,6 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSettingCard({
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    Widget? trailing,
-    VoidCallback? onTap,
-  }) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.blueAccent),
-        title: Text(title),
-        subtitle: subtitle != null ? Text(subtitle) : null,
-        trailing: trailing,
-        onTap: onTap,
       ),
     );
   }

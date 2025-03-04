@@ -19,7 +19,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import include, path, re_path
-from .views import index
+from .views import index, getCA
 
 
 def redirect_home(request):
@@ -30,6 +30,7 @@ def redirect_home(request):
 
 urlpatterns = [
     path('admin', admin.site.urls),
+    path("ca", getCA),
     path('api/v1/', include('api_v1.urls')),
     path('drf/auth/', include('rest_framework.urls', namespace='rest_framework')),
 

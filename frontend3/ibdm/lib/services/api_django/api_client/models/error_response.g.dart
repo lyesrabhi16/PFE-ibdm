@@ -21,5 +21,6 @@ Map<String, dynamic> _$ErrorResponseToJson(ErrorResponse instance) =>
 const _$CodeEnumEnumMap = {
   CodeEnum.invalidInput: 'invalid_input',
   CodeEnum.invalidCredentials: 'invalid_credentials',
+  CodeEnum.notFound: 'not_found',
   CodeEnum.$unknown: r'$unknown',
 };

@@ -433,6 +433,17 @@
     "darkmode": "Dark mode",
     "language": "Language",
     "helpAssistance": "Help and Assistance",
-    "about": "About"
+    "about": "About",
+    "emailSchedules": "Email Schedules",
+    "emailSchedulesDescription": "Emails sent on defined intervals",
+    "emailAlerts": "Email Alerts",
+    "emailAlertsDescription": "Emails sent when monitored values hit certain points",
+    "monitored": "Monitored",
+    "danger": "Danger",
+    "warning": "Warning",
+    "active": "Active",
+    "addAlertEmail": "Add Alert Email",
+    "addScheduleEmail": "Add Schedule Email"
+
         
 }

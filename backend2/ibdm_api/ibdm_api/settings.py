@@ -253,6 +253,9 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "REDOC_DIST": "SIDECAR",
     "OAS_VERSION": "3.0.0",
+    "ENUM_NAME_OVERRIDES": {
+        "AlertEnum": "emails.models.ALL_MONITORED_VALUES",
+    }
     # OTHER SETTINGS
 }
 
@@ -283,7 +286,7 @@ JAZZMIN_SETTINGS = {
 MEDIA_URL = "/media/"
 
 ## Email settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "api_v1.smtp_backend.EmailBackend" #'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST =  Env.EMAIL_HOST
 EMAIL_USE_TLS = Env.EMAIL_USE_TLS
 EMAIL_PORT = Env.EMAIL_PORT

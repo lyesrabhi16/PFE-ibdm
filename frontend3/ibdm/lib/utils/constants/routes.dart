@@ -4,15 +4,17 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
 import 'package:ibdm/pages/filtration.dart/filtration.dart';
-import 'package:ibdm/pages/AboutPage.dart';
+import 'package:ibdm/pages/settings/about_page.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
 import 'package:ibdm/common/middlewares/protected_route_middleware.dart';
-import 'package:ibdm/pages/settings.dart';
+import 'package:ibdm/pages/settings/emails/email_alerts_page.dart';
+import 'package:ibdm/pages/settings/emails/email_schedules_page.dart';
+import 'package:ibdm/pages/settings/settings.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
 import 'package:ibdm/pages/users.dart';
-import 'package:ibdm/pages/EmailSettingsPage.dart';
-import 'package:ibdm/pages/HelpPage.dart';
+import 'package:ibdm/pages/settings/emails/email_settings_page.dart';
+import 'package:ibdm/pages/settings/help_page.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -29,6 +31,9 @@ class Routes {
   static const String settings = '/settings';
   static const String users = '/users';
   static const String emailSettings = '/settings/emailsettings';
+  static const String emailSchedules = '/settings/emailsettings/schedules';
+  static const String emailAlerts = '/settings/emailsettings/alerts';
+  static const String emailSent = '/settings/emailsettings/sent';
   static const String about = '/settings/about';
   static const String help = '/settings/help';
 
@@ -67,6 +72,9 @@ class Routes {
 
   static final customRoutes = {
     emailSettings: settings,
+    emailSchedules: settings,
+    emailAlerts: settings,
+    emailSent: settings,
     about: settings,
     help: settings,
   };
@@ -87,13 +95,28 @@ class Routes {
       page: () => EmailSettingsPage(),
       middlewares: [ProtectedRouteMiddleware()],
     ),
+    Routes.emailSchedules: GetPage(
+      name: emailSchedules,
+      page: () => EmailSchedulesPage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    Routes.emailAlerts: GetPage(
+      name: emailAlerts,
+      page: () => EmailAlertsPage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    Routes.emailSent: GetPage(
+      name: emailSent,
+      page: () => EmailSettingsPage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
     Routes.about: GetPage(
         name: about,
-        page: () => Aboutpage(),
+        page: () => AboutPage(),
         middlewares: [ProtectedRouteMiddleware()]),
     Routes.help: GetPage(
         name: help,
-        page: () => Helppage(),
+        page: () => HelpPage(),
         middlewares: [ProtectedRouteMiddleware()]),
     Routes.siroperie: GetPage(
       name: Routes.siroperie,

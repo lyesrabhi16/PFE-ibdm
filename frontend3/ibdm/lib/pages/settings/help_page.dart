@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 
-class EmailSettingsPage extends StatelessWidget {
-  const EmailSettingsPage({super.key});
+class HelpPage extends StatelessWidget {
+  const HelpPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AppCustomContainer(
       child: Center(
         child: Text(
-          "page emails",
+          "page Help",
           style: TextStyle(fontSize: 18),
         ),
       ),
