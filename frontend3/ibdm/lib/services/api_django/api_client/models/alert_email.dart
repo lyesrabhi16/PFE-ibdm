@@ -42,7 +42,7 @@ class AlertEmail {
   final String? customAlertMessage;
   final bool enabled;
   @JsonKey(name: 'send_to_roles')
-  final List<int> sendToRoles;
+  final List<int?> sendToRoles;
 
   Map<String, Object?> toJson() => _$AlertEmailToJson(this);
 }
