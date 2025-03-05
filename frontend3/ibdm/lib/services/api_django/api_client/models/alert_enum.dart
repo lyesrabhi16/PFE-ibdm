@@ -9,11 +9,11 @@ import 'package:json_annotation/json_annotation.dart';
 /// * `sucre.t_s23` - sucre.t_s23.
 /// * `sucre.t_s24` - sucre.t_s24.
 /// * `sucre.t_s25` - sucre.t_s25.
-/// * `sucre.t02` - sucre.t02.
-/// * `sucre.t03` - sucre.t03.
-/// * `sucre.t04` - sucre.t04.
-/// * `sucre.t05` - sucre.t05.
-/// * `sucre.t06` - sucre.t06.
+/// * `sucre.a_t02` - sucre.a_t02.
+/// * `sucre.a_t03` - sucre.a_t03.
+/// * `sucre.a_t04` - sucre.a_t04.
+/// * `sucre.a_t05` - sucre.a_t05.
+/// * `sucre.a_t06` - sucre.a_t06.
 /// * `niveau.niv_f1` - niveau.niv_f2.
 /// * `niveau.niv_uf1` - niveau.niv_uf1.
 /// * `niveau.niv_uf2` - niveau.niv_uf2.
@@ -100,21 +100,21 @@ enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `sucre.t_s25`.
   @JsonValue('sucre.t_s25')
   undefined4('sucre.t_s25'),
-  /// Incorrect name has been replaced. Original name: `sucre.t02`.
-  @JsonValue('sucre.t02')
-  undefined5('sucre.t02'),
-  /// Incorrect name has been replaced. Original name: `sucre.t03`.
-  @JsonValue('sucre.t03')
-  undefined6('sucre.t03'),
-  /// Incorrect name has been replaced. Original name: `sucre.t04`.
-  @JsonValue('sucre.t04')
-  undefined7('sucre.t04'),
-  /// Incorrect name has been replaced. Original name: `sucre.t05`.
-  @JsonValue('sucre.t05')
-  undefined8('sucre.t05'),
-  /// Incorrect name has been replaced. Original name: `sucre.t06`.
-  @JsonValue('sucre.t06')
-  undefined9('sucre.t06'),
+  /// Incorrect name has been replaced. Original name: `sucre.a_t02`.
+  @JsonValue('sucre.a_t02')
+  undefined5('sucre.a_t02'),
+  /// Incorrect name has been replaced. Original name: `sucre.a_t03`.
+  @JsonValue('sucre.a_t03')
+  undefined6('sucre.a_t03'),
+  /// Incorrect name has been replaced. Original name: `sucre.a_t04`.
+  @JsonValue('sucre.a_t04')
+  undefined7('sucre.a_t04'),
+  /// Incorrect name has been replaced. Original name: `sucre.a_t05`.
+  @JsonValue('sucre.a_t05')
+  undefined8('sucre.a_t05'),
+  /// Incorrect name has been replaced. Original name: `sucre.a_t06`.
+  @JsonValue('sucre.a_t06')
+  undefined9('sucre.a_t06'),
   /// Incorrect name has been replaced. Original name: `niveau.niv_f1`.
   @JsonValue('niveau.niv_f1')
   undefined10('niveau.niv_f1'),

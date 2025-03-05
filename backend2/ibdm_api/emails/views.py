@@ -69,9 +69,9 @@ def getPossibleMonitorValuesAlertEmails(request):
     all_values = set(map( lambda x: x[0] ,ALL_MONITORED_VALUES))
     monitored_values = set(AlertEmail.objects.all().values_list("monitored_value", flat=True))
     possible_values = all_values - monitored_values
-    logging.info(f"all_values: {all_values}")
-    logging.info(f"monitored_values: {monitored_values}")
-    logging.info(f"possible_values: {possible_values}")
+    #logging.info(f"all_values: {all_values}")
+    #logging.info(f"monitored_values: {monitored_values}")
+    #logging.info(f"possible_values: {possible_values}")
     return JsonResponse(
         PossibleMonitorValuesAlertEmailsSerializer({
         "all_values": sorted(all_values),

@@ -8,7 +8,7 @@ from ibdm_api.settings import BASE_DIR
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.types import OpenApiTypes
 from rest_framework.decorators import api_view
-
+    
 def index(request):
     return render(request, "web/index.html")
 

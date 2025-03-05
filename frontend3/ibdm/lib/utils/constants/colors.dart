@@ -27,7 +27,6 @@ class AppColors {
 
   static Color getRoleColorWithRole(Role role) {
     int colorValue = int.parse("FF${role.color.split("#")[1]}", radix: 16);
-    logger.e("Color value for role $role: $colorValue");
     return Color(colorValue);
   }
 
@@ -36,7 +35,6 @@ class AppColors {
     Role? roleObj = userController.roles.firstWhereOrNull(
       (element) => element.name == role,
     );
-    logger.e("Role object for role $role: $roleObj");
     return roleObj != null ? getRoleColorWithRole(roleObj) : Colors.grey;
   }
 }

@@ -4,7 +4,7 @@ from django.db import models
 ALL_MONITORED_VALUES = (
     #sucre
     ("sucre.t_s21", "sucre.t_s21"), ("sucre.t_s22", "sucre.t_s21"), ("sucre.t_s23", "sucre.t_s23"), ("sucre.t_s24", "sucre.t_s24"), ("sucre.t_s25", "sucre.t_s25"),
-    ("sucre.t02", "sucre.t02"), ("sucre.t03", "sucre.t03"), ("sucre.t04", "sucre.t04"), ("sucre.t05", "sucre.t05"), ("sucre.t06", "sucre.t06"),
+    ("sucre.a_t02", "sucre.a_t02"), ("sucre.a_t03", "sucre.a_t03"), ("sucre.a_t04", "sucre.a_t04"), ("sucre.a_t05", "sucre.a_t05"), ("sucre.a_t06", "sucre.a_t06"),
     
     #niveau
     ("niveau.niv_f1", "niveau.niv_f2"), ("niveau.niv_uf1", "niveau.niv_uf1"), ("niveau.niv_uf2", "niveau.niv_uf2"), ("niveau.niv_os1", "niveau.niv_os1"),

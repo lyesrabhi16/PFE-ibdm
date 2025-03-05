@@ -440,5 +440,7 @@
 	"warning": "Avertissement",
 	"active" : "Actif",
 	"addAlertEmail": "Ajouter un Email D'Alerte",
-	"addScheduleEmail": "Ajouter un Email Cyclique"
+	"addScheduleEmail": "Ajouter un Email Cyclique",
+	"edit": "Modifier",
+	"save": "Sauvegarder"
 }

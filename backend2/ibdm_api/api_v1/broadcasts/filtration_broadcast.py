@@ -1,4 +1,5 @@
 import logging
+import time
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from api_v1.monitors.debit_monitor import DebitMonitor
@@ -10,10 +11,10 @@ from filtration.serializers import DebitSerializer, NiveauSerializer, PresCondSe
 
 
 def broadcast_filtration():
-    
+    start_func = time.time()
     channel_layer = get_channel_layer()
 
-
+    start = time.time()
     niveau_latest = Niveau.objects.latest("date")
     #logging.info(f"latest niveau: {str(niveau_latest)}")
     NiveauMonitor(niveau_latest)
@@ -31,7 +32,7 @@ def broadcast_filtration():
     #logging.info(f"latest pres_cond_latest: {str(pres_cond_latest)}")
     PresCondMonitor(pres_cond_latest)
 
-    logging.info("broadcast_filtration done retrieving data and now broadcasting")
+    logging.info(f"broadcast_filtration: {niveau_latest.date} retrieved in {time.time() - start}")
 
     data = {
                 "niveau": NiveauSerializer(niveau_latest).data,
@@ -47,3 +48,4 @@ def broadcast_filtration():
             "data": data,
         },
     )
+    logging.info(f"broadcast_filtration: {niveau_latest.date} done in {time.time() - start_func}")
