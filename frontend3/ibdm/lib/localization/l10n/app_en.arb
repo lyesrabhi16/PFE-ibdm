@@ -443,7 +443,9 @@
     "warning": "Warning",
     "active": "Active",
     "addAlertEmail": "Add Alert Email",
-    "addScheduleEmail": "Add Schedule Email"
+    "addScheduleEmail": "Add Schedule Email",
+    "edit": "Edit",
+    "save": "Save"
 
         
 }

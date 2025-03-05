@@ -76,6 +76,7 @@ class ApiClientInstance {
       }
     }
     //dio.interceptors.add(CsrfInterceptor());
+    dio.interceptors.add(EnumFixInterceptor());
 
     print("ApiClientInstance: Initialized");
   }
@@ -404,6 +405,70 @@ extension WebUsersFixedApis on IbdmApiClient {
   }
 }
 
+class EnumFixInterceptor extends Interceptor {
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    print("EnumFixInterceptor: Start");
+    if (options.data is Map<String, dynamic>) {
+      if (options.data.containsKey('monitored_value')) {
+        options.data.fields['monitored_value'] = AlertEnum.values
+            .firstWhere((role) => role.name == options.data['monitored_value'])
+            .json;
+      }
+    } else if (options.data is FormData) {
+      if (_hasField((options.data as FormData).fields, "monitored_value")) {
+        print("EnumFixInterceptor: request has monitored_value field");
+        for (var e in (options.data as FormData).fields) {
+          if (e.key == "monitored_value") {
+            print(
+                "EnumFixInterceptor: Found monitored_value field with value: ${e.value}");
+            MapEntry<String, String> newE = MapEntry(
+                e.key,
+                AlertEnum.values.firstWhere(
+                      (r) => r.name == e.value,
+                      orElse: () {
+                        if (AlertEnum.values
+                                .indexWhere((r) => r.json == e.value) ==
+                            -1) {
+                          logger.e(
+                              "EnumFixInterceptor: monitored_value value ${e.value} not found in AlertEnum (name or json value)");
+                          throw Exception(
+                              "EnumFixInterceptor: monitored_value value ${e.value} not found in AlertEnum (name or json value)");
+                        }
+                        return AlertEnum.fromJson(e.value);
+                      },
+                    ).json ??
+                    "");
+            (options.data as FormData)
+                .fields
+                .insert((options.data as FormData).fields.indexOf(e), newE);
+            print(
+                "EnumFixInterceptor: created new monitored_value value: $newE");
+            (options.data as FormData).fields.remove(e);
+            print(
+                "EnumFixInterceptor: Changed ${e.key} from ${e.value} to ${newE.value}");
+          }
+        }
+      }
+    }
+    print("RoleFixInterceptor: Finished");
+    super.onRequest(options, handler);
+  }
+
+  bool _hasField(List<MapEntry<String, String>> data, String field) {
+    for (var e in data) {
+      if (e.key.toLowerCase() == field) {
+        if (e.value.isEmpty) {
+          data.remove(e);
+          return false;
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
 class TestInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -413,7 +478,8 @@ class TestInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print("Interceptor Response: ${response.data}");
+    print(
+        "Interceptor Response: ${response.statusCode} ${response.statusMessage}");
     super.onResponse(response, handler);
   }
 

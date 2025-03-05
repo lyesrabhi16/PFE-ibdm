@@ -198,7 +198,7 @@ def sendEmail(email: EmailSchedule):
             "file": file,
             "subject":f"IBDM {subject}",
             "body": message,
-            "from_email":settings.EMAIL_HOST_USER,
+            "from_email":settings.EMAIL_OF_SENDER,
             "to":[email_str]
         }).start()
     for user in users:

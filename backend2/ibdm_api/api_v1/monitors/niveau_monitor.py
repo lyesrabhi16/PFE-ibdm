@@ -15,3 +15,4 @@ def NiveauMonitor(niveau: Niveau):
                 "lock": NiveauMutex
             }
         ).start()
+
