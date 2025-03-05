@@ -343,7 +343,7 @@
 	"@year": {
 		"placeholders": {
 			"year": {
-				"type": "String",
+				"type": "int",
 				"description": "the year to display",
 				"example": "2025"
 			}
