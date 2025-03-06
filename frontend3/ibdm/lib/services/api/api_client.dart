@@ -451,7 +451,7 @@ class EnumFixInterceptor extends Interceptor {
         }
       }
     }
-    print("RoleFixInterceptor: Finished");
+    print("EnumFixInterceptor: Finished");
     super.onRequest(options, handler);
   }
 

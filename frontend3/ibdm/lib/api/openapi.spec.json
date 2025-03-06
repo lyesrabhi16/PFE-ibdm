@@ -514,6 +514,22 @@
                         }
                     },
                     {
+                        "in": "query",
+                        "name": "enabled",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "ordering",
+                        "required": false,
+                        "in": "query",
+                        "description": "Which field to use when ordering the results.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "page",
                         "in": "query",
                         "description": "Page number",
@@ -529,6 +545,22 @@
                         "required": false,
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "required": false,
+                        "in": "query",
+                        "description": "A search term.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "tag",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
@@ -5267,7 +5299,7 @@
                         "type": "string"
                     },
                     "superiors": {
-                        "type" : "array",
+                        "type": "array",
                         "items":
                             {
                                 "$ref": "#/components/schemas/UserSerializerWithSuperiors"
@@ -5275,7 +5307,7 @@
                         "readOnly": true
                     },
                     "subordinates": {
-                        "type" : "array",
+                        "type": "array",
                         "items":
                             {
                                 "$ref": "#/components/schemas/UserSerializerWithSubordinates"
