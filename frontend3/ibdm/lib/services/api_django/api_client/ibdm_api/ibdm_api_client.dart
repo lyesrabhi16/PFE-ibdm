@@ -93,14 +93,22 @@ abstract class IbdmApiClient {
 
   /// [enablePagination] - Enable or disable pagination.
   ///
+  /// [ordering] - Which field to use when ordering the results.
+  ///
   /// [page] - Page number.
   ///
   /// [perPage] - Number of results per page.
+  ///
+  /// [search] - A search term.
   @GET('/api/v1/emails/alerts/')
   Future<PaginatedAlertEmailList> getAlertEmails({
     @Query('enable_pagination') bool? enablePagination,
+    @Query('enabled') bool? enabled,
+    @Query('ordering') String? ordering,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
+    @Query('search') String? search,
+    @Query('tag') String? tag,
   });
 
   @MultiPart()

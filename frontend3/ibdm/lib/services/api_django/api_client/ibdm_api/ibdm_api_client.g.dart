@@ -193,14 +193,22 @@ class _IbdmApiClient implements IbdmApiClient {
   @override
   Future<PaginatedAlertEmailList> getAlertEmails({
     bool? enablePagination,
+    bool? enabled,
+    String? ordering,
     int? page,
     int? perPage,
+    String? search,
+    String? tag,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'enable_pagination': enablePagination,
+      r'enabled': enabled,
+      r'ordering': ordering,
       r'page': page,
       r'per_page': perPage,
+      r'search': search,
+      r'tag': tag,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};

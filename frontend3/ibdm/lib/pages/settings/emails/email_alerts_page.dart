@@ -1,22 +1,28 @@
+import 'dart:ui';
+
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/divider_with_text.dart';
 import 'package:ibdm/common/widgets/icon_with_label_button.dart';
 import 'package:ibdm/common/widgets/side_menu_container.dart';
+import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:ibdm/utils/helpers/user_helpers.dart';
+import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 
@@ -46,10 +52,65 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   late PaginatedAlertEmailList alertsMeta;
   final _selectedAlerts = <AlertEmail>[].obs;
 
-  int page = 1;
-  int perPage = 10;
+  List<String> _allMonitorValueTags = <String>[];
 
-  final actionsController = ShadPopoverController();
+  int page = 1;
+  String? monitorValueTagFilter;
+  bool? activationStateFilter;
+
+  static final _expandPerPage = false.obs;
+  static final _perPageController = TextEditingController(text: "10");
+
+  static final _filtersPopoverController = ShadPopoverController();
+  static final _filtersActive = false.obs;
+
+  static final _perPageFormKey = GlobalKey<FormState>();
+
+  static final _tagFilterController = TextEditingController();
+  static final _activationStateFilterController = TextEditingController();
+
+  static final _sortPopoverController = ShadPopoverController();
+
+  final RxMap<String, Sorter> _sortersASC = {
+    "Monitored Value": Sorter(
+      isSelected: false,
+      orderingValue: "monitored_value",
+    ),
+    "Danger Point": Sorter(
+      isSelected: false,
+      orderingValue: "danger_point",
+    ),
+    "Warning Point": Sorter(
+      isSelected: false,
+      orderingValue: "warning_point",
+    ),
+    "Enabled": Sorter(
+      isSelected: false,
+      orderingValue: "enabled",
+    ),
+  }.obs;
+  final RxMap<String, Sorter> _sortersDESC = {
+    "Monitored Value": Sorter(
+      isSelected: false,
+      orderingValue: "-monitored_value",
+    ),
+    "Danger Point": Sorter(
+      isSelected: false,
+      orderingValue: "-danger_point",
+    ),
+    "Warning Point": Sorter(
+      isSelected: false,
+      orderingValue: "-warning_point",
+    ),
+    "Enabled": Sorter(
+      isSelected: false,
+      orderingValue: "-enabled",
+    ),
+  }.obs;
+
+  final _sortASC = true.obs;
+
+  final _sortActive = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +157,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   children: [
                     SearchBar(
                       controller: _searchController,
-                      onSubmitted: (_) => _loadAlerts(),
-                      onTapOutside: (_) => _loadAlerts(),
+                      onSubmitted: (_) => load(),
+                      onTapOutside: (_) => load(),
                       constraints: BoxConstraints(
                         maxWidth: AppSizes.lg * 8,
                         minHeight: AppSizes.lg * 1.5,
@@ -123,11 +184,89 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                         ShadButton.destructive(
                             onPressed: _onDeleteButtonClick,
                             child: Text(strings.value.delete)),
-                      ],
+                        SizedBox(
+                          width: AppSizes.xl * 4,
+                          child: IconWithLabelButton(
+                            icon: Icons.settings,
+                            text: strings.value.options,
+                            onTap: () {
+                              showShadSheet(
+                                  context: context,
+                                  side: ShadSheetSide.right,
+                                  isDismissible: true,
+                                  builder: (context) {
+                                    return ShadSheet(
+                                        scrollable: false,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.all(AppSizes.sm),
+                                          child: ScrollConfiguration(
+                                            behavior:
+                                                ScrollConfiguration.of(context)
+                                                    .copyWith(
+                                              dragDevices: {
+                                                PointerDeviceKind.touch,
+                                                PointerDeviceKind.mouse,
+                                                PointerDeviceKind.stylus,
+                                                PointerDeviceKind
+                                                    .invertedStylus,
+                                                PointerDeviceKind.trackpad,
+                                                PointerDeviceKind.unknown,
+                                              },
+                                              scrollbars: true,
+                                            ),
+                                            child: SingleChildScrollView(
+                                              physics: BouncingScrollPhysics(),
+                                              child: Container(
+                                                constraints: BoxConstraints(
+                                                  minWidth: context.width / 2,
+                                                  maxWidth: context.width,
+                                                  minHeight: context.height,
+                                                  maxHeight: context.height,
+                                                ),
+                                                child: Scaffold(
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  body:
+                                                      _topPageActionsSmallScreen(),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ));
+                                  });
+                            },
+                          ).removeWhen(isAtLeastMediumScreen(context)),
+                        ),
+                      ].nonNulls.toList(),
                     )
                   ],
                 ),
               ),
+            ),
+            Container(
+                  width: context.width,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainer,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: _topPageActions(
+                    alignment: WrapAlignment.spaceBetween,
+                    expandPerPage: _expandPerPage.value,
+                    filtersPopoverController: _filtersPopoverController,
+                    filtersActive: _filtersActive,
+                    perPageFormKey: _perPageFormKey,
+                    tagFilterController: _tagFilterController,
+                    activationStateFilterController:
+                        _activationStateFilterController,
+                    sortPopoverController: _sortPopoverController,
+                    sortASC: _sortASC,
+                    sortActive: _sortActive,
+                  ),
+                ).removeWhen(isAtMostSmallScreen(context)) ??
+                SizedBox.shrink(),
+            SizedBox(
+              height: AppSizes.sm,
             ),
             Expanded(
               child: Container(
@@ -158,7 +297,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             SizedBox(
               height: AppSizes.sm,
             ),
-            _bottomPageAction(
+            _bottomPageActions(
               currentPage: alertsMeta.currentPage,
               nbrTotalPages: alertsMeta.totalPages,
               nbrShown: alertsMeta.data.length,
@@ -573,7 +712,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     );
   }
 
-  Widget _bottomPageAction({
+  Widget _bottomPageActions({
     required int currentPage,
     required int nbrTotalPages,
     required int nbrShown,
@@ -774,13 +913,43 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   }
 
   Future<void> _loadAlerts() async {
+    _getOrdering() {
+      return _sortASC.value
+          ? _sortersASC.entries
+              .where((e) => e.value.isSelected)
+              .firstOrNull
+              ?.value
+              .orderingValue
+          : _sortersDESC.entries
+              .where((e) => e.value.isSelected)
+              .firstOrNull
+              ?.value
+              .orderingValue;
+    }
+
     // Load alerts
     try {
       alertsMeta = await api!.getAlertEmails(
         page: page,
-        perPage: perPage,
+        perPage: int.tryParse(_perPageController.text),
+        tag: monitorValueTagFilter,
+        enabled: activationStateFilter,
+        ordering: _getOrdering(),
+        search:
+            _searchController.text.isNotEmpty ? _searchController.text : null,
       );
       alerts = alertsMeta.data.obs;
+    } catch (e) {
+      logger.e("Failed to load alerts : $e");
+    }
+  }
+
+  Future<void> _loadAllTags() async {
+    // Load alerts
+    try {
+      final res = await api!.getPossibleMonitorValuesAlertEmails();
+      _allMonitorValueTags =
+          res.allValues.map((mv) => mv.split(".")[0]).toSet().toList();
     } catch (e) {
       logger.e("Failed to load alerts : $e");
     }
@@ -792,6 +961,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     }
     api ??= await ApiClientInstance.getApiClient();
     await _loadAlerts();
+    await _loadAllTags();
 
     loaded.value = true;
   }
@@ -853,139 +1023,137 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   }
 
   _getRows() {
-    return alerts
-        .map((e) => DataRow2(
-                selected: _selectedAlerts.contains(e),
-                onSelectChanged: (selected) {
-                  if (selected == true) {
-                    _selectedAlerts.add(e);
-                  } else {
-                    _selectedAlerts.remove(e);
-                  }
-                },
-                onDoubleTap: () => _showViewAlertEmailDialog(
-                      alert: e,
-                    ),
-                cells: [
-                  DataCell(Text(
-                    (alerts.indexOf(e) + 1).toString(),
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  )),
-                  DataCell(Text(
-                    e.monitoredValue.json ?? "unknown",
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  )),
-                  DataCell(Text(
-                    e.dangerPoint.toString(),
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  )),
-                  DataCell(Text(
-                    e.warningPoint.toString(),
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  )),
-                  DataCell(
-                    Checkbox(
-                      value: e.enabled,
-                      onChanged: (v) {
-                        Actions.changeAlertEnabledState(
-                          context,
-                          alertId: e.id,
-                          enabled: v ?? false,
-                          onSuccess: () {
-                            load();
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  DataCell(
-                    FittedBox(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
+    return alerts.map((e) {
+      final actionsController = ShadPopoverController();
+      return DataRow2(
+        selected: _selectedAlerts.contains(e),
+        onSelectChanged: (selected) {
+          if (selected == true) {
+            _selectedAlerts.add(e);
+          } else {
+            _selectedAlerts.remove(e);
+          }
+        },
+        onDoubleTap: () => _showViewAlertEmailDialog(
+          alert: e,
+        ),
+        cells: [
+          DataCell(Text(
+            (alerts.indexOf(e) + 1).toString(),
+            style: Theme.of(context).textTheme.bodyMedium,
+          )),
+          DataCell(Text(
+            e.monitoredValue.json ?? "unknown",
+            style: Theme.of(context).textTheme.bodyMedium,
+          )),
+          DataCell(Text(
+            e.dangerPoint.toString(),
+            style: Theme.of(context).textTheme.bodyMedium,
+          )),
+          DataCell(Text(
+            e.warningPoint.toString(),
+            style: Theme.of(context).textTheme.bodyMedium,
+          )),
+          DataCell(
+            Checkbox(
+              value: e.enabled,
+              onChanged: (v) {
+                Actions.changeAlertEnabledState(
+                  context,
+                  alertId: e.id,
+                  enabled: v ?? false,
+                  onSuccess: () {
+                    load();
+                  },
+                );
+              },
+            ),
+          ),
+          DataCell(
+            FittedBox(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      _showViewAlertEmailDialog(alert: e);
+                    },
+                    icon: Icon(Icons.remove_red_eye_rounded),
+                  ).removeWhen(isAtMostMediumScreen(context)),
+                  IconButton(
+                    onPressed: () {
+                      _showEditAlertEmailDialog(alert: e);
+                    },
+                    icon: Icon(Icons.edit),
+                  ).removeWhen(isAtMostSmallScreen(context)),
+                  IconButton(
+                    onPressed: () {
+                      _selectedAlerts.add(e);
+                      _onDeleteButtonClick();
+                    },
+                    icon: Icon(Icons.delete),
+                  ).removeWhen(isAtMostMediumScreen(context)),
+                  ShadPopover(
+                    padding: EdgeInsets.zero,
+                    decoration: ShadDecoration(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        border: ShadBorder.all(
+                          width: 0,
+                          radius: BorderRadius.circular(10),
+                        )),
+                    popover: (context) => SizedBox(
+                      width: AppSizes.lg * 5,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              _showViewAlertEmailDialog(alert: e);
+                          IconWithLabelButton(
+                            icon: Icons.remove_red_eye_rounded,
+                            text: "view",
+                            onTap: () => {
+                              _showViewAlertEmailDialog(alert: e),
+                              actionsController.toggle(),
                             },
-                            icon: Icon(Icons.remove_red_eye_rounded),
-                          ).removeWhen(isAtMostMediumScreen(context)),
-                          IconButton(
-                            onPressed: () {
+                          ),
+                          IconWithLabelButton(
+                            icon: Icons.edit,
+                            onTap: () {
                               _showEditAlertEmailDialog(alert: e);
+                              actionsController.toggle();
                             },
-                            icon: Icon(Icons.edit),
-                          ).removeWhen(isAtMostSmallScreen(context)),
-                          IconButton(
-                            onPressed: () {
-                              _selectedAlerts.add(e);
-                              _onDeleteButtonClick();
-                            },
-                            icon: Icon(Icons.delete),
-                          ).removeWhen(isAtMostMediumScreen(context)),
-                          ShadPopover(
-                            padding: EdgeInsets.zero,
-                            decoration: ShadDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerHighest,
-                                border: ShadBorder.all(
-                                  width: 0,
-                                  radius: BorderRadius.circular(10),
-                                )),
-                            popover: (context) => SizedBox(
-                              width: AppSizes.lg * 5,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconWithLabelButton(
-                                    icon: Icons.remove_red_eye_rounded,
-                                    text: "view",
-                                    onTap: () => {
-                                      _showViewAlertEmailDialog(alert: e),
-                                      actionsController.toggle(),
-                                    },
-                                  ),
-                                  IconWithLabelButton(
-                                    icon: Icons.edit,
-                                    onTap: () {
-                                      _showEditAlertEmailDialog(alert: e);
-                                      actionsController.toggle();
-                                    },
-                                    text: "edit",
-                                  ).removeWhen(isAtLeastMediumScreen(context)),
-                                  IconWithLabelButton(
-                                    icon: Icons.delete,
-                                    text: "delete",
-                                    activeColor: errorColor,
-                                  ),
-                                ].nonNulls.toList(),
-                              ),
-                            ),
-                            controller: actionsController,
-                            child: IconButton(
-                              onPressed: () {
-                                actionsController.toggle();
-                              },
-                              icon: Icon(
-                                LucideIcons.ellipsisVertical,
-                                applyTextScaling: true,
-                              ),
-                            ),
-                          ).removeWhen(isAtLeastLargeScreen(context)),
+                            text: "edit",
+                          ).removeWhen(isAtLeastMediumScreen(context)),
+                          IconWithLabelButton(
+                            icon: Icons.delete,
+                            text: "delete",
+                            activeColor: errorColor,
+                          ),
                         ].nonNulls.toList(),
                       ),
                     ),
-                  ),
-                ]))
-        .toList();
+                    controller: actionsController,
+                    child: IconButton(
+                      onPressed: () {
+                        actionsController.toggle();
+                      },
+                      icon: Icon(
+                        LucideIcons.ellipsisVertical,
+                        applyTextScaling: true,
+                      ),
+                    ),
+                  ).removeWhen(isAtLeastLargeScreen(context)),
+                ].nonNulls.toList(),
+              ),
+            ),
+          ),
+        ],
+      );
+    }).toList();
   }
 
   _getColumnSpacing() {
     return isSmallScreen(context) ? AppSizes.sm : AppSizes.md;
-  }
-
-  void sort(int columnIndex, bool ascending) {
-    print("sort called");
   }
 
   _deleteAlerts() async {
@@ -1019,6 +1187,470 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       toastification.dismissById(toast.id);
     });
     ShadToaster.of(Get.context!).hide();
+  }
+
+  _topPageActions({
+    WrapAlignment alignment = WrapAlignment.spaceBetween,
+    bool reverseOrder = false,
+    bool expandPerPage = false,
+    double? customExpandPerPage,
+    required ShadPopoverController filtersPopoverController,
+    required RxBool filtersActive,
+    required GlobalKey<FormState> perPageFormKey,
+    required TextEditingController tagFilterController,
+    required TextEditingController activationStateFilterController,
+    required ShadPopoverController sortPopoverController,
+    required RxBool sortASC,
+    required RxBool sortActive,
+    bool center = false,
+  }) {
+    final context = getContext;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSizes.md,
+        vertical: AppSizes.sm,
+      ),
+      child: Wrap(
+        alignment: alignment,
+        direction: Axis.horizontal,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        runAlignment: WrapAlignment.center,
+        verticalDirection: VerticalDirection.down,
+        textDirection: reverseOrder ? TextDirection.rtl : TextDirection.ltr,
+        children: [
+          // left row
+          Wrap(
+            direction: Axis.horizontal,
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            runAlignment: WrapAlignment.center,
+            verticalDirection: VerticalDirection.down,
+            children: [
+              // filter button
+              SizedBox(
+                width: AppSizes.xl * 4,
+                child: ShadPopover(
+                  controller: filtersPopoverController,
+                  decoration: ShadDecoration(
+                    border: ShadBorder.none,
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                  ),
+                  closeOnTapOutside: false,
+                  popover: (context) => Container(
+                    constraints: BoxConstraints(
+                        minWidth: AppSizes.xl * 6, maxWidth: AppSizes.xl * 8),
+                    child: filterContent(context, tagFilterController,
+                        activationStateFilterController),
+                  ),
+                  child: IconWithLabelButton(
+                    icon: Icons.filter_alt,
+                    active: filtersActive.value,
+                    text: "Filter",
+                    onTap: () {
+                      filtersActive.value = !filtersActive.value;
+                      filtersPopoverController.toggle();
+                    },
+                  ),
+                ),
+              ),
+              // sort button
+              SizedBox(
+                width: AppSizes.xl * 4,
+                child: ShadPopover(
+                  controller: sortPopoverController,
+                  decoration: ShadDecoration(
+                    border: ShadBorder.none,
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                  ),
+                  closeOnTapOutside: false,
+                  popover: (context) => SizedBox(
+                    width: AppSizes.xl * 6,
+                    child: sortContent(
+                      context: context,
+                      sortASC: sortASC,
+                    ),
+                  ),
+                  child: IconWithLabelButton(
+                    icon: Icons.sort_rounded,
+                    active: sortActive.value,
+                    text: "Sort",
+                    onTap: () {
+                      sortActive.value = !sortActive.value;
+                      _sortPopoverController.toggle();
+                    },
+                  ),
+                ),
+              ),
+              // PerPage TextField
+              SizedBox(
+                width: _expandPerPage.value
+                    ? customExpandPerPage ?? AppSizes.xl * 8
+                    : AppSizes.xl * 3,
+                child: PerPageInput(
+                  expandPerPage: _expandPerPage,
+                  perPageController: _perPageController,
+                  perPage: int.tryParse(_perPageController.text)!,
+                  load: load,
+                ),
+              ),
+            ],
+          ),
+          //right refresh button
+          SizedBox(
+            width: AppSizes.xl * 4,
+            child: IconWithLabelButton(
+              icon: Icons.refresh_rounded,
+              onTap: () => load(),
+              text: "refresh",
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Obx sortContent({
+    required BuildContext context,
+    required RxBool sortASC,
+  }) {
+    void setSorter(String s, bool selected) {
+      if (_sortASC.value) {
+        for (var sorter in _sortersASC.entries) {
+          if (sorter.key.toLowerCase() == s.toLowerCase()) {
+            _sortersASC[s] = Sorter(
+                isSelected: selected,
+                orderingValue: sorter.value.orderingValue);
+            load();
+          } else {
+            _sortersASC[sorter.key] = Sorter(
+                isSelected: false, orderingValue: sorter.value.orderingValue);
+          }
+        }
+      } else {
+        for (var sorter in _sortersDESC.entries) {
+          if (sorter.key.toLowerCase() == s.toLowerCase()) {
+            _sortersDESC[s] = Sorter(
+                isSelected: selected,
+                orderingValue: sorter.value.orderingValue);
+            load();
+          } else {
+            _sortersDESC[sorter.key] = Sorter(
+                isSelected: false, orderingValue: sorter.value.orderingValue);
+          }
+        }
+      }
+    }
+
+    _switchSorters({
+      required RxBool sortASC,
+      required RxMap<String, Sorter> sortersASC,
+      required RxMap<String, Sorter> sortersDESC,
+    }) {
+      if (sortASC.value) {
+        for (var s in _sortersASC.entries) {
+          if (s.value.isSelected) {
+            sortersDESC[s.key] = Sorter(
+                isSelected: true,
+                orderingValue: sortersDESC[s.key]!.orderingValue);
+            sortersASC[s.key] =
+                Sorter(isSelected: false, orderingValue: s.value.orderingValue);
+          }
+        }
+      } else {
+        for (var s in _sortersDESC.entries) {
+          if (s.value.isSelected) {
+            sortersASC[s.key] = Sorter(
+                isSelected: true,
+                orderingValue: sortersASC[s.key]!.orderingValue);
+            sortersDESC[s.key] =
+                Sorter(isSelected: false, orderingValue: s.value.orderingValue);
+          }
+        }
+      }
+    }
+
+    bool _checkIfLoadIsNeeded({
+      required RxMap<String, Sorter> sortersASC,
+      required RxMap<String, Sorter> sortersDESC,
+    }) {
+      final sortASCActive =
+          _sortersASC.entries.where((e) => e.value.isSelected).firstOrNull?.key;
+      final sortDescActive = _sortersDESC.entries
+          .where((e) => e.value.isSelected)
+          .firstOrNull
+          ?.key;
+      if (sortASCActive == null && sortDescActive == null) {
+        return false;
+      }
+      return true;
+    }
+
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text("Sort", style: Theme.of(context).textTheme.headlineMedium),
+          SizedBox(
+            height: AppSizes.sm,
+          ),
+          Text("Sort alerts", style: Theme.of(context).textTheme.bodyLarge),
+          SizedBox(
+            height: AppSizes.sm,
+          ),
+          Divider(),
+          SizedBox(
+            height: AppSizes.md,
+          ),
+          Text("Order:", style: Theme.of(context).textTheme.bodyMedium),
+          ShadSelect(
+            initialValue: sortASC.value ? "asc" : "desc",
+            options: [
+              ShadOption(value: "asc", child: Text("ASC")),
+              ShadOption(value: "desc", child: Text("DESC")),
+            ],
+            selectedOptionBuilder: (context, value) => Text(
+              value,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            onChanged: (value) {
+              bool doLoad = _checkIfLoadIsNeeded(
+                sortersASC: _sortersASC,
+                sortersDESC: _sortersDESC,
+              );
+              _switchSorters(
+                sortASC: sortASC,
+                sortersASC: _sortersASC,
+                sortersDESC: _sortersDESC,
+              );
+              sortASC.value = value == "asc";
+              if (doLoad) {
+                load();
+              }
+            },
+          ),
+          SizedBox(
+            height: AppSizes.sm,
+          ),
+          Text("Sort by:", style: Theme.of(context).textTheme.bodyMedium),
+          SizedBox(
+            height: AppSizes.sm,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: _sortersASC.keys
+                .map(
+                  (sorter) => ShadSwitch(
+                    uncheckedTrackColor:
+                        Theme.of(context).colorScheme.surfaceDim,
+                    checkedTrackColor: Theme.of(context).colorScheme.primary,
+                    value: (sortASC.value
+                        ? _sortersASC[sorter]!.isSelected
+                        : _sortersDESC[sorter]!.isSelected),
+                    label: Text(
+                      sorter.toUpperCase(),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    onChanged: (value) => setSorter(sorter, value),
+                  ),
+                )
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Column filterContent(
+      BuildContext context,
+      TextEditingController tagFilterController,
+      TextEditingController activationStateFilterController) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text("Filters", style: Theme.of(context).textTheme.headlineMedium),
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        Text("Filter alerts", style: Theme.of(context).textTheme.bodyLarge),
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        Divider(),
+        SizedBox(
+          height: AppSizes.md,
+        ),
+        Text("Filter by Monitored Value Tag",
+            style: Theme.of(context).textTheme.bodyMedium),
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        DropdownMenu<String>(
+          hintText: "Select Monitored Value Tag",
+          label: Text("Tag"),
+          controller: tagFilterController,
+          inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
+              ),
+          initialSelection: monitorValueTagFilter,
+          width: AppSizes.xl * 8,
+          onSelected: (value) {
+            // filter by monitored value tag
+            if (monitorValueTagFilter == value) {
+              tagFilterController.clear();
+              monitorValueTagFilter = null;
+              load();
+              return;
+            }
+            monitorValueTagFilter = value;
+            load();
+          },
+          dropdownMenuEntries: [
+            for (String tag in _allMonitorValueTags)
+              DropdownMenuEntry(
+                value: tag,
+                label: tag,
+              ),
+          ],
+        ),
+        Text("Filter by Activation State",
+            style: Theme.of(context).textTheme.bodyMedium),
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        DropdownMenu<bool>(
+          hintText: "Select Activation State",
+          label: Text("Activation State"),
+          controller: activationStateFilterController,
+          width: AppSizes.xl * 8,
+          inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
+              ),
+          initialSelection: activationStateFilter,
+          onSelected: (value) {
+            // filter by monitored value tag
+            if (activationStateFilter == value) {
+              activationStateFilterController.clear();
+              activationStateFilter = null;
+              load();
+              return;
+            }
+            activationStateFilter = value;
+            load();
+          },
+          dropdownMenuEntries: [
+            DropdownMenuEntry(
+              value: true,
+              label: "Active",
+            ),
+            DropdownMenuEntry(
+              value: false,
+              label: "Inactive",
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  _topPageActionsSmallScreen() {
+    return Column(
+      children: [
+        //right refresh button
+        IconWithLabelButton(
+          icon: Icons.refresh_rounded,
+          onTap: () => load(),
+          text: "refresh",
+        ),
+
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        PerPageInput(
+          expandPerPage: _expandPerPage,
+          perPageController: _perPageController,
+          load: load,
+        ),
+        SizedBox(
+          height: AppSizes.lg,
+        ),
+        DividerWithText(text: "Filter"),
+        filterContent(
+            context, _tagFilterController, _activationStateFilterController),
+        SizedBox(
+          height: AppSizes.xl,
+        ),
+        DividerWithText(text: "Sort"),
+        sortContent(
+          context: context,
+          sortASC: _sortASC,
+        ),
+      ],
+    );
+  }
+}
+
+class PerPageInput extends StatelessWidget {
+  final GlobalKey<FormState> perPageFormKey = GlobalKey<FormState>();
+  final TextEditingController _perPageController;
+  final RxBool _expandPerPage;
+  final Function? load;
+  int perPage;
+  PerPageInput({
+    super.key,
+    required RxBool expandPerPage,
+    required TextEditingController perPageController,
+    this.load,
+    this.perPage = 10,
+  })  : _expandPerPage = expandPerPage,
+        _perPageController = perPageController;
+
+  void _executeChangePerPageIfPossible(GlobalKey<FormState> perPageFormKey) {
+    if (perPageFormKey.currentState != null &&
+        perPageFormKey.currentState!.validate()) {
+      load?.call();
+    }
+  }
+
+  void _changePerPage(String value) {
+    if (value.isEmpty) {
+      _perPageController.text = "$perPage";
+    }
+    int? newPerPage = int.tryParse(value);
+
+    if (newPerPage != null) {
+      perPage = newPerPage;
+      LocalStorage.setPerPage(newPerPage);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: perPageFormKey,
+      onChanged: () {},
+      child: TextFormField(
+        validator: (value) => AppValidators.perPageValidator(
+          value,
+          _expandPerPage,
+        ),
+        controller: _perPageController,
+        onTapOutside: (_) => _executeChangePerPageIfPossible(
+            perPageFormKey), // execute change per page if possible
+        onEditingComplete: () => _executeChangePerPageIfPossible(
+            perPageFormKey), // execute change per page if possible
+        onChanged: (value) => _changePerPage(value),
+        decoration: InputDecoration(
+          filled: true,
+          labelText: "Per Page",
+          hintText: "10",
+        ),
+      ),
+    );
   }
 }
 
