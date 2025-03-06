@@ -3,26 +3,24 @@ import 'dart:ui';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
+import 'package:ibdm/common/widgets/alert_email_form.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/divider_with_text.dart';
 import 'package:ibdm/common/widgets/icon_with_label_button.dart';
+import 'package:ibdm/common/widgets/per_page_input.dart';
 import 'package:ibdm/common/widgets/side_menu_container.dart';
+import 'package:ibdm/pages/settings/emails/actions.dart';
 import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
-import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
-import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
-import 'package:ibdm/utils/helpers/user_helpers.dart';
-import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 
@@ -148,7 +146,9 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               child: Padding(
                 padding: EdgeInsets.all(AppSizes.sm),
                 child: Wrap(
-                  alignment: WrapAlignment.spaceEvenly,
+                  alignment: isAtMostSmallScreen(context)
+                      ? WrapAlignment.center
+                      : WrapAlignment.spaceBetween,
                   runAlignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   direction: Axis.horizontal,
@@ -171,6 +171,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                       hintText: strings.value.search,
                     ),
                     Wrap(
+                      alignment: WrapAlignment.center,
                       children: [
                         ShadButton(
                             backgroundColor: colorScheme.surfaceContainerLow,
@@ -184,59 +185,63 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                         ShadButton.destructive(
                             onPressed: _onDeleteButtonClick,
                             child: Text(strings.value.delete)),
-                        SizedBox(
-                          width: AppSizes.xl * 4,
-                          child: IconWithLabelButton(
-                            icon: Icons.settings,
-                            text: strings.value.options,
-                            onTap: () {
-                              showShadSheet(
-                                  context: context,
-                                  side: ShadSheetSide.right,
-                                  isDismissible: true,
-                                  builder: (context) {
-                                    return ShadSheet(
-                                        scrollable: false,
-                                        child: ScrollConfiguration(
-                                          behavior:
-                                              ScrollConfiguration.of(context)
-                                                  .copyWith(
-                                            dragDevices: {
-                                              PointerDeviceKind.touch,
-                                              PointerDeviceKind.mouse,
-                                              PointerDeviceKind.stylus,
-                                              PointerDeviceKind.invertedStylus,
-                                              PointerDeviceKind.trackpad,
-                                              PointerDeviceKind.unknown,
-                                            },
-                                            scrollbars: true,
-                                          ),
-                                          child: SingleChildScrollView(
-                                            physics: BouncingScrollPhysics(),
-                                            child: Container(
-                                              constraints: BoxConstraints(
-                                                minWidth: context.width / 2,
-                                                maxWidth: context.width,
-                                                minHeight: context.height,
-                                                maxHeight: context.height,
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(
-                                                    AppSizes.sm),
-                                                child: Scaffold(
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  body:
-                                                      _topPageActionsSmallScreen(),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: SizedBox(
+                            width: AppSizes.xl * 4,
+                            child: IconWithLabelButton(
+                              icon: Icons.settings,
+                              text: strings.value.options,
+                              onTap: () {
+                                showShadSheet(
+                                    context: context,
+                                    side: ShadSheetSide.right,
+                                    isDismissible: true,
+                                    builder: (context) {
+                                      return ShadSheet(
+                                          scrollable: false,
+                                          child: ScrollConfiguration(
+                                            behavior:
+                                                ScrollConfiguration.of(context)
+                                                    .copyWith(
+                                              dragDevices: {
+                                                PointerDeviceKind.touch,
+                                                PointerDeviceKind.mouse,
+                                                PointerDeviceKind.stylus,
+                                                PointerDeviceKind
+                                                    .invertedStylus,
+                                                PointerDeviceKind.trackpad,
+                                                PointerDeviceKind.unknown,
+                                              },
+                                              scrollbars: true,
+                                            ),
+                                            child: SingleChildScrollView(
+                                              physics: BouncingScrollPhysics(),
+                                              child: Container(
+                                                constraints: BoxConstraints(
+                                                  minWidth: context.width / 2,
+                                                  maxWidth: context.width,
+                                                  minHeight: context.height,
+                                                  maxHeight: context.height,
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      AppSizes.sm),
+                                                  child: Scaffold(
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    body:
+                                                        _topPageActionsSmallScreen(),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ));
-                                  });
-                            },
-                          ).removeWhen(isAtLeastMediumScreen(context)),
-                        ),
+                                          ));
+                                    });
+                              },
+                            ),
+                          ),
+                        ).removeWhen(isAtLeastMediumScreen(context)),
                       ].nonNulls.toList(),
                     )
                   ],
@@ -340,7 +345,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               child: Text("Cancel"),
             ),
             ShadButton(
-              onPressed: () => Actions.addAlert(
+              onPressed: () => EmailActions.addAlert(
                 context,
                 monitoredValue: _addAlertMonitoredValue!,
                 customMessage: _addAlertCustomMessage,
@@ -529,7 +534,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                       icon: Icon(Icons.edit),
                       child: Text(strings.value.save),
                       onPressed: () {
-                        Actions.saveAlert(
+                        EmailActions.saveAlert(
                           context,
                           alertId: alert.id,
                           customMessage: _saveAlertCustomMessage,
@@ -573,7 +578,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                               icon: Icon(Icons.edit),
                               child: Text(strings.value.save),
                               onPressed: () {
-                                Actions.saveAlert(
+                                EmailActions.saveAlert(
                                   context,
                                   alertId: alert.id,
                                   customMessage: _saveAlertCustomMessage,
@@ -974,7 +979,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               color: Colors.grey,
               fontWeight: FontWeight.bold,
             ),
-      )),
+      )).removeWhen(isAtMostSmallScreen(context)),
       DataColumn2(
           label: Text(
         strings.value.monitored,
@@ -990,7 +995,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               color: Colors.grey,
               fontWeight: FontWeight.bold,
             ),
-      )),
+      )).removeWhen(isAtMostSmallScreen(context)),
       DataColumn2(
           label: Text(
         strings.value.warning,
@@ -998,7 +1003,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               color: Colors.grey,
               fontWeight: FontWeight.bold,
             ),
-      )),
+      )).removeWhen(isAtMostSmallScreen(context)),
       DataColumn2(
           label: Text(
         strings.value.active,
@@ -1018,7 +1023,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           ),
         ),
       ),
-    ];
+    ].nonNulls.toList();
   }
 
   _getRows() {
@@ -1040,24 +1045,27 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           DataCell(Text(
             (alerts.indexOf(e) + 1).toString(),
             style: Theme.of(context).textTheme.bodyMedium,
-          )),
-          DataCell(Text(
-            e.monitoredValue.json ?? "unknown",
-            style: Theme.of(context).textTheme.bodyMedium,
+          )).removeWhen(isAtMostSmallScreen(context)),
+          DataCell(FittedBox(
+            child: Text(
+              e.monitoredValue.json ?? "unknown",
+              softWrap: false,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           )),
           DataCell(Text(
             e.dangerPoint.toString(),
             style: Theme.of(context).textTheme.bodyMedium,
-          )),
+          )).removeWhen(isAtMostSmallScreen(context)),
           DataCell(Text(
             e.warningPoint.toString(),
             style: Theme.of(context).textTheme.bodyMedium,
-          )),
+          )).removeWhen(isAtMostSmallScreen(context)),
           DataCell(
             Checkbox(
               value: e.enabled,
               onChanged: (v) {
-                Actions.changeAlertEnabledState(
+                EmailActions.changeAlertEnabledState(
                   context,
                   alertId: e.id,
                   enabled: v ?? false,
@@ -1146,7 +1154,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               ),
             ),
           ),
-        ],
+        ].nonNulls.toList(),
       );
     }).toList();
   }
@@ -1590,627 +1598,5 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
         ),
       ],
     );
-  }
-}
-
-class PerPageInput extends StatelessWidget {
-  final GlobalKey<FormState> perPageFormKey = GlobalKey<FormState>();
-  final TextEditingController _perPageController;
-  final RxBool _expandPerPage;
-  final Function? load;
-  int perPage;
-  PerPageInput({
-    super.key,
-    required RxBool expandPerPage,
-    required TextEditingController perPageController,
-    this.load,
-    this.perPage = 10,
-  })  : _expandPerPage = expandPerPage,
-        _perPageController = perPageController;
-
-  void _executeChangePerPageIfPossible(GlobalKey<FormState> perPageFormKey) {
-    if (perPageFormKey.currentState != null &&
-        perPageFormKey.currentState!.validate()) {
-      load?.call();
-    }
-  }
-
-  void _changePerPage(String value) {
-    if (value.isEmpty) {
-      _perPageController.text = "$perPage";
-    }
-    int? newPerPage = int.tryParse(value);
-
-    if (newPerPage != null) {
-      perPage = newPerPage;
-      LocalStorage.setPerPage(newPerPage);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: perPageFormKey,
-      onChanged: () {},
-      child: TextFormField(
-        validator: (value) => AppValidators.perPageValidator(
-          value,
-          _expandPerPage,
-        ),
-        controller: _perPageController,
-        onTapOutside: (_) => _executeChangePerPageIfPossible(
-            perPageFormKey), // execute change per page if possible
-        onEditingComplete: () => _executeChangePerPageIfPossible(
-            perPageFormKey), // execute change per page if possible
-        onChanged: (value) => _changePerPage(value),
-        decoration: InputDecoration(
-          filled: true,
-          labelText: "Per Page",
-          hintText: "10",
-        ),
-      ),
-    );
-  }
-}
-
-class Actions {
-  Actions._();
-  static Future<void> addAlert(
-    BuildContext context, {
-    required String monitoredValue,
-    String? customMessage,
-    String? dangerAlertInterval,
-    String? dangerPoint,
-    bool? enabled,
-    List<Role>? roles,
-    List<User>? users,
-    String? warningAlertInterval,
-    String? warningPoint,
-    Function? onSuccess,
-    Function? onFail,
-  }) async {
-    // add alert
-    final state = FutureState.loading.obs;
-    final toast = Toasts.showStatefulToast(
-        context: context,
-        message: "Adding Alert...",
-        messageSuccess: "Alert Added",
-        messageError: "Failed to add alert",
-        state: state);
-    try {
-      final api = await ApiClientInstance.getApiClient();
-      final res = await api.addAlertEmail(
-        monitoredValue: AlertEnum.fromJson(monitoredValue),
-        dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
-        warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
-        dangerReminderInterval:
-            dangerAlertInterval != null ? int.parse(dangerAlertInterval) : null,
-        warningReminderInterval: warningAlertInterval != null
-            ? int.parse(warningAlertInterval)
-            : null,
-        customAlertMessage: customMessage,
-        enabled: enabled,
-        sendToUsers: users?.map((e) => e.email).toList(),
-        sendToRoles: roles?.map((e) => e.roleId).toList(),
-      );
-      state.value = FutureState.success;
-      onSuccess?.call();
-    } on Exception catch (e) {
-      logger.e("Failed to add alert : $e");
-      state.value = FutureState.error;
-      Toasts.showErrorToast(context: context, message: "Failed to add alert");
-      onFail?.call();
-    } finally {
-      Future.delayed(Duration(seconds: 2), () {
-        toastification.dismissById(toast.id);
-      });
-    }
-    return;
-  }
-
-  static Future<void> saveAlert(
-    BuildContext context, {
-    required int alertId,
-    String? monitoredValue,
-    String? customMessage,
-    String? dangerAlertInterval,
-    String? dangerPoint,
-    bool? enabled,
-    List<Role>? roles,
-    List<User>? users,
-    String? warningAlertInterval,
-    String? warningPoint,
-    Function? onSuccess,
-    Function? onFail,
-  }) async {
-    // add alert
-    final state = FutureState.loading.obs;
-    final toast = Toasts.showStatefulToast(
-        context: context,
-        message: "Saving Alert...",
-        messageSuccess: "Alert Saved",
-        messageError: "Failed to save alert",
-        state: state);
-    try {
-      final api = await ApiClientInstance.getApiClient();
-
-      final res = await api.partialUpdateAlertEmail(
-        id: alertId,
-        monitoredValue:
-            monitoredValue != null ? AlertEnum.fromJson(monitoredValue) : null,
-        dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
-        warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
-        dangerReminderInterval:
-            dangerAlertInterval != null ? int.parse(dangerAlertInterval) : null,
-        warningReminderInterval: warningAlertInterval != null
-            ? int.parse(warningAlertInterval)
-            : null,
-        customAlertMessage: customMessage,
-        enabled: enabled,
-        sendToUsers: users?.map((e) => e.email).toList(),
-        sendToRoles: roles?.map((e) => e.roleId).toList(),
-      );
-      state.value = FutureState.success;
-      onSuccess?.call();
-    } on Exception catch (e) {
-      logger.e("Failed to save alert : $e");
-      state.value = FutureState.error;
-      Toasts.showErrorToast(context: context, message: "Failed to save alert");
-      onFail?.call();
-    } finally {
-      Future.delayed(Duration(seconds: 2), () {
-        toastification.dismissById(toast.id);
-      });
-    }
-    return;
-  }
-
-  static Future<void> changeAlertEnabledState(
-    BuildContext context, {
-    required int alertId,
-    required bool enabled,
-    Function? onSuccess,
-    Function? onFail,
-  }) async {
-    // enable or disable alert
-    final actionStr = enabled ? 'Activating' : 'Deactivating';
-    final actionDoneStr = enabled ? 'Activated' : 'Deactivated';
-    final state = FutureState.loading.obs;
-    final toast = Toasts.showStatefulToast(
-      context: context,
-      message: "$actionStr Alert...",
-      messageSuccess: "Alert $actionDoneStr",
-      messageError: "Failed to $actionDoneStr alert",
-      state: state,
-    );
-    try {
-      final api = await ApiClientInstance.getApiClient();
-
-      await api.partialUpdateAlertEmail(
-        id: alertId,
-        enabled: enabled,
-      );
-      state.value = FutureState.success;
-      onSuccess?.call();
-    } on Exception catch (e) {
-      logger.e("Failed to $actionStr alert : $e");
-      state.value = FutureState.error;
-      Toasts.showErrorToast(
-          context: context, message: "Failed to $actionStr alert");
-      onFail?.call();
-    } finally {
-      Future.delayed(Duration(seconds: 2), () {
-        toastification.dismissById(toast.id);
-      });
-    }
-    return;
-  }
-}
-
-class AlertEmailForm extends StatelessWidget {
-  AlertEmailForm({
-    super.key,
-    this.showIdField = false,
-    this.onValuesChanged,
-    this.editable = true,
-    this.alert,
-  });
-
-  final bool editable;
-  final AlertEmail? alert;
-
-  Function? _getContext;
-
-  BuildContext get getContext => _getContext!.call()!;
-
-  ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
-
-  final Function({
-    String? monitoredValue,
-    String? dangerPoint,
-    String? warningPoint,
-    String? dangerAlertInterval,
-    String? warningAlertInterval,
-    List<Role>? roles,
-    List<User>? users,
-    String? customMessage,
-    bool? enabled,
-  })? onValuesChanged;
-
-  _valuesChanged() {
-    if (!editable) return;
-    print("monitoredValueController.text ${monitoredValueController.text}");
-    print(
-        "dangerAlertIntervalController.text ${dangerAlertIntervalController.text}");
-    print("dangerPointController.text ${dangerPointController.text}");
-    print(
-        "warningAlertIntervalController.text ${warningAlertIntervalController.text}");
-    print("warningPointController.text ${warningPointController.text}");
-    print("customMessageController.text ${customMessageController.text}");
-    print("sendToRoles ${sendToRoles.map((e) => e.name).join(', ')}");
-    print("sendToUsers ${sendToUsers.map((e) => e.email).join(', ')}");
-    print("enabled $enabled");
-    onValuesChanged?.call(
-      monitoredValue: monitoredValueController.text,
-      dangerPoint: dangerPointController.text,
-      warningPoint: warningPointController.text,
-      dangerAlertInterval: dangerAlertIntervalController.text,
-      warningAlertInterval: warningAlertIntervalController.text,
-      roles: sendToRoles.toList(),
-      users: sendToUsers.toList(),
-      customMessage: customMessageController.text,
-      enabled: enabled,
-    );
-  }
-
-  final idController = TextEditingController(text: "Auto Generated");
-  final monitoredValueController = TextEditingController();
-  final dangerPointController = TextEditingController(text: "1000");
-  final warningPointController = TextEditingController(text: "2500");
-  final dangerAlertIntervalController = TextEditingController(text: "1");
-  final warningAlertIntervalController = TextEditingController(text: "7");
-  final customMessageController = TextEditingController(text: "");
-  final sendToRoles = <Role>[];
-  final sendToUsers = <User>[];
-
-  bool enabled = true;
-
-  late final strings = getTranslations(getContext).obs;
-  final bool showIdField;
-  final userController = Get.find<UserController>();
-  IbdmApiClient? api;
-  List<User> _users = [];
-  List<String> _possibleMonitorValues = [];
-  RxBool loaded = false.obs;
-
-  _loadUsers() async {
-    try {
-      final res = await api!.getUsers(
-        enablePagination: false,
-      );
-      _users = res.data;
-    } catch (e) {
-      logger.e("Failed to load users : $e");
-      Toasts.showErrorToast(
-          context: getContext, message: "Failed to load users");
-      Navigator.of(getContext).pop();
-    }
-  }
-
-  Future<void> load() async {
-    if (loaded.value) {
-      loaded.value = false;
-    }
-    api ??= await ApiClientInstance.getApiClient();
-    await _loadUsers();
-    await _loadPossibleMonitorValues();
-
-    if (alert != null) {
-      idController.text = alert!.id.toString();
-      customMessageController.text = alert!.customAlertMessage ?? "";
-      dangerAlertIntervalController.text =
-          alert!.dangerReminderInterval.toString();
-      dangerPointController.text = alert!.dangerPoint.toString();
-      warningAlertIntervalController.text =
-          alert!.warningReminderInterval.toString();
-      warningPointController.text = alert!.warningPoint.toString();
-      enabled = alert!.enabled;
-      monitoredValueController.text = alert!.monitoredValue.toString();
-      sendToRoles.addAll(
-        userController.roles
-            .where((role) => alert!.sendToRoles.contains(role.roleId)),
-      );
-      sendToUsers.addAll(
-        _users.where((user) => alert!.sendToUsers.contains(user.email)),
-      );
-    }
-
-    loaded.value = true;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _getContext = () => context;
-    return Obx(() {
-      if (!loaded.value) {
-        load();
-        return SizedBox(
-          height: AppSizes.lg * 10,
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      }
-
-      return ShadForm(
-          onChanged: _valuesChanged,
-          child: Column(
-            children: [
-              SizedBox(height: AppSizes.lg),
-              if (showIdField)
-                ShadInputFormField(
-                  enabled: editable,
-                  controller: idController,
-                  label: Text("id"),
-                ),
-              SizedBox(height: AppSizes.sm),
-              Container(
-                constraints: BoxConstraints(
-                  minWidth: context.width,
-                ),
-                child: ShadSelectFormField<String>(
-                  enabled: editable,
-                  label: Text("Monitored Value"),
-                  options: _possibleMonitorValues.map(
-                    (value) => ShadOption(
-                      value: value,
-                      child: Text(value),
-                    ),
-                  ),
-                  selectedOptionBuilder: (context, value) => Container(
-                      constraints: BoxConstraints(
-                        minWidth: context.width,
-                      ),
-                      child: Text(value)),
-                  initialValue: alert?.monitoredValue.json,
-                  onChanged: (v) {
-                    monitoredValueController.text = v!;
-                    _valuesChanged();
-                  },
-                  placeholder: Container(
-                      constraints: BoxConstraints(
-                        minWidth: context.width,
-                      ),
-                      child: Text("Select a Value to Monitor")),
-                ),
-              ),
-              SizedBox(height: AppSizes.sm),
-              ShadInputFormField(
-                enabled: editable,
-                controller: dangerPointController,
-                label: Text("Danger Point"),
-                keyboardType: TextInputType.number,
-                initialValue: "1000",
-                onChanged: (v) => {
-                  _valuesChanged(),
-                },
-              ),
-              SizedBox(height: AppSizes.sm),
-              ShadInputFormField(
-                enabled: editable,
-                controller: warningPointController,
-                label: Text("Warning Point"),
-                keyboardType: TextInputType.number,
-                initialValue: "2500",
-                onChanged: (v) => {
-                  _valuesChanged(),
-                },
-              ),
-              SizedBox(height: AppSizes.sm),
-              ShadInputFormField(
-                enabled: editable,
-                controller: dangerAlertIntervalController,
-                label: Text("Danger Alert Interval (in days)"),
-                keyboardType: TextInputType.number,
-                initialValue: "1",
-                onChanged: (v) => {
-                  _valuesChanged(),
-                },
-              ),
-              SizedBox(height: AppSizes.sm),
-              ShadInputFormField(
-                enabled: editable,
-                controller: warningAlertIntervalController,
-                label: Text("Warning Alert Interval (in days)"),
-                keyboardType: TextInputType.number,
-                initialValue: "7",
-                onChanged: (v) => {
-                  _valuesChanged(),
-                },
-              ),
-              SizedBox(height: AppSizes.sm),
-              // tab panes to send based on users or roles
-              ShadTabs(
-                  value: alert != null
-                      ? alert!.sendToRoles.isNotEmpty
-                          ? "roles"
-                          : "users"
-                      : "roles",
-                  tabs: [
-                    ShadTab(
-                      value: "roles",
-                      content: ShadCard(
-                        child: Column(
-                          children: [
-                            Text("Send This Alert To Roles"),
-                            SizedBox(height: AppSizes.sm),
-                            ShadSelect<Role>.multiple(
-                              enabled: editable,
-                              closeOnSelect: false,
-                              onChanged: (v) {
-                                sendToRoles.clear();
-                                sendToRoles.addAll(v);
-                                _valuesChanged();
-                              },
-                              anchor: ShadAnchorAuto(
-                                preferBelow: false,
-                              ),
-                              options: userController.roles.map(
-                                (r) => ShadOption(
-                                  value: r,
-                                  child: Text(r.name,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color:
-                                                AppColors.getRoleColorWithRole(
-                                                    r),
-                                          )),
-                                ),
-                              ),
-                              selectedOptionsBuilder: (context, values) =>
-                                  Container(
-                                constraints: BoxConstraints(
-                                  minWidth: context.width,
-                                ),
-                                child: Column(
-                                  children: values
-                                      .map((role) => Text(
-                                            role.name,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.copyWith(
-                                                  color: AppColors
-                                                      .getRoleColorWithRole(
-                                                          role),
-                                                ),
-                                          ))
-                                      .toList(),
-                                ),
-                              ),
-                              initialValues: sendToRoles,
-                              placeholder: Container(
-                                  constraints: BoxConstraints(
-                                    minWidth: context.width,
-                                  ),
-                                  child: Text("Select Roles")),
-                            ),
-                          ],
-                        ),
-                      ),
-                      child: Text("Roles"),
-                    ),
-                    ShadTab(
-                        value: "users",
-                        content: ShadCard(
-                          child: Column(
-                            children: [
-                              Text("Send This Alert To Users"),
-                              SizedBox(height: AppSizes.sm),
-                              ShadSelect<User>.multiple(
-                                enabled: editable,
-                                onChanged: (v) {
-                                  sendToUsers.clear();
-                                  sendToUsers.addAll(v);
-                                  _valuesChanged();
-                                },
-                                closeOnSelect: false,
-                                anchor: ShadAnchorAuto(
-                                  preferBelow: false,
-                                ),
-                                options: _users.map(
-                                  (user) => ShadOption(
-                                    value: user,
-                                    child: Text(getUserName(user),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              color: AppColors
-                                                  .getRoleColorWithRoleValue(
-                                                      user.role),
-                                            )),
-                                  ),
-                                ),
-                                selectedOptionsBuilder: (context, values) =>
-                                    Container(
-                                  constraints: BoxConstraints(
-                                    minWidth: context.width,
-                                  ),
-                                  child: Column(
-                                    children: values
-                                        .map((user) => Text(
-                                              getUserName(user),
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.copyWith(
-                                                    color: AppColors
-                                                        .getRoleColorWithRoleValue(
-                                                            user.role),
-                                                  ),
-                                            ))
-                                        .toList(),
-                                  ),
-                                ),
-                                initialValues: sendToUsers,
-                                placeholder: Container(
-                                    constraints: BoxConstraints(
-                                      minWidth: context.width,
-                                    ),
-                                    child: Text("Select Users")),
-                              ),
-                            ],
-                          ),
-                        ),
-                        child: Text("Users")),
-                  ]),
-              SizedBox(height: AppSizes.sm),
-              ShadInputFormField(
-                enabled: editable,
-                controller: customMessageController,
-                minLines: 4,
-                maxLines: 30,
-                label: Text("Custom Message"),
-                onChanged: (v) => {
-                  _valuesChanged(),
-                },
-              ),
-              SizedBox(height: AppSizes.md),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ShadCheckboxFormField(
-                    enabled: editable,
-                    initialValue: alert?.enabled ?? true,
-                    inputLabel: Text("Enabled"),
-                    onChanged: (v) {
-                      enabled = v;
-                      _valuesChanged();
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(height: AppSizes.lg),
-            ],
-          ));
-    });
-  }
-
-  _loadPossibleMonitorValues() async {
-    // load possible monitor values
-    try {
-      final res = await api!.getPossibleMonitorValuesAlertEmails();
-      _possibleMonitorValues = res.possibleValues;
-    } catch (e) {
-      logger.e("Failed to load users : $e");
-      Toasts.showErrorToast(
-          context: getContext,
-          message: "Failed to load possible values for monitoring");
-      Navigator.of(getContext).pop();
-    }
   }
 }
