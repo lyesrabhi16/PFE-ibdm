@@ -197,33 +197,32 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                                   builder: (context) {
                                     return ShadSheet(
                                         scrollable: false,
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.all(AppSizes.sm),
-                                          child: ScrollConfiguration(
-                                            behavior:
-                                                ScrollConfiguration.of(context)
-                                                    .copyWith(
-                                              dragDevices: {
-                                                PointerDeviceKind.touch,
-                                                PointerDeviceKind.mouse,
-                                                PointerDeviceKind.stylus,
-                                                PointerDeviceKind
-                                                    .invertedStylus,
-                                                PointerDeviceKind.trackpad,
-                                                PointerDeviceKind.unknown,
-                                              },
-                                              scrollbars: true,
-                                            ),
-                                            child: SingleChildScrollView(
-                                              physics: BouncingScrollPhysics(),
-                                              child: Container(
-                                                constraints: BoxConstraints(
-                                                  minWidth: context.width / 2,
-                                                  maxWidth: context.width,
-                                                  minHeight: context.height,
-                                                  maxHeight: context.height,
-                                                ),
+                                        child: ScrollConfiguration(
+                                          behavior:
+                                              ScrollConfiguration.of(context)
+                                                  .copyWith(
+                                            dragDevices: {
+                                              PointerDeviceKind.touch,
+                                              PointerDeviceKind.mouse,
+                                              PointerDeviceKind.stylus,
+                                              PointerDeviceKind.invertedStylus,
+                                              PointerDeviceKind.trackpad,
+                                              PointerDeviceKind.unknown,
+                                            },
+                                            scrollbars: true,
+                                          ),
+                                          child: SingleChildScrollView(
+                                            physics: BouncingScrollPhysics(),
+                                            child: Container(
+                                              constraints: BoxConstraints(
+                                                minWidth: context.width / 2,
+                                                maxWidth: context.width,
+                                                minHeight: context.height,
+                                                maxHeight: context.height,
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(
+                                                    AppSizes.sm),
                                                 child: Scaffold(
                                                   backgroundColor:
                                                       Colors.transparent,
