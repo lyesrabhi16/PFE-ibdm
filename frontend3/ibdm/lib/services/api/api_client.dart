@@ -79,6 +79,7 @@ class ApiClientInstance {
       }
     }
     //dio.interceptors.add(CsrfInterceptor());
+    dio.interceptors.add(EnumFixInterceptor());
 
     print("ApiClientInstance: Initialized");
   }
@@ -453,6 +454,97 @@ extension WebUsersFixedApis on IbdmApiClient {
   }
 }
 
+class EnumFixInterceptor extends Interceptor {
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    print("EnumFixInterceptor: Start");
+    if (options.data is FormData) {
+      checkEnumFromForm(options, "monitored_value", AlertEnum.values);
+      checkEnumFromForm(options, "rapport", RapportEnum.values);
+      checkEnumFromForm(options, "interval", IntervalEnum.values);
+    }
+    print("EnumFixInterceptor: Finished");
+    super.onRequest(options, handler);
+  }
+
+  /* void checkEnumFromMap(RequestOptions options, String fieldName, List values) {
+    if (options.data.containsKey(fieldName)) {
+      dynamic v = null;
+      for (dynamic item in values) {
+        if (getTypeSafeName(item) == options.data[fieldName]) {
+          v = getTypeSafeJson(item);
+          break;
+        }
+      }
+      options.data.fields[fieldName] = v;
+    }
+  } */
+
+  String getTypeSafeName(dynamic r) {
+    if (r is RapportEnum) return r.name;
+    if (r is AlertEnum) return r.name;
+    if (r is IntervalEnum) return r.name;
+    throw ("EnumFixInterceptor: Type not found");
+  }
+
+  String? getTypeSafeJson(dynamic r) {
+    if (r is RapportEnum) return r.json;
+    if (r is AlertEnum) return r.json;
+    if (r is IntervalEnum) return r.json;
+    throw ("EnumFixInterceptor: Type not found");
+  }
+
+  void checkEnumFromForm(
+      RequestOptions options, String fieldName, List values) {
+    if (_hasField((options.data as FormData).fields, fieldName)) {
+      print("EnumFixInterceptor: request has $fieldName field");
+      for (var e in (options.data as FormData).fields) {
+        if (e.key == fieldName) {
+          print(
+              "EnumFixInterceptor: Found $fieldName field with value: ${e.value}");
+          print("runtimeType: ${values.runtimeType}");
+
+          dynamic v = null;
+
+          for (dynamic item in values) {
+            print("item: $item");
+            if (getTypeSafeName(item) == e.value) {
+              v = item;
+              break;
+            } else if (getTypeSafeJson(item) == e.value) {
+              v = item;
+              break;
+            }
+          }
+          print("v: $v");
+          MapEntry<String, String> newE =
+              MapEntry(e.key, v != null ? getTypeSafeJson(v) ?? "" : "");
+          (options.data as FormData)
+              .fields
+              .insert((options.data as FormData).fields.indexOf(e), newE);
+          print("EnumFixInterceptor: created new $fieldName value: $newE");
+          (options.data as FormData).fields.remove(e);
+          print(
+              "EnumFixInterceptor: Changed ${e.key} from ${e.value} to ${newE.value}");
+        }
+      }
+    }
+  }
+
+  bool _hasField(List<MapEntry<String, String>> data, String field) {
+    for (var e in data) {
+      if (e.key.toLowerCase() == field) {
+        if (e.value.isEmpty) {
+          data.remove(e);
+          return false;
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
 class TestInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -462,7 +554,8 @@ class TestInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print("Interceptor Response: ${response.data}");
+    print(
+        "Interceptor Response: ${response.statusCode} ${response.statusMessage}");
     super.onResponse(response, handler);
   }
 

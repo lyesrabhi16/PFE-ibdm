@@ -128,10 +128,16 @@
         
         {{flutter_js}}
         {{flutter_build_config}}
+        
+        
         // Cacher le splash screen après le chargement de Flutter
         const splashScreen = document.getElementById("splash-screen");
     
         _flutter.loader.load({
+          config: {
+              // use local canvas kit
+            canvasKitBaseUrl: "/canvaskit/",
+          },
           onEntrypointLoaded: async function (engineInitializer) {
             const appRunner = await engineInitializer.initializeEngine();
             await appRunner.runApp();

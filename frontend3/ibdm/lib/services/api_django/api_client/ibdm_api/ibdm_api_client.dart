@@ -10,18 +10,21 @@ import 'package:retrofit/retrofit.dart';
 
 import '../models/alert_email.dart';
 import '../models/alert_enum.dart';
+import '../models/co2_ifruit.dart';
 import '../models/debit.dart';
 import '../models/email_schedule.dart';
+import '../models/email_schedule_request.dart';
 import '../models/feed_meta_data.dart';
 import '../models/format.dart';
 import '../models/get_subordinate_and_superior_id_response.dart';
 import '../models/group.dart';
 import '../models/has_perm_response.dart';
-import '../models/interval_enum.dart';
+import '../models/interval.dart';
 import '../models/lang.dart';
 import '../models/login_response.dart';
 import '../models/niveau.dart';
 import '../models/paginated_alert_email_list.dart';
+import '../models/paginated_co2_ifruit_list.dart';
 import '../models/paginated_debit_list.dart';
 import '../models/paginated_email_schedule_list.dart';
 import '../models/paginated_group_list.dart';
@@ -33,17 +36,20 @@ import '../models/paginated_sent_email_list.dart';
 import '../models/paginated_subordinate_and_superior_list.dart';
 import '../models/paginated_sucre_list.dart';
 import '../models/paginated_user_list.dart';
+import '../models/paginated_utilite_list.dart';
 import '../models/paginated_volume_list.dart';
+import '../models/patched_email_schedule_request.dart';
 import '../models/permission.dart';
 import '../models/possible_monitor_values_alert_emails.dart';
 import '../models/pres_cond.dart';
-import '../models/rapport_enum.dart';
+import '../models/rapport.dart';
 import '../models/role.dart';
 import '../models/sent_email.dart';
 import '../models/subordinate_and_superior.dart';
 import '../models/success_response.dart';
 import '../models/sucre.dart';
 import '../models/user.dart';
+import '../models/utilite.dart';
 import '../models/volume.dart';
 
 part 'ibdm_api_client.g.dart';
@@ -93,14 +99,22 @@ abstract class IbdmApiClient {
 
   /// [enablePagination] - Enable or disable pagination.
   ///
+  /// [ordering] - Which field to use when ordering the results.
+  ///
   /// [page] - Page number.
   ///
   /// [perPage] - Number of results per page.
+  ///
+  /// [search] - A search term.
   @GET('/api/v1/emails/alerts/')
   Future<PaginatedAlertEmailList> getAlertEmails({
     @Query('enable_pagination') bool? enablePagination,
+    @Query('enabled') bool? enabled,
+    @Query('ordering') String? ordering,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
+    @Query('search') String? search,
+    @Query('tag') String? tag,
   });
 
   @MultiPart()
@@ -167,26 +181,34 @@ abstract class IbdmApiClient {
 
   /// [enablePagination] - Enable or disable pagination.
   ///
+  /// [interval] - * `jour` - jour.
+  /// * `semaine` - semaine.
+  /// * `mois` - mois.
+  /// * `manual` - manual.
+  ///
+  /// [ordering] - Which field to use when ordering the results.
+  ///
   /// [page] - Page number.
   ///
   /// [perPage] - Number of results per page.
+  ///
+  /// [rapport] - * `inventaire-sucre` - inventaire-sucre.
+  ///
+  /// [search] - A search term.
   @GET('/api/v1/emails/schedules/')
   Future<PaginatedEmailScheduleList> getEmailSchedules({
     @Query('enable_pagination') bool? enablePagination,
+    @Query('interval') Interval? interval,
+    @Query('ordering') String? ordering,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
+    @Query('rapport') Rapport? rapport,
+    @Query('search') String? search,
   });
 
-  @MultiPart()
   @POST('/api/v1/emails/schedules/')
   Future<EmailSchedule> addEmailSchedule({
-    @Part(name: 'rapport') required RapportEnum rapport,
-    @Part(name: 'temps_envoi') required String tempsEnvoi,
-    @Part(name: 'interval') required IntervalEnum interval,
-    @Part(name: 'scheduled_users') required List<String> scheduledUsers,
-    @Part(name: 'interval_manual') int? intervalManual,
-    @Part(name: 'next_run_time') DateTime? nextRunTime,
-    @Part(name: 'scheduled_roles') List<int>? scheduledRoles,
+    @Body() required EmailScheduleRequest body,
   });
 
   /// [id] - A unique integer value identifying this email schedule.
@@ -196,31 +218,17 @@ abstract class IbdmApiClient {
   });
 
   /// [id] - A unique integer value identifying this email schedule.
-  @MultiPart()
   @PUT('/api/v1/emails/schedules/{id}/')
   Future<EmailSchedule> updateEmailSchedule({
     @Path('id') required int id,
-    @Part(name: 'rapport') required RapportEnum rapport,
-    @Part(name: 'temps_envoi') required String tempsEnvoi,
-    @Part(name: 'interval') required IntervalEnum interval,
-    @Part(name: 'scheduled_users') required List<String> scheduledUsers,
-    @Part(name: 'interval_manual') int? intervalManual,
-    @Part(name: 'next_run_time') DateTime? nextRunTime,
-    @Part(name: 'scheduled_roles') List<int>? scheduledRoles,
+    @Body() required EmailScheduleRequest body,
   });
 
   /// [id] - A unique integer value identifying this email schedule.
-  @MultiPart()
   @PATCH('/api/v1/emails/schedules/{id}/')
   Future<EmailSchedule> partialUpdateEmailSchedule({
     @Path('id') required int id,
-    @Part(name: 'rapport') RapportEnum? rapport,
-    @Part(name: 'temps_envoi') String? tempsEnvoi,
-    @Part(name: 'interval') IntervalEnum? interval,
-    @Part(name: 'interval_manual') int? intervalManual,
-    @Part(name: 'next_run_time') DateTime? nextRunTime,
-    @Part(name: 'scheduled_users') List<String>? scheduledUsers,
-    @Part(name: 'scheduled_roles') List<int>? scheduledRoles,
+    @Body() PatchedEmailScheduleRequest? body,
   });
 
   /// [id] - A unique integer value identifying this email schedule.
@@ -231,14 +239,20 @@ abstract class IbdmApiClient {
 
   /// [enablePagination] - Enable or disable pagination.
   ///
+  /// [ordering] - Which field to use when ordering the results.
+  ///
   /// [page] - Page number.
   ///
   /// [perPage] - Number of results per page.
+  ///
+  /// [search] - A search term.
   @GET('/api/v1/emails/sent/')
   Future<PaginatedSentEmailList> getSentEmails({
     @Query('enable_pagination') bool? enablePagination,
+    @Query('ordering') String? ordering,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
+    @Query('search') String? search,
   });
 
   /// [id] - A unique integer value identifying this sent email.
@@ -735,6 +749,72 @@ abstract class IbdmApiClient {
   @DELETE('/api/v1/user-management/users/{id}/')
   Future<void> removeUser({
     @Path('id') required int id,
+  });
+
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/utilite/co2_ifruit/')
+  Future<PaginatedCo2IfruitList> getCo2IfruitList({
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
+  /// [date] - A unique value identifying this co2 ifruit.
+  @GET('/api/v1/utilite/co2_ifruit/{date}/')
+  Future<Co2Ifruit> getCo2Ifruit({
+    @Path('date') required DateTime date,
+  });
+
+  /// get Co2_Ifruit at specific time.
+  ///
+  /// getCo2IfruitAtSpecificTime.
+  @GET('/api/v1/utilite/co2_ifruit/specific')
+  Future<Co2Ifruit> getCo2IfruitAtSpecificTime({
+    @Query('year') required int year,
+    @Query('day') int? day,
+    @Query('hour') int? hour,
+    @Query('minute') int? minute,
+    @Query('month') int? month,
+    @Query('second') int? second,
+  });
+
+  /// get utilite metadata
+  @GET('/api/v1/utilite/metadata')
+  Future<FeedMetaData> getUtiliteMetaData();
+
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/utilite/utilite/')
+  Future<PaginatedUtiliteList> getUtiliteList({
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
+  /// [date] - A unique value identifying this utilite.
+  @GET('/api/v1/utilite/utilite/{date}/')
+  Future<Utilite> getUtilite({
+    @Path('date') required DateTime date,
+  });
+
+  /// get utilite at specific time.
+  ///
+  /// getUtiliteAtSpecificTime.
+  @GET('/api/v1/utilite/utilite/specific')
+  Future<Utilite> getUtiliteAtSpecificTime({
+    @Query('year') required int year,
+    @Query('day') int? day,
+    @Query('hour') int? hour,
+    @Query('minute') int? minute,
+    @Query('month') int? month,
+    @Query('second') int? second,
   });
 
   /// Get the CA certificate
