@@ -114,208 +114,214 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   Widget build(BuildContext context) {
     _getContext = () => context;
     return AppCustomContainer(
+        backButton: true,
         child: Padding(
-      padding: const EdgeInsets.all(AppSizes.sm),
-      child: Obx(() {
-        if (!loaded.value) {
-          load();
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+          padding: const EdgeInsets.all(AppSizes.sm),
+          child: Obx(() {
+            if (!loaded.value) {
+              load();
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
 
-        _showCheckboxColumn.value = _selectedAlerts.isNotEmpty;
+            _showCheckboxColumn.value = _selectedAlerts.isNotEmpty;
 
-        return Column(
-          children: [
-            Text(
-              'Alert Emails',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            SizedBox(height: AppSizes.xl),
-            Container(
-              constraints: BoxConstraints(
-                minWidth: context.width,
-              ),
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(AppSizes.sm),
-                child: Wrap(
-                  alignment: isAtMostSmallScreen(context)
-                      ? WrapAlignment.center
-                      : WrapAlignment.spaceBetween,
-                  runAlignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  direction: Axis.horizontal,
-                  runSpacing: AppSizes.sm,
-                  verticalDirection: VerticalDirection.down,
-                  children: [
-                    SearchBar(
-                      controller: _searchController,
-                      onSubmitted: (_) => load(),
-                      onTapOutside: (_) => load(),
-                      constraints: BoxConstraints(
-                        maxWidth: AppSizes.lg * 8,
-                        minHeight: AppSizes.lg * 1.5,
-                        maxHeight: AppSizes.lg * 1.5,
+            return Column(
+              children: [
+                Text(
+                  'Alert Emails',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      backgroundColor: WidgetStatePropertyAll(
-                          Theme.of(context).colorScheme.surfaceContainer),
-                      elevation: WidgetStatePropertyAll(0),
-                      leading: Icon(Icons.search),
-                      hintText: strings.value.search,
-                    ),
-                    Wrap(
-                      alignment: WrapAlignment.center,
+                ),
+                SizedBox(height: AppSizes.xl),
+                Container(
+                  constraints: BoxConstraints(
+                    minWidth: context.width,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(AppSizes.sm),
+                    child: Wrap(
+                      alignment: isAtMostSmallScreen(context)
+                          ? WrapAlignment.center
+                          : WrapAlignment.spaceBetween,
+                      runAlignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      direction: Axis.horizontal,
+                      runSpacing: AppSizes.sm,
+                      verticalDirection: VerticalDirection.down,
                       children: [
-                        ShadButton(
-                            backgroundColor: colorScheme.surfaceContainerLow,
-                            hoverBackgroundColor:
-                                colorScheme.surfaceContainerHighest,
-                            foregroundColor: colorScheme.onSurface,
-                            onPressed: () {
-                              _showAddAlertEmailDialog();
-                            },
-                            child: Text(strings.value.addAlertEmail)),
-                        ShadButton.destructive(
-                            onPressed: _onDeleteButtonClick,
-                            child: Text(strings.value.delete)),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: SizedBox(
-                            width: AppSizes.xl * 4,
-                            child: IconWithLabelButton(
-                              icon: Icons.settings,
-                              text: strings.value.options,
-                              onTap: () {
-                                showShadSheet(
-                                    context: context,
-                                    side: ShadSheetSide.right,
-                                    isDismissible: true,
-                                    builder: (context) {
-                                      return ShadSheet(
-                                          scrollable: false,
-                                          child: ScrollConfiguration(
-                                            behavior:
-                                                ScrollConfiguration.of(context)
-                                                    .copyWith(
-                                              dragDevices: {
-                                                PointerDeviceKind.touch,
-                                                PointerDeviceKind.mouse,
-                                                PointerDeviceKind.stylus,
-                                                PointerDeviceKind
-                                                    .invertedStylus,
-                                                PointerDeviceKind.trackpad,
-                                                PointerDeviceKind.unknown,
-                                              },
-                                              scrollbars: true,
-                                            ),
-                                            child: SingleChildScrollView(
-                                              physics: BouncingScrollPhysics(),
-                                              child: Container(
-                                                constraints: BoxConstraints(
-                                                  minWidth: context.width / 2,
-                                                  maxWidth: context.width,
-                                                  minHeight: context.height,
-                                                  maxHeight: context.height,
+                        SearchBar(
+                          controller: _searchController,
+                          onSubmitted: (_) => load(),
+                          onTapOutside: (_) => load(),
+                          constraints: BoxConstraints(
+                            maxWidth: AppSizes.lg * 8,
+                            minHeight: AppSizes.lg * 1.5,
+                            maxHeight: AppSizes.lg * 1.5,
+                          ),
+                          backgroundColor: WidgetStatePropertyAll(
+                              Theme.of(context).colorScheme.surfaceContainer),
+                          elevation: WidgetStatePropertyAll(0),
+                          leading: Icon(Icons.search),
+                          hintText: strings.value.search,
+                        ),
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          children: [
+                            ShadButton(
+                                backgroundColor:
+                                    colorScheme.surfaceContainerLow,
+                                hoverBackgroundColor:
+                                    colorScheme.surfaceContainerHighest,
+                                foregroundColor: colorScheme.onSurface,
+                                onPressed: () {
+                                  _showAddAlertEmailDialog();
+                                },
+                                child: Text(strings.value.addAlertEmail)),
+                            ShadButton.destructive(
+                                onPressed: _onDeleteButtonClick,
+                                child: Text(strings.value.delete)),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: SizedBox(
+                                width: AppSizes.xl * 4,
+                                child: IconWithLabelButton(
+                                  icon: Icons.settings,
+                                  text: strings.value.options,
+                                  onTap: () {
+                                    showShadSheet(
+                                        context: context,
+                                        side: ShadSheetSide.right,
+                                        isDismissible: true,
+                                        builder: (context) {
+                                          return ShadSheet(
+                                              scrollable: false,
+                                              child: ScrollConfiguration(
+                                                behavior:
+                                                    ScrollConfiguration.of(
+                                                            context)
+                                                        .copyWith(
+                                                  dragDevices: {
+                                                    PointerDeviceKind.touch,
+                                                    PointerDeviceKind.mouse,
+                                                    PointerDeviceKind.stylus,
+                                                    PointerDeviceKind
+                                                        .invertedStylus,
+                                                    PointerDeviceKind.trackpad,
+                                                    PointerDeviceKind.unknown,
+                                                  },
+                                                  scrollbars: true,
                                                 ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      AppSizes.sm),
-                                                  child: Scaffold(
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                    body:
-                                                        _topPageActionsSmallScreen(),
+                                                child: SingleChildScrollView(
+                                                  physics:
+                                                      BouncingScrollPhysics(),
+                                                  child: Container(
+                                                    constraints: BoxConstraints(
+                                                      minWidth:
+                                                          context.width / 2,
+                                                      maxWidth: context.width,
+                                                      minHeight: context.height,
+                                                      maxHeight: context.height,
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              AppSizes.sm),
+                                                      child: Scaffold(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        body:
+                                                            _topPageActionsSmallScreen(),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          ));
-                                    });
-                              },
-                            ),
-                          ),
-                        ).removeWhen(isAtLeastMediumScreen(context)),
-                      ].nonNulls.toList(),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Container(
-                  width: context.width,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainer,
-                    borderRadius: BorderRadius.circular(20),
+                                              ));
+                                        });
+                                  },
+                                ),
+                              ),
+                            ).removeWhen(isAtLeastMediumScreen(context)),
+                          ].nonNulls.toList(),
+                        )
+                      ],
+                    ),
                   ),
-                  child: _topPageActions(
-                    alignment: WrapAlignment.spaceBetween,
-                    expandPerPage: _expandPerPage.value,
-                    filtersPopoverController: _filtersPopoverController,
-                    filtersActive: _filtersActive,
-                    perPageFormKey: _perPageFormKey,
-                    tagFilterController: _tagFilterController,
-                    activationStateFilterController:
-                        _activationStateFilterController,
-                    sortPopoverController: _sortPopoverController,
-                    sortASC: _sortASC,
-                    sortActive: _sortActive,
+                ),
+                Container(
+                      width: context.width,
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainer,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: _topPageActions(
+                        alignment: WrapAlignment.spaceBetween,
+                        expandPerPage: _expandPerPage.value,
+                        filtersPopoverController: _filtersPopoverController,
+                        filtersActive: _filtersActive,
+                        perPageFormKey: _perPageFormKey,
+                        tagFilterController: _tagFilterController,
+                        activationStateFilterController:
+                            _activationStateFilterController,
+                        sortPopoverController: _sortPopoverController,
+                        sortASC: _sortASC,
+                        sortActive: _sortActive,
+                      ),
+                    ).removeWhen(isAtMostSmallScreen(context)) ??
+                    SizedBox.shrink(),
+                SizedBox(
+                  height: AppSizes.sm,
+                ),
+                Expanded(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minWidth: context.width,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: DataTable2(
+                      columnSpacing: _getColumnSpacing(),
+                      onSelectAll: (selectedAll) => selectedAll == true
+                          ? _selectedAlerts.addAll(alerts)
+                          : _selectedAlerts.clear(),
+                      showCheckboxColumn: _showCheckboxColumn.value,
+                      sortColumnIndex: 0,
+                      dataRowColor: WidgetStateProperty.fromMap({
+                        WidgetState.hovered:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        WidgetState.focused: colorScheme.primaryContainer,
+                      }),
+                      columns: _getCols(),
+                      rows: _getRows(),
+                    ),
                   ),
-                ).removeWhen(isAtMostSmallScreen(context)) ??
-                SizedBox.shrink(),
-            SizedBox(
-              height: AppSizes.sm,
-            ),
-            Expanded(
-              child: Container(
-                constraints: BoxConstraints(
-                  minWidth: context.width,
                 ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                  borderRadius: BorderRadius.circular(10),
+                SizedBox(
+                  height: AppSizes.sm,
                 ),
-                child: DataTable2(
-                  columnSpacing: _getColumnSpacing(),
-                  onSelectAll: (selectedAll) => selectedAll == true
-                      ? _selectedAlerts.addAll(alerts)
-                      : _selectedAlerts.clear(),
-                  showCheckboxColumn: _showCheckboxColumn.value,
-                  sortColumnIndex: 0,
-                  dataRowColor: WidgetStateProperty.fromMap({
-                    WidgetState.hovered:
-                        Theme.of(context).colorScheme.primaryContainer,
-                    WidgetState.focused: colorScheme.primaryContainer,
-                  }),
-                  columns: _getCols(),
-                  rows: _getRows(),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: AppSizes.sm,
-            ),
-            _bottomPageActions(
-              currentPage: alertsMeta.currentPage,
-              nbrTotalPages: alertsMeta.totalPages,
-              nbrShown: alertsMeta.data.length,
-              nbrTotal: alertsMeta.totalResults,
-              onPrevPress: (p) => {page = p, load()},
-              onNextPress: (p) => {page = p, load()},
-              onPagePress: (p) => {page = p, load()},
-              data: alerts,
-              label: "Alerts",
-            )
-          ],
-        );
-      }),
-    ));
+                _bottomPageActions(
+                  currentPage: alertsMeta.currentPage,
+                  nbrTotalPages: alertsMeta.totalPages,
+                  nbrShown: alertsMeta.data.length,
+                  nbrTotal: alertsMeta.totalResults,
+                  onPrevPress: (p) => {page = p, load()},
+                  onNextPress: (p) => {page = p, load()},
+                  onPagePress: (p) => {page = p, load()},
+                  data: alerts,
+                  label: "Alerts",
+                )
+              ],
+            );
+          }),
+        ));
   }
 
   _showAddAlertEmailDialog() {
@@ -1055,11 +1061,17 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           )),
           DataCell(Text(
             e.dangerPoint.toString(),
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: errorColor,
+                  fontWeight: FontWeight.bold,
+                ),
           )).removeWhen(isAtMostSmallScreen(context)),
           DataCell(Text(
             e.warningPoint.toString(),
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.orangeAccent,
+                  fontWeight: FontWeight.bold,
+                ),
           )).removeWhen(isAtMostSmallScreen(context)),
           DataCell(
             Checkbox(

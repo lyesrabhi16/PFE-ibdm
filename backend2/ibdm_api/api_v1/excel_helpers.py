@@ -1,14 +1,25 @@
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
+import os
 
+from ibdm_api.settings import BASE_DIR
 
 def generateExcelReport(
     data,
     filename,
-    title
-
+    title,
+    force=False,
 ):
+    
+    output_file = f"{filename}.xlsx"
+
+    # check if report already exists
+    if not force:
+        exists = os.path.isfile(os.path.join(BASE_DIR, output_file))
+        if exists:
+            print(f"re-using existing file {output_file}")
+            return output_file
 
     # Create a new workbook and select the active worksheet
     wb = Workbook()
@@ -88,7 +99,6 @@ def generateExcelReport(
         ws.column_dimensions[column].width = adjusted_width
 
     # Save the workbook
-    output_file = f"{filename}.xlsx"
     wb.save(output_file)
 
     print(f"Excel file '{output_file}' created successfully!")

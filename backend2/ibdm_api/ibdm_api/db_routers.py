@@ -11,6 +11,9 @@ class DB_Router:
         "filtration":[
             "filtration",
         ],
+        "utilite":[
+            "utilite",
+        ],
         'automate': [
             'automate',
         ],

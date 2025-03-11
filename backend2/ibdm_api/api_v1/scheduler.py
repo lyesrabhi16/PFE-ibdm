@@ -3,6 +3,8 @@ from apscheduler.schedulers.twisted import TwistedScheduler
 from filtration.consumers import FiltrationConsumer
 from api_v1.broadcasts.filtration_broadcast import broadcast_filtration
 from api_v1.broadcasts.sucre_broadcast import broadcast_sucre
+from api_v1.broadcasts.sent_emails_broadcast import broadcast_sent_emails
+from api_v1.broadcasts.utilite_broadcast import broadcast_utilite
 from api_v1.emails.emails_scheduler import email_scheduler
 from siroperie.consumers import SucreConsumer
 
@@ -27,6 +29,25 @@ scheduler.add_job(
     id="broadcast_filtration",
 )
 #scheduler.pause_job("broadcast_filtration")
+
+
+scheduler.add_job(
+    broadcast_sent_emails,
+    "cron",
+    #minute="*/1", works
+    second="*/1",
+    id="broadcast_sent_emails",
+)
+#scheduler.pause_job("broadcast_sent_emails")
+
+scheduler.add_job(
+    broadcast_utilite,
+    "cron",
+    #minute="*/1", works
+    second="*/1",
+    id="broadcast_utilite",
+)
+#scheduler.pause_job("broadcast_sucre")
 
 
 scheduler.add_job(

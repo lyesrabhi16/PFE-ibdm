@@ -5,7 +5,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 /// * `sucre.t_s21` - sucre.t_s21.
-/// * `sucre.t_s22` - sucre.t_s21.
+/// * `sucre.t_s22` - sucre.t_s22.
 /// * `sucre.t_s23` - sucre.t_s23.
 /// * `sucre.t_s24` - sucre.t_s24.
 /// * `sucre.t_s25` - sucre.t_s25.
@@ -83,6 +83,51 @@ import 'package:json_annotation/json_annotation.dart';
 /// * `volume.vol_os7` - volume.vol_os7.
 /// * `volume.vol_os8` - volume.vol_os8.
 /// * `volume.vol_os9` - volume.vol_os9.
+/// * `ut_co2_vc1` - ut_co2_vc1.
+/// * `ut_co2_vc2` - ut_co2_vc2.
+/// * `ut_co2_de` - ut_co2_de.
+/// * `ut_co2_ve` - ut_co2_ve.
+/// * `ut_co2_pc1` - ut_co2_pc1.
+/// * `ut_co2_pc2` - ut_co2_pc2.
+/// * `ut_co2_pn` - ut_co2_pn.
+/// * `ut_co2_d182` - ut_co2_d182.
+/// * `ut_co2_d1833` - ut_co2_d1833.
+/// * `ut_co2_dcan35` - ut_co2_dcan35.
+/// * `ut_co2_dkrv40` - ut_co2_dkrv40.
+/// * `ut_co2_dcan2` - ut_co2_dcan2.
+/// * `ut_co2_dcm16` - ut_co2_dcm16.
+/// * `ut_co2_v182` - ut_co2_v182.
+/// * `ut_co2_v1833` - ut_co2_v1833.
+/// * `ut_co2_vcan35` - ut_co2_vcan35.
+/// * `ut_co2_vkrv40` - ut_co2_vkrv40.
+/// * `ut_co2_vcan2` - ut_co2_vcan2.
+/// * `ut_co2_vcm16` - ut_co2_vcm16.
+/// * `ut_co2_p182` - ut_co2_p182.
+/// * `ut_co2_p1833` - ut_co2_p1833.
+/// * `ut_co2_pcan35` - ut_co2_pcan35.
+/// * `ut_co2_pkrv40` - ut_co2_pkrv40.
+/// * `ut_co2_pcan2` - ut_co2_pcan2.
+/// * `ut_co2_pcm16` - ut_co2_pcm16.
+/// * `ut_n2_vn2` - ut_n2_vn2.
+/// * `ut_n2_pn2` - ut_n2_pn2.
+/// * `ut_soude` - ut_soude.
+/// * `utilite.ut_kr_p7` - utilite.ut_kr_p7.
+/// * `utilite.ut_kr_pn2` - utilite.ut_kr_pn2.
+/// * `utilite.ut_kr_p40` - utilite.ut_kr_p40.
+/// * `utilite.ut_kr_pv` - utilite.ut_kr_pv.
+/// * `utilite.ut_kr_pg` - utilite.ut_kr_pg.
+/// * `utilite.ut_kr_tt` - utilite.ut_kr_tt.
+/// * `utilite.ut_kr_tc` - utilite.ut_kr_tc.
+/// * `utilite.ut_sid_p7` - utilite.ut_sid_p7.
+/// * `utilite.ut_sid_pn2` - utilite.ut_sid_pn2.
+/// * `utilite.ut_sid_p40` - utilite.ut_sid_p40.
+/// * `utilite.ut_sid_pv` - utilite.ut_sid_pv.
+/// * `utilite.ut_sid_pg` - utilite.ut_sid_pg.
+/// * `utilite.ut_sid_tt` - utilite.ut_sid_tt.
+/// * `utilite.ut_sid_tc` - utilite.ut_sid_tc.
+/// * `sucre.total.adue` - sucre.total.adue.
+/// * `sucre.total.tetra` - sucre.total.tetra.
+/// * `sucre.total` - sucre.total.
 @JsonEnum()
 enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `sucre.t_s21`.
@@ -322,6 +367,113 @@ enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `volume.vol_os9`.
   @JsonValue('volume.vol_os9')
   undefined78('volume.vol_os9'),
+  @JsonValue('ut_co2_vc1')
+  utCo2Vc1('ut_co2_vc1'),
+  @JsonValue('ut_co2_vc2')
+  utCo2Vc2('ut_co2_vc2'),
+  @JsonValue('ut_co2_de')
+  utCo2De('ut_co2_de'),
+  @JsonValue('ut_co2_ve')
+  utCo2Ve('ut_co2_ve'),
+  @JsonValue('ut_co2_pc1')
+  utCo2Pc1('ut_co2_pc1'),
+  @JsonValue('ut_co2_pc2')
+  utCo2Pc2('ut_co2_pc2'),
+  @JsonValue('ut_co2_pn')
+  utCo2Pn('ut_co2_pn'),
+  @JsonValue('ut_co2_d182')
+  utCo2D182('ut_co2_d182'),
+  @JsonValue('ut_co2_d1833')
+  utCo2D1833('ut_co2_d1833'),
+  @JsonValue('ut_co2_dcan35')
+  utCo2Dcan35('ut_co2_dcan35'),
+  @JsonValue('ut_co2_dkrv40')
+  utCo2Dkrv40('ut_co2_dkrv40'),
+  @JsonValue('ut_co2_dcan2')
+  utCo2Dcan2('ut_co2_dcan2'),
+  @JsonValue('ut_co2_dcm16')
+  utCo2Dcm16('ut_co2_dcm16'),
+  @JsonValue('ut_co2_v182')
+  utCo2V182('ut_co2_v182'),
+  @JsonValue('ut_co2_v1833')
+  utCo2V1833('ut_co2_v1833'),
+  @JsonValue('ut_co2_vcan35')
+  utCo2Vcan35('ut_co2_vcan35'),
+  @JsonValue('ut_co2_vkrv40')
+  utCo2Vkrv40('ut_co2_vkrv40'),
+  @JsonValue('ut_co2_vcan2')
+  utCo2Vcan2('ut_co2_vcan2'),
+  @JsonValue('ut_co2_vcm16')
+  utCo2Vcm16('ut_co2_vcm16'),
+  @JsonValue('ut_co2_p182')
+  utCo2P182('ut_co2_p182'),
+  @JsonValue('ut_co2_p1833')
+  utCo2P1833('ut_co2_p1833'),
+  @JsonValue('ut_co2_pcan35')
+  utCo2Pcan35('ut_co2_pcan35'),
+  @JsonValue('ut_co2_pkrv40')
+  utCo2Pkrv40('ut_co2_pkrv40'),
+  @JsonValue('ut_co2_pcan2')
+  utCo2Pcan2('ut_co2_pcan2'),
+  @JsonValue('ut_co2_pcm16')
+  utCo2Pcm16('ut_co2_pcm16'),
+  @JsonValue('ut_n2_vn2')
+  utN2Vn2('ut_n2_vn2'),
+  @JsonValue('ut_n2_pn2')
+  utN2Pn2('ut_n2_pn2'),
+  @JsonValue('ut_soude')
+  utSoude('ut_soude'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_kr_p7`.
+  @JsonValue('utilite.ut_kr_p7')
+  undefined79('utilite.ut_kr_p7'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_kr_pn2`.
+  @JsonValue('utilite.ut_kr_pn2')
+  undefined80('utilite.ut_kr_pn2'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_kr_p40`.
+  @JsonValue('utilite.ut_kr_p40')
+  undefined81('utilite.ut_kr_p40'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_kr_pv`.
+  @JsonValue('utilite.ut_kr_pv')
+  undefined82('utilite.ut_kr_pv'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_kr_pg`.
+  @JsonValue('utilite.ut_kr_pg')
+  undefined83('utilite.ut_kr_pg'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_kr_tt`.
+  @JsonValue('utilite.ut_kr_tt')
+  undefined84('utilite.ut_kr_tt'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_kr_tc`.
+  @JsonValue('utilite.ut_kr_tc')
+  undefined85('utilite.ut_kr_tc'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_sid_p7`.
+  @JsonValue('utilite.ut_sid_p7')
+  undefined86('utilite.ut_sid_p7'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_sid_pn2`.
+  @JsonValue('utilite.ut_sid_pn2')
+  undefined87('utilite.ut_sid_pn2'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_sid_p40`.
+  @JsonValue('utilite.ut_sid_p40')
+  undefined88('utilite.ut_sid_p40'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_sid_pv`.
+  @JsonValue('utilite.ut_sid_pv')
+  undefined89('utilite.ut_sid_pv'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_sid_pg`.
+  @JsonValue('utilite.ut_sid_pg')
+  undefined90('utilite.ut_sid_pg'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_sid_tt`.
+  @JsonValue('utilite.ut_sid_tt')
+  undefined91('utilite.ut_sid_tt'),
+  /// Incorrect name has been replaced. Original name: `utilite.ut_sid_tc`.
+  @JsonValue('utilite.ut_sid_tc')
+  undefined92('utilite.ut_sid_tc'),
+  /// Incorrect name has been replaced. Original name: `sucre.total.adue`.
+  @JsonValue('sucre.total.adue')
+  undefined93('sucre.total.adue'),
+  /// Incorrect name has been replaced. Original name: `sucre.total.tetra`.
+  @JsonValue('sucre.total.tetra')
+  undefined94('sucre.total.tetra'),
+  /// Incorrect name has been replaced. Original name: `sucre.total`.
+  @JsonValue('sucre.total')
+  undefined95('sucre.total'),
   /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
   $unknown(null);
 

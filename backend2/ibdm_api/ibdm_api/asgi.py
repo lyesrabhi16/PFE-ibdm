@@ -15,15 +15,17 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from channels.auth import AuthMiddlewareStack
 from siroperie.routing import siroperie_urlpatterns
 from filtration.routing import filtration_urlpatterns
-from siroperie.routing import siroperie_urlpatterns
-
+from emails.routing import sent_emails_urlpatterns
+from utilite.routing import utilite_urlpatterns
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ibdm_api.settings')
 
 django_asgi_app = get_asgi_application()
 
 websocket_urlPatterns = [
     *siroperie_urlpatterns,
-    *filtration_urlpatterns
+    *filtration_urlpatterns,
+    *sent_emails_urlpatterns,
+    *utilite_urlpatterns,
 ]
 
 application = ProtocolTypeRouter({
