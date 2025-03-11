@@ -839,6 +839,29 @@
                         }
                     },
                     {
+                        "in": "query",
+                        "name": "interval",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "jour",
+                                "manual",
+                                "mois",
+                                "semaine"
+                            ]
+                        },
+                        "description": "* `jour` - jour\n* `semaine` - semaine\n* `mois` - mois\n* `manual` - manual"
+                    },
+                    {
+                        "name": "ordering",
+                        "required": false,
+                        "in": "query",
+                        "description": "Which field to use when ordering the results.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "page",
                         "in": "query",
                         "description": "Page number",
@@ -854,6 +877,26 @@
                         "required": false,
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "rapport",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "inventaire-sucre"
+                            ]
+                        },
+                        "description": "* `inventaire-sucre` - inventaire-sucre"
+                    },
+                    {
+                        "name": "search",
+                        "required": false,
+                        "in": "query",
+                        "description": "A search term.",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
@@ -886,16 +929,6 @@
                 "requestBody": {
                     "content": {
                         "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/EmailScheduleRequest"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/EmailScheduleRequest"
-                            }
-                        },
-                        "multipart/form-data": {
                             "schema": {
                                 "$ref": "#/components/schemas/EmailScheduleRequest"
                             }
@@ -979,16 +1012,6 @@
                             "schema": {
                                 "$ref": "#/components/schemas/EmailScheduleRequest"
                             }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/EmailScheduleRequest"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/EmailScheduleRequest"
-                            }
                         }
                     },
                     "required": true
@@ -1030,16 +1053,6 @@
                 "requestBody": {
                     "content": {
                         "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PatchedEmailScheduleRequest"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PatchedEmailScheduleRequest"
-                            }
-                        },
-                        "multipart/form-data": {
                             "schema": {
                                 "$ref": "#/components/schemas/PatchedEmailScheduleRequest"
                             }
@@ -1106,6 +1119,15 @@
                         }
                     },
                     {
+                        "name": "ordering",
+                        "required": false,
+                        "in": "query",
+                        "description": "Which field to use when ordering the results.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "page",
                         "in": "query",
                         "description": "Page number",
@@ -1121,6 +1143,15 @@
                         "required": false,
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "required": false,
+                        "in": "query",
+                        "description": "A search term.",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
@@ -3480,6 +3511,358 @@
                 }
             }
         },
+        "/api/v1/utilite/co2_ifruit/": {
+            "get": {
+                "operationId": "getCo2IfruitList",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Utilite"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedCo2IfruitList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/utilite/co2_ifruit/{date}/": {
+            "get": {
+                "operationId": "getCo2Ifruit",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "date",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "description": "A unique value identifying this co2 ifruit.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Utilite"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Co2Ifruit"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/utilite/co2_ifruit/specific": {
+            "get": {
+                "operationId": "getCo2IfruitAtSpecificTime",
+                "description": "getCo2IfruitAtSpecificTime",
+                "summary": "get Co2_Ifruit at specific time",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "day",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "hour",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "minute",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "month",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "second",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "year",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Utilite"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Co2Ifruit"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/utilite/metadata": {
+            "get": {
+                "operationId": "getUtiliteMetaData",
+                "summary": "get utilite metadata",
+                "tags": [
+                    "Utilite"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FeedMetaData"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/utilite/utilite/": {
+            "get": {
+                "operationId": "getUtiliteList",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Utilite"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedUtiliteList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/utilite/utilite/{date}/": {
+            "get": {
+                "operationId": "getUtilite",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "date",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "description": "A unique value identifying this utilite.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Utilite"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Utilite"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/utilite/utilite/specific": {
+            "get": {
+                "operationId": "getUtiliteAtSpecificTime",
+                "description": "getUtiliteAtSpecificTime",
+                "summary": "get utilite at specific time",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "day",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "hour",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "minute",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "month",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "second",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "year",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Utilite"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Utilite"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/ca": {
             "get": {
                 "operationId": "getCA",
@@ -3701,10 +4084,204 @@
                     "volume.vol_os6",
                     "volume.vol_os7",
                     "volume.vol_os8",
-                    "volume.vol_os9"
+                    "volume.vol_os9",
+                    "ut_co2_vc1",
+                    "ut_co2_vc2",
+                    "ut_co2_de",
+                    "ut_co2_ve",
+                    "ut_co2_pc1",
+                    "ut_co2_pc2",
+                    "ut_co2_pn",
+                    "ut_co2_d182",
+                    "ut_co2_d1833",
+                    "ut_co2_dcan35",
+                    "ut_co2_dkrv40",
+                    "ut_co2_dcan2",
+                    "ut_co2_dcm16",
+                    "ut_co2_v182",
+                    "ut_co2_v1833",
+                    "ut_co2_vcan35",
+                    "ut_co2_vkrv40",
+                    "ut_co2_vcan2",
+                    "ut_co2_vcm16",
+                    "ut_co2_p182",
+                    "ut_co2_p1833",
+                    "ut_co2_pcan35",
+                    "ut_co2_pkrv40",
+                    "ut_co2_pcan2",
+                    "ut_co2_pcm16",
+                    "ut_n2_vn2",
+                    "ut_n2_pn2",
+                    "ut_soude",
+                    "utilite.ut_kr_p7",
+                    "utilite.ut_kr_pn2",
+                    "utilite.ut_kr_p40",
+                    "utilite.ut_kr_pv",
+                    "utilite.ut_kr_pg",
+                    "utilite.ut_kr_tt",
+                    "utilite.ut_kr_tc",
+                    "utilite.ut_sid_p7",
+                    "utilite.ut_sid_pn2",
+                    "utilite.ut_sid_p40",
+                    "utilite.ut_sid_pv",
+                    "utilite.ut_sid_pg",
+                    "utilite.ut_sid_tt",
+                    "utilite.ut_sid_tc",
+                    "sucre.total.adue",
+                    "sucre.total.tetra",
+                    "sucre.total"
                 ],
                 "type": "string",
-                "description": "* `sucre.t_s21` - sucre.t_s21\n* `sucre.t_s22` - sucre.t_s21\n* `sucre.t_s23` - sucre.t_s23\n* `sucre.t_s24` - sucre.t_s24\n* `sucre.t_s25` - sucre.t_s25\n* `sucre.a_t02` - sucre.a_t02\n* `sucre.a_t03` - sucre.a_t03\n* `sucre.a_t04` - sucre.a_t04\n* `sucre.a_t05` - sucre.a_t05\n* `sucre.a_t06` - sucre.a_t06\n* `niveau.niv_f1` - niveau.niv_f2\n* `niveau.niv_uf1` - niveau.niv_uf1\n* `niveau.niv_uf2` - niveau.niv_uf2\n* `niveau.niv_os1` - niveau.niv_os1\n* `niveau.niv_os2` - niveau.niv_os2\n* `niveau.niv_os3` - niveau.niv_os3\n* `niveau.niv_os4` - niveau.niv_os4\n* `niveau.niv_os5` - niveau.niv_os5\n* `niveau.niv_os6` - niveau.niv_os6\n* `niveau.niv_os7` - niveau.niv_os7\n* `debit.d_F1` - debit.d_F1\n* `debit.d_uf1` - debit.d_uf1\n* `debit.d_uf2` - debit.d_uf2\n* `debit.d_uf3` - debit.d_uf3\n* `debit.d_uf4` - debit.d_uf4\n* `debit.d_uf5` - debit.d_uf5\n* `debit.d_uf6` - debit.d_uf6\n* `debit.d_os1` - debit.d_os1\n* `debit.d_os2` - debit.d_os2\n* `debit.d_os3` - debit.d_os3\n* `debit.d_os4` - debit.d_os4\n* `debit.d_os5` - debit.d_os5\n* `debit.d_os6` - debit.d_os6\n* `debit.d_os7` - debit.d_os7\n* `debit.d_os8` - debit.d_os8\n* `debit.d_os9` - debit.d_os9\n* `Pres_Cond.p_uf` - Pres_Cond.p_uf\n* `Pres_Cond.p_uf4` - Pres_Cond.p_uf4\n* `Pres_Cond.p_uf6` - Pres_Cond.p_uf6\n* `Pres_Cond.p_os1` - Pres_Cond.p_os1\n* `Pres_Cond.p_os2` - Pres_Cond.p_os2\n* `Pres_Cond.p_os3` - Pres_Cond.p_os3\n* `Pres_Cond.p_os4` - Pres_Cond.p_os4\n* `Pres_Cond.p_os5` - Pres_Cond.p_os5\n* `Pres_Cond.p_os6` - Pres_Cond.p_os6\n* `Pres_Cond.p_os7` - Pres_Cond.p_os7\n* `Pres_Cond.p_os71` - Pres_Cond.p_os71\n* `Pres_Cond.p_os8` - Pres_Cond.p_os8\n* `Pres_Cond.p_os9` - Pres_Cond.p_os9\n* `Pres_Cond.p_ose1` - Pres_Cond.p_ose1\n* `Pres_Cond.p_ose2` - Pres_Cond.p_ose2\n* `Pres_Cond.p_conc` - Pres_Cond.p_conc\n* `Pres_Cond.c_uf` - Pres_Cond.c_uf\n* `Pres_Cond.c_os1` - Pres_Cond.c_os1\n* `Pres_Cond.c_os2` - Pres_Cond.c_os2\n* `Pres_Cond.c_os3` - Pres_Cond.c_os3\n* `Pres_Cond.c_os4` - Pres_Cond.c_os4\n* `Pres_Cond.c_os5` - Pres_Cond.c_os5\n* `Pres_Cond.c_os6` - Pres_Cond.c_os6\n* `Pres_Cond.c_os7` - Pres_Cond.c_os7\n* `Pres_Cond.c_os8` - Pres_Cond.c_os8\n* `Pres_Cond.c_os9` - Pres_Cond.c_os9\n* `Pres_Cond.c_ose` - Pres_Cond.c_ose\n* `volume.vol_for` - volume.vol_for\n* `volume.vol_uf1` - volume.vol_uf1\n* `volume.vol_uf2` - volume.vol_uf2\n* `volume.vol_uf3` - volume.vol_uf3\n* `volume.vol_uf4` - volume.vol_uf4\n* `volume.vol_uf5` - volume.vol_uf5\n* `volume.vol_uf6` - volume.vol_uf6\n* `volume.vol_os1` - volume.vol_os1\n* `volume.vol_os2` - volume.vol_os2\n* `volume.vol_os3` - volume.vol_os3\n* `volume.vol_os4` - volume.vol_os4\n* `volume.vol_os5` - volume.vol_os5\n* `volume.vol_os6` - volume.vol_os6\n* `volume.vol_os7` - volume.vol_os7\n* `volume.vol_os8` - volume.vol_os8\n* `volume.vol_os9` - volume.vol_os9"
+                "description": "* `sucre.t_s21` - sucre.t_s21\n* `sucre.t_s22` - sucre.t_s22\n* `sucre.t_s23` - sucre.t_s23\n* `sucre.t_s24` - sucre.t_s24\n* `sucre.t_s25` - sucre.t_s25\n* `sucre.a_t02` - sucre.a_t02\n* `sucre.a_t03` - sucre.a_t03\n* `sucre.a_t04` - sucre.a_t04\n* `sucre.a_t05` - sucre.a_t05\n* `sucre.a_t06` - sucre.a_t06\n* `niveau.niv_f1` - niveau.niv_f2\n* `niveau.niv_uf1` - niveau.niv_uf1\n* `niveau.niv_uf2` - niveau.niv_uf2\n* `niveau.niv_os1` - niveau.niv_os1\n* `niveau.niv_os2` - niveau.niv_os2\n* `niveau.niv_os3` - niveau.niv_os3\n* `niveau.niv_os4` - niveau.niv_os4\n* `niveau.niv_os5` - niveau.niv_os5\n* `niveau.niv_os6` - niveau.niv_os6\n* `niveau.niv_os7` - niveau.niv_os7\n* `debit.d_F1` - debit.d_F1\n* `debit.d_uf1` - debit.d_uf1\n* `debit.d_uf2` - debit.d_uf2\n* `debit.d_uf3` - debit.d_uf3\n* `debit.d_uf4` - debit.d_uf4\n* `debit.d_uf5` - debit.d_uf5\n* `debit.d_uf6` - debit.d_uf6\n* `debit.d_os1` - debit.d_os1\n* `debit.d_os2` - debit.d_os2\n* `debit.d_os3` - debit.d_os3\n* `debit.d_os4` - debit.d_os4\n* `debit.d_os5` - debit.d_os5\n* `debit.d_os6` - debit.d_os6\n* `debit.d_os7` - debit.d_os7\n* `debit.d_os8` - debit.d_os8\n* `debit.d_os9` - debit.d_os9\n* `Pres_Cond.p_uf` - Pres_Cond.p_uf\n* `Pres_Cond.p_uf4` - Pres_Cond.p_uf4\n* `Pres_Cond.p_uf6` - Pres_Cond.p_uf6\n* `Pres_Cond.p_os1` - Pres_Cond.p_os1\n* `Pres_Cond.p_os2` - Pres_Cond.p_os2\n* `Pres_Cond.p_os3` - Pres_Cond.p_os3\n* `Pres_Cond.p_os4` - Pres_Cond.p_os4\n* `Pres_Cond.p_os5` - Pres_Cond.p_os5\n* `Pres_Cond.p_os6` - Pres_Cond.p_os6\n* `Pres_Cond.p_os7` - Pres_Cond.p_os7\n* `Pres_Cond.p_os71` - Pres_Cond.p_os71\n* `Pres_Cond.p_os8` - Pres_Cond.p_os8\n* `Pres_Cond.p_os9` - Pres_Cond.p_os9\n* `Pres_Cond.p_ose1` - Pres_Cond.p_ose1\n* `Pres_Cond.p_ose2` - Pres_Cond.p_ose2\n* `Pres_Cond.p_conc` - Pres_Cond.p_conc\n* `Pres_Cond.c_uf` - Pres_Cond.c_uf\n* `Pres_Cond.c_os1` - Pres_Cond.c_os1\n* `Pres_Cond.c_os2` - Pres_Cond.c_os2\n* `Pres_Cond.c_os3` - Pres_Cond.c_os3\n* `Pres_Cond.c_os4` - Pres_Cond.c_os4\n* `Pres_Cond.c_os5` - Pres_Cond.c_os5\n* `Pres_Cond.c_os6` - Pres_Cond.c_os6\n* `Pres_Cond.c_os7` - Pres_Cond.c_os7\n* `Pres_Cond.c_os8` - Pres_Cond.c_os8\n* `Pres_Cond.c_os9` - Pres_Cond.c_os9\n* `Pres_Cond.c_ose` - Pres_Cond.c_ose\n* `volume.vol_for` - volume.vol_for\n* `volume.vol_uf1` - volume.vol_uf1\n* `volume.vol_uf2` - volume.vol_uf2\n* `volume.vol_uf3` - volume.vol_uf3\n* `volume.vol_uf4` - volume.vol_uf4\n* `volume.vol_uf5` - volume.vol_uf5\n* `volume.vol_uf6` - volume.vol_uf6\n* `volume.vol_os1` - volume.vol_os1\n* `volume.vol_os2` - volume.vol_os2\n* `volume.vol_os3` - volume.vol_os3\n* `volume.vol_os4` - volume.vol_os4\n* `volume.vol_os5` - volume.vol_os5\n* `volume.vol_os6` - volume.vol_os6\n* `volume.vol_os7` - volume.vol_os7\n* `volume.vol_os8` - volume.vol_os8\n* `volume.vol_os9` - volume.vol_os9\n* `ut_co2_vc1` - ut_co2_vc1\n* `ut_co2_vc2` - ut_co2_vc2\n* `ut_co2_de` - ut_co2_de\n* `ut_co2_ve` - ut_co2_ve\n* `ut_co2_pc1` - ut_co2_pc1\n* `ut_co2_pc2` - ut_co2_pc2\n* `ut_co2_pn` - ut_co2_pn\n* `ut_co2_d182` - ut_co2_d182\n* `ut_co2_d1833` - ut_co2_d1833\n* `ut_co2_dcan35` - ut_co2_dcan35\n* `ut_co2_dkrv40` - ut_co2_dkrv40\n* `ut_co2_dcan2` - ut_co2_dcan2\n* `ut_co2_dcm16` - ut_co2_dcm16\n* `ut_co2_v182` - ut_co2_v182\n* `ut_co2_v1833` - ut_co2_v1833\n* `ut_co2_vcan35` - ut_co2_vcan35\n* `ut_co2_vkrv40` - ut_co2_vkrv40\n* `ut_co2_vcan2` - ut_co2_vcan2\n* `ut_co2_vcm16` - ut_co2_vcm16\n* `ut_co2_p182` - ut_co2_p182\n* `ut_co2_p1833` - ut_co2_p1833\n* `ut_co2_pcan35` - ut_co2_pcan35\n* `ut_co2_pkrv40` - ut_co2_pkrv40\n* `ut_co2_pcan2` - ut_co2_pcan2\n* `ut_co2_pcm16` - ut_co2_pcm16\n* `ut_n2_vn2` - ut_n2_vn2\n* `ut_n2_pn2` - ut_n2_pn2\n* `ut_soude` - ut_soude\n* `utilite.ut_kr_p7` - utilite.ut_kr_p7\n* `utilite.ut_kr_pn2` - utilite.ut_kr_pn2\n* `utilite.ut_kr_p40` - utilite.ut_kr_p40\n* `utilite.ut_kr_pv` - utilite.ut_kr_pv\n* `utilite.ut_kr_pg` - utilite.ut_kr_pg\n* `utilite.ut_kr_tt` - utilite.ut_kr_tt\n* `utilite.ut_kr_tc` - utilite.ut_kr_tc\n* `utilite.ut_sid_p7` - utilite.ut_sid_p7\n* `utilite.ut_sid_pn2` - utilite.ut_sid_pn2\n* `utilite.ut_sid_p40` - utilite.ut_sid_p40\n* `utilite.ut_sid_pv` - utilite.ut_sid_pv\n* `utilite.ut_sid_pg` - utilite.ut_sid_pg\n* `utilite.ut_sid_tt` - utilite.ut_sid_tt\n* `utilite.ut_sid_tc` - utilite.ut_sid_tc\n* `sucre.total.adue` - sucre.total.adue\n* `sucre.total.tetra` - sucre.total.tetra\n* `sucre.total` - sucre.total"
+            },
+            "Co2Ifruit": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "ut_co2_vc1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_vc2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_de": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_ve": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_pc1": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_pc2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_pn": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_d182": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_d1833": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_dcan35": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_dkrv40": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_dcan2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_dcm16": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_v182": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_v1833": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_vcan35": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_vkrv40": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_vcan2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_vcm16": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_p182": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_p1833": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_pcan35": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_pkrv40": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_pcan2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_co2_pcm16": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_n2_vn2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_n2_pn2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_soude": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    }
+                }
             },
             "CodeEnum": {
                 "enum": [
@@ -3866,7 +4443,6 @@
                     "id",
                     "interval",
                     "rapport",
-                    "scheduled_users",
                     "temps_envoi",
                     "updated_at"
                 ]
@@ -3913,7 +4489,6 @@
                 "required": [
                     "interval",
                     "rapport",
-                    "scheduled_users",
                     "temps_envoi"
                 ]
             },
@@ -4146,6 +4721,45 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/AlertEmail"
+                        }
+                    }
+                }
+            },
+            "PaginatedCo2IfruitList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Co2Ifruit"
                         }
                     }
                 }
@@ -4575,6 +5189,45 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/User"
+                        }
+                    }
+                }
+            },
+            "PaginatedUtiliteList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Utilite"
                         }
                     }
                 }
@@ -5442,6 +6095,85 @@
                     "superiors",
                     "user_id"
                 ]
+            },
+            "Utilite": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "ut_kr_p7": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_kr_pn2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_kr_p40": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_kr_pv": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_kr_pg": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_kr_tt": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_kr_tc": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_sid_p7": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_sid_pn2": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_sid_p40": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_sid_pv": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_sid_pg": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_sid_tt": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "ut_sid_tc": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    }
+                }
             },
             "Volume": {
                 "type": "object",

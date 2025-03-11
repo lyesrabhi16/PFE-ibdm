@@ -4,7 +4,7 @@ from emails.models import AlertEmail, EmailSchedule, sentEmail
 from users.models import Role, User
 
 class EmailScheduleSerializer(serializers.ModelSerializer):
-    scheduled_users = serializers.SlugRelatedField(slug_field="email", queryset=User.objects.all(), many=True)
+    scheduled_users = serializers.SlugRelatedField(slug_field="email", queryset=User.objects.all(), many=True, required=False)
     class Meta:
         model = EmailSchedule
         fields = ["id","rapport", "temps_envoi", "interval", "interval_manual", "next_run_time", "scheduled_users", "scheduled_roles", "created_at", "updated_at"]

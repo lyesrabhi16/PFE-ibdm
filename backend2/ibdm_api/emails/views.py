@@ -9,6 +9,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiPara
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.parsers import JSONParser
 # Create your views here.
 @with_operation_ids(
     on_create="addEmailSchedule",
@@ -21,10 +22,45 @@ from django_filters.rest_framework import DjangoFilterBackend
 @extend_schema(
     tags=["emails"]
 )
+@extend_schema_view(
+    list=extend_schema(summary="get schedules", description="Get all schedules", parameters=[
+            OpenApiParameter(
+                name="search",
+                required=False,
+                description="Search by rapport, scheduled_users__username, scheduled_users__email, scheduled_users__first_name, scheduled_users__last_name, scheduled_roles__group__name",
+                location=OpenApiParameter.QUERY,
+            ),
+            OpenApiParameter(
+                name="ordering",
+                required=False,
+                description="Order by rapport, interval_manual, temps_envoi",
+                enum=["rapport", "interval_manual", "temps_envoi", "-rapport", "-interval_manual", "-temps_envoi"],
+                location=OpenApiParameter.QUERY,
+            ),
+            OpenApiParameter(
+                name="interval",
+                required=False,
+                description="Filter by interval",
+                location=OpenApiParameter.QUERY,
+            ),
+            OpenApiParameter(
+                name="rapport",
+                required=False,
+                description="Filter by rapport",
+                location=OpenApiParameter.QUERY,
+            )
+    ]),
+)
 class EmailScheduleViewset(viewsets.ModelViewSet):
     queryset = EmailSchedule.objects.all()
+    parser_classes = [JSONParser]
     serializer_class = EmailScheduleSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
+    filterset_fields = ("interval", "rapport", )
+    search_fields = ["rapport", "scheduled_users__username", "scheduled_users__email", "scheduled_users__first_name", "scheduled_users__last_name", "scheduled_roles__group__name"]
+    ordering_fields = ["rapport", "interval_manual", "temps_envoi"]
+
 
 @with_operation_ids(
     on_retrieve="getSentEmail",
@@ -33,10 +69,50 @@ class EmailScheduleViewset(viewsets.ModelViewSet):
 @extend_schema(
     tags=["emails"]
 )
+
+@extend_schema_view(
+    list=extend_schema(summary="get schedules", description="Get all schedules", parameters=[
+            OpenApiParameter(
+                name="search",
+                required=False,
+                description="Search by receptionist__username, receptionist__email, receptionist__first_name, receptionist__last_name, schedule__rapport, alert__monitored_value",
+                location=OpenApiParameter.QUERY,
+            ),
+            OpenApiParameter(
+                name="ordering",
+                required=False,
+                description="Order by temps_envois, receptionist",
+                enum=["temps_envoi", "receptionist"],
+                location=OpenApiParameter.QUERY,
+            ),
+            OpenApiParameter(
+                name="email_type",
+                required=False,
+                description="Filter by alert or schedule",
+                enum=["alert", "schedule"],
+                location=OpenApiParameter.QUERY,
+            ),
+    ]),
+)
 class SentEamilViewset(viewsets.ReadOnlyModelViewSet):
-    queryset = sentEmail.objects.all()
+    queryset = sentEmail.objects.all().order_by("temps_envoi").reverse()
     serializer_class = SentEmailSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
+    # filterset_class = SentEmailFilters # TODO:FIX
+    search_fields = [
+        "receptionist__username",
+        "receptionist__email",
+        "receptionist__first_name",
+        "receptionist__last_name",
+        "schedule__rapport",
+        "alert__monitored_value",
+    ]
+    ordering_fields = [
+        'temps_envoi',
+        "receptionist",
+    ]
+
 
 
 
@@ -86,7 +162,6 @@ class SentEamilViewset(viewsets.ReadOnlyModelViewSet):
 class AlertEamilViewset(viewsets.ModelViewSet):
     queryset = AlertEmail.objects.all()
     serializer_class = AlertEmailSerializer
-    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     filterset_class = CustomAlertFilter
     search_fields = ["monitored_value", "send_to_users__username", "send_to_users__email", "send_to_users__first_name", "send_to_users__last_name", "send_to_roles__group__name"]

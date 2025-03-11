@@ -15,11 +15,11 @@ class LoadingPage extends StatelessWidget {
   LoadingPageController loadingPageController =
       Get.find<LoadingPageController>();
   UserController userController = Get.find<UserController>();
-
   bool _permissions_loaded = false;
   bool _roles_loaded = false;
 
   _loadFinished() {
+    loadingPageController.isLoading.value = true;
     if (_permissions_loaded && _roles_loaded) {
       Future.delayed(Duration(seconds: 1), () {
         loadingPageController.isLoading.value = false;
@@ -33,17 +33,22 @@ class LoadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
 
+    _roles_loaded = false;
     userController.getRoles(context).then((value) {
       logger.e("Roles loaded: ${userController.roles.length}");
 
       _roles_loaded = true;
       _loadFinished();
     });
-    permissionsController.loadPermissions().then((value) {
-      logger.e("Permissions loaded: ${permissionsController.ready}");
-      _permissions_loaded = true;
-      _loadFinished();
-    });
+
+    if (!permissionsController.permissions_loading) {
+      _permissions_loaded = false;
+      permissionsController.loadPermissions().then((value) {
+        logger.e("Permissions loaded: ${permissionsController.ready}");
+        _permissions_loaded = true;
+        _loadFinished();
+      });
+    }
 
     return Obx(
       () {

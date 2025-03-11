@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 
 class PerPageInput extends StatelessWidget {
@@ -39,6 +40,7 @@ class PerPageInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = getTranslations(context).obs;
     return Form(
       key: perPageFormKey,
       onChanged: () {},
@@ -54,8 +56,8 @@ class PerPageInput extends StatelessWidget {
             perPageFormKey), // execute change per page if possible
         onChanged: (value) => _changePerPage(value),
         decoration: InputDecoration(
-          filled: true,
-          labelText: "Per Page",
+          border: OutlineInputBorder(),
+          labelText: strings.value.perPage,
           hintText: "10",
         ),
       ),

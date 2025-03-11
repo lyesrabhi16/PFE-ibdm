@@ -7,19 +7,48 @@ import 'package:ibdm/common/widgets/responsive_appbar.dart';
 import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/pages/loading_page.dart';
 import 'package:ibdm/utils/constants/routes.dart';
+import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
+import 'package:ibdm/common/controllers/loading_page_controller.dart';
 
 class AppCustomContainer extends StatelessWidget {
-  const AppCustomContainer({super.key, required this.child});
+  const AppCustomContainer(
+      {super.key, required this.child, this.backButton = false});
   final Widget child;
+  final bool backButton;
   static final userController = Get.find<UserController>();
   @override
   Widget build(BuildContext context) {
-    final permissionsController = Get.find<PermissionsController>();
+    final loadingPageController = Get.find<LoadingPageController>();
+
     return Obx(() {
-      if (!permissionsController.ready.value) {
+      if (loadingPageController.isLoading.value) {
         return LoadingPage();
       }
+
+      final _child = Container(
+        child: Column(
+          children: [
+            if (backButton && Get.previousRoute.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(AppSizes.sm),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back),
+                      onPressed: () {
+                        Get.back();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            Expanded(
+              child: child,
+            ),
+          ],
+        ),
+      );
 
       return SafeArea(
         child: Scaffold(
@@ -35,8 +64,8 @@ class AppCustomContainer extends StatelessWidget {
             },
           ),
           body: isAtMostSmallScreen(context)
-              ? DrawerContainer(child: child)
-              : SideMenuContainer(child: child),
+              ? DrawerContainer(child: _child)
+              : SideMenuContainer(child: _child),
         ),
       );
     });

@@ -409,50 +409,77 @@ class EnumFixInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     print("EnumFixInterceptor: Start");
-    if (options.data is Map<String, dynamic>) {
-      if (options.data.containsKey('monitored_value')) {
-        options.data.fields['monitored_value'] = AlertEnum.values
-            .firstWhere((role) => role.name == options.data['monitored_value'])
-            .json;
-      }
-    } else if (options.data is FormData) {
-      if (_hasField((options.data as FormData).fields, "monitored_value")) {
-        print("EnumFixInterceptor: request has monitored_value field");
-        for (var e in (options.data as FormData).fields) {
-          if (e.key == "monitored_value") {
-            print(
-                "EnumFixInterceptor: Found monitored_value field with value: ${e.value}");
-            MapEntry<String, String> newE = MapEntry(
-                e.key,
-                AlertEnum.values.firstWhere(
-                      (r) => r.name == e.value,
-                      orElse: () {
-                        if (AlertEnum.values
-                                .indexWhere((r) => r.json == e.value) ==
-                            -1) {
-                          logger.e(
-                              "EnumFixInterceptor: monitored_value value ${e.value} not found in AlertEnum (name or json value)");
-                          throw Exception(
-                              "EnumFixInterceptor: monitored_value value ${e.value} not found in AlertEnum (name or json value)");
-                        }
-                        return AlertEnum.fromJson(e.value);
-                      },
-                    ).json ??
-                    "");
-            (options.data as FormData)
-                .fields
-                .insert((options.data as FormData).fields.indexOf(e), newE);
-            print(
-                "EnumFixInterceptor: created new monitored_value value: $newE");
-            (options.data as FormData).fields.remove(e);
-            print(
-                "EnumFixInterceptor: Changed ${e.key} from ${e.value} to ${newE.value}");
-          }
-        }
-      }
+    if (options.data is FormData) {
+      checkEnumFromForm(options, "monitored_value", AlertEnum.values);
+      checkEnumFromForm(options, "rapport", RapportEnum.values);
+      checkEnumFromForm(options, "interval", IntervalEnum.values);
     }
     print("EnumFixInterceptor: Finished");
     super.onRequest(options, handler);
+  }
+
+  /* void checkEnumFromMap(RequestOptions options, String fieldName, List values) {
+    if (options.data.containsKey(fieldName)) {
+      dynamic v = null;
+      for (dynamic item in values) {
+        if (getTypeSafeName(item) == options.data[fieldName]) {
+          v = getTypeSafeJson(item);
+          break;
+        }
+      }
+      options.data.fields[fieldName] = v;
+    }
+  } */
+
+  String getTypeSafeName(dynamic r) {
+    if (r is RapportEnum) return r.name;
+    if (r is AlertEnum) return r.name;
+    if (r is IntervalEnum) return r.name;
+    throw ("EnumFixInterceptor: Type not found");
+  }
+
+  String? getTypeSafeJson(dynamic r) {
+    if (r is RapportEnum) return r.json;
+    if (r is AlertEnum) return r.json;
+    if (r is IntervalEnum) return r.json;
+    throw ("EnumFixInterceptor: Type not found");
+  }
+
+  void checkEnumFromForm(
+      RequestOptions options, String fieldName, List values) {
+    if (_hasField((options.data as FormData).fields, fieldName)) {
+      print("EnumFixInterceptor: request has $fieldName field");
+      for (var e in (options.data as FormData).fields) {
+        if (e.key == fieldName) {
+          print(
+              "EnumFixInterceptor: Found $fieldName field with value: ${e.value}");
+          print("runtimeType: ${values.runtimeType}");
+
+          dynamic v = null;
+
+          for (dynamic item in values) {
+            print("item: $item");
+            if (getTypeSafeName(item) == e.value) {
+              v = item;
+              break;
+            } else if (getTypeSafeJson(item) == e.value) {
+              v = item;
+              break;
+            }
+          }
+          print("v: $v");
+          MapEntry<String, String> newE =
+              MapEntry(e.key, v != null ? getTypeSafeJson(v) ?? "" : "");
+          (options.data as FormData)
+              .fields
+              .insert((options.data as FormData).fields.indexOf(e), newE);
+          print("EnumFixInterceptor: created new $fieldName value: $newE");
+          (options.data as FormData).fields.remove(e);
+          print(
+              "EnumFixInterceptor: Changed ${e.key} from ${e.value} to ${newE.value}");
+        }
+      }
+    }
   }
 
   bool _hasField(List<MapEntry<String, String>> data, String field) {
