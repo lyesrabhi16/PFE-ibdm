@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+
 // import 'package:dio/browser.dart'; //! fails on non-web platforms
 import 'package:dio/dio.dart'
     show
@@ -28,6 +30,7 @@ import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
 import 'package:universal_html/html.dart' as uhtml;
+import 'package:flutter/material.dart';
 /* 
 extension RoleExtension on Role {
   String get name {
@@ -131,6 +134,52 @@ class CsrfInterceptor extends Interceptor {
   }
 }
 
+extension DownloadFile on IbdmApiClient {
+  Future<void> downloadFile({
+    required BuildContext context, // 🔹 Ajout du contexte
+    required String url,
+    required String fileName,
+  }) async {
+    String filePath = "";
+
+    if (kIsWeb) {
+      // Gestion pour le Web
+      final anchorElement = uhtml.AnchorElement(href: url)
+        ..download = url
+        ..click();
+      filePath = "Téléchargé via le navigateur";
+    } else {
+      try {
+        // Gestion pour Windows & iOS
+        Directory directory;
+        if (Platform.isIOS) {
+          directory = await getApplicationDocumentsDirectory();
+        } else if (Platform.isWindows) {
+          directory = await getDownloadsDirectory() ?? await getTemporaryDirectory();
+        } else {
+          throw Exception("Plateforme non supportée !");
+        }
+
+        filePath = "${directory.path}/$fileName";
+        Dio dio = Dio();
+
+        // Télécharger le fichier
+        await dio.download(url, filePath);
+      } catch (e) {
+        filePath = "Erreur de téléchargement : $e";
+      }
+    }
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Fichier téléchargé : $filePath"),
+          duration: Duration(seconds: 4),
+        ),
+      );
+    }
+  }
+}
 extension WebUsersFixedApis on IbdmApiClient {
   Future<User> addUsersOnWeb({
     required String email,

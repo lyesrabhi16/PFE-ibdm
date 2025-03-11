@@ -15,9 +15,10 @@ class SentEmail {
     this.schedule,
     this.alert,
   });
-  
-  factory SentEmail.fromJson(Map<String, Object?> json) => _$SentEmailFromJson(json);
-  
+
+  factory SentEmail.fromJson(Map<String, Object?> json) =>
+      _$SentEmailFromJson(json);
+
   final int id;
   @JsonKey(name: 'temps_envoi')
   final DateTime tempsEnvoi;

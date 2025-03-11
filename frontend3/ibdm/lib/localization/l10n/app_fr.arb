@@ -213,7 +213,8 @@
 	"@perPage": {
 		"description": "Per page label"
 	},
-	"no": "No",
+	"yes": "Oui",
+	"no": "Non",
 	"@no": {
 		"description": "No field label"
 	},
@@ -432,7 +433,9 @@
     "helpAssistance": "Aide et Assistance",
     "about": "À propos",
 	"emailSchedules": "Emails Cycliques",
+	"emailSents": "Emails Envoyés",
 	"emailSchedulesDescription": "Emails envoyés a des intervalles réguliers.",
+	"emaisSentDescription": "Emails envoyés à des utilisateurs.",
 	"emailAlerts": "Emails D'Alertes",
 	"emailAlertsDescription": "Emails envoyés quand des valuers Surveillée attients certain points.",
 	"monitored": "Surveillée",
@@ -440,5 +443,40 @@
 	"warning": "Avertissement",
 	"active" : "Actif",
 	"addAlertEmail": "Ajouter un Email D'Alerte",
-	"addScheduleEmail": "Ajouter un Email Cyclique"
+	"addScheduleEmail": "Ajouter un Email Cyclique",
+	"sents": "Envoyés",
+	"deletEmailSents": "Supprimer Emails Envoyés",
+	"selectEmailSentsToDelete": "Sélectionner Emails Envoyés à Supprimer",
+	"delete_sents": "Êtes-vous sûr de vouloir supprimer {count, plural, one {envoyé} other {envoyés}}?",
+	"@delete_sents": {
+		"description": "Message de confirmation pour la suppression des envoyés",
+		"placeholders": {
+			"count": {
+				"type": "int"
+			}
+		}
+	},
+	"refresh": "Réfreshir",
+	"failedToLoadSents": "Failed to load sents",
+	"tempEnvoi": "Temp D'Envoi",
+    "receptionist": "Receptionist",
+	"schedule": "Emails Cyclique",
+	"alers": "Alert",
+	"unknown": "inconnu",
+	"deletingSents": "Supprimer les Emails Envoyée ...",
+    "sentsDeleted": "les Emails Envoyée Supprimé.",
+    "deletEmailSent": "Echéc de Suppression des Emails Envoyée/Envoyées",
+	"filterEmailsSent": "Filtrer les Emails Envoyée",
+    "filterbySendingtime": "Filtrer par le Temps D'Envoi",
+	"selectSendingtime": "Sélectionner le Temps D'Envoi" ,
+    "time": "Temp",
+    "filterbyTypeofEmail": "Filtrer par Type D'Email",
+    "selectTypeofEmail": "Sélectionner Type D'Email",
+    "scheduleEmail": "Emails Cyclique",
+	"sortSents": "Trier les Emails Envoyée",
+    "order": "Ordrer",
+    "asc": "asc",
+    "desc": "desc",
+	"edit": "Modifier"
+
 }

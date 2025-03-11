@@ -247,6 +247,12 @@ abstract class IbdmApiClient {
     @Path('id') required int id,
   });
 
+   /// [id] - A unique integer value identifying this email sent.
+  @DELETE('/api/v1/emails/sent/{id}/')
+  Future<void> destroyEmailSent({
+    @Path('id') required int id,
+  });
+
   /// [enablePagination] - Enable or disable pagination.
   ///
   /// [page] - Page number.

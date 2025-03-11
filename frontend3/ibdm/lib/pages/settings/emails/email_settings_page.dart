@@ -60,6 +60,14 @@ class _EmailSettingsPageState extends State<EmailSettingsPage> {
                       Get.toNamed(Routes.emailAlerts),
                     },
                   ),
+                  SettingCard(
+                    icon: Icons.email,
+                    title: strings.value.emailSents,
+                    subtitle: strings.value.emailSentsDescription,
+                    onTap: () => {
+                      Get.toNamed(Routes.emailSent),
+                    },
+                  ),
                 ],
               ),
             ),
