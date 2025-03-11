@@ -473,12 +473,8 @@
             }
         }
     },
-	"refresh": "Rafraîchir",
 	"sortSchedules": "Trier les Emails Cycliques",
 	"sortAlerts": "Trier les Emails D'Alertes",
-	"order": "Ordre",
-	"asc": "asc",
-	"desc": "desc",
 	"filterSchedules": "Filtrer les Emails Cycliques",
 	"filterAlerts": "Filtrer les Emails D'Alertes",
 	"editSchedule": "Modifier l'email cyclique",
@@ -493,9 +489,7 @@
 	"addAlert": "Ajouter une alerte",
 	"addScheduleSettings": "Ajouter un email cyclique",
 	"addAlertSettings": "Ajouter une alerte d'email",
-	"unknown": "Inconnu",
 	"unscheduled": "Non planifié",
-	"yes": "oui",
 	"deleteSchedules": "Supprimer les Emails Cycliques",
 	"deleteAlerts": "Supprimer les Emails D'Alertes",
 	"selectSchedulesToDelete": "Sélectionner les emails cycliques à supprimer",
@@ -531,7 +525,6 @@
 	"filterByInterval": "filtrer avec l'interval",
     "filterByRapport": "filtrer avec le rapport",
     "selectInterval": "Seléctioner un Interval",
-    "schedule": "Email Cyclique",
 	"addingSchedule": "Ajouter un Email Cyclique...",
     "ScheduleAdded": "Email Cyclique Ajouté",
     "failedToAddSchedule": "l'ajout de l'email cyclique a echoué",
@@ -572,6 +565,5 @@
     "order": "Ordrer",
     "asc": "asc",
     "desc": "desc",
-	"edit": "Modifier"
-
+	"emailSentsDescription": "Emails envoyés à des utilisateurs."
 }

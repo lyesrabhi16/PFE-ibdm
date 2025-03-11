@@ -476,12 +476,8 @@
             }
         }
     },
-    "refresh": "refresh",
     "sortSchedules": "Sort Schedules",
     "sortAlerts": "Sort Alerts",
-    "order": "Order",
-    "asc": "asc",
-    "desc": "desc",
     "filterSchedules": "Filter Schedules",
     "filterAlerts": "Filter Alerts",
     "editSchedule": "Edit Schedule",
@@ -496,9 +492,7 @@
     "addAlert": "Add Alert",
     "addScheduleSettings": "Add one email schedule",
     "addAlertSettings": "Add  one email alert",
-    "unknown": "unknown",
     "unscheduled": "Unscheduled",
-    "yes": "yes",
     "deleteSchedules": "Delete Schedules",
     "deleteAlerts": "Delete Alerts",
     "selectSchedulesToDelete": "Select schedules to delete",
@@ -534,7 +528,6 @@
     "filterByInterval": "filter By interval",
     "filterByRapport": "filter By rapport",
     "selectInterval": "Select Interval",
-    "schedule": "Schedule",
     "addingSchedule": "Add Schedule...",
     "scheduleAdded": "Schedule Added",
     "failedToAddSchedule": "Failed to add Schedule",
@@ -573,10 +566,6 @@
     "sortSents": "Sort Sents",
     "order": "Order",
     "asc": "asc",
-    "desc": "desc",
-    "edit": "Edit"
+    "desc": "desc"
     
-    
-
-        
 }
