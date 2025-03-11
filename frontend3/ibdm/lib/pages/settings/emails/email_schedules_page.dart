@@ -1466,6 +1466,9 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
               ),
           initialSelection: rapportFilter,
           width: AppSizes.xl * 8,
+          enableFilter: false,
+          enableSearch: false,
+          requestFocusOnTap: false,
           onSelected: (value) {
             // filter by monitored value tag
             if (rapportFilter == value) {
@@ -1497,6 +1500,9 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
           label: Text(strings.value.interval),
           controller: activationStateFilterController,
           width: AppSizes.xl * 8,
+          enableFilter: false,
+          enableSearch: false,
+          requestFocusOnTap: false,
           inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
                 filled: true,
                 fillColor: Theme.of(context).colorScheme.surface,

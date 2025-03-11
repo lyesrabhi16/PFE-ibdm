@@ -38,8 +38,6 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
 
   ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
 
-  late final strings = getTranslations(getContext).obs;
-
   final _showCheckboxColumn = false.obs;
 
   static final _searchController = TextEditingController();
@@ -113,6 +111,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   @override
   Widget build(BuildContext context) {
     _getContext = () => context;
+    final strings = getTranslations(context).obs;
     return AppCustomContainer(
         backButton: true,
         child: Padding(
@@ -400,6 +399,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   _showViewAlertEmailDialog({
     required AlertEmail alert,
   }) {
+    final strings = getTranslations(context).obs;
     return showShadDialog(
       context: context,
       builder: (context) {
@@ -495,6 +495,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   _showEditAlertEmailDialog({
     required AlertEmail alert,
   }) {
+    final strings = getTranslations(context).obs;
     String? _saveAlertCustomMessage;
     String? _saveAlertDangerAlertInterval;
     String? _saveAlertDangerPoint;
@@ -733,6 +734,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     required List<Object> data,
     required String label,
   }) {
+    final strings = getTranslations(context).obs;
+
     List<int> getIndexesOfPages(
       int currentPage,
       int totalPages, {
@@ -977,6 +980,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   }
 
   _getCols() {
+    final strings = getTranslations(context).obs;
+
     return [
       DataColumn2(
           label: Text(
@@ -1516,6 +1521,9 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               ),
           initialSelection: monitorValueTagFilter,
           width: AppSizes.xl * 8,
+          enableFilter: false,
+          enableSearch: false,
+          requestFocusOnTap: false,
           onSelected: (value) {
             // filter by monitored value tag
             if (monitorValueTagFilter == value) {
@@ -1545,6 +1553,9 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           label: Text("Activation State"),
           controller: activationStateFilterController,
           width: AppSizes.xl * 8,
+          enableFilter: false,
+          enableSearch: false,
+          requestFocusOnTap: false,
           inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
                 filled: true,
                 fillColor: Theme.of(context).colorScheme.surface,
