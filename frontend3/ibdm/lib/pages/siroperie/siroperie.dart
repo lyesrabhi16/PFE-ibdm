@@ -421,8 +421,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
     if (SiroperiePage.stream == null) {
       try {
         print("connecting to sucre broadcast");
-        SiroperiePage.channel = WebSocketChannel.connect(
-            Uri.parse(ApiConfig.sucre_broadcast_websocket_url));
+        // SiroperiePage.channel = WebSocketChannel.connect(
+        //     Uri.parse(ApiConfig.sucre_broadcast_websocket_url));
         final res =
             await (await ApiClientInstance.getApiClient()).getSucreMetaData();
         print("sucre broadcast connected");
