@@ -214,6 +214,7 @@
     "@perPage": {
         "description": "Per page label"
     },
+    "yes": "Yes",
     "no": "No",
     "@no": {
         "description": "No option"
@@ -435,7 +436,9 @@
     "helpAssistance": "Help and Assistance",
     "about": "About",
     "emailSchedules": "Email Schedules",
+    "emailSents": "Emails Sent",
     "emailSchedulesDescription": "Emails sent on defined intervals",
+    "emailSentsDescription": "Emails sent to Users",
     "emailAlerts": "Email Alerts",
     "emailAlertsDescription": "Emails sent when monitored values hit certain points",
     "monitored": "Monitored",
@@ -473,12 +476,8 @@
             }
         }
     },
-    "refresh": "refresh",
     "sortSchedules": "Sort Schedules",
     "sortAlerts": "Sort Alerts",
-    "order": "Order",
-    "asc": "asc",
-    "desc": "desc",
     "filterSchedules": "Filter Schedules",
     "filterAlerts": "Filter Alerts",
     "editSchedule": "Edit Schedule",
@@ -493,9 +492,7 @@
     "addAlert": "Add Alert",
     "addScheduleSettings": "Add one email schedule",
     "addAlertSettings": "Add  one email alert",
-    "unknown": "unknown",
     "unscheduled": "Unscheduled",
-    "yes": "yes",
     "deleteSchedules": "Delete Schedules",
     "deleteAlerts": "Delete Alerts",
     "selectSchedulesToDelete": "Select schedules to delete",
@@ -531,15 +528,44 @@
     "filterByInterval": "filter By interval",
     "filterByRapport": "filter By rapport",
     "selectInterval": "Select Interval",
-    "schedule": "Schedule",
     "addingSchedule": "Add Schedule...",
     "scheduleAdded": "Schedule Added",
     "failedToAddSchedule": "Failed to add Schedule",
     "savingSchedule": "Save Schedule...",
     "scheduleSaved": "Schedule Saved",
-    "failedToSaveSchedule": "Failed to save Schedule"
+    "failedToSaveSchedule": "Failed to save Schedule",
+    "sents": "Sents",
+    "deletEmailSents": "Delete Email Sents",
+    "selectEmailSentsToDelete": "Select Email Sents To Delete",
+    "delete_sents": "Are you sure you want to delete {count, plural, one {sent} other {sents}}?",
+    "@delete_sents": {
+        "description": "Confirmation message for deleting sents",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "refresh": "Refresh",
+    "failedToLoadSents": "Failed to load sents",
+	"tempEnvoi": "Temp D'Envoi",
+    "receptionist": "Receptionist",
+	"schedule": "Emails Cyclique",
+	"alers": "Alert",
+    "unknown": "unknown",
+    "deletingSents": "deleting Sents...",
+    "sentsDeleted": "Sents Deleted.",
+    "deletEmailSent": "Failed To delete Sent/Sents",
+    "filterEmailsSent": "Filter Emails Sent",
+    "filterbySendingtime": "Filter by Sending time",
+    "selectSendingtime": "Select Sending time" ,
+    "time": "Time",
+    "filterbyTypeofEmail": "Fliter by Type of Email",
+    "selectTypeofEmail": "Select Type of Email",
+    "scheduleEmail": "Schedule Email",
+    "sortSents": "Sort Sents",
+    "order": "Order",
+    "asc": "asc",
+    "desc": "desc"
     
-    
-    
-        
 }

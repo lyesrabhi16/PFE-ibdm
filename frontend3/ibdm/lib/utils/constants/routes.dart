@@ -14,6 +14,7 @@ import 'package:ibdm/pages/settings/settings.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
 import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/pages/settings/emails/email_settings_page.dart';
+import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
 import 'package:ibdm/pages/settings/help_page.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
@@ -107,7 +108,7 @@ class Routes {
     ),
     Routes.emailSent: GetPage(
       name: emailSent,
-      page: () => EmailSettingsPage(),
+      page: () => EmailSentsPage(),
       middlewares: [ProtectedRouteMiddleware()],
     ),
     Routes.about: GetPage(

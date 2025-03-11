@@ -1956,8 +1956,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
       if (FiltrationPage.stream == null) {
         try {
           print("connecting to filtration broadcast");
-          FiltrationPage.channel = WebSocketChannel.connect(
-              Uri.parse(ApiConfig.filtration_broadcast_websocket_url));
+          // FiltrationPage.channel = WebSocketChannel.connect(
+          //     Uri.parse(ApiConfig.filtration_broadcast_websocket_url));
           final res = await (await ApiClientInstance.getApiClient())
               .getFiltrationMetaData();
           print("filtration broadcast connected");
