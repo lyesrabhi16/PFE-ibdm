@@ -1,1 +1,0 @@
-export { default as avatarUpload} from "./avatar.upload.config";
