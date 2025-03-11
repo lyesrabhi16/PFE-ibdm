@@ -1,8 +1,0 @@
-services:
-  sql_server_db:
-    container_name: sql_server_db
-    image: mcr.microsoft.com/mssql/server:latest
-    env_file: .env
-    ports:
-      - "1430:1433"
-    
