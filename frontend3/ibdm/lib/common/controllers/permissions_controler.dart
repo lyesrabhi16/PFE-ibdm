@@ -4,12 +4,14 @@ import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
+import 'package:ibdm/common/controllers/loading_page_controller.dart';
 
 class PermissionsController extends GetxController {
   PermissionsController() {
     loadPermissions();
   }
 
+  bool permissions_loading = false;
   Rx<bool> ready = false.obs;
   bool? hasViewSiroperiePagePerm;
   bool? hasViewUsersPagePerm;
@@ -17,17 +19,45 @@ class PermissionsController extends GetxController {
   bool? hasViewSettingsPagePerm;
 
   Future<void> loadPermissions() async {
+    if (permissions_loading) {
+      return;
+    }
+    permissions_loading = true;
     ready.value = false;
+    int permissionsLoadedCount = 0;
+    int maxPermissionsLoadedCount = 4;
+    _done() {
+      permissionsLoadedCount++;
+      logger.e("loaded ${permissionsLoadedCount} permissions");
 
-    hasViewSiroperiePagePerm =
-        await _hasPermRequest(Permissions.viewSiroperiePage);
-    hasViewUsersPagePerm = await _hasPermRequest(Permissions.viewUsersPage);
-    hasViewFiltrationPagePerm =
-        await _hasPermRequest(Permissions.viewFiltrationPage);
-    hasViewSettingsPagePerm =
-        await _hasPermRequest(Permissions.viewSettingsPage);
-    logger.e("HasViewSettingsPagePerm: $hasViewSettingsPagePerm");
-    ready.value = true;
+      if (permissionsLoadedCount == maxPermissionsLoadedCount) {
+        permissionsLoadedCount = 0;
+        ready.value = true;
+      }
+      permissions_loading = false;
+    }
+
+    logger.e("await permissions");
+    await Future.wait([
+      _hasPermRequest(Permissions.viewSiroperiePage).then(
+        (value) {
+          hasViewSiroperiePagePerm = value;
+          _done();
+        },
+      ),
+      _hasPermRequest(Permissions.viewUsersPage).then((value) {
+        hasViewUsersPagePerm = value;
+        _done();
+      }),
+      _hasPermRequest(Permissions.viewFiltrationPage).then((value) {
+        hasViewFiltrationPagePerm = value;
+        _done();
+      }),
+      _hasPermRequest(Permissions.viewSettingsPage).then((value) {
+        hasViewSettingsPagePerm = value;
+        _done();
+      }),
+    ]);
   }
 
   void resetPermissions() {
@@ -54,6 +84,10 @@ class PermissionsController extends GetxController {
   bool hasPerm(String permission) {
     try {
       if (ready.value == false) {
+        final loadingPageController = Get.find<LoadingPageController>();
+        if (loadingPageController.isLoading.value == false) {
+          loadingPageController.isLoading.value = true;
+        }
         throw ("Permissions not ready");
       }
 

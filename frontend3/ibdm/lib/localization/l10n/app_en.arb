@@ -447,6 +447,100 @@
     "active": "Active",
     "addAlertEmail": "Add Alert Email",
     "addScheduleEmail": "Add Schedule Email",
+    "edit": "Edit",
+    "save": "Save",
+    "rapport": "Report",
+    "interval": "Interval",
+    "tempsEnvoi": "Sending Time",
+    "nextRunTime": "Next Send",
+    "days": "Days",
+    "deletingSchedules": "Deleting Schedules...",
+    "deletingAlerts": "Deleting Alerts...",
+    "schedulesDeleted": "Schedules Deleted",
+    "alertsDeleted": "Alerts Deleted",
+    "failedToDeleteSchedules": "Failed to delete schedules",
+    "failedToDeleteAlerts": "Failed to delete alerts",
+    "failedToDeleteScheduleWithId": "Failed to delete schedule with id: {id}",
+    "@failedToDeleteScheduleWithId": {
+        "placeholders": {
+            "id": {
+                "type": "int"
+            }
+        }
+    },
+    "failedToDeleteAlertWithId": "Failed to delete alert with id: {id}",
+    "@failedToDeleteAlertWithId": {
+        "placeholders": {
+            "id": {
+                "type": "int"
+            }
+        }
+    },
+    "refresh": "refresh",
+    "sortSchedules": "Sort Schedules",
+    "sortAlerts": "Sort Alerts",
+    "order": "Order",
+    "asc": "asc",
+    "desc": "desc",
+    "filterSchedules": "Filter Schedules",
+    "filterAlerts": "Filter Alerts",
+    "editSchedule": "Edit Schedule",
+    "editAlert": "Edit Alert",
+    "editScheduleSettings": "Edit schedule settings",
+    "editAlertSettings": "Edit alert settings",
+    "viewSchedule": "View Schedule",
+    "viewAlert": "View Alert",
+    "viewScheduleSettings": "View schedule settings",
+    "viewAlertSettings": "View alert settings",
+    "addSchedule": "Add Schedule",
+    "addAlert": "Add Alert",
+    "addScheduleSettings": "Add one email schedule",
+    "addAlertSettings": "Add  one email alert",
+    "unknown": "unknown",
+    "unscheduled": "Unscheduled",
+    "yes": "yes",
+    "deleteSchedules": "Delete Schedules",
+    "deleteAlerts": "Delete Alerts",
+    "selectSchedulesToDelete": "Select schedules to delete",
+    "selectAlertsToDelete": "Select alerts to delete",
+    "confirmSchedulesDeletion": "Are you sure you want to delete {count} {count, plural, one {schedule} other {schedules}}?",
+    "@confirmSchedulesDeletion": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "selectAReport": "Select a report",
+    "selectAnInterval": "Select an interval",
+    "intervalManualLabel": "Manual Interval (in days)",
+    "scheduleManually": "Schedule the next run manually",
+    "roles": "Roles",
+    "selectRoles": "Select Roles",
+    "selectUsers": "Select Users",
+    "sendThisAlertToRoles": "Send This alert to Roles",
+    "sendThisAlertToUsers": "Send This alert to Users",
+    "schedules": "Schedules",
+    "alerts": "Alerts",
+    "addANewScheduleEmail": "Add a new schedule email",
+    "addANewAlertEmail": "Add a new alert email",
+    "editScheduleEmail": "Edit schedule email",
+    "editAlertEmail": "Edit alert email",
+    "viewScheduleEmail": "View schedule email",
+    "viewAlertEmail": "View alert email",
+    "add": "Add",
+    "nextRunTimeDate": "Next Send Date",
+    "nextRunTimeTime": "Next Send Time",
+    "filterByInterval": "filter By interval",
+    "filterByRapport": "filter By rapport",
+    "selectInterval": "Select Interval",
+    "schedule": "Schedule",
+    "addingSchedule": "Add Schedule...",
+    "scheduleAdded": "Schedule Added",
+    "failedToAddSchedule": "Failed to add Schedule",
+    "savingSchedule": "Save Schedule...",
+    "scheduleSaved": "Schedule Saved",
+    "failedToSaveSchedule": "Failed to save Schedule",
     "sents": "Sents",
     "deletEmailSents": "Delete Email Sents",
     "selectEmailSentsToDelete": "Select Email Sents To Delete",
@@ -481,6 +575,8 @@
     "asc": "asc",
     "desc": "desc",
     "edit": "Edit"
+    
+    
 
         
 }

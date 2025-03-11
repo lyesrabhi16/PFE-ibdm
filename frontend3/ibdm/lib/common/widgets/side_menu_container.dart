@@ -23,18 +23,18 @@ class SideMenuContainer extends StatelessWidget {
     if ((route != Routes.siroperie || Get.currentRoute != Routes.siroperie) &&
         SiroperiePage.stream != null) {
       logger.e("closing siroperie channel");
-      SiroperiePage.channel!.sink.close();
+      SiroperiePage.channel?.sink.close();
       SiroperiePage.stream = null;
     }
 
     if ((route != Routes.filtration || Get.currentRoute != Routes.filtration) &&
         (FiltrationPage.stream != null)) {
       logger.e("closing filtration channel");
-      FiltrationPage.channel!.sink.close();
+      FiltrationPage.channel?.sink.close();
       FiltrationPage.stream = null;
     }
     logger.d(
-        "index: $index ${Get.currentRoute} ${Destination.getDestinationsMap(Get.context!)[Get.currentRoute]?.title}");
+        "index: $index ${Get.currentRoute} ${Get.context != null ? Destination.getDestinationsMap(Get.context)[Get.currentRoute]?.title : "Get.Context Not Ready"}");
   }
 
   static SideMenuStateController sideMenuStateController =
@@ -57,10 +57,11 @@ class SideMenuContainer extends StatelessWidget {
     // activate current page
     int startIndexOffset = 1; // actual index of the first page in items list
     controller.changePage(Destination.getDestinationsMap(
-      context,
-      startIndexOffset: startIndexOffset,
-    )[Get.currentRoute]!
-        .index!);
+          context,
+          startIndexOffset: startIndexOffset,
+        )[Get.currentRoute]
+            ?.index ??
+        0);
 
     List<SideMenuItem> items = [];
     for (Destination dest in Destination.getDestinations(context)) {
