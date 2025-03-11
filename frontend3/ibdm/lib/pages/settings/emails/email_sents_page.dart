@@ -120,196 +120,201 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
   Widget build(BuildContext context) {
     _getContext = () => context;
     return AppCustomContainer(
+        backButton: true,
         child: Padding(
-      padding: const EdgeInsets.all(AppSizes.sm),
-      child: Obx(() {
-        if (!loaded.value) {
-          load();
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+          padding: const EdgeInsets.all(AppSizes.sm),
+          child: Obx(() {
+            if (!loaded.value) {
+              load();
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
 
-        _showCheckboxColumn.value = _selectedSents.isNotEmpty;
+            _showCheckboxColumn.value = _selectedSents.isNotEmpty;
 
-        return Column(
-          children: [
-            Text(
-              strings.value.emailSents,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            SizedBox(height: AppSizes.xl),
-            Container(
-              constraints: BoxConstraints(
-                minWidth: context.width,
-              ),
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(AppSizes.sm),
-                child: Wrap(
-                  alignment: WrapAlignment.spaceEvenly,
-                  runAlignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  direction: Axis.horizontal,
-                  runSpacing: AppSizes.sm,
-                  verticalDirection: VerticalDirection.down,
-                  children: [
-                    SearchBar(
-                      controller: _searchController,
-                      onSubmitted: (_) => _loadSents(),
-                      onTapOutside: (_) => _loadSents(),
-                      constraints: BoxConstraints(
-                        maxWidth: AppSizes.lg * 8,
-                        minHeight: AppSizes.lg * 1.5,
-                        maxHeight: AppSizes.lg * 1.5,
+            return Column(
+              children: [
+                Text(
+                  strings.value.emailSents,
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      backgroundColor: WidgetStatePropertyAll(
-                          Theme.of(context).colorScheme.surfaceContainer),
-                      elevation: WidgetStatePropertyAll(0),
-                      leading: Icon(Icons.search),
-                      hintText: strings.value.search,
-                    ),
-                    Wrap(
+                ),
+                SizedBox(height: AppSizes.xl),
+                Container(
+                  constraints: BoxConstraints(
+                    minWidth: context.width,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(AppSizes.sm),
+                    child: Wrap(
+                      alignment: WrapAlignment.spaceEvenly,
+                      runAlignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      direction: Axis.horizontal,
+                      runSpacing: AppSizes.sm,
+                      verticalDirection: VerticalDirection.down,
                       children: [
-                        ShadButton.destructive(
-                            onPressed: _onDeleteButtonClick,
-                            child: Text(strings.value.delete)),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: SizedBox(
-                            width: AppSizes.xl * 4,
-                            child: IconWithLabelButton(
-                              icon: Icons.settings,
-                              text: strings.value.options,
-                              onTap: () {
-                                showShadSheet(
-                                    context: context,
-                                    side: ShadSheetSide.right,
-                                    isDismissible: true,
-                                    builder: (context) {
-                                      return ShadSheet(
-                                          scrollable: false,
-                                          child: ScrollConfiguration(
-                                            behavior:
-                                                ScrollConfiguration.of(context)
-                                                    .copyWith(
-                                              dragDevices: {
-                                                PointerDeviceKind.touch,
-                                                PointerDeviceKind.mouse,
-                                                PointerDeviceKind.stylus,
-                                                PointerDeviceKind
-                                                    .invertedStylus,
-                                                PointerDeviceKind.trackpad,
-                                                PointerDeviceKind.unknown,
-                                              },
-                                              scrollbars: true,
-                                            ),
-                                            child: SingleChildScrollView(
-                                              physics: BouncingScrollPhysics(),
-                                              child: Container(
-                                                constraints: BoxConstraints(
-                                                  minWidth: context.width / 2,
-                                                  maxWidth: context.width,
-                                                  minHeight: context.height,
-                                                  maxHeight: context.height,
+                        SearchBar(
+                          controller: _searchController,
+                          onSubmitted: (_) => _loadSents(),
+                          onTapOutside: (_) => _loadSents(),
+                          constraints: BoxConstraints(
+                            maxWidth: AppSizes.lg * 8,
+                            minHeight: AppSizes.lg * 1.5,
+                            maxHeight: AppSizes.lg * 1.5,
+                          ),
+                          backgroundColor: WidgetStatePropertyAll(
+                              Theme.of(context).colorScheme.surfaceContainer),
+                          elevation: WidgetStatePropertyAll(0),
+                          leading: Icon(Icons.search),
+                          hintText: strings.value.search,
+                        ),
+                        Wrap(
+                          children: [
+                            ShadButton.destructive(
+                                onPressed: _onDeleteButtonClick,
+                                child: Text(strings.value.delete)),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: SizedBox(
+                                width: AppSizes.xl * 4,
+                                child: IconWithLabelButton(
+                                  icon: Icons.settings,
+                                  text: strings.value.options,
+                                  onTap: () {
+                                    showShadSheet(
+                                        context: context,
+                                        side: ShadSheetSide.right,
+                                        isDismissible: true,
+                                        builder: (context) {
+                                          return ShadSheet(
+                                              scrollable: false,
+                                              child: ScrollConfiguration(
+                                                behavior:
+                                                    ScrollConfiguration.of(
+                                                            context)
+                                                        .copyWith(
+                                                  dragDevices: {
+                                                    PointerDeviceKind.touch,
+                                                    PointerDeviceKind.mouse,
+                                                    PointerDeviceKind.stylus,
+                                                    PointerDeviceKind
+                                                        .invertedStylus,
+                                                    PointerDeviceKind.trackpad,
+                                                    PointerDeviceKind.unknown,
+                                                  },
+                                                  scrollbars: true,
                                                 ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      AppSizes.sm),
-                                                  child: Scaffold(
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                    body:
-                                                        _topPageActionsSmallScreen(),
+                                                child: SingleChildScrollView(
+                                                  physics:
+                                                      BouncingScrollPhysics(),
+                                                  child: Container(
+                                                    constraints: BoxConstraints(
+                                                      minWidth:
+                                                          context.width / 2,
+                                                      maxWidth: context.width,
+                                                      minHeight: context.height,
+                                                      maxHeight: context.height,
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              AppSizes.sm),
+                                                      child: Scaffold(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        body:
+                                                            _topPageActionsSmallScreen(),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          ));
-                                    });
-                              },
-                            ),
-                          ),
-                        ).removeWhen(isAtLeastMediumScreen(context)),
-                      ].nonNulls.toList(),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Container(
-                  width: context.width,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainer,
-                    borderRadius: BorderRadius.circular(20),
+                                              ));
+                                        });
+                                  },
+                                ),
+                              ),
+                            ).removeWhen(isAtLeastMediumScreen(context)),
+                          ].nonNulls.toList(),
+                        )
+                      ],
+                    ),
                   ),
-                  child: _topPageActions(
-                    alignment: WrapAlignment.spaceBetween,
-                    expandPerPage: _expandPerPage.value,
-                    filtersPopoverController: _filtersPopoverController,
-                    filtersActive: _filtersActive,
-                    perPageFormKey: _perPageFormKey,
-                    tagFilterController: _tagFilterController,
-                    activationStateFilterController:
-                        _activationStateFilterController,
-                    sortPopoverController: _sortPopoverController,
-                    sortASC: _sortASC,
-                    sortActive: _sortActive,
+                ),
+                Container(
+                      width: context.width,
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainer,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: _topPageActions(
+                        alignment: WrapAlignment.spaceBetween,
+                        expandPerPage: _expandPerPage.value,
+                        filtersPopoverController: _filtersPopoverController,
+                        filtersActive: _filtersActive,
+                        perPageFormKey: _perPageFormKey,
+                        tagFilterController: _tagFilterController,
+                        activationStateFilterController:
+                            _activationStateFilterController,
+                        sortPopoverController: _sortPopoverController,
+                        sortASC: _sortASC,
+                        sortActive: _sortActive,
+                      ),
+                    ).removeWhen(isAtMostSmallScreen(context)) ??
+                    SizedBox.shrink(),
+                SizedBox(
+                  height: AppSizes.sm,
+                ),
+                Expanded(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minWidth: context.width,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: DataTable2(
+                      columnSpacing: _getColumnSpacing(),
+                      onSelectAll: (selectedAll) => selectedAll == true
+                          ? _selectedSents.addAll(sents)
+                          : _selectedSents.clear(),
+                      showCheckboxColumn: _showCheckboxColumn.value,
+                      sortColumnIndex: 0,
+                      dataRowColor: WidgetStateProperty.fromMap({
+                        WidgetState.hovered:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        WidgetState.focused: colorScheme.primaryContainer,
+                      }),
+                      columns: _getCols(),
+                      rows: _getRows(),
+                    ),
                   ),
-                ).removeWhen(isAtMostSmallScreen(context)) ??
-                SizedBox.shrink(),
-            SizedBox(
-              height: AppSizes.sm,
-            ),
-            Expanded(
-              child: Container(
-                constraints: BoxConstraints(
-                  minWidth: context.width,
                 ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                  borderRadius: BorderRadius.circular(10),
+                SizedBox(
+                  height: AppSizes.sm,
                 ),
-                child: DataTable2(
-                  columnSpacing: _getColumnSpacing(),
-                  onSelectAll: (selectedAll) => selectedAll == true
-                      ? _selectedSents.addAll(sents)
-                      : _selectedSents.clear(),
-                  showCheckboxColumn: _showCheckboxColumn.value,
-                  sortColumnIndex: 0,
-                  dataRowColor: WidgetStateProperty.fromMap({
-                    WidgetState.hovered:
-                        Theme.of(context).colorScheme.primaryContainer,
-                    WidgetState.focused: colorScheme.primaryContainer,
-                  }),
-                  columns: _getCols(),
-                  rows: _getRows(),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: AppSizes.sm,
-            ),
-            _bottomPageActions(
-              currentPage: sentsMeta.currentPage,
-              nbrTotalPages: sentsMeta.totalPages,
-              nbrShown: sentsMeta.data.length,
-              nbrTotal: sentsMeta.totalResults,
-              onPrevPress: (p) => {page = p, load()},
-              onNextPress: (p) => {page = p, load()},
-              onPagePress: (p) => {page = p, load()},
-              data: sents,
-              label: strings.value.sents,
-            )
-          ],
-        );
-      }),
-    ));
+                _bottomPageActions(
+                  currentPage: sentsMeta.currentPage,
+                  nbrTotalPages: sentsMeta.totalPages,
+                  nbrShown: sentsMeta.data.length,
+                  nbrTotal: sentsMeta.totalResults,
+                  onPrevPress: (p) => {page = p, load()},
+                  onNextPress: (p) => {page = p, load()},
+                  onPagePress: (p) => {page = p, load()},
+                  data: sents,
+                  label: strings.value.sents,
+                )
+              ],
+            );
+          }),
+        ));
   }
 
   void _onDeleteButtonClick({
