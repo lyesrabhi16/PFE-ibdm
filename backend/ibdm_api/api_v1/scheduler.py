@@ -57,36 +57,5 @@ scheduler.add_job(
     id="email_scheduler",
 )
 
-def Manager():
-
-    sucre_broadcast_job =  scheduler.get_job("broadcast_sucre")
-    if(SucreConsumer.connected_count == 0 and sucre_broadcast_job.next_run_time is not None):
-        logging.log(logging.INFO, "manager stopping broadcast_sucre")
-
-        scheduler.pause_job("broadcast_sucre")
-    elif (SucreConsumer.connected_count > 0 and sucre_broadcast_job.next_run_time is None):
-        logging.log(logging.INFO, "manager starting broadcast_sucre")
-        scheduler.resume_job("broadcast_sucre")
-
-    filtration_broadcast_job =  scheduler.get_job("broadcast_filtration")
-    if(FiltrationConsumer.connected_count == 0 and filtration_broadcast_job.next_run_time is not None):
-        logging.log(logging.INFO, "manager stopping broadcast_filtration")
-
-        scheduler.pause_job("broadcast_filtration")
-    elif (FiltrationConsumer.connected_count > 0 and filtration_broadcast_job.next_run_time is None):
-        logging.log(logging.INFO, "manager starting broadcast_filtration")
-        scheduler.resume_job("broadcast_filtration")
-        
-""" scheduler.add_job(
-    Manager,
-    "interval",
-    seconds=0.1,
-    id="Manager",
-    replace_existing=True,
-    
-)
- """
-
-
 logging.getLogger('apscheduler.executors.default').setLevel(logging.WARNING)
 scheduler.start()

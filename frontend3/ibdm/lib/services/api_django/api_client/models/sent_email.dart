@@ -4,6 +4,9 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
+import 'alert_email.dart';
+import 'email_schedule.dart';
+
 part 'sent_email.g.dart';
 
 @JsonSerializable()
@@ -15,16 +18,15 @@ class SentEmail {
     this.schedule,
     this.alert,
   });
-
-  factory SentEmail.fromJson(Map<String, Object?> json) =>
-      _$SentEmailFromJson(json);
-
+  
+  factory SentEmail.fromJson(Map<String, Object?> json) => _$SentEmailFromJson(json);
+  
   final int id;
   @JsonKey(name: 'temps_envoi')
   final DateTime tempsEnvoi;
   final String receptionist;
-  final int? schedule;
-  final int? alert;
+  final EmailSchedule? schedule;
+  final AlertEmail? alert;
 
   Map<String, Object?> toJson() => _$SentEmailToJson(this);
 }

@@ -566,6 +566,9 @@
     "sortSents": "Sort Sents",
     "order": "Order",
     "asc": "asc",
-    "desc": "desc"
+    "desc": "desc",
+    "emails": "Emails",
+    "description": "Description",
+    "alert": "Alert"
     
 }

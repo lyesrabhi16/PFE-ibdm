@@ -10,8 +10,12 @@ SentEmail _$SentEmailFromJson(Map<String, dynamic> json) => SentEmail(
       id: (json['id'] as num).toInt(),
       tempsEnvoi: DateTime.parse(json['temps_envoi'] as String),
       receptionist: json['receptionist'] as String,
-      schedule: (json['schedule'] as num?)?.toInt(),
-      alert: (json['alert'] as num?)?.toInt(),
+      schedule: json['schedule'] == null
+          ? null
+          : EmailSchedule.fromJson(json['schedule'] as Map<String, dynamic>),
+      alert: json['alert'] == null
+          ? null
+          : AlertEmail.fromJson(json['alert'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SentEmailToJson(SentEmail instance) => <String, dynamic>{

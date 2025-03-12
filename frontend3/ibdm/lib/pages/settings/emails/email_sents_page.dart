@@ -3,32 +3,23 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/per_page_input.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
-import 'package:ibdm/services/toasts.dart';
-import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
-import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
-import 'package:ibdm/utils/helpers/user_helpers.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:toastification/toastification.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
 import 'package:ibdm/services/api_django/api_client/models/sent_email.dart';
 import 'package:ibdm/services/api_django/api_client/models/paginated_sent_email_list.dart';
-import 'package:ibdm/utils/helpers/logger.dart';
-import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/icon_with_label_button.dart';
 import 'package:ibdm/common/widgets/divider_with_text.dart';
 import 'package:ibdm/pages/users.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/common/widgets/sent_email_form.dart';
-import 'package:ibdm/common/widgets/alert_email_form.dart';
 
 class EmailSentsPage extends StatefulWidget {
   const EmailSentsPage({super.key});
@@ -56,11 +47,10 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
   late PaginatedSentEmailList sentsMeta;
 
   final _selectedSents = <SentEmail>[].obs;
-  List<String> _allMonitorValueTags = <String>[];
 
   int page = 1;
   String? monitorValueTagFilter;
-  bool? activationStateFilter;
+  String? emailTypeFilter;
 
   static final _expandPerPage = false.obs;
   static final _perPageController = TextEditingController(text: "10");
@@ -71,7 +61,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
   static final _perPageFormKey = GlobalKey<FormState>();
 
   static final _tagFilterController = TextEditingController();
-  static final _activationStateFilterController = TextEditingController();
+  static final _emailTypeFilterController = TextEditingController();
 
   static final _sortPopoverController = ShadPopoverController();
 
@@ -98,7 +88,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
       isSelected: false,
       orderingValue: "-temps_envoi",
     ),
-    "Receptioniste": Sorter(
+    "Receptionist": Sorter(
       isSelected: false,
       orderingValue: "-receptionist",
     ),
@@ -177,9 +167,6 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                         ),
                         Wrap(
                           children: [
-                            ShadButton.destructive(
-                                onPressed: _onDeleteButtonClick,
-                                child: Text(strings.value.delete)),
                             Align(
                               alignment: Alignment.centerRight,
                               child: SizedBox(
@@ -260,8 +247,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                         filtersActive: _filtersActive,
                         perPageFormKey: _perPageFormKey,
                         tagFilterController: _tagFilterController,
-                        activationStateFilterController:
-                            _activationStateFilterController,
+                        emailTypeFilterController: _emailTypeFilterController,
                         sortPopoverController: _sortPopoverController,
                         sortASC: _sortASC,
                         sortActive: _sortActive,
@@ -315,59 +301,6 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
             );
           }),
         ));
-  }
-
-  void _onDeleteButtonClick({
-    void Function()? onDeleteConfirmed,
-  }) {
-    _showCheckboxColumn.value = !_showCheckboxColumn.value;
-
-    ShadToaster.of(context).show(
-      ShadToast.destructive(
-        closeIcon: SizedBox(),
-        duration: Duration(days: 365),
-        title: Text(strings.value.deletEmailSents),
-        description: Obx(
-          () {
-            return _selectedSents.isEmpty
-                ? Text(strings.value.selectEmailSentsToDelete)
-                : Text(
-                    "Are you sure you want to delete ${_selectedSents.length} Sent(s)?");
-          },
-        ),
-        action: Obx(
-          () => _selectedSents.isEmpty
-              ? ShadButton(
-                  onPressed: () {
-                    _selectedSents.clear();
-                    _showCheckboxColumn.value = false;
-                    ShadToaster.of(context).hide();
-                  },
-                  child: Text(strings.value.cancel),
-                )
-              : Row(
-                  children: [
-                    ShadButton(
-                      onPressed: () async {
-                        await _deleteSents();
-                        load();
-                        onDeleteConfirmed?.call();
-                      },
-                      child: Text(strings.value.yes),
-                    ),
-                    ShadButton(
-                      onPressed: () {
-                        _selectedSents.clear();
-                        _showCheckboxColumn.value = false;
-                        ShadToaster.of(context).hide();
-                      },
-                      child: Text(strings.value.no),
-                    ),
-                  ],
-                ),
-        ),
-      ),
-    );
   }
 
   Widget _bottomPageActions({
@@ -579,11 +512,10 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
     required RxBool filtersActive,
     required GlobalKey<FormState> perPageFormKey,
     required TextEditingController tagFilterController,
-    required TextEditingController activationStateFilterController,
+    required TextEditingController emailTypeFilterController,
     required ShadPopoverController sortPopoverController,
     required RxBool sortASC,
     required RxBool sortActive,
-    bool center = false,
   }) {
     final context = getContext;
 
@@ -622,7 +554,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                     constraints: BoxConstraints(
                         minWidth: AppSizes.xl * 6, maxWidth: AppSizes.xl * 8),
                     child: filterContent(context, tagFilterController,
-                        activationStateFilterController),
+                        emailTypeFilterController),
                   ),
                   child: IconWithLabelButton(
                     icon: Icons.filter_alt,
@@ -679,7 +611,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
           ),
           //right refresh button
           SizedBox(
-            width: AppSizes.xl * 4,
+            width: AppSizes.xl * 5,
             child: IconWithLabelButton(
               icon: Icons.refresh_rounded,
               onTap: () => load(),
@@ -708,7 +640,14 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
 
     // Load sents
     try {
-      sentsMeta = await api!.getSentEmails();
+      logger.e("ordering: ${_getOrdering()}");
+      sentsMeta = await api!.getSentEmails(
+        page: page,
+        ordering: _getOrdering(),
+        search: _searchController.text,
+        perPage: int.tryParse(_perPageController.text) ?? 10,
+        emailType: emailTypeFilter,
+      );
       sents = sentsMeta.data.obs;
     } catch (e) {
       logger.e("${strings.value.failedToLoadSents} : $e");
@@ -753,15 +692,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
       )).removeWhen(isAtMostSmallScreen(context)),
       DataColumn2(
           label: Text(
-        strings.value.schedule,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Colors.grey,
-              fontWeight: FontWeight.bold,
-            ),
-      )),
-      DataColumn2(
-          label: Text(
-        strings.value.alers,
+        strings.value.description,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Colors.grey,
               fontWeight: FontWeight.bold,
@@ -783,6 +714,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
 
   _getRows() {
     return sents.map((e) {
+      final _color = e.schedule != null ? colorScheme.secondary : null;
       return DataRow2(
         selected: _selectedSents.contains(e),
         onSelectChanged: (selected) {
@@ -798,26 +730,38 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
         cells: [
           DataCell(Text(
             (sents.indexOf(e) + 1).toString(),
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: _color,
+                ),
           )).removeWhen(isAtMostSmallScreen(context)),
-          DataCell(Text(
-            e.tempsEnvoi.toString().split('.')[0] ?? strings.value.unknown,
-            style: Theme.of(context).textTheme.bodyMedium,
-          )),
-          DataCell(Text(
-            e.receptionist.toString(),
-            style: Theme.of(context).textTheme.bodyMedium,
-          )).removeWhen(isAtMostSmallScreen(context)),
-          DataCell(Text(
-            e.schedule.toString(),
-            style: Theme.of(context).textTheme.bodyMedium,
-          )),
-          DataCell(
-            Text(
-              e.alert.toString(),
-              style: Theme.of(context).textTheme.bodyMedium,
+          DataCell(FittedBox(
+            child: Text(
+              e.tempsEnvoi.toString().split('.')[0],
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: _color,
+                  ),
+              softWrap: false,
             ),
-          ),
+          )),
+          DataCell(FittedBox(
+            child: Text(
+              e.receptionist.toString(),
+              softWrap: false,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: _color,
+                  ),
+            ),
+          )).removeWhen(isAtMostSmallScreen(context)),
+          DataCell(FittedBox(
+            child: Text(
+              e.schedule != null
+                  ? "${strings.value.schedule.toUpperCase()}(${e.schedule!.rapport.json})"
+                  : "${strings.value.alert.toUpperCase()}(${e.alert?.monitoredValue.json})",
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: _color,
+                  ),
+            ),
+          )),
           DataCell(
             FittedBox(
               child: Row(
@@ -867,17 +811,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
               },
             ).removeWhen(isAtLeastMediumScreen(context)),
             Obx(() {
-              return loaded.value
-                  ? ShadButton.destructive(
-                      child: Text(strings.value.delete),
-                      onPressed: () {
-                        _selectedSents.add(sent);
-                        _onDeleteButtonClick(
-                          onDeleteConfirmed: () => Navigator.of(context).pop(),
-                        );
-                      },
-                    )
-                  : SizedBox.shrink();
+              return SizedBox.shrink();
             }).removeWhen(isAtLeastMediumScreen(context)),
             Obx(() => Expanded(
                   child: Row(
@@ -887,18 +821,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                       if (loaded.value)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ShadButton.destructive(
-                              child: Text(strings.value.delete),
-                              onPressed: () {
-                                _selectedSents.add(sent);
-                                _onDeleteButtonClick(
-                                  onDeleteConfirmed: () =>
-                                      Navigator.of(context).pop(),
-                                );
-                              },
-                            ),
-                          ],
+                          children: [],
                         ),
                       ShadButton(
                         icon: Icon(Icons.close),
@@ -938,48 +861,10 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
     return isSmallScreen(context) ? AppSizes.sm : AppSizes.md;
   }
 
-  void sort(int columnIndex, bool ascending) {
-    print("sort called");
-  }
-
-  _deleteSents() async {
-    _done(int id) {
-      _selectedSents.removeWhere((element) => element.id == id);
-      sents.removeWhere((element) => element.id == id);
-    }
-
-    final state = FutureState.loading.obs;
-    final toast = Toasts.showStatefulToast(
-        context: context,
-        message: strings.value.deletingSents,
-        messageSuccess: strings.value.sentsDeleted,
-        messageError: strings.value.deletEmailSent,
-        state: state);
-    await Future.wait(_selectedSents.map((sent) {
-      return api!.destroyEmailSent(id: sent.id).then((value) {
-        _done(sent.id);
-      }).catchError((e) {
-        logger.e("Failed to delete Sent email : $e");
-        state.value = FutureState.error;
-        Toasts.showErrorToast(
-            context: context,
-            message: "Failed To delete Sent with id: ${sent.id}");
-      });
-    }));
-    if (state.value != FutureState.error) {
-      state.value = FutureState.success;
-    }
-    load();
-    Future.delayed(Duration(seconds: 2), () {
-      toastification.dismissById(toast.id);
-    });
-    ShadToaster.of(Get.context!).hide();
-  }
-
   Column filterContent(
       BuildContext context,
       TextEditingController tagFilterController,
-      TextEditingController activationStateFilterController) {
+      TextEditingController emailTypeFilterController) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -1037,34 +922,37 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
         SizedBox(
           height: AppSizes.sm,
         ),
-        DropdownMenu<bool>(
+        DropdownMenu<String>(
           hintText: strings.value.selectTypeofEmail,
           label: Text(strings.value.scheduleEmail),
-          controller: activationStateFilterController,
+          controller: emailTypeFilterController,
           width: AppSizes.xl * 8,
+          enableFilter: false,
+          enableSearch: false,
+          requestFocusOnTap: false,
           inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
                 filled: true,
                 fillColor: Theme.of(context).colorScheme.surface,
               ),
-          initialSelection: activationStateFilter,
+          initialSelection: emailTypeFilter,
           onSelected: (value) {
             // filter by monitored value tag
-            if (activationStateFilter == value) {
-              activationStateFilterController.clear();
-              activationStateFilter = null;
+            if (emailTypeFilter == value) {
+              emailTypeFilterController.clear();
+              emailTypeFilter = null;
               load();
               return;
             }
-            activationStateFilter = value;
+            emailTypeFilter = value;
             load();
           },
           dropdownMenuEntries: [
             DropdownMenuEntry(
-              value: true,
+              value: "schedule",
               label: strings.value.emailSchedules,
             ),
             DropdownMenuEntry(
-              value: false,
+              value: "alert",
               label: strings.value.emailAlerts,
             ),
           ],
@@ -1234,41 +1122,6 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
     );
   }
 
-  Widget PerPageInput({
-    required RxBool expandPerPage,
-    required TextEditingController perPageController,
-    required Function load,
-    int perPage = 10,
-    double? customExpandPerPage,
-  }) {
-    return Form(
-      key: _perPageFormKey,
-      child: TextFormField(
-        controller: perPageController,
-        decoration: InputDecoration(
-          labelText: 'Per Page',
-          border: OutlineInputBorder(),
-        ),
-        keyboardType: TextInputType.number,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter a number';
-          }
-          final n = int.tryParse(value);
-          if (n == null || n <= 0) {
-            return 'Please enter a valid number';
-          }
-          return null;
-        },
-        onFieldSubmitted: (value) {
-          if (_perPageFormKey.currentState!.validate()) {
-            load();
-          }
-        },
-      ),
-    );
-  }
-
   _topPageActionsSmallScreen() {
     return Column(
       children: [
@@ -1292,7 +1145,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
         ),
         DividerWithText(text: strings.value.filter),
         filterContent(
-            context, _tagFilterController, _activationStateFilterController),
+            context, _tagFilterController, _emailTypeFilterController),
         SizedBox(
           height: AppSizes.xl,
         ),

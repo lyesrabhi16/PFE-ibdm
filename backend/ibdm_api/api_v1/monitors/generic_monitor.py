@@ -3,7 +3,7 @@ import threading
 from django.core.mail import send_mail
 from django.conf import settings
 import logging
-from emails.models import CUSTOM_MONITORED_VALUES, AlertEmail, sentEmail
+from emails.models import CUSTOM_MONITORED_VALUES, AlertEmail, SentAlertEmail, sentEmail
 from users.models import User
 from django.template.loader import render_to_string
 
@@ -38,7 +38,7 @@ def GenericMonitor(monitored_value_tag: str, monitored_object_value: object, nam
                 )
 
                 for user in recipients:
-                    if sentEmail.objects.filter(alert=alert, receptionist=user, temps_envoi__gte=datetime.now() - timedelta(days=alert.danger_reminder_interval)).count() == 0:
+                    if sentEmail.objects.filter(alert__alert=alert, receptionist=user, temps_envoi__gte=datetime.now() - timedelta(days=alert.danger_reminder_interval)).count() == 0:
                         logging.info(f"{name} : {alert.monitored_value} Sending danger alert email to '{user.email}'")
                         sendDangerAlertEmail(alert, value, user, name)
             elif value <= alert.warning_point:
@@ -90,7 +90,8 @@ def sendDangerAlertEmail(alert, value, user, name):
         from_email=settings.EMAIL_OF_SENDER,
         recipient_list=[user.email]
     )
-    sentEmail.objects.create(alert=alert, receptionist=user)
+    sent_alert = SentAlertEmail.objects.create(alert=alert, at_value=value, alert_type="danger")
+    sentEmail.objects.create(alert=sent_alert, receptionist=user)
     logging.info(f"{name} : {alert.monitored_value} sent danger alert email to '{user.email}'")
             
 

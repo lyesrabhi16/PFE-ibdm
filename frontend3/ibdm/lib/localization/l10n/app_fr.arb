@@ -565,5 +565,8 @@
     "order": "Ordrer",
     "asc": "asc",
     "desc": "desc",
-	"emailSentsDescription": "Emails envoyés à des utilisateurs."
+	"emailSentsDescription": "Emails envoyés à des utilisateurs.",
+	"emails": "Emails",
+    "description": "Description",
+    "alert": "Alert"
 }

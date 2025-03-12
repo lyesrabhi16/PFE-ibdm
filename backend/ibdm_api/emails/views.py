@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions
 
 from emails.serializers import AlertEmailSerializer, EmailScheduleSerializer, PossibleMonitorValuesAlertEmailsSerializer, SentEmailSerializer
 from api_v1.utils import with_operation_ids
-from emails.filters import CustomAlertFilter
+from emails.filters import CustomAlertFilter, SentEmailFilters
 from .models import ALL_MONITORED_VALUES, AlertEmail, EmailSchedule, sentEmail
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from rest_framework.decorators import api_view, permission_classes
@@ -62,16 +62,12 @@ class EmailScheduleViewset(viewsets.ModelViewSet):
     ordering_fields = ["rapport", "interval_manual", "temps_envoi"]
 
 
-@with_operation_ids(
-    on_retrieve="getSentEmail",
-    on_list="getSentEmails",
-)
 @extend_schema(
     tags=["emails"]
 )
 
 @extend_schema_view(
-    list=extend_schema(summary="get schedules", description="Get all schedules", parameters=[
+    list=extend_schema(summary="get sent emails", description="Get all sent emails", parameters=[
             OpenApiParameter(
                 name="search",
                 required=False,
@@ -82,24 +78,27 @@ class EmailScheduleViewset(viewsets.ModelViewSet):
                 name="ordering",
                 required=False,
                 description="Order by temps_envois, receptionist",
-                enum=["temps_envoi", "receptionist"],
                 location=OpenApiParameter.QUERY,
             ),
             OpenApiParameter(
                 name="email_type",
                 required=False,
                 description="Filter by alert or schedule",
-                enum=["alert", "schedule"],
                 location=OpenApiParameter.QUERY,
             ),
     ]),
 )
+@with_operation_ids(
+    on_retrieve="getSentEmail",
+    on_list="getSentEmails",
+)
 class SentEamilViewset(viewsets.ReadOnlyModelViewSet):
     queryset = sentEmail.objects.all().order_by("temps_envoi").reverse()
     serializer_class = SentEmailSerializer
+    parser_classes = [JSONParser]
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
-    # filterset_class = SentEmailFilters # TODO:FIX
+    filterset_class = SentEmailFilters
     search_fields = [
         "receptionist__username",
         "receptionist__email",
