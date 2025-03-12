@@ -190,7 +190,7 @@ class sentEmail(models.Model):
     temps_envoi = models.DateTimeField(auto_now_add=True)
     receptionist = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="sent_email_to")
     schedule = models.ForeignKey(EmailSchedule, on_delete=models.CASCADE, related_name="sent_email_schedule", blank=True, null=True)
-    alert = models.ForeignKey("emails.AlertEmail", on_delete=models.CASCADE, related_name="sent_email_alert", blank=True, null=True)
+    alert = models.ForeignKey("emails.SentAlertEmail", on_delete=models.CASCADE, related_name="sent_email_alert_meta", blank=True, null=True)
 
 
 
@@ -198,7 +198,7 @@ class sentEmail(models.Model):
         if (self.schedule is not None):
             return f"SCHEDULED: {self.pk}  {self.receptionist} - {self.temps_envoi} - {self.schedule.rapport}"
         elif self.alert is not None:
-            return f"ALERT: {self.pk}  {self.receptionist} - {self.temps_envoi} - {self.alert.monitored_value}"
+            return f"ALERT: {self.pk}  {self.receptionist} - {self.temps_envoi} - {self.alert.alert.monitored_value}"
         else:
             return f"unknown email type with id: {self.pk}"
 
@@ -219,3 +219,7 @@ class AlertEmail(models.Model):
         return f"ALERT: {self.monitored_value} - danger: {self.danger_point} - warning: {self.warning_point}"
 
 
+class SentAlertEmail(models.Model):
+    alert = models.ForeignKey(AlertEmail, on_delete=models.CASCADE, related_name="sent_alert_email_alert")
+    at_value = models.FloatField()
+    alert_type = models.CharField(choices=(("danger", "danger"), ("warning", "warning")), max_length=255)

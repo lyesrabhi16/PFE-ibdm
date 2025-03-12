@@ -237,17 +237,24 @@ abstract class IbdmApiClient {
     @Path('id') required int id,
   });
 
+  /// get sent emails.
+  ///
+  /// Get all sent emails.
+  ///
+  /// [emailType] - Filter by alert or schedule.
+  ///
   /// [enablePagination] - Enable or disable pagination.
   ///
-  /// [ordering] - Which field to use when ordering the results.
+  /// [ordering] - Order by temps_envois, receptionist.
   ///
   /// [page] - Page number.
   ///
   /// [perPage] - Number of results per page.
   ///
-  /// [search] - A search term.
+  /// [search] - Search by receptionist__username, receptionist__email, receptionist__first_name, receptionist__last_name, schedule__rapport, alert__monitored_value.
   @GET('/api/v1/emails/sent/')
   Future<PaginatedSentEmailList> getSentEmails({
+    @Query('email_type') String? emailType,
     @Query('enable_pagination') bool? enablePagination,
     @Query('ordering') String? ordering,
     @Query('page') int? page,
@@ -258,12 +265,6 @@ abstract class IbdmApiClient {
   /// [id] - A unique integer value identifying this sent email.
   @GET('/api/v1/emails/sent/{id}/')
   Future<SentEmail> getSentEmail({
-    @Path('id') required int id,
-  });
-
-   /// [id] - A unique integer value identifying this email sent.
-  @DELETE('/api/v1/emails/sent/{id}/')
-  Future<void> destroyEmailSent({
     @Path('id') required int id,
   });
 

@@ -20,11 +20,10 @@ class _EmailSettingsPageState extends State<EmailSettingsPage> {
 
   ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
 
-  late final strings = getTranslations(getContext).obs;
-
   @override
   Widget build(BuildContext context) {
     _getContext = () => context;
+    final strings = getTranslations(context).obs;
     return AppCustomContainer(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.sm),
@@ -33,7 +32,7 @@ class _EmailSettingsPageState extends State<EmailSettingsPage> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Text(
-              "Emails",
+              strings.value.emails,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),

@@ -247,12 +247,14 @@ def email_scheduler():
         next_run_time__month=now.month,
         next_run_time__day=now.day,
         next_run_time__hour=now.hour,
-        next_run_time__minute=now.minute,        
+        next_run_time__minute=now.minute,
         )
-    #logging.log(logging.WARNING, f"scheduled emails: {scheduled_emails}")
+    logging.log(logging.WARNING, f"scheduled emails: {scheduled_emails}")
     emails_to_be_sent = {
         email for email in scheduled_emails if email not in emails_in_process
     }
+
+    logging.log(logging.WARNING, f'emails to send: {emails_to_be_sent}')
     for email in emails_to_be_sent:
        threading.Thread(target=sendEmail, args=(email,)).start()
 

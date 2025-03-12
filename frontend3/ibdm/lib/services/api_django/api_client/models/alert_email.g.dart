@@ -160,8 +160,8 @@ const _$AlertEnumEnumMap = {
   AlertEnum.undefined90: 'utilite.ut_sid_pg',
   AlertEnum.undefined91: 'utilite.ut_sid_tt',
   AlertEnum.undefined92: 'utilite.ut_sid_tc',
-  AlertEnum.undefined93: 'sucre.total.adue',
-  AlertEnum.undefined94: 'sucre.total.tetra',
-  AlertEnum.undefined95: 'sucre.total',
+  AlertEnum.undefined93: 'sucre.total.tetra',
+  AlertEnum.undefined94: 'sucre.total',
+  AlertEnum.undefined95: 'sucre.total.adue',
   AlertEnum.$unknown: r'$unknown',
 };
