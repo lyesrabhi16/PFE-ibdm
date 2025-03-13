@@ -9,6 +9,7 @@ import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/avatar.dart';
 import 'package:ibdm/common/widgets/icon_with_label_button.dart';
+import 'package:ibdm/common/widgets/per_page_input.dart';
 import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/common/widgets/user_form.dart';
 import 'package:ibdm/services/api/api_client.dart';
@@ -686,6 +687,9 @@ class UsersPage extends StatelessWidget {
                           hintText: strings.value.role,
                           label: Text(strings.value.role),
                           controller: _roleFilterController,
+                          enableFilter: false,
+                          enableSearch: false,
+                          requestFocusOnTap: false,
                           inputDecorationTheme:
                               Theme.of(context).inputDecorationTheme.copyWith(
                                     filled: true,
@@ -717,6 +721,8 @@ class UsersPage extends StatelessWidget {
                             }
                             logger.e(
                                 "${strings.value.role} :${_roleFilter?.name} $value");
+
+
                           },
                           dropdownMenuEntries: [
                             for (var role in roles)
@@ -890,31 +896,15 @@ class UsersPage extends StatelessWidget {
               ),
               // PerPage TextField
               SizedBox(
-                width: expandPerPage
-                    ? customExpandPerPage ?? AppSizes.xl * 8
-                    : AppSizes.xl * 3,
-                child: Form(
-                  key: _perPageFormKey,
-                  onChanged: () {},
-                  child: TextFormField(
-                    validator: (value) => AppValidators.perPageValidator(
-                      value,
-                      _expandPerPage,
-                    ),
-                    controller: _perPageController,
-                    onTapOutside: (_) =>
-                        _executeChangePerPageIfPossible(context),
-                    onEditingComplete: () =>
-                        _executeChangePerPageIfPossible(context),
-                    onChanged: (value) => _changePerPage(context, value),
-                    decoration: InputDecoration(
-                      filled: true,
-                      labelText: strings.value.perPage,
-                      hintText: "10",
-                    ),
-                  ),
-                ),
-              ),
+                  width: expandPerPage
+                      ? customExpandPerPage ?? AppSizes.xl * 8
+                      : AppSizes.xl * 3,
+                  child: PerPageInput(
+                    expandPerPage: _expandPerPage as RxBool,
+                    perPageController: _perPageController,
+                    perPage: perPage?.value ?? 10,
+                    load: () => _loadUsers(context),
+                  )),
             ],
           ),
           //right refresh button
