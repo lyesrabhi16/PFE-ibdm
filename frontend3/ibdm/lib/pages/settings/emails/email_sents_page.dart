@@ -729,7 +729,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
     return [
       DataColumn2(
           label: Text(
-        strings.value.no,
+        strings.value.num,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Colors.grey,
               fontWeight: FontWeight.bold,
@@ -770,7 +770,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
       DataColumn2(
         label: Expanded(
           child: Text(
-            "Actions",
+            strings.value.actions,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
@@ -848,10 +848,10 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
         return ShadDialog(
           title: Text(
             sent.schedule != null
-                ? "Schedule Sent: ${sent.schedule}"
+                ? "${strings.value.scheduleSent} : ${sent.schedule}"
                 : sent.alert != null
-                    ? "Alert Sent: ${sent.alert}"
-                    : "Sent: ${sent.id}",
+                    ? "${strings.value.alertSent} : ${sent.alert}"
+                    : "${strings.value.sents} : ${sent.id}",
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           description: Text(

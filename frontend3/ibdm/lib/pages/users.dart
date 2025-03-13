@@ -561,7 +561,7 @@ class UsersPage extends StatelessWidget {
                                 if (isAtLeastMediumScreen(context) &&
                                     !SideMenuContainer.open)
                                   Text(
-                                    "Page: $currentPage", // if it is at least a small screen show it in this position
+                                    "${strings.value.page} : $currentPage", // if it is at least a small screen show it in this position
                                   ),
                                 Row(
                                   mainAxisSize:
@@ -598,8 +598,9 @@ class UsersPage extends StatelessWidget {
                                 if (isAtMostSmallScreen(context) ||
                                     SideMenuContainer.open)
                                   Text(
-                                      "Page: $currentPage"), // if it is at most a small screen show it in this position
-                                Text("Users: $nbrUsersShown/$nbrTotalUsers")
+                                      "${strings.value.page}: $currentPage"), // if it is at most a small screen show it in this position
+                                Text(
+                                    "${strings.value.users}: $nbrUsersShown/$nbrTotalUsers")
                               ],
                             ),
                           ),
@@ -622,6 +623,7 @@ class UsersPage extends StatelessWidget {
     bool expandPerPage = false,
     double? customExpandPerPage,
   }) {
+    final strings = getTranslations(context).obs;
     _actionsPopoverController.setOpen(true);
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -661,12 +663,12 @@ class UsersPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text("Filters",
+                        Text(strings.value.filters,
                             style: Theme.of(context).textTheme.headlineMedium),
                         SizedBox(
                           height: AppSizes.sm,
                         ),
-                        Text("Filter users",
+                        Text(strings.value.filterUser,
                             style: Theme.of(context).textTheme.bodyLarge),
                         SizedBox(
                           height: AppSizes.sm,
@@ -675,14 +677,14 @@ class UsersPage extends StatelessWidget {
                         SizedBox(
                           height: AppSizes.md,
                         ),
-                        Text("Filter by Role",
+                        Text(strings.value.filterByRole,
                             style: Theme.of(context).textTheme.bodyMedium),
                         SizedBox(
                           height: AppSizes.sm,
                         ),
                         DropdownMenu<Role>(
-                          hintText: "Role",
-                          label: Text("Role"),
+                          hintText: strings.value.role,
+                          label: Text(strings.value.role),
                           controller: _roleFilterController,
                           inputDecorationTheme:
                               Theme.of(context).inputDecorationTheme.copyWith(
@@ -706,13 +708,15 @@ class UsersPage extends StatelessWidget {
                               _loadUsers(context);
                               return;
                             }
-                            logger.e("Role:${_roleFilter?.name} $value");
+                            logger.e(
+                                "${strings.value.role} :${_roleFilter?.name} $value");
                             if (value != null) {
                               _roleFilter = value;
                               _roleFilterSelected.value = true;
                               _loadUsers(context);
                             }
-                            logger.e("Role:${_roleFilter?.name} $value");
+                            logger.e(
+                                "${strings.value.role} :${_roleFilter?.name} $value");
                           },
                           dropdownMenuEntries: [
                             for (var role in roles)
@@ -732,7 +736,7 @@ class UsersPage extends StatelessWidget {
                   child: IconWithLabelButton(
                     icon: Icons.filter_alt,
                     active: _filtersActive.value,
-                    text: "Filter",
+                    text: strings.value.filter,
                     onTap: () {
                       _filtersActive.value = !_filtersActive.value;
                       _filtersPopoverController.toggle();
@@ -757,13 +761,13 @@ class UsersPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text("Sort",
+                          Text(strings.value.sort,
                               style:
                                   Theme.of(context).textTheme.headlineMedium),
                           SizedBox(
                             height: AppSizes.sm,
                           ),
-                          Text("Sort users",
+                          Text(strings.value.sortUser,
                               style: Theme.of(context).textTheme.bodyLarge),
                           SizedBox(
                             height: AppSizes.sm,
@@ -772,27 +776,34 @@ class UsersPage extends StatelessWidget {
                           SizedBox(
                             height: AppSizes.md,
                           ),
-                          Text("Order:",
+                          Text("${strings.value.order} :",
                               style: Theme.of(context).textTheme.bodyMedium),
                           ShadSelect(
-                            initialValue: _sortASC.value ? "asc" : "desc",
+                            initialValue: _sortASC.value
+                                ? strings.value.asc
+                                : strings.value.desc,
                             options: [
-                              ShadOption(value: "asc", child: Text("ASC")),
-                              ShadOption(value: "desc", child: Text("DESC")),
+                              ShadOption(
+                                  value: strings.value.asc,
+                                  child: Text(strings.value.asc.toUpperCase())),
+                              ShadOption(
+                                  value: strings.value.desc,
+                                  child:
+                                      Text(strings.value.desc.toUpperCase())),
                             ],
                             selectedOptionBuilder: (context, value) => Text(
                               value,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             onChanged: (value) {
-                              _sortASC.value = value == "asc";
+                              _sortASC.value = value == strings.value.asc;
                               _loadUsers(context);
                             },
                           ),
                           SizedBox(
                             height: AppSizes.sm,
                           ),
-                          Text("Sort by:",
+                          Text("${strings.value.sortBy} :",
                               style: Theme.of(context).textTheme.bodyMedium),
                           SizedBox(
                             height: AppSizes.sm,
@@ -809,7 +820,7 @@ class UsersPage extends StatelessWidget {
                                     ? _sortersASC["id"]!.isSelected
                                     : _sortersDESC["id"]!.isSelected),
                                 label: Text(
-                                  "ID",
+                                  strings.value.id,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 onChanged: (value) =>
@@ -824,7 +835,7 @@ class UsersPage extends StatelessWidget {
                                     ? _sortersASC["email"]!.isSelected
                                     : _sortersDESC["email"]!.isSelected),
                                 label: Text(
-                                  "Email",
+                                  strings.value.email,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 onChanged: (value) =>
@@ -839,7 +850,7 @@ class UsersPage extends StatelessWidget {
                                     ? _sortersASC["name"]!.isSelected
                                     : _sortersDESC["name"]!.isSelected),
                                 label: Text(
-                                  "Name",
+                                  strings.value.name,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 onChanged: (value) =>
@@ -854,7 +865,7 @@ class UsersPage extends StatelessWidget {
                                     ? _sortersASC["role"]!.isSelected
                                     : _sortersDESC["role"]!.isSelected),
                                 label: Text(
-                                  "Role",
+                                  strings.value.role,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 onChanged: (value) =>
@@ -869,7 +880,7 @@ class UsersPage extends StatelessWidget {
                   child: IconWithLabelButton(
                     icon: Icons.sort_rounded,
                     active: _sortActive.value,
-                    text: "Sort",
+                    text: strings.value.sort,
                     onTap: () {
                       _sortActive.value = !_sortActive.value;
                       _sortPopoverController.toggle();
@@ -898,7 +909,7 @@ class UsersPage extends StatelessWidget {
                     onChanged: (value) => _changePerPage(context, value),
                     decoration: InputDecoration(
                       filled: true,
-                      labelText: "Per Page",
+                      labelText: strings.value.perPage,
                       hintText: "10",
                     ),
                   ),
@@ -912,7 +923,7 @@ class UsersPage extends StatelessWidget {
             child: IconWithLabelButton(
               icon: Icons.refresh_rounded,
               onTap: () => _loadUsers(context, page: currentPage ?? 1),
-              text: "refresh",
+              text: strings.value.refresh,
             ),
           ),
         ],
@@ -921,10 +932,11 @@ class UsersPage extends StatelessWidget {
   }
 
   List<DataColumn> _getCols(BuildContext context) {
+    final strings = getTranslations(context).obs;
     return [
       DataColumn2(
           label: Text(
-        "No",
+        strings.value.num,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Colors.grey,
               fontWeight: FontWeight.bold,
@@ -933,7 +945,7 @@ class UsersPage extends StatelessWidget {
       DataColumn2(
           label: Expanded(
               child: Text(
-        "Avatar",
+        strings.value.avatar,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Colors.grey,
               fontWeight: FontWeight.bold,
@@ -942,7 +954,7 @@ class UsersPage extends StatelessWidget {
       DataColumn2(
           label: Expanded(
               child: Text(
-        "ID",
+        strings.value.id,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Colors.grey,
               fontWeight: FontWeight.bold,
@@ -951,7 +963,7 @@ class UsersPage extends StatelessWidget {
       DataColumn2(
           label: Expanded(
               child: Text(
-        "Email",
+        strings.value.email,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Colors.grey,
               fontWeight: FontWeight.bold,
@@ -960,7 +972,7 @@ class UsersPage extends StatelessWidget {
       DataColumn2(
           label: Expanded(
               child: Text(
-        "Name",
+        strings.value.name,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Colors.grey,
               fontWeight: FontWeight.bold,
@@ -969,7 +981,7 @@ class UsersPage extends StatelessWidget {
       DataColumn2(
         label: Expanded(
           child: Text(
-            "Role",
+            strings.value.role,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
@@ -980,7 +992,7 @@ class UsersPage extends StatelessWidget {
       DataColumn2(
         label: Expanded(
           child: Text(
-            "Actions",
+            strings.value.actions,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
@@ -994,16 +1006,17 @@ class UsersPage extends StatelessWidget {
   void _onDeleteButtonClick(BuildContext context,
       {Function()? onDeleteConfirmed}) {
     _showCheckboxColumn.value = !_showCheckboxColumn.value;
+    final strings = getTranslations(context).obs;
 
     ShadToaster.of(context).show(
       ShadToast.destructive(
         closeIcon: SizedBox(),
         duration: Duration(days: 365),
-        title: Text("Delete Users"),
+        title: Text(strings.value.deleteUser),
         description: Obx(
           () {
             return _selectedUsers.isEmpty
-                ? Text("Select users to delete")
+                ? Text(strings.value.selectUserDelete)
                 : Text(
                     "Are you sure you want to delete ${_selectedUsers.length} user(s)?");
           },
@@ -1016,7 +1029,7 @@ class UsersPage extends StatelessWidget {
                     _showCheckboxColumn.value = false;
                     ShadToaster.of(context).hide();
                   },
-                  child: Text("Cancel"),
+                  child: Text(strings.value.cancel),
                 )
               : Row(
                   children: [
@@ -1026,7 +1039,7 @@ class UsersPage extends StatelessWidget {
                         _loadUsers(context);
                         onDeleteConfirmed?.call();
                       },
-                      child: Text("Yes"),
+                      child: Text(strings.value.yes),
                     ),
                     ShadButton(
                       onPressed: () {
@@ -1034,7 +1047,7 @@ class UsersPage extends StatelessWidget {
                         _showCheckboxColumn.value = false;
                         ShadToaster.of(context).hide();
                       },
-                      child: Text("No"),
+                      child: Text(strings.value.no),
                     ),
                   ],
                 ),
@@ -1120,6 +1133,7 @@ class UsersPage extends StatelessWidget {
   }
 
   List<DataRow> _getRows(BuildContext context) {
+    final strings = getTranslations(context).obs;
     return usersData.map((user) {
       if (_hovered[user.userId] == null) {
         _hovered[user.userId] = false;
@@ -1230,7 +1244,7 @@ class UsersPage extends StatelessWidget {
                         children: [
                           IconWithLabelButton(
                             icon: Icons.remove_red_eye_rounded,
-                            text: "view",
+                            text: strings.value.view,
                             onTap: () => {
                               _showViewUserDialog(context, user),
                               actionsController.toggle(),
@@ -1242,11 +1256,11 @@ class UsersPage extends StatelessWidget {
                               _showEditUserDialog(context, user);
                               actionsController.toggle();
                             },
-                            text: "edit",
+                            text: strings.value.edit,
                           ).removeWhen(isAtLeastMediumScreen(context)),
                           IconWithLabelButton(
                             icon: Icons.delete,
-                            text: "delete",
+                            text: strings.value.delete,
                             activeColor: errorColor,
                           ),
                         ].nonNulls.toList(),
@@ -1341,8 +1355,8 @@ class UsersPage extends StatelessWidget {
       logger.e("failed to get users: $e");
       Toasts.showErrorToastNotification(
           context: Get.context!,
-          message: "Failed to get users",
-          title: "Error: Failed to get users");
+          message: strings.value.failedToGetUsersMessage,
+          title: strings.value.errorFailedToGetUsers);
       _addUserSuperiorOptions.value = [];
       _loadedAddUserSuperiorOptions.value = true;
       return;
@@ -1379,6 +1393,7 @@ class UsersPage extends StatelessWidget {
   }
 
   Future _showEditUserDialog(BuildContext context, User user) async {
+    final strings = getTranslations(context).obs;
     _loadSuperiorsOptions(context);
     logger.d("showing edit dialog");
     User newUser = User(
@@ -1414,7 +1429,7 @@ class UsersPage extends StatelessWidget {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
           context: Get.context!,
-          message: "Details: ${e.toString()}",
+          message: "${strings.value.details} : ${e.toString()}",
           title: "Error: Failed to get user details");
       loadedUserDetails.value = true;
     });
@@ -1422,8 +1437,8 @@ class UsersPage extends StatelessWidget {
     return showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
-        title: Text("User: ${_getName(user, orEmail: true)}"),
-        description: Text("Edit User"),
+        title: Text("${strings.value.user}: ${_getName(user, orEmail: true)}"),
+        description: Text(strings.value.editUser),
         actions: [
           Obx(() => Expanded(
                 child: Row(
@@ -1435,7 +1450,7 @@ class UsersPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           ShadButton.destructive(
-                            child: Text("Delete"),
+                            child: Text(strings.value.delete),
                             onPressed: () {
                               _selectedUsers.add(userDetails!);
                               _onDeleteButtonClick(
@@ -1447,7 +1462,7 @@ class UsersPage extends StatelessWidget {
                           ),
                           ShadButton(
                             icon: Icon(Icons.edit),
-                            child: Text("Save"),
+                            child: Text(strings.value.save),
                             onPressed: () {
                               onSaveButtonPressed(
                                 context: context,
@@ -1465,7 +1480,7 @@ class UsersPage extends StatelessWidget {
                       ),
                     ShadButton(
                       icon: Icon(Icons.close),
-                      child: Text("Close"),
+                      child: Text(strings.value.cancel),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -1538,6 +1553,7 @@ class UsersPage extends StatelessWidget {
     User? userDetails;
     final Rx<bool> loadedRoles = false.obs;
     final RxList<Role> roles = <Role>[].obs;
+    final strings = getTranslations(context).obs;
 
     ApiClientInstance.getApiClient().then((api) async {
       roles.clear();
@@ -1551,21 +1567,21 @@ class UsersPage extends StatelessWidget {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
           context: Get.context!,
-          message: "Details: ${e.toString()}",
-          title: "Error: Failed to get user details");
+          message: "${strings.value.details}: ${e.toString()}",
+          title: strings.value.errorFailedToGetUsers);
       loadedUserDetails.value = true;
     });
 
     return showShadDialog(
       context: Get.context!,
       builder: (context) => ShadDialog(
-        title: Text("User: ${_getName(user, orEmail: true)}"),
-        description: Text("View User Details"),
+        title: Text("${strings.value.user}: ${_getName(user, orEmail: true)}"),
+        description: Text(strings.value.viewUserDetails),
         removeBorderRadiusWhenTiny: true,
         actions: [
           ShadButton(
             icon: Icon(Icons.close),
-            child: Text("Close"),
+            child: Text(strings.value.cancel),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -1573,7 +1589,7 @@ class UsersPage extends StatelessWidget {
           Obx(() {
             return loadedUserDetails.value
                 ? ShadButton.destructive(
-                    child: Text("Delete"),
+                    child: Text(strings.value.delete),
                     onPressed: () {
                       _selectedUsers.add(userDetails!);
                       _onDeleteButtonClick(
@@ -1588,7 +1604,7 @@ class UsersPage extends StatelessWidget {
             return loadedUserDetails.value
                 ? ShadButton(
                     icon: Icon(Icons.edit),
-                    child: Text("Edit"),
+                    child: Text(strings.value.edit),
                     onPressed: () {
                       Navigator.of(context).pop();
                       _showEditUserDialog(context, user);
@@ -1606,7 +1622,7 @@ class UsersPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           ShadButton.destructive(
-                            child: Text("Delete"),
+                            child: Text(strings.value.delete),
                             onPressed: () {
                               _selectedUsers.add(userDetails!);
                               _onDeleteButtonClick(
@@ -1618,7 +1634,7 @@ class UsersPage extends StatelessWidget {
                           ),
                           ShadButton(
                             icon: Icon(Icons.edit),
-                            child: Text("Edit"),
+                            child: Text(strings.value.edit),
                             onPressed: () {
                               Navigator.of(context).pop();
                               _showEditUserDialog(context, user);
@@ -1628,7 +1644,7 @@ class UsersPage extends StatelessWidget {
                       ),
                     ShadButton(
                       icon: Icon(Icons.close),
-                      child: Text("Close"),
+                      child: Text(strings.value.cancel),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -1663,7 +1679,7 @@ class UsersPage extends StatelessWidget {
                 addLastNameController:
                     TextEditingController(text: userDetails!.lastName),
                 addUserPasswordController:
-                    TextEditingController(text: "Hashed Value"),
+                    TextEditingController(text: strings.value.hashedValue),
                 addUserPhoneController:
                     TextEditingController(text: userDetails!.phoneNumber),
                 formKeyAddUser: GlobalKey<FormState>(),
@@ -1684,14 +1700,14 @@ class UsersPage extends StatelessWidget {
           context: context, message: "¨Please fix the errors in the form");
       return;
     }
-
+    final strings = getTranslations(context).obs;
     Rx<FutureState> loadingToastState = FutureState.loading.obs;
     // show loading toast
     final toast = Toasts.showStatefulToast(
       context: context,
-      message: "Adding user...",
-      messageError: "Failed to add user",
-      messageSuccess: "User Added Successfully",
+      message: strings.value.addingUser,
+      messageError: strings.value.failedToAddUser,
+      messageSuccess: strings.value.userAddedSuccessfully,
       state: loadingToastState,
     );
     // add user request
@@ -1758,14 +1774,14 @@ class UsersPage extends StatelessWidget {
           context: context, message: "¨Please fix the errors in the form");
       return;
     }
-
+    final strings = getTranslations(context).obs;
     Rx<FutureState> loadingToastState = FutureState.loading.obs;
     // show loading toast
     final toast = Toasts.showStatefulToast(
       context: context,
-      message: "Saving user...",
-      messageError: "Failed to save user",
-      messageSuccess: "User Saved Successfully",
+      message: strings.value.savingUser,
+      messageError: strings.value.failedToSaveUser,
+      messageSuccess: strings.value.userSavedSuccessfully,
       state: loadingToastState,
     );
     // add user request
@@ -1773,7 +1789,7 @@ class UsersPage extends StatelessWidget {
       final api = await ApiClientInstance.getApiClient();
       //logger.e("addUserRole: ${_addUserRole!.name}");
       logger.e(
-          "avatar: ${userAvatarBytes != null} $_addUserAvatarBytesFileName ${userAvatarFile != null}");
+          "${strings.value.avatar} : ${userAvatarBytes != null} $_addUserAvatarBytesFileName ${userAvatarFile != null}");
       late final User res;
       if (kIsWeb) {
         res = await api.partialUpdateUserOnWeb(
