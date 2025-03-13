@@ -47,7 +47,7 @@ def GenericMonitor(monitored_value_tag: str, monitored_object_value: object, nam
                     User.objects.filter(role__in=alert.send_to_roles.all())
                 )
                 for user in recipients:
-                    if sentEmail.objects.filter(alert=alert, receptionist=user, temps_envoi__gte=datetime.now() - timedelta(days=alert.warning_reminder_interval)).count() == 0:
+                    if sentEmail.objects.filter(alert__alert=alert, receptionist=user, temps_envoi__gte=datetime.now() - timedelta(days=alert.warning_reminder_interval)).count() == 0:
                         sendWarningAlertEmail(name, alert, user, value)
             alert.save()
             logging.info(f"{name}: done.")
@@ -56,13 +56,13 @@ def GenericMonitor(monitored_value_tag: str, monitored_object_value: object, nam
 def sendWarningAlertEmail(name, alert, user, value):
     logging.info(f"{name} : {alert.monitored_value} Sending warning alert email to '{user.email}'")
     send_mail(
-        subject= f"IBDM Alert Warning: {alert.monitored_value}",
+        subject= f"IBDM Alert D'Avertissement: {alert.monitored_value}",
         message="",
         html_message= render_to_string(
             template_name="emails/alert.html",
             context={
                 'alert': alert.monitored_value,
-                'type': 'Warning',
+                'type': 'Avertissement',
                 'valeur_actual': value,
                 'message': alert.custom_alert_message
             }
@@ -70,7 +70,8 @@ def sendWarningAlertEmail(name, alert, user, value):
         from_email=settings.EMAIL_OF_SENDER,
         recipient_list=[user.email]
     )
-    sentEmail.objects.create(alert=alert, receptionist=user)
+    sent_alert = SentAlertEmail.objects.create(alert=alert, at_value=value, alert_type="danger")
+    sentEmail.objects.create(alert=sent_alert, receptionist=user)
     logging.info(f"{name} : {alert.monitored_value} sent warning alert email to '{user.email}'")
 
 
@@ -90,7 +91,7 @@ def sendDangerAlertEmail(alert, value, user, name):
         from_email=settings.EMAIL_OF_SENDER,
         recipient_list=[user.email]
     )
-    sent_alert = SentAlertEmail.objects.create(alert=alert, at_value=value, alert_type="danger")
+    sent_alert = SentAlertEmail.objects.create(alert=alert, at_value=value, alert_type="warning")
     sentEmail.objects.create(alert=sent_alert, receptionist=user)
     logging.info(f"{name} : {alert.monitored_value} sent danger alert email to '{user.email}'")
             

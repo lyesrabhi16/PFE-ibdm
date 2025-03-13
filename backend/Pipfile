@@ -22,6 +22,7 @@ channels-redis = "*"
 apscheduler = "*"
 django-tailwind = "*"
 openpyxl = "*"
+channels-rabbitmq = "*"
 
 [requires]
 python_version = "3.12.9"

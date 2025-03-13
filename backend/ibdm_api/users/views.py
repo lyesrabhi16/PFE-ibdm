@@ -15,7 +15,6 @@ from .serializers import (
     SubordinateAndSuperiorSerializer,
     UserSerializer,
     PermissionSerializer,
-    GetSubordinateAndSuperiorIdRequestSerializer,
     GetSubordinateAndSuperiorIdResponseSerializer,
 )
 from rest_framework.decorators import api_view, permission_classes
