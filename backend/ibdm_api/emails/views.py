@@ -105,7 +105,7 @@ class SentEamilViewset(viewsets.ReadOnlyModelViewSet):
         "receptionist__first_name",
         "receptionist__last_name",
         "schedule__rapport",
-        "alert__monitored_value",
+        "alert__alert__monitored_value",
     ]
     ordering_fields = [
         'temps_envoi',
