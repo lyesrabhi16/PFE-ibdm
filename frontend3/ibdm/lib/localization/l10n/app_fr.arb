@@ -215,6 +215,7 @@
 	},
 	"yes": "Oui",
 	"no": "Non",
+	"num": "no",
 	"@no": {
 		"description": "No field label"
 	},
@@ -269,6 +270,14 @@
 	"addUserMessage": "Ajout de l'utilisateur...",
 	"@addUserMessage": {
 		"description": "Adding user message"
+	},
+	"failedToGetUsersMessage": "Échec de l'obtention des utilisateurs",
+	"@failedToGetUsersMessage": {
+		"description": "Failed to get users message"
+	},
+	"errorFailedToGetUsers": "Erreur: Échec de l'obtention des utilisateurs",
+	"@errorFailedToGetUsers": {
+		"description": "Error message for failed to get users"
 	},
 	"failedToAddUserMessage": "Ajout Utilisateur échoué",
 	"@failedToAddUserMessage": {
@@ -442,6 +451,7 @@
 	"danger": "Danger",
 	"warning": "Avertissement",
 	"active" : "Actif",
+	"inactive" : "Inactif",
 	"addAlertEmail": "Ajouter un Email D'Alerte",
 	"addScheduleEmail": "Ajouter un Email Cyclique",
 	"edit": "Modifier",
@@ -483,6 +493,7 @@
 	"editAlertSettings": "Modifier les paramètres de l'alerte",
 	"viewSchedule": "Voir l'email cyclique",
 	"viewAlert": "Voir l'alerte",
+	"view": "Voir",
 	"viewScheduleSettings": "Voir les paramètres d'email cyclique",
 	"viewAlertSettings": "Voir les paramètres de l'alerte",
 	"addSchedule": "Ajouter un email cyclique",
@@ -523,6 +534,11 @@
 	"nextRunTimeDate": "date du prochain envoi",
 	"nextRunTimeTime": "heure du prochain envoi",
 	"filterByInterval": "filtrer avec l'interval",
+	"filterByMonitoredValueTag": "filtrer avec le tag de valeur surveillée",
+	"filterByActivationState": "filtrer avec l'état d'activation",
+	"selectActivationState": "sélectionner l'état d'activation",
+	"activationState": "État d'activation",
+	"tag": "Tag",
     "filterByRapport": "filtrer avec le rapport",
     "selectInterval": "Seléctioner un Interval",
 	"addingSchedule": "Ajouter un Email Cyclique...",
@@ -533,6 +549,8 @@
 	"scheduleSaved": "Email cyclique sauvegardé",
 	"failedToSaveSchedule": "Échec de la sauvegarde de l'email cyclique",
 	"sents": "Envoyés",
+	"scheduleSent": "Email Cyclique Envoyé",
+	"alertSent": "Alerte Envoyé",
 	"deletEmailSents": "Supprimer Emails Envoyés",
 	"selectEmailSentsToDelete": "Sélectionner Emails Envoyés à Supprimer",
 	"delete_sents": "Êtes-vous sûr de vouloir supprimer {count, plural, one {envoyé} other {envoyés}}?",
@@ -565,5 +583,16 @@
     "order": "Ordrer",
     "asc": "asc",
     "desc": "desc",
-	"emailSentsDescription": "Emails envoyés à des utilisateurs."
+	"emailSentsDescription": "Emails envoyés à des utilisateurs.",
+	"details": "Détails",
+	"user": "Utilisateur",
+	"editUser": "Modifier l'utilisateur",
+	"viewUserDetails": "Voir les détails de l'utilisateur",
+	"hashedValue": "Valeur Hachée",
+	"addingUser": "Ajout de l'utilisateur...",
+	"failedToAddUser": "Échec de l'ajout de l'utilisateur",
+	"userAddedSuccessfully": "Utilisateur ajouté avec succès",
+	"savingUser": "Sauvegarde de l'utilisateur...",
+	"failedToSaveUser": "Échec de la sauvegarde de l'utilisateur",
+	"userSavedSuccessfully": "Utilisateur sauvegardé avec succès"
 }

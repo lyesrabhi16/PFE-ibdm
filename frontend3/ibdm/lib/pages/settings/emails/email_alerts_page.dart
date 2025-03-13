@@ -129,7 +129,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             return Column(
               children: [
                 Text(
-                  'Alert Emails',
+                  strings.value.emailAlerts,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -315,7 +315,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   onNextPress: (p) => {page = p, load()},
                   onPagePress: (p) => {page = p, load()},
                   data: alerts,
-                  label: "Alerts",
+                  label: strings.value.alerts,
                 )
               ],
             );
@@ -338,16 +338,16 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       context: context,
       builder: (context) {
         return ShadDialog(
-          title: Text("Add Alert Email",
+          title: Text(strings.value.addAlertEmail,
               style: Theme.of(context).textTheme.headlineMedium),
-          description: Text("Add a new alert email",
+          description: Text(strings.value.addANewAlertEmail,
               style: Theme.of(context).textTheme.bodyMedium),
           actions: [
             ShadButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Cancel"),
+              child: Text(strings.value.cancel),
             ),
             ShadButton(
               onPressed: () => EmailActions.addAlert(
@@ -366,7 +366,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   Navigator.of(context).pop();
                 },
               ),
-              child: Text("Add"),
+              child: Text(strings.value.add),
             )
           ],
           child: AlertEmailForm(
@@ -404,7 +404,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       context: context,
       builder: (context) {
         return ShadDialog(
-          title: Text("Alert: ${alert.monitoredValue.json} ",
+          title: Text("${strings.value.alers}: ${alert.monitoredValue.json} ",
               style: Theme.of(context).textTheme.headlineMedium),
           description: Text(
               "view alert settings of ${alert.monitoredValue.json}",
@@ -509,7 +509,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       context: context,
       builder: (context) {
         return ShadDialog(
-          title: Text("Edit Alert: ${alert.monitoredValue.json} ",
+          title: Text(
+              "${strings.value.editAlert} : ${alert.monitoredValue.json} ",
               style: Theme.of(context).textTheme.headlineMedium),
           description: Text(
               "edit alert settings of ${alert.monitoredValue.json}",
@@ -679,11 +680,11 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       ShadToast.destructive(
         closeIcon: SizedBox(),
         duration: Duration(days: 365),
-        title: Text("Delete Users"),
+        title: Text(strings.value.deleteAlerts),
         description: Obx(
           () {
             return _selectedAlerts.isEmpty
-                ? Text("Select Alerts to delete")
+                ? Text(strings.value.selectAlertsToDelete)
                 : Text(
                     "Are you sure you want to delete ${_selectedAlerts.length} Alert(s)?");
           },
@@ -696,7 +697,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                     _showCheckboxColumn.value = false;
                     ShadToaster.of(context).hide();
                   },
-                  child: Text("Cancel"),
+                  child: Text(strings.value.cancel),
                 )
               : Row(
                   children: [
@@ -706,7 +707,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                         load();
                         onDeleteConfirmed?.call();
                       },
-                      child: Text("Yes"),
+                      child: Text(strings.value.yes),
                     ),
                     ShadButton(
                       onPressed: () {
@@ -714,7 +715,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                         _showCheckboxColumn.value = false;
                         ShadToaster.of(context).hide();
                       },
-                      child: Text("No"),
+                      child: Text(strings.value.no),
                     ),
                   ],
                 ),
@@ -889,7 +890,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           children: [
             if (isAtLeastMediumScreen(context) && !SideMenuContainer.open)
               Text(
-                "Page: $currentPage", // if it is at least a small screen show it in this position
+                "${strings.value.page} : $currentPage", // if it is at least a small screen show it in this position
               ),
             Row(
               mainAxisSize:
@@ -917,7 +918,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             ),
             if (isAtMostSmallScreen(context) || SideMenuContainer.open)
               Text(
-                  "Page: $currentPage"), // if it is at most a small screen show it in this position
+                  "${strings.value.page} : $currentPage"), // if it is at most a small screen show it in this position
             Text("$label: $nbrShown/$nbrTotal")
           ],
         ),
@@ -985,7 +986,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     return [
       DataColumn2(
           label: Text(
-        strings.value.no,
+        strings.value.num,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Colors.grey,
               fontWeight: FontWeight.bold,
@@ -1026,7 +1027,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       DataColumn2(
         label: Expanded(
           child: Text(
-            "Actions",
+            strings.value.actions,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
@@ -1059,7 +1060,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           )).removeWhen(isAtMostSmallScreen(context)),
           DataCell(FittedBox(
             child: Text(
-              e.monitoredValue.json ?? "unknown",
+              e.monitoredValue.json ?? strings.value.unknown,
               softWrap: false,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
@@ -1134,7 +1135,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                         children: [
                           IconWithLabelButton(
                             icon: Icons.remove_red_eye_rounded,
-                            text: "view",
+                            text: strings.value.view,
                             onTap: () => {
                               _showViewAlertEmailDialog(alert: e),
                               actionsController.toggle(),
@@ -1146,11 +1147,11 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                               _showEditAlertEmailDialog(alert: e);
                               actionsController.toggle();
                             },
-                            text: "edit",
+                            text: strings.value.edit,
                           ).removeWhen(isAtLeastMediumScreen(context)),
                           IconWithLabelButton(
                             icon: Icons.delete,
-                            text: "delete",
+                            text: strings.value.delete,
                             activeColor: errorColor,
                           ),
                         ].nonNulls.toList(),
@@ -1189,9 +1190,9 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
         context: context,
-        message: "deleting alerts...",
-        messageSuccess: "Alerts Deleted.",
-        messageError: "Failed To delete alert/alerts",
+        message: strings.value.deletingAlerts,
+        messageSuccess: strings.value.alertsDeleted,
+        messageError: strings.value.failedToDeleteAlerts,
         state: state);
     await Future.wait(_selectedAlerts.map((alert) {
       return api!.destroyAlertEmail(id: alert.id).then((value) {
@@ -1270,7 +1271,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   child: IconWithLabelButton(
                     icon: Icons.filter_alt,
                     active: filtersActive.value,
-                    text: "Filter",
+                    text: strings.value.filter,
                     onTap: () {
                       filtersActive.value = !filtersActive.value;
                       filtersPopoverController.toggle();
@@ -1298,7 +1299,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   child: IconWithLabelButton(
                     icon: Icons.sort_rounded,
                     active: sortActive.value,
-                    text: "Sort",
+                    text: strings.value.sort,
                     onTap: () {
                       sortActive.value = !sortActive.value;
                       _sortPopoverController.toggle();
@@ -1326,7 +1327,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             child: IconWithLabelButton(
               icon: Icons.refresh_rounded,
               onTap: () => load(),
-              text: "refresh",
+              text: strings.value.refresh,
             ),
           ),
         ],
@@ -1415,11 +1416,13 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text("Sort", style: Theme.of(context).textTheme.headlineMedium),
+          Text(strings.value.sort,
+              style: Theme.of(context).textTheme.headlineMedium),
           SizedBox(
             height: AppSizes.sm,
           ),
-          Text("Sort alerts", style: Theme.of(context).textTheme.bodyLarge),
+          Text(strings.value.sortAlerts,
+              style: Theme.of(context).textTheme.bodyLarge),
           SizedBox(
             height: AppSizes.sm,
           ),
@@ -1427,12 +1430,18 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           SizedBox(
             height: AppSizes.md,
           ),
-          Text("Order:", style: Theme.of(context).textTheme.bodyMedium),
+          Text("${strings.value.order} :",
+              style: Theme.of(context).textTheme.bodyMedium),
           ShadSelect(
-            initialValue: sortASC.value ? "asc" : "desc",
+            initialValue:
+                sortASC.value ? strings.value.asc : strings.value.desc,
             options: [
-              ShadOption(value: "asc", child: Text("ASC")),
-              ShadOption(value: "desc", child: Text("DESC")),
+              ShadOption(
+                  value: strings.value.asc,
+                  child: Text(strings.value.asc.toUpperCase())),
+              ShadOption(
+                  value: strings.value.desc,
+                  child: Text(strings.value.desc.toUpperCase())),
             ],
             selectedOptionBuilder: (context, value) => Text(
               value,
@@ -1448,7 +1457,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                 sortersASC: _sortersASC,
                 sortersDESC: _sortersDESC,
               );
-              sortASC.value = value == "asc";
+              sortASC.value = value == strings.value.asc;
               if (doLoad) {
                 load();
               }
@@ -1457,7 +1466,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           SizedBox(
             height: AppSizes.sm,
           ),
-          Text("Sort by:", style: Theme.of(context).textTheme.bodyMedium),
+          Text("${strings.value.sortBy} :",
+              style: Theme.of(context).textTheme.bodyMedium),
           SizedBox(
             height: AppSizes.sm,
           ),
@@ -1494,11 +1504,13 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text("Filters", style: Theme.of(context).textTheme.headlineMedium),
+        Text(strings.value.filters,
+            style: Theme.of(context).textTheme.headlineMedium),
         SizedBox(
           height: AppSizes.sm,
         ),
-        Text("Filter alerts", style: Theme.of(context).textTheme.bodyLarge),
+        Text(strings.value.filterAlerts,
+            style: Theme.of(context).textTheme.bodyLarge),
         SizedBox(
           height: AppSizes.sm,
         ),
@@ -1506,14 +1518,14 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
         SizedBox(
           height: AppSizes.md,
         ),
-        Text("Filter by Monitored Value Tag",
+        Text(strings.value.filterByMonitoredValueTag,
             style: Theme.of(context).textTheme.bodyMedium),
         SizedBox(
           height: AppSizes.sm,
         ),
         DropdownMenu<String>(
-          hintText: "Select Monitored Value Tag",
-          label: Text("Tag"),
+          hintText: strings.value.filterByInterval,
+          label: Text(strings.value.tag),
           controller: tagFilterController,
           inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
                 filled: true,
@@ -1543,14 +1555,14 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               ),
           ],
         ),
-        Text("Filter by Activation State",
+        Text(strings.value.filterByActivationState,
             style: Theme.of(context).textTheme.bodyMedium),
         SizedBox(
           height: AppSizes.sm,
         ),
         DropdownMenu<bool>(
-          hintText: "Select Activation State",
-          label: Text("Activation State"),
+          hintText: strings.value.selectActivationState,
+          label: Text(strings.value.activationState),
           controller: activationStateFilterController,
           width: AppSizes.xl * 8,
           enableFilter: false,
@@ -1575,11 +1587,11 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           dropdownMenuEntries: [
             DropdownMenuEntry(
               value: true,
-              label: "Active",
+              label: strings.value.active,
             ),
             DropdownMenuEntry(
               value: false,
-              label: "Inactive",
+              label: strings.value.inactive,
             ),
           ],
         ),
@@ -1594,7 +1606,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
         IconWithLabelButton(
           icon: Icons.refresh_rounded,
           onTap: () => load(),
-          text: "refresh",
+          text: strings.value.refresh,
         ),
 
         SizedBox(
@@ -1608,13 +1620,13 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
         SizedBox(
           height: AppSizes.lg,
         ),
-        DividerWithText(text: "Filter"),
+        DividerWithText(text: strings.value.filter),
         filterContent(
             context, _tagFilterController, _activationStateFilterController),
         SizedBox(
           height: AppSizes.xl,
         ),
-        DividerWithText(text: "Sort"),
+        DividerWithText(text: strings.value.sort),
         sortContent(
           context: context,
           sortASC: _sortASC,
