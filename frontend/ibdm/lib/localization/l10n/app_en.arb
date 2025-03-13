@@ -216,6 +216,7 @@
     },
     "yes": "Yes",
     "no": "No",
+    "num": "no",
     "@no": {
         "description": "No option"
     },
@@ -270,6 +271,14 @@
     "addUserMessage": "Adding user...",
     "@addUserMessage": {
         "description": "Adding user status message"
+    },
+    "failedToGetUsersMessage": "Failed to get users",
+    "@failedToGetUsersMessage": {
+        "description": "Failed to get users message"
+    },
+    "errorFailedToGetUsers": "Error: Failed to get users",
+    "@errorFailedToGetUsers": {
+        "description": "Error message for failed to get users"
     },
     "failedToAddUserMessage": "Failed to add user",
     "@failedToAddUserMessage": {
@@ -445,6 +454,7 @@
     "danger": "Danger",
     "warning": "Warning",
     "active": "Active",
+    "inactive": "Inactive",
     "addAlertEmail": "Add Alert Email",
     "addScheduleEmail": "Add Schedule Email",
     "edit": "Edit",
@@ -486,6 +496,7 @@
     "editAlertSettings": "Edit alert settings",
     "viewSchedule": "View Schedule",
     "viewAlert": "View Alert",
+    "view": "View",
     "viewScheduleSettings": "View schedule settings",
     "viewAlertSettings": "View alert settings",
     "addSchedule": "Add Schedule",
@@ -526,6 +537,11 @@
     "nextRunTimeDate": "Next Send Date",
     "nextRunTimeTime": "Next Send Time",
     "filterByInterval": "filter By interval",
+    "filterByMonitoredValueTag": "filter By Monitored Value Tag",
+    "filterByActivationState": "filter By Activation State",
+    "selectActivationState": "Select Activation State",
+    "activationState": "Activation State",
+    "tag": "Tag",
     "filterByRapport": "filter By rapport",
     "selectInterval": "Select Interval",
     "addingSchedule": "Add Schedule...",
@@ -534,7 +550,9 @@
     "savingSchedule": "Save Schedule...",
     "scheduleSaved": "Schedule Saved",
     "failedToSaveSchedule": "Failed to save Schedule",
-    "sents": "Sents",
+    "sents": "Sent",
+    "scheduleSent": "Schedule Sent",
+    "alertSent": "Alert Sent",
     "deletEmailSents": "Delete Email Sents",
     "selectEmailSentsToDelete": "Select Email Sents To Delete",
     "delete_sents": "Are you sure you want to delete {count, plural, one {sent} other {sents}}?",
@@ -567,11 +585,20 @@
     "order": "Order",
     "asc": "asc",
     "desc": "desc",
+    "details": "Details",
+    "user": "User",
+    "editUser": "Edit User",
+    "viewUserDetails": "View User Details",
+    "hashedValue": "Hached Value",
+    "addingUser": "Adding User...",
+    "failedToAddUser": "Failed to add User",
+    "userAddedSuccessfully": "User Added Successfully",
+    "savingUser": "Saving User...",
+    "failedToSaveUser": "Failed to save User",
+    "userSavedSuccessfully": "User Saved Successfully",
     "emails": "Emails",
     "description": "Description",
     "alert": "Alert",
-    "scheduleSent": "Schedule Sent",
-    "alertSent": "Alert Sent",
     "sent": "Sent",
     "sentAt": "Sent At",
     "newEmailSent": "A new email was sent"
