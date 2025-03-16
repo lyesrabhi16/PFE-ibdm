@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/helpers/user_helpers.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:get/get.dart';
@@ -46,7 +47,7 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(
+              /* Image.asset(
                 "assets/images/logo.png",
                 height: 30,
               ),
@@ -54,7 +55,7 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
               const Text(
                 'IBDM',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
+              ), */
             ],
           ),
           const Spacer(),
@@ -67,7 +68,9 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Text(
-                  widget.userName,
+                  userController.user != null
+                      ? getUserName(userController.user!)
+                      : "How did you get here?",
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),

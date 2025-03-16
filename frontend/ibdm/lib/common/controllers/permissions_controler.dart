@@ -17,6 +17,9 @@ class PermissionsController extends GetxController {
   bool? hasViewUsersPagePerm;
   bool? hasViewFiltrationPagePerm;
   bool? hasViewSettingsPagePerm;
+  bool? hasViewEmailScheduleSettingsPerm;
+  bool? hasViewEmailAlertsPerm;
+  bool? hasViewEmailsSentPerm;
 
   Future<void> loadPermissions() async {
     if (permissions_loading) {
@@ -25,7 +28,7 @@ class PermissionsController extends GetxController {
     permissions_loading = true;
     ready.value = false;
     int permissionsLoadedCount = 0;
-    int maxPermissionsLoadedCount = 4;
+    int maxPermissionsLoadedCount = 7;
     _done() {
       permissionsLoadedCount++;
       logger.e("loaded ${permissionsLoadedCount} permissions");
@@ -58,6 +61,18 @@ class PermissionsController extends GetxController {
           hasViewSettingsPagePerm = value;
           _done();
         }),
+        _hasPermRequest(Permissions.viewEmailSchedules).then((value) {
+          hasViewEmailScheduleSettingsPerm = value;
+          _done();
+        }),
+        _hasPermRequest(Permissions.viewEmailAlerts).then((value) {
+          hasViewEmailAlertsPerm = value;
+          _done();
+        }),
+        _hasPermRequest(Permissions.viewEmailsSent).then((value) {
+          hasViewEmailsSentPerm = value;
+          _done();
+        }),
       ]);
     } catch (e) {
       logger.e("Failed to get permissions: $e");
@@ -70,6 +85,9 @@ class PermissionsController extends GetxController {
     hasViewUsersPagePerm = null;
     hasViewFiltrationPagePerm = null;
     hasViewSettingsPagePerm = null;
+    hasViewEmailScheduleSettingsPerm = null;
+    hasViewEmailAlertsPerm = null;
+    hasViewEmailsSentPerm = null;
     ready.value = false;
     logger.e("end reset permissions");
   }
@@ -101,6 +119,12 @@ class PermissionsController extends GetxController {
           return hasViewFiltrationPagePerm!;
         case Permissions.viewSettingsPage:
           return hasViewSettingsPagePerm!;
+        case Permissions.viewEmailSchedules:
+          return hasViewEmailScheduleSettingsPerm!;
+        case Permissions.viewEmailAlerts:
+          return hasViewEmailAlertsPerm!;
+        case Permissions.viewEmailsSent:
+          return hasViewEmailsSentPerm!;
         default:
           throw ("Permission not found");
       }

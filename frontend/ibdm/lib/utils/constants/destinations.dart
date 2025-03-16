@@ -29,8 +29,16 @@ class Destination {
     }
 
     for (var e in Routes.customRoutes.entries) {
-      Destination dest = destMap[e.value]!;
-      destMap[e.key] = dest;
+      print("set dest ${e.key} ${destMap[e.value]} ");
+      final v = destMap[e.value];
+      if (v != null) {
+        Destination dest = v;
+        destMap[e.key] = dest;
+        print("dest ${e.key} ${destMap[e.value]} is set");
+      } else {
+        print(
+            "dest ${e.key} ${destMap[e.value]} is not set because it is null");
+      }
     }
 
     return destMap;

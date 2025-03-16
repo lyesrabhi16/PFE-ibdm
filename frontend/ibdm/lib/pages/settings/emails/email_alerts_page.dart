@@ -1355,7 +1355,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           ),
           //right refresh button
           SizedBox(
-            width: AppSizes.xl * 4,
+            width: AppSizes.xl * 5,
             child: IconWithLabelButton(
               icon: Icons.refresh_rounded,
               onTap: _loadAlerts,
