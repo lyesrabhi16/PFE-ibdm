@@ -1,0 +1,27 @@
+{
+    "components.schemas.SentEmail.properties.schedule": {
+        "$ref": "#/components/schemas/EmailSchedule",
+        "nullable": true
+    },
+    "components.schemas.SentEmail.properties.alert": {
+        "$ref": "#/components/schemas/SentAlertEmail",
+        "nullable": true
+    },
+    "components.schemas.User.properties.superiors": {
+        "type": "array",
+        "items":
+            {
+                "$ref": "#/components/schemas/UserSerializerWithSuperiors"
+            },
+        "readOnly": true
+    },
+    "components.schemas.User.properties.subordinates": {
+        "type": "array",
+        "items":
+            {
+                "$ref": "#/components/schemas/UserSerializerWithSubordinates"
+            },
+        "readOnly": true
+    }
+    
+}

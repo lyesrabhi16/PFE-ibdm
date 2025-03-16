@@ -5994,18 +5994,16 @@
                     },
                     "superiors": {
                         "type": "array",
-                        "items":
-                            {
-                                "$ref": "#/components/schemas/UserSerializerWithSuperiors"
-                            },
+                        "items": {
+                            "$ref": "#/components/schemas/UserSerializerWithSuperiors"
+                        },
                         "readOnly": true
                     },
                     "subordinates": {
                         "type": "array",
-                        "items":
-                            {
-                                "$ref": "#/components/schemas/UserSerializerWithSubordinates"
-                            },
+                        "items": {
+                            "$ref": "#/components/schemas/UserSerializerWithSubordinates"
+                        },
                         "readOnly": true
                     },
                     "user_permissions": {
@@ -6304,14 +6302,6 @@
                         "nullable": true
                     }
                 }
-            }
-        },
-        "securitySchemes": {
-            "MySessionAuthentication": {
-                "type": "apiKey",
-                "in": "cookie",
-                "name": "sessionid",
-                "description": "Session based authentication. Use the sessionid cookie to authenticate."
             }
         }
     }
