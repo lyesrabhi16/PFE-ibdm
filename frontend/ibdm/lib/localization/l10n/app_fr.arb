@@ -600,5 +600,6 @@
 	"userAddedSuccessfully": "Utilisateur ajouté avec succès",
 	"savingUser": "Sauvegarde de l'utilisateur...",
 	"failedToSaveUser": "Échec de la sauvegarde de l'utilisateur",
-	"userSavedSuccessfully": "Utilisateur sauvegardé avec succès"
+	"userSavedSuccessfully": "Utilisateur sauvegardé avec succès",
+	"welcome": "Bienvenue"
 }

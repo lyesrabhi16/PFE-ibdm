@@ -13,15 +13,13 @@ import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
-import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
 
 class SideMenuContainer extends StatelessWidget {
   const SideMenuContainer({super.key, required this.child});
 
   static final SideMenuController controller = SideMenuController();
   final Widget child;
-  static void onNavigationChanged({int? index, String? route}) {
-    }
+  static void onNavigationChanged({int? index, String? route}) {}
 
   static SideMenuStateController sideMenuStateController =
       Get.find<SideMenuStateController>();

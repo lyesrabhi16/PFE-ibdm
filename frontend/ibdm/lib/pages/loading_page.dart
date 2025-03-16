@@ -85,7 +85,7 @@ class _LoadingPageState extends State<LoadingPage> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      strings.value.homePageWelcomeMessage,
+                      strings.value.welcome,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

@@ -52,7 +52,7 @@ class AppCustomContainer extends StatelessWidget {
                 ),
               ),
             Expanded(
-              child: child,
+              child: (() => child)(),
             ),
           ],
         ),

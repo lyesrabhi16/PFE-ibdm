@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/setting_card.dart';
+import 'package:ibdm/utils/constants/permissions.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
@@ -50,7 +52,7 @@ class _EmailSettingsPageState extends State<EmailSettingsPage> {
                     onTap: () => {
                       Get.toNamed(Routes.emailSchedules),
                     },
-                  ),
+                  ).withPermission(Permissions.viewEmailSchedules),
                   SettingCard(
                     icon: Icons.email,
                     title: strings.value.emailAlerts,
@@ -58,7 +60,7 @@ class _EmailSettingsPageState extends State<EmailSettingsPage> {
                     onTap: () => {
                       Get.toNamed(Routes.emailAlerts),
                     },
-                  ),
+                  ).withPermission(Permissions.viewEmailAlerts),
                   SettingCard(
                     icon: Icons.email,
                     title: strings.value.emailSents,
@@ -66,8 +68,8 @@ class _EmailSettingsPageState extends State<EmailSettingsPage> {
                     onTap: () => {
                       Get.toNamed(Routes.emailSent),
                     },
-                  ),
-                ],
+                  ).withPermission(Permissions.viewEmailsSent),
+                ].nonNulls.toList(),
               ),
             ),
           ],
