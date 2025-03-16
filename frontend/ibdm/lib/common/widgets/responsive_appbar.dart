@@ -144,8 +144,10 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                       : ShadAvatar(
                           LucideIcons.circleUserRound,
                           fit: BoxFit.cover,
-                          backgroundColor: AppColors.getRoleColorWithRoleValue(
-                              userController.user!.role),
+                          backgroundColor: userController.user != null
+                              ? AppColors.getRoleColorWithRoleValue(
+                                  userController.user!.role)
+                              : null,
                         ),
                 ),
               ),

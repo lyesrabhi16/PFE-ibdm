@@ -11,6 +11,9 @@ extension RbacDestinationExtensions on Destination {
   Destination? withPermission(String permission) {
     PermissionsController permissionsController =
         Get.find<PermissionsController>();
+    if (permissionsController.ready.value == false) {
+      return null;
+    }
     return permissionsController.hasPerm(permission) ? this : null;
   }
 }

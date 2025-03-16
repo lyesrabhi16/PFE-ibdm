@@ -1957,7 +1957,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
         try {
           print("connecting to filtration broadcast");
           FiltrationPage.channel = WebSocketChannel.connect(
-               Uri.parse(ApiConfig.filtration_broadcast_websocket_url));
+              Uri.parse(ApiConfig.filtration_broadcast_websocket_url));
           final res = await (await ApiClientInstance.getApiClient())
               .getFiltrationMetaData();
           print("filtration broadcast connected");
@@ -1981,7 +1981,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
             retries = 3;
           }
           Toasts.showErrorToastNotification(
-              context: Get.context!,
+              context: context,
               message:
                   "Failed To Connect To Filtration Broadcast${retries > 0 ? ',retrying' : ''}");
         }

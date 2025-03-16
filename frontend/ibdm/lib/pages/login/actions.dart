@@ -66,11 +66,14 @@ class LoginActions {
       userController.setUser(response.user);
 
       // show success toast
-      Toasts.showSuccessToastNotification(
-        context: context,
-        message: strings.loginSuccessMessage,
-        title: strings.loginSuccessful,
-      );
+      if (Get.overlayContext != null && Get.overlayContext!.mounted) {
+        Toasts.showSuccessToastNotification(
+          //? normal context or Get.context causes null check error
+          context: Get.overlayContext!,
+          message: strings.loginSuccessMessage,
+          title: strings.loginSuccessful,
+        );
+      }
 
       LoadingPageController loadingPageController =
           Get.find<LoadingPageController>();
@@ -78,7 +81,7 @@ class LoginActions {
       PermissionsController permissionsController =
           Get.find<PermissionsController>();
       permissionsController.ready.value = false;
-      
+
       logger.e(
           "Loading page is ${loadingPageController.isLoading.value} after login");
 
@@ -116,20 +119,23 @@ class LoginActions {
         if (e.response != null) {
           errorToastMessage = e.response?.data['message'];
         }
-
-        Toasts.showErrorToastNotification(
-            context: Get.context!,
-            message: errorToastMessage,
-            title: strings.loginFailed);
+        if (context.mounted) {
+          Toasts.showErrorToastNotification(
+              context: context,
+              message: errorToastMessage,
+              title: strings.loginFailed);
+        }
       } else {
         print("Login Failed uncaught exception: $e");
         logger.f("Login Failed uncaught exception: $e");
 
         // show uncaught error toast
-        Toasts.showErrorToastNotification(
-            context: Get.context!,
-            message: strings.unknownError,
-            title: strings.connectionFailed);
+        if (context.mounted) {
+          Toasts.showErrorToastNotification(
+              context: context,
+              message: strings.unknownError,
+              title: strings.connectionFailed);
+        }
       }
     }
   }

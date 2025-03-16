@@ -690,12 +690,12 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
       DataColumn2(
           fixedWidth: 60,
           label: Text(
-        strings.value.num,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Colors.grey,
-              fontWeight: FontWeight.bold,
-            ),
-      )).removeWhen(isAtMostSmallScreen(context)),
+            strings.value.num,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
+          )).removeWhen(isAtMostSmallScreen(context)),
       DataColumn2(
           size: isAtMostSmallScreen(context) ? ColumnSize.M : ColumnSize.S,
           label: Text(
@@ -1193,6 +1193,11 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
   Future<void> connectToEmailBroadcast() async {
     final strings = getTranslations(context).obs;
     try {
+      if (EmailSentsPage.channel != null) {
+        EmailSentsPage.channel!.sink.close();
+        EmailSentsPage.channel = null;
+      }
+
       EmailSentsPage.channel ??= WebSocketChannel.connect(
         Uri.parse(ApiConfig.sent_emails_broadcast_websocket_url),
       );
@@ -1221,24 +1226,38 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
           perPage: prevPerPage ?? 10,
           emailType: emailTypeFilter,
         );
-        final firstMatches = sentsMetaFromApi.data.firstOrNull?.id ==
-            sentsMetaFromApi.data.firstOrNull?.id;
-        final lastMatches = sentsMetaFromApi.data.lastOrNull?.id ==
-            sentsMetaFromApi.data.lastOrNull?.id;
+        if (sents.isEmpty) {
+          sents.insert(0, sentEmail);
+          Toasts.showInfoToastNotification(
+            context: context,
+            title: strings.value.newEmailSent,
+            autoDismiss: false,
+            message:
+                "TO: ${sentEmail.receptionist} ${sentEmail.alert != null ? strings.value.alert.toUpperCase() : strings.value.schedule.toUpperCase()} ${sentEmail.alert?.alertType.json ?? sentEmail.schedule?.rapport.json}",
+          );
+          return;
+        }
+
+        final firstMatches =
+            sentsMetaFromApi.data.first.id == sentsMeta.data.first.id;
+        final lastMatches =
+            sentsMetaFromApi.data.last.id == sentsMeta.data.last.id;
 
         if (firstMatches && lastMatches) {
-          logger
-              .e("first and last items match, list didn't change, aborting...");
+          logger.e(
+              "${sentsMetaFromApi.data.first.id} ${sentsMeta.data.first.id} first and last items match, list didn't change, aborting...");
           return;
         }
         Toasts.showInfoToastNotification(
-          context: Get.context!,
+          context: context,
           title: strings.value.newEmailSent,
           autoDismiss: false,
           message:
               "TO: ${sentEmail.receptionist} ${sentEmail.alert != null ? strings.value.alert.toUpperCase() : strings.value.schedule.toUpperCase()} ${sentEmail.alert?.alertType.json ?? sentEmail.schedule?.rapport.json}",
         );
         sentsMeta = sentsMetaFromApi;
+        sents.clear();
+        sents.addAll(sentsMeta.data);
       });
     } catch (e) {
       logger.e("Error: $e");

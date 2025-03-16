@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/common/controllers/permissions_controler.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/drawer_container.dart';
 import 'package:ibdm/common/widgets/responsive_appbar.dart';
@@ -25,11 +24,20 @@ class AppCustomContainer extends StatelessWidget {
       if (loadingPageController.isLoading.value) {
         return LoadingPage();
       }
+      _getBackRoute() {
+        final _urlParts = Get.currentRoute.split("/");
+        if (_urlParts.length > 2) {
+          return _urlParts.sublist(0, _urlParts.length - 1).join("/");
+        }
+        return null;
+      }
+
+      final _backRoute = _getBackRoute();
 
       final _child = Container(
         child: Column(
           children: [
-            if (backButton && Get.previousRoute.isNotEmpty)
+            if (_backRoute != null)
               Padding(
                 padding: const EdgeInsets.all(AppSizes.sm),
                 child: Row(
@@ -37,7 +45,7 @@ class AppCustomContainer extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.arrow_back),
                       onPressed: () {
-                        Get.back();
+                        Get.toNamed(_backRoute);
                       },
                     ),
                   ],
