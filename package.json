@@ -22,8 +22,10 @@
 		"build:macos": "cd frontend/ibdm && flutter build macos",
 		"build:linux": "cd frontend/ibdm && flutter build linux",
 		"sql_server_db:up": "cd backend/config/db && docker compose -f sql_server.yaml up -d",
+		"fix:api-client-spec": "cd backend/scripts && python openapi_fix_swagger_parser.py",
 		"generate:api-client:prepare": "cd backend && pipenv run generate_schema_json && cd .. && copy .\\backend\\ibdm_api\\openapi\\openapi.spec.json .\\frontend\\ibdm\\lib\\api\\ && cd frontend/ibdm && rmdir /S /Q lib\\services\\api_django",
 		"generate:api-client:build": "cd frontend/ibdm && dart run swagger_parser && dart run build_runner build",
+		"generate:api-client": "pnpm run generate:api-client:prepare && pnpm run fix:api-client-spec && pnpm run generate:api-client:build",
 		"generate:inventaire-sucre-html": "cd backend/ibdm_api/templates/emails/siroperie/ && mailwind --input-html inventaire-sucre.dev.html --output-html inventaire-sucre.html"
 	},
 	"keywords": [],

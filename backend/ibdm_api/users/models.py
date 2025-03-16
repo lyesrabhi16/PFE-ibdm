@@ -131,5 +131,8 @@ class User(AbstractBaseUser, PermissionsMixin):
             ('can_view_filtration_page', 'Can view filtration page'),
             ('can_view_siroperie_page', 'Can view siroperie page'),
             ('can_view_settings_page', 'Can view settings page'),
+            ('can_view_email_schedule_settings', 'Can view email schedule settings'),
+            ('can_view_email_alerts', 'Can view email alerts'),
+            ('can_view_emails_sent', 'Can view emails sent'),
         ]
     
