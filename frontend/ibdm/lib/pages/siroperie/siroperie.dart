@@ -265,9 +265,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
                                   // sucre tetra
                                   Column(
                                     children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                      Wrap(
+                                        alignment: WrapAlignment.center,
                                         children: [
                                           Text(strings.value.sucreTetraTitle,
                                               style: Theme.of(context)
@@ -329,9 +328,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                        Wrap(
+                                          alignment: WrapAlignment.center,
                                           children: [
                                             Text(strings.value.sucreAdueTitle,
                                                 style: Theme.of(context)
@@ -420,7 +418,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
       try {
         print("connecting to sucre broadcast");
         SiroperiePage.channel = WebSocketChannel.connect(
-             Uri.parse(ApiConfig.sucre_broadcast_websocket_url));
+            Uri.parse(ApiConfig.sucre_broadcast_websocket_url));
         final res =
             await (await ApiClientInstance.getApiClient()).getSucreMetaData();
         print("sucre broadcast connected");
@@ -444,7 +442,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
           retries = 3;
         }
         Toasts.showErrorToastNotification(
-            context: Get.context!,
+            context: context,
             message:
                 "Failed To Connect To Sucre Broadcast${retries > 0 ? ',retrying' : ''}");
       }
@@ -563,42 +561,47 @@ class _SiroperiePageState extends State<SiroperiePage> {
 
   _getBottomDataBarTetra({bool label = true}) {
     final strings = getTranslations(getContext).obs;
-    return Padding(
-      padding: EdgeInsets.all(AppSizes.sm),
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        children: [
-          if (label)
-            Obx(() {
-              return Text(strings.value.totalSucreTetra,
-                  style: Theme.of(getContext).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ));
-            }),
-          Text(
-            " ${sommeTetraL.toStringAsFixed(2)} L",
-            softWrap: false,
-            style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
-                  color: sommeTetraL < 30000 ? errorColor : successColor,
-                  fontStyle: FontStyle.italic,
-                ),
-          ),
-          Text(
-            ",",
-            style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          Text(
-            " ${sommeTetraKG.toStringAsFixed(2)} KG",
-            softWrap: false,
-            style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
-                  color: sommeTetraKG < 30000 * 3 ? errorColor : successColor,
-                  fontStyle: FontStyle.italic,
-                ),
-          ),
-        ],
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: context.width,
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(AppSizes.sm),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          children: [
+            if (label)
+              Obx(() {
+                return Text(strings.value.totalSucreTetra,
+                    style: Theme.of(getContext).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ));
+              }),
+            Text(
+              " ${sommeTetraL.toStringAsFixed(2)} L",
+              softWrap: false,
+              style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
+                    color: sommeTetraL < 30000 ? errorColor : successColor,
+                    fontStyle: FontStyle.italic,
+                  ),
+            ),
+            Text(
+              ",",
+              style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            Text(
+              " ${sommeTetraKG.toStringAsFixed(2)} KG",
+              softWrap: false,
+              style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
+                    color: sommeTetraKG < 30000 * 3 ? errorColor : successColor,
+                    fontStyle: FontStyle.italic,
+                  ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -13,6 +13,7 @@ import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
+import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
 
 class SideMenuContainer extends StatelessWidget {
   const SideMenuContainer({super.key, required this.child});
@@ -20,22 +21,7 @@ class SideMenuContainer extends StatelessWidget {
   static final SideMenuController controller = SideMenuController();
   final Widget child;
   static void onNavigationChanged({int? index, String? route}) {
-    if ((route != Routes.siroperie || Get.currentRoute != Routes.siroperie) &&
-        SiroperiePage.stream != null) {
-      logger.e("closing siroperie channel");
-      SiroperiePage.channel?.sink.close();
-      SiroperiePage.stream = null;
     }
-
-    if ((route != Routes.filtration || Get.currentRoute != Routes.filtration) &&
-        (FiltrationPage.stream != null)) {
-      logger.e("closing filtration channel");
-      FiltrationPage.channel?.sink.close();
-      FiltrationPage.stream = null;
-    }
-    logger.d(
-        "index: $index ${Get.currentRoute} ${Get.context != null ? Destination.getDestinationsMap(Get.context)[Get.currentRoute]?.title : "Get.Context Not Ready"}");
-  }
 
   static SideMenuStateController sideMenuStateController =
       Get.find<SideMenuStateController>();

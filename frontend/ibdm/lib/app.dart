@@ -7,12 +7,17 @@ import 'package:ibdm/common/controllers/routes_controller.dart';
 import 'package:ibdm/common/controllers/side_menu_state_controller.dart';
 import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
+import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/initial_binding.dart';
+import 'package:ibdm/pages/filtration.dart/filtration.dart';
+import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
+import 'package:ibdm/pages/siroperie/siroperie.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ibdm/utils/theme/theme.dart';
 import 'package:ibdm/utils/theme/util.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
@@ -57,8 +62,37 @@ class MyApp extends StatelessWidget {
             initialRoute: Routes.home,
             getPages: routesController.routes.value,
             textDirection: TextDirection.ltr,
+            routingCallback: (routing) {
+              if ((routing?.current != Routes.siroperie) &&
+                  SiroperiePage.stream != null) {
+                logger.e("closing siroperie channel");
+                SiroperiePage.channel?.sink.close();
+                SiroperiePage.stream = null;
+              }
+
+              if ((routing?.current != Routes.filtration) &&
+                  (FiltrationPage.stream != null)) {
+                logger.e("closing filtration channel");
+                FiltrationPage.channel?.sink.close();
+                FiltrationPage.stream = null;
+              }
+
+              if ((routing?.current != Routes.emailSent) &&
+                  (EmailSentsPage.stream != null)) {
+                logger.e("closing sent emails channel");
+                EmailSentsPage.channel?.sink.close();
+                EmailSentsPage.stream = null;
+              }
+
+              logger.d("Route ${routing?.current}");
+            },
             builder: (context, child) {
-              return ShadToaster(child: child!);
+              try {
+                return ShadToaster(child: child ?? Container());
+              } catch (e) {
+                logger.e("Error building app: $e");
+              }
+              return child ?? Container();
             },
             onUnknownRoute: (settings) {
               return GetPageRoute(

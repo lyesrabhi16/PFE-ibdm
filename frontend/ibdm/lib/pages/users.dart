@@ -152,20 +152,25 @@ class UsersPage extends StatelessWidget {
           "Error: Failed to load data of users, known error",
           error: err,
         );
-        Toasts.showErrorToastNotification(
-            context: Get.context!,
-            message: "Details: ${err.message}",
-            title: "Error: Failed to load data of users");
+        if (context.mounted) {
+          Toasts.showErrorToastNotification(
+              context: context,
+              message: "Details: ${err.message}",
+              title: "Error: Failed to load data of users");
+        }
+
         return;
       }
       logger.e(
         "Error: Failed to load data of users, unknown error",
         error: err,
       );
-      Toasts.showErrorToastNotification(
-          context: Get.context!,
-          message: "Details: Unknown Error Occurred",
-          title: "Error: Failed to load data of users");
+      if (context.mounted) {
+        Toasts.showErrorToastNotification(
+            context: context,
+            message: "Details: Unknown Error Occurred",
+            title: "Error: Failed to load data of users");
+      }
     } finally {
       _loaded.value = true;
     }
@@ -721,8 +726,6 @@ class UsersPage extends StatelessWidget {
                             }
                             logger.e(
                                 "${strings.value.role} :${_roleFilter?.name} $value");
-
-
                           },
                           dropdownMenuEntries: [
                             for (var role in roles)
@@ -1056,7 +1059,7 @@ class UsersPage extends StatelessWidget {
 
     _selectedUsers.clear();
     _showCheckboxColumn.value = false;
-    ShadToaster.of(Get.context!).hide();
+    ShadToaster.of(context).hide();
   }
 
   Future<dynamic> _showAddUserDialog(BuildContext context) {
@@ -1344,7 +1347,7 @@ class UsersPage extends StatelessWidget {
     } catch (e) {
       logger.e("failed to get users: $e");
       Toasts.showErrorToastNotification(
-          context: Get.context!,
+          context: context,
           message: strings.value.failedToGetUsersMessage,
           title: strings.value.errorFailedToGetUsers);
       _addUserSuperiorOptions.value = [];
@@ -1418,7 +1421,7 @@ class UsersPage extends StatelessWidget {
     }).catchError((e) {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
-          context: Get.context!,
+          context: context,
           message: "${strings.value.details} : ${e.toString()}",
           title: "Error: Failed to get user details");
       loadedUserDetails.value = true;
@@ -1556,14 +1559,14 @@ class UsersPage extends StatelessWidget {
     }).catchError((e) {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
-          context: Get.context!,
+          context: context,
           message: "${strings.value.details}: ${e.toString()}",
           title: strings.value.errorFailedToGetUsers);
       loadedUserDetails.value = true;
     });
 
     return showShadDialog(
-      context: Get.context!,
+      context: context,
       builder: (context) => ShadDialog(
         title: Text("${strings.value.user}: ${_getName(user, orEmail: true)}"),
         description: Text(strings.value.viewUserDetails),
@@ -1741,7 +1744,7 @@ class UsersPage extends StatelessWidget {
       Future.delayed(
           Duration(seconds: 1), () => Toastification().dismissById(toast.id));
       // reload users list
-      _loadUsers(Get.context!);
+      _loadUsers(context);
     } catch (e) {
       logger.e("failed to add user: $e");
       // show error toast
@@ -1837,7 +1840,7 @@ class UsersPage extends StatelessWidget {
       Future.delayed(
           Duration(seconds: 1), () => Toastification().dismissById(toast.id));
       // reload users list
-      _loadUsers(Get.context!);
+      _loadUsers(context);
     } catch (e) {
       logger.e("failed to add user: $e");
       // show error toast

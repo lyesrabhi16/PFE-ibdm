@@ -6,25 +6,43 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 
-class LoadingPage extends StatelessWidget {
+class LoadingPage extends StatefulWidget {
   LoadingPage({super.key});
 
+  @override
+  State<LoadingPage> createState() => _LoadingPageState();
+  static bool inProgress = false;
+}
+
+class _LoadingPageState extends State<LoadingPage> {
   PermissionsController permissionsController =
       Get.find<PermissionsController>();
 
   LoadingPageController loadingPageController =
       Get.find<LoadingPageController>();
+
   UserController userController = Get.find<UserController>();
+
   bool _permissions_loaded = false;
+
   bool _roles_loaded = false;
 
   _loadFinished() {
     loadingPageController.isLoading.value = true;
+    if (_permissions_loaded) {
+      logger.e(
+          "LOADING PROGRESS Permissions loaded: ${permissionsController.ready}");
+    } else if (_roles_loaded) {
+      logger.e("LOADING PROGRESS Roles loaded: ${userController.roles.length}");
+    }
+
     if (_permissions_loaded && _roles_loaded) {
       Future.delayed(Duration(seconds: 1), () {
         loadingPageController.isLoading.value = false;
+        LoadingPage.inProgress = false;
         logger
             .e("Loading page set to ${loadingPageController.isLoading.value}");
+        logger.e("END LOADING");
       });
     }
   }
@@ -32,6 +50,7 @@ class LoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
+    logger.e("BEGIN LOADING");
 
     _roles_loaded = false;
     userController.getRoles(context).then((value) {

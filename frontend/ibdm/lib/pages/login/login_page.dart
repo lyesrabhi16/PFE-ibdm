@@ -18,14 +18,18 @@ import 'dart:io';
 void downloadCertificate(BuildContext context) async {
   final api = await ApiClientInstance.getApiClient();
   if (kIsWeb) {
-    await api.downloadFile(
-        context: context, url: ApiConfig.ca_url, fileName: "ibdm_ca.crt");
+    if (context.mounted) {
+      await api.downloadFile(
+          context: context, url: ApiConfig.ca_url, fileName: "ibdm_ca.crt");
+    }
   } else {
-    await api.downloadFile(
-      context: context,
-      url: ApiConfig.ca_url,
-      fileName: "ibdm_ca.crt",
-    );
+    if (context.mounted) {
+      await api.downloadFile(
+        context: context,
+        url: ApiConfig.ca_url,
+        fileName: "ibdm_ca.crt",
+      );
+    }
   }
   /* try {
     final url = "https://localhost/ca";

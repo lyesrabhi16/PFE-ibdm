@@ -395,7 +395,7 @@ class EmailScheduleForm extends StatelessWidget {
                   ShadSwitchFormField(
                     enabled: editable,
                     inputLabel: Text(strings.value.scheduleManually),
-                    initialValue: false,
+                    initialValue: _showNextRunTime.value,
                     onChanged: (v) => {
                       _showNextRunTime.value = v,
                     },
