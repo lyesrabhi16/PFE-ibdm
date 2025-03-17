@@ -361,20 +361,23 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
           ],
           child: EmailScheduleForm(
             onValuesChanged: (
-                {interval,
+                {formKey,
+                interval,
                 intervalManual,
                 nextRunTime,
                 rapport,
                 roles,
                 tempsEnvoi,
                 users}) {
-              _rapport = rapport;
-              _interval = interval;
-              _intervalManual = intervalManual;
-              _nextRunTime = nextRunTime;
-              _tempsEnvoi = tempsEnvoi;
-              _scheduledRoles = roles?.map((r) => r.roleId).toList();
-              _scheduledUsers = users?.map((u) => u.email).toList();
+              _rapport = rapport ?? _rapport;
+              _interval = interval ?? _interval;
+              _intervalManual = intervalManual ?? _intervalManual;
+              _nextRunTime = nextRunTime ?? _nextRunTime;
+              _tempsEnvoi = tempsEnvoi ?? _tempsEnvoi;
+              _scheduledRoles =
+                  roles?.map((r) => r.roleId).toList() ?? _scheduledRoles;
+              _scheduledUsers =
+                  users?.map((u) => u.email).toList() ?? _scheduledUsers;
             },
           ),
         );
@@ -602,20 +605,23 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             showIdField: false,
             showNextRunTime: true,
             onValuesChanged: (
-                {interval,
+                {formKey,
+                interval,
                 intervalManual,
                 nextRunTime,
                 rapport,
                 roles,
-                tempsEnvoi,
+                tempsEnvoi, 
                 users}) {
-              _rapport = rapport;
-              _interval = interval;
-              _intervalManual = intervalManual;
-              _nextRunTime = nextRunTime;
-              _tempsEnvoi = tempsEnvoi;
-              _scheduledRoles = roles?.map((r) => r.roleId).toList();
-              _scheduledUsers = users?.map((u) => u.email).toList();
+              _rapport = rapport ?? _rapport;
+              _interval = interval ?? _interval;
+              _intervalManual = intervalManual ?? _intervalManual;
+              _nextRunTime = nextRunTime ?? _nextRunTime;
+              _tempsEnvoi = tempsEnvoi ?? _tempsEnvoi;
+              _scheduledRoles =
+                  roles?.map((r) => r.roleId).toList() ?? _scheduledRoles;
+              _scheduledUsers =
+                  users?.map((u) => u.email).toList() ?? _scheduledUsers;
             },
           ),
         );

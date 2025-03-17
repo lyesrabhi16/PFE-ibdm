@@ -8,6 +8,8 @@ import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:toastification/toastification.dart';
 
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
 class EmailActions {
   EmailActions._();
   static Future<void> addAlert(
@@ -23,7 +25,14 @@ class EmailActions {
     String? warningPoint,
     Function? onSuccess,
     Function? onFail,
+    GlobalKey<FormState>? formKey,
   }) async {
+    if (formKey?.currentState != null && formKey!.currentState!.validate()) {
+      logger.e("Form is not valid");
+      Toasts.showErrorToastNotification(
+          context: context, message: "¨Please fix the errors in the form");
+      return;
+    }
     // add alert
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
@@ -77,7 +86,14 @@ class EmailActions {
     String? warningPoint,
     Function? onSuccess,
     Function? onFail,
+    GlobalKey<FormState>? formKey,
   }) async {
+    if (formKey?.currentState != null && formKey!.currentState!.validate()) {
+      logger.e("Form is not valid");
+      Toasts.showErrorToastNotification(
+          context: context, message: "¨Please fix the errors in the form");
+      return;
+    }
     // add alert
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
@@ -172,7 +188,14 @@ class EmailActions {
     DateTime? nextRunTime,
     Function? onSuccess,
     Function? onFail,
+    GlobalKey<FormState>? formKey,
   }) async {
+    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+      logger.e("Form is not valid");
+      Toasts.showErrorToastNotification(
+          context: context, message: "¨Please fix the errors in the form");
+      return;
+    }
     final strings = getTranslations(context);
     // enable or disable alert
     final state = FutureState.loading.obs;
@@ -229,7 +252,14 @@ class EmailActions {
     DateTime? nextRunTime,
     Function? onSuccess,
     Function? onFail,
+    GlobalKey<FormState>? formKey,
   }) async {
+    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+      logger.e("Form is not valid");
+      Toasts.showErrorToastNotification(
+          context: context, message: "¨Please fix the errors in the form");
+      return;
+    }
     final strings = getTranslations(context);
     // enable or disable alert
     final state = FutureState.loading.obs;
