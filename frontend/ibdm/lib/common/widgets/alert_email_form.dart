@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api/api_client.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
@@ -18,6 +20,7 @@ class AlertEmailForm extends StatelessWidget {
     this.onValuesChanged,
     this.editable = true,
     this.alert,
+    required this.formKey,
   });
 
   final bool editable;
@@ -67,6 +70,7 @@ class AlertEmailForm extends StatelessWidget {
     );
   }
 
+  final GlobalKey<FormState> formKey;
   final idController = TextEditingController(text: "Auto Generated");
   final monitoredValueController = TextEditingController();
   final dangerPointController = TextEditingController(text: "1000");
@@ -148,6 +152,7 @@ class AlertEmailForm extends StatelessWidget {
 
       return ShadForm(
           onChanged: _valuesChanged,
+          key: formKey,
           child: Column(
             children: [
               SizedBox(height: AppSizes.lg),
@@ -164,6 +169,8 @@ class AlertEmailForm extends StatelessWidget {
                 ),
                 child: ShadSelectFormField<String>(
                   enabled: editable,
+                  validator: (v) =>
+                         AppValidators.roleSelectionValidator(v),
                   label: Text("Monitored Value"),
                   options: _possibleMonitorValues.map(
                     (value) => ShadOption(
@@ -192,6 +199,9 @@ class AlertEmailForm extends StatelessWidget {
               ShadInputFormField(
                 enabled: editable,
                 controller: dangerPointController,
+                validator: FormBuilderValidators.numeric(
+                  errorText: "Please enter a valid number",
+                ),
                 label: Text("Danger Point"),
                 keyboardType: TextInputType.number,
                 initialValue: "1000",
@@ -203,6 +213,9 @@ class AlertEmailForm extends StatelessWidget {
               ShadInputFormField(
                 enabled: editable,
                 controller: warningPointController,
+                validator: FormBuilderValidators.numeric(
+                  errorText: "Please enter a valid number",
+                ),
                 label: Text("Warning Point"),
                 keyboardType: TextInputType.number,
                 initialValue: "2500",
@@ -214,6 +227,9 @@ class AlertEmailForm extends StatelessWidget {
               ShadInputFormField(
                 enabled: editable,
                 controller: dangerAlertIntervalController,
+                validator: FormBuilderValidators.numeric(
+                  errorText: "Please enter a valid number",
+                ),
                 label: Text("Danger Alert Interval (in days)"),
                 keyboardType: TextInputType.number,
                 initialValue: "1",
@@ -225,6 +241,9 @@ class AlertEmailForm extends StatelessWidget {
               ShadInputFormField(
                 enabled: editable,
                 controller: warningAlertIntervalController,
+                validator: FormBuilderValidators.numeric(
+                  errorText: "Please enter a valid number",
+                ),
                 label: Text("Warning Alert Interval (in days)"),
                 keyboardType: TextInputType.number,
                 initialValue: "7",
@@ -243,6 +262,8 @@ class AlertEmailForm extends StatelessWidget {
                   tabs: [
                     ShadTab(
                       value: "roles",
+                      //validator: (v) =>
+                      //  AppValidators.roleSelectionValidator(v?.name),
                       content: ShadCard(
                         child: Column(
                           children: [
