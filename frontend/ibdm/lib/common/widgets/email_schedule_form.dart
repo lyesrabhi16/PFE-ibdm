@@ -27,7 +27,7 @@ class EmailScheduleForm extends StatelessWidget {
   final bool editable;
   final EmailSchedule? schedule;
   final Key? formKey;
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<ShadFormState>();
   Function? _getContext;
 
   BuildContext get getContext => _getContext!.call()!;
@@ -158,6 +158,7 @@ class EmailScheduleForm extends StatelessWidget {
       return ShadForm(
           onChanged: _valuesChanged,
           key: _formKey,
+          autovalidateMode: ShadAutovalidateMode.alwaysAfterFirstValidation,
           child: Obx(() {
             return Column(
               children: [

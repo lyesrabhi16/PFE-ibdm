@@ -60,7 +60,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   static final _filtersPopoverController = ShadPopoverController();
   static final _filtersActive = false.obs;
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ShadFormState> _formKey = GlobalKey<ShadFormState>();
 
   static final _perPageFormKey = GlobalKey<FormState>();
 
@@ -354,6 +354,14 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             ),
             ShadButton(
               onPressed: () {
+                if (_formKey.currentState != null &&
+                    !_formKey.currentState!.validate()) {
+                  logger.e("Form is not valid");
+                  Toasts.showErrorToastNotification(
+                      context: Get.overlayContext!,
+                      message: "¨Please fix the errors in the form");
+                  return;
+                }
                 EmailActions.addAlert(
                   context,
                   monitoredValue: _addAlertMonitoredValue!,
@@ -550,11 +558,12 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                       icon: Icon(Icons.edit),
                       child: Text(strings.value.save),
                       onPressed: () {
-                        if (!_formKey.currentState!.validate()) {
+                        if (_formKey.currentState != null &&
+                            !_formKey.currentState!.validate()) {
                           logger.e("Form is not valid");
                           Toasts.showErrorToastNotification(
-                              context: context,
-                              message: "Please fix the errors in the form");
+                              context: Get.overlayContext!,
+                              message: "¨Please fix the errors in the form");
                           return;
                         }
                         EmailActions.saveAlert(
@@ -603,6 +612,15 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                               icon: Icon(Icons.edit),
                               child: Text(strings.value.save),
                               onPressed: () {
+                                if (_formKey.currentState != null &&
+                                    !_formKey.currentState!.validate()) {
+                                  logger.e("Form is not valid");
+                                  Toasts.showErrorToastNotification(
+                                      context: Get.overlayContext!,
+                                      message:
+                                          "¨Please fix the errors in the form");
+                                  return;
+                                }
                                 EmailActions.saveAlert(
                                   context,
                                   alertId: alert.id,

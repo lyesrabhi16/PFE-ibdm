@@ -49,6 +49,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
   RxList<API_CLIENT.EmailSchedule> schedules = <API_CLIENT.EmailSchedule>[].obs;
   late API_CLIENT.PaginatedEmailScheduleList schedulesMeta;
   final _selectedSchedules = <API_CLIENT.EmailSchedule>[].obs;
+  final GlobalKey<ShadFormState> _formKey = GlobalKey<ShadFormState>();
 
   int page = 1;
   API_CLIENT.RapportEnum? rapportFilter;
@@ -342,20 +343,30 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
               child: Text(strings.value.cancel),
             ),
             ShadButton(
-              onPressed: () => EmailActions.addSchedule(
-                context,
-                rapport: _rapport!,
-                interval: _interval!,
-                tempsEnvoi: _tempsEnvoi!,
-                intervalManual: _intervalManual,
-                nextRunTime: _nextRunTime,
-                scheduledRoles: _scheduledRoles,
-                scheduledUsers: _scheduledUsers,
-                onSuccess: () {
-                  load();
-                  Navigator.of(context).pop();
-                },
-              ),
+              onPressed: () {
+                if (_formKey.currentState != null &&
+                    !_formKey.currentState!.validate()) {
+                  logger.e("Form is not valid");
+                  Toasts.showErrorToastNotification(
+                      context: Get.overlayContext!,
+                      message: "¨Please fix the errors in the form");
+                  return;
+                }
+                EmailActions.addSchedule(
+                  context,
+                  rapport: _rapport!,
+                  interval: _interval!,
+                  tempsEnvoi: _tempsEnvoi!,
+                  intervalManual: _intervalManual,
+                  nextRunTime: _nextRunTime,
+                  scheduledRoles: _scheduledRoles,
+                  scheduledUsers: _scheduledUsers,
+                  onSuccess: () {
+                    load();
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
               child: Text(strings.value.add),
             )
           ],
@@ -527,6 +538,14 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                       icon: Icon(Icons.edit),
                       child: Text(strings.value.save),
                       onPressed: () {
+                        if (_formKey.currentState != null &&
+                            !_formKey.currentState!.validate()) {
+                          logger.e("Form is not valid");
+                          Toasts.showErrorToastNotification(
+                              context: Get.overlayContext!,
+                              message: "¨Please fix the errors in the form");
+                          return;
+                        }
                         EmailActions.saveSchedule(
                           context,
                           id: schedule.id,
@@ -569,6 +588,15 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                               icon: Icon(Icons.edit),
                               child: Text(strings.value.save),
                               onPressed: () {
+                                if (_formKey.currentState != null &&
+                                    !_formKey.currentState!.validate()) {
+                                  logger.e("Form is not valid");
+                                  Toasts.showErrorToastNotification(
+                                      context: Get.overlayContext!,
+                                      message:
+                                          "¨Please fix the errors in the form");
+                                  return;
+                                }
                                 EmailActions.saveSchedule(
                                   context,
                                   id: schedule.id,
@@ -611,7 +639,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                 nextRunTime,
                 rapport,
                 roles,
-                tempsEnvoi, 
+                tempsEnvoi,
                 users}) {
               _rapport = rapport ?? _rapport;
               _interval = interval ?? _interval;
