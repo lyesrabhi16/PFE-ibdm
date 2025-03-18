@@ -76,7 +76,7 @@ class SentEmailForm extends StatelessWidget {
   final EmailSchedule? schedule;
   final AlertEmail? alert;
 
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<ShadFormState>();
 
   _loadUsers() async {
     try {

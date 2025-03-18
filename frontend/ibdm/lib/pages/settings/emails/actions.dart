@@ -27,12 +27,6 @@ class EmailActions {
     Function? onFail,
     GlobalKey<FormState>? formKey,
   }) async {
-    if (formKey?.currentState != null && formKey!.currentState!.validate()) {
-      logger.e("Form is not valid");
-      Toasts.showErrorToastNotification(
-          context: context, message: "¨Please fix the errors in the form");
-      return;
-    }
     // add alert
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
@@ -88,12 +82,6 @@ class EmailActions {
     Function? onFail,
     GlobalKey<FormState>? formKey,
   }) async {
-    if (formKey?.currentState != null && formKey!.currentState!.validate()) {
-      logger.e("Form is not valid");
-      Toasts.showErrorToastNotification(
-          context: context, message: "¨Please fix the errors in the form");
-      return;
-    }
     // add alert
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(

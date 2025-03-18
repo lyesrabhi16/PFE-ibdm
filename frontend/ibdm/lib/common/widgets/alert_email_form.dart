@@ -70,7 +70,7 @@ class AlertEmailForm extends StatelessWidget {
     );
   }
 
-  final GlobalKey<FormState> formKey;
+  final GlobalKey<ShadFormState> formKey;
   final idController = TextEditingController(text: "Auto Generated");
   final monitoredValueController = TextEditingController();
   final dangerPointController = TextEditingController(text: "1000");
@@ -153,6 +153,7 @@ class AlertEmailForm extends StatelessWidget {
       return ShadForm(
           onChanged: _valuesChanged,
           key: formKey,
+          autovalidateMode: ShadAutovalidateMode.alwaysAfterFirstValidation,
           child: Column(
             children: [
               SizedBox(height: AppSizes.lg),
@@ -169,8 +170,7 @@ class AlertEmailForm extends StatelessWidget {
                 ),
                 child: ShadSelectFormField<String>(
                   enabled: editable,
-                  validator: (v) =>
-                         AppValidators.roleSelectionValidator(v),
+                  validator: (v) => AppValidators.monitoredValueValidator(v),
                   label: Text("Monitored Value"),
                   options: _possibleMonitorValues.map(
                     (value) => ShadOption(
