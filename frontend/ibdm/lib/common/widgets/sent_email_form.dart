@@ -76,6 +76,8 @@ class SentEmailForm extends StatelessWidget {
   final EmailSchedule? schedule;
   final AlertEmail? alert;
 
+  final _formKey = GlobalKey<ShadFormState>();
+
   _loadUsers() async {
     try {
       final res = await api!.getUsers(
@@ -177,6 +179,7 @@ class SentEmailForm extends StatelessWidget {
                       showIdField: true,
                     )
                   : AlertEmailForm(
+                      formKey: _formKey,
                       alert: alert,
                       editable: false,
                       showIdField: true,

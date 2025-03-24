@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
@@ -19,11 +21,13 @@ class EmailScheduleForm extends StatelessWidget {
     this.editable = true,
     this.schedule,
     this.showNextRunTime = false,
+    this.formKey,
   });
 
   final bool editable;
   final EmailSchedule? schedule;
-
+  final Key? formKey;
+  final _formKey = GlobalKey<ShadFormState>();
   Function? _getContext;
 
   BuildContext get getContext => _getContext!.call()!;
@@ -38,6 +42,7 @@ class EmailScheduleForm extends StatelessWidget {
     DateTime? nextRunTime,
     List<Role>? roles,
     List<User>? users,
+    GlobalKey<FormState>? formKey,
   })? onValuesChanged;
 
   _valuesChanged() {
@@ -152,6 +157,8 @@ class EmailScheduleForm extends StatelessWidget {
 
       return ShadForm(
           onChanged: _valuesChanged,
+          key: _formKey,
+          autovalidateMode: ShadAutovalidateMode.alwaysAfterFirstValidation,
           child: Obx(() {
             return Column(
               children: [
@@ -169,6 +176,8 @@ class EmailScheduleForm extends StatelessWidget {
                   ),
                   child: ShadSelectFormField<RapportEnum>(
                     enabled: editable,
+                    validator: FormBuilderValidators.required(
+                        errorText: strings.value.selectAReport),
                     label: Text(strings.value.rapport),
                     options: _rapportValues.map(
                       (value) => ShadOption(
@@ -200,6 +209,8 @@ class EmailScheduleForm extends StatelessWidget {
                   ),
                   child: ShadSelectFormField<IntervalEnum>(
                     enabled: editable,
+                    validator: FormBuilderValidators.required(
+                        errorText: strings.value.selectAnInterval),
                     label: Text(strings.value.interval),
                     options: IntervalEnum.values
                         .where((i) => i != IntervalEnum.$unknown)
@@ -263,6 +274,8 @@ class EmailScheduleForm extends StatelessWidget {
                     tabs: [
                       ShadTab(
                         value: strings.value.roles,
+                        //validator: (v) =>
+                        //    AppValidators.roleSelectionValidator(v?.name),
                         content: ShadCard(
                           child: Column(
                             children: [
