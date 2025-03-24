@@ -22,7 +22,6 @@ import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
-import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:universal_io/io.dart';
@@ -46,7 +45,6 @@ class UsersPage extends StatelessWidget {
     text: "${perPage?.value}",
   );
   static final Rx<bool> _expandPerPage = false.obs;
-  static final _perPageFormKey = GlobalKey<FormState>();
 
   static final Rx<bool> _filtersActive = false.obs;
   static final Rx<bool> _optionsActive = false.obs;
@@ -152,20 +150,25 @@ class UsersPage extends StatelessWidget {
           "Error: Failed to load data of users, known error",
           error: err,
         );
-        Toasts.showErrorToastNotification(
-            context: Get.context!,
-            message: "Details: ${err.message}",
-            title: "Error: Failed to load data of users");
+        if (context.mounted) {
+          Toasts.showErrorToastNotification(
+              context: context,
+              message: "Details: ${err.message}",
+              title: "Error: Failed to load data of users");
+        }
+
         return;
       }
       logger.e(
         "Error: Failed to load data of users, unknown error",
         error: err,
       );
-      Toasts.showErrorToastNotification(
-          context: Get.context!,
-          message: "Details: Unknown Error Occurred",
-          title: "Error: Failed to load data of users");
+      if (context.mounted) {
+        Toasts.showErrorToastNotification(
+            context: context,
+            message: "Details: Unknown Error Occurred",
+            title: "Error: Failed to load data of users");
+      }
     } finally {
       _loaded.value = true;
     }
@@ -192,8 +195,8 @@ class UsersPage extends StatelessWidget {
     int totalPages, {
     int nbrAdditionalIndexesShown = 2,
   }) {
-    //print("currentPage: $currentPage");
-    //print("totalPages: $totalPages");
+    //printMessage("currentPage: $currentPage");
+    //printMessage("totalPages: $totalPages");
     List<int> indexes = [];
 
     indexes.add(1);
@@ -232,7 +235,7 @@ class UsersPage extends StatelessWidget {
 
       i++;
     }
-    //print(fIndexes);
+    //printMessage(fIndexes);
     return fIndexes;
   }
 
@@ -721,8 +724,6 @@ class UsersPage extends StatelessWidget {
                             }
                             logger.e(
                                 "${strings.value.role} :${_roleFilter?.name} $value");
-
-
                           },
                           dropdownMenuEntries: [
                             for (var role in roles)
@@ -1056,7 +1057,7 @@ class UsersPage extends StatelessWidget {
 
     _selectedUsers.clear();
     _showCheckboxColumn.value = false;
-    ShadToaster.of(Get.context!).hide();
+    ShadToaster.of(context).hide();
   }
 
   Future<dynamic> _showAddUserDialog(BuildContext context) {
@@ -1344,31 +1345,12 @@ class UsersPage extends StatelessWidget {
     } catch (e) {
       logger.e("failed to get users: $e");
       Toasts.showErrorToastNotification(
-          context: Get.context!,
+          context: context,
           message: strings.value.failedToGetUsersMessage,
           title: strings.value.errorFailedToGetUsers);
       _addUserSuperiorOptions.value = [];
       _loadedAddUserSuperiorOptions.value = true;
       return;
-    }
-  }
-
-  void _executeChangePerPageIfPossible(BuildContext context) {
-    if (_perPageFormKey.currentState != null &&
-        _perPageFormKey.currentState!.validate()) {
-      _loadUsers(context);
-    }
-  }
-
-  void _changePerPage(BuildContext context, String value) {
-    if (value.isEmpty) {
-      _perPageController.text = "${perPage?.value}";
-    }
-    int? newPerPage = int.tryParse(value);
-
-    if (newPerPage != null) {
-      perPage?.value = newPerPage;
-      LocalStorage.setPerPage(newPerPage);
     }
   }
 
@@ -1418,7 +1400,7 @@ class UsersPage extends StatelessWidget {
     }).catchError((e) {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
-          context: Get.context!,
+          context: context,
           message: "${strings.value.details} : ${e.toString()}",
           title: "Error: Failed to get user details");
       loadedUserDetails.value = true;
@@ -1556,14 +1538,14 @@ class UsersPage extends StatelessWidget {
     }).catchError((e) {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
-          context: Get.context!,
+          context: context,
           message: "${strings.value.details}: ${e.toString()}",
           title: strings.value.errorFailedToGetUsers);
       loadedUserDetails.value = true;
     });
 
     return showShadDialog(
-      context: Get.context!,
+      context: context,
       builder: (context) => ShadDialog(
         title: Text("${strings.value.user}: ${_getName(user, orEmail: true)}"),
         description: Text(strings.value.viewUserDetails),
@@ -1730,7 +1712,9 @@ class UsersPage extends StatelessWidget {
 
       if (_addUserSuperior != null) {
         await api.addSubordinateAndSuperior(
-            superior: _addUserSuperior!.userId, subordinate: res.userId);
+          body: SubordinateAndSuperiorRequest(
+              superior: _addUserSuperior!.userId, subordinate: res.userId),
+        );
       } else {
         logger.e("superior is null");
       }
@@ -1741,7 +1725,7 @@ class UsersPage extends StatelessWidget {
       Future.delayed(
           Duration(seconds: 1), () => Toastification().dismissById(toast.id));
       // reload users list
-      _loadUsers(Get.context!);
+      _loadUsers(context);
     } catch (e) {
       logger.e("failed to add user: $e");
       // show error toast
@@ -1811,14 +1795,16 @@ class UsersPage extends StatelessWidget {
       if (_addUserSuperior != null) {
         if (user.superiors.isEmpty) {
           await api.addSubordinateAndSuperior(
-              superior: _addUserSuperior!.userId, subordinate: res.userId);
+              body: SubordinateAndSuperiorRequest(
+                  superior: _addUserSuperior!.userId, subordinate: res.userId));
         } else {
           final res = await api.getSubordinateAndSuperiorId(
               superior: user.superiors.first.userId, subordinate: user.userId);
           await api.partialUpdateSubordinateAndSuperior(
-              id: res.id,
-              superior: _addUserSuperior!.userId,
-              subordinate: user.userId);
+            id: res.id,
+            body: PatchedSubordinateAndSuperiorRequest(
+                superior: _addUserSuperior!.userId, subordinate: user.userId),
+          );
         }
       } else {
         logger.e("superior is null");
@@ -1837,7 +1823,7 @@ class UsersPage extends StatelessWidget {
       Future.delayed(
           Duration(seconds: 1), () => Toastification().dismissById(toast.id));
       // reload users list
-      _loadUsers(Get.context!);
+      _loadUsers(context);
     } catch (e) {
       logger.e("failed to add user: $e");
       // show error toast

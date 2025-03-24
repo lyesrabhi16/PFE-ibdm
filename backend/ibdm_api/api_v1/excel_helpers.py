@@ -5,6 +5,19 @@ import os
 
 from ibdm_api.settings import BASE_DIR
 
+def ensurePathExists(path:str):
+    _path = path.split("/")
+    _path.pop()
+    _path = "/".join(_path)
+
+    if os.path.exists(_path):
+        return
+
+    # create it otherwise
+    os.makedirs(_path, exist_ok=True)
+    return
+
+    
 def generateExcelReport(
     data,
     filename,
@@ -12,13 +25,21 @@ def generateExcelReport(
     force=False,
 ):
     
-    output_file = f"{filename}.xlsx"
-
+    print("GENERATE_EXCEL_REPORT")
+    print("GENERATE_EXCEL_REPORT")
+    print("GENERATE_EXCEL_REPORT")
+    output_file = f"data/rapports/{filename}.xlsx"
+    ensurePathExists(output_file)
     # check if report already exists
     if not force:
         exists = os.path.isfile(os.path.join(BASE_DIR, output_file))
         if exists:
             print(f"re-using existing file {output_file}")
+            
+            print("GENERATE_EXCEL_REPORT")
+            print("GENERATE_EXCEL_REPORT")
+            print("GENERATE_EXCEL_REPORT")
+    
             return output_file
 
     # Create a new workbook and select the active worksheet
@@ -76,14 +97,15 @@ def generateExcelReport(
                 cell = ws.cell(row=row_index, column=col)
                 cell.font = Font(color="FF0000")
 
-    # Write the synthese section
-    ws.append([])  # Add an empty row for spacing
-    ws.append(["Synthèse"])
-    ws.append([data['synthese']])
+    if data.get("synthese", None) is not None:
 
-    # Apply styling to the synthese section
-    synthese_font = Font(bold=True, color="009879")
-    ws.cell(row=ws.max_row - 1, column=1).font = synthese_font
+        ws.append([])  # Add an empty row for spacing
+        ws.append(["Synthèse"])
+        ws.append([data['synthese']])
+
+        # Apply styling to the synthese section
+        synthese_font = Font(bold=True, color="009879")
+        ws.cell(row=ws.max_row - 1, column=1).font = synthese_font
 
     # Adjust column widths
     for col in ws.columns:
@@ -102,5 +124,8 @@ def generateExcelReport(
     wb.save(output_file)
 
     print(f"Excel file '{output_file}' created successfully!")
-
+    
+    print("GENERATE_EXCEL_REPORT")
+    print("GENERATE_EXCEL_REPORT")
+    print("GENERATE_EXCEL_REPORT")
     return output_file

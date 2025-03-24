@@ -14,7 +14,28 @@ class AlertEmailSerializer(serializers.ModelSerializer):
     send_to_users = serializers.SlugRelatedField(slug_field="email", queryset=User.objects.all(), required=False,many=True)
     class Meta:
         model = AlertEmail
-        fields = "__all__"
+        fields = [
+            "id",
+            "monitored_value",
+            "danger_point",
+            "warning_point",
+            "danger_reminder_interval",
+            "warning_reminder_interval",
+            "custom_alert_message",
+            "send_to_users",
+            "send_to_roles",
+            "enabled",
+        ]
+        extra_kwargs={
+            "danger_point": {"allow_null": True},
+            "warning_point": {"allow_null": True},
+            "danger_reminder_interval": {"allow_null": True},
+            "warning_reminder_interval": {"allow_null": True},
+            "custom_alert_message": {"allow_null": True},
+            "send_to_users": {"allow_null": True, "required":False,},
+            "send_to_roles": {"allow_null": True, "required":False,},
+            "enabled": {"allow_null": True},
+        }
 class SentAlertEmailSerializer(serializers.ModelSerializer):
     alert = AlertEmailSerializer()
     class Meta:

@@ -1,0 +1,63 @@
+{
+    "components.schemas.SentEmail.properties.schedule": {
+        "$ref": "#/components/schemas/EmailSchedule",
+        "nullable": true
+    },
+    "components.schemas.SentEmail.properties.alert": {
+        "$ref": "#/components/schemas/SentAlertEmail",
+        "nullable": true
+    },
+    "components.schemas.User.properties.superiors": {
+        "type": "array",
+        "items":
+            {
+                "$ref": "#/components/schemas/UserSerializerWithSuperiors"
+            },
+        "readOnly": true
+    },
+    "components.schemas.User.properties.subordinates": {
+        "type": "array",
+        "items":
+            {
+                "$ref": "#/components/schemas/UserSerializerWithSubordinates"
+            },
+        "readOnly": true
+    },
+    "components.schemas.AlertEmailRequest.properties.send_to_users":{
+        "type": "array",
+        "items": {
+            "type": "string",
+            "nullable": true
+        },
+        "nullable": true
+    },
+    "components.schemas.AlertEmailRequest.properties.send_to_roles":{
+        "type": "array",
+        "items": {
+            "type": "integer",
+            "nullable": true
+        },
+        "nullable": true
+    },
+    "components.schemas.PatchedAlertEmailRequest.properties.monitored_value":{
+        "$ref": "#/components/schemas/AlertEnum",
+        "nullable": true
+    },
+    "components.schemas.PatchedAlertEmailRequest.properties.send_to_users":{
+        "type": "array",
+        "items": {
+            "type": "string",
+            "nullable": true
+        },
+        "nullable": true
+    },
+    "components.schemas.PatchedAlertEmailRequest.properties.send_to_roles":{
+        "type": "array",
+        "items": {
+            "type": "integer",
+            "nullable": true
+        },
+        "nullable": true
+    }
+    
+}

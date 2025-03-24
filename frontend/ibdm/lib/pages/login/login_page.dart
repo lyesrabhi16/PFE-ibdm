@@ -9,23 +9,23 @@ import 'package:ibdm/pages/login/wide_login_page.dart';
 import 'package:ibdm/pages/login/small_login_page.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
-import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 void downloadCertificate(BuildContext context) async {
   final api = await ApiClientInstance.getApiClient();
   if (kIsWeb) {
-    await api.downloadFile(
-        context: context, url: ApiConfig.ca_url, fileName: "ibdm_ca.crt");
+    if (context.mounted) {
+      await api.downloadFile(
+          context: context, url: ApiConfig.ca_url, fileName: "ibdm_ca.crt");
+    }
   } else {
-    await api.downloadFile(
-      context: context,
-      url: ApiConfig.ca_url,
-      fileName: "ibdm_ca.crt",
-    );
+    if (context.mounted) {
+      await api.downloadFile(
+        context: context,
+        url: ApiConfig.ca_url,
+        fileName: "ibdm_ca.crt",
+      );
+    }
   }
   /* try {
     final url = "https://localhost/ca";
@@ -40,7 +40,7 @@ void downloadCertificate(BuildContext context) async {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Certificat téléchargé : $filePath")),
       );
-      print("Fichier enregistré : $filePath");
+      printMessage("Fichier enregistré : $filePath");
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Échec du téléchargement du certificat.")),

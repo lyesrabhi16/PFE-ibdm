@@ -1,3 +1,4 @@
+version: "2.4"
 # Comments are provided throughout this file to help you get started.
 # If you need more help, visit the Docker Compose reference guide at
 # https://docs.docker.com/go/compose-spec-reference/
@@ -15,11 +16,12 @@ services:
     build:
       context: .
     ports:
-      - 443:443
+      - 8442:443
     network_mode: host
+    #networks:
+     # ibdm_network:
+      #  ipv4_address: 10.2.60.111
     user: root
-    extra_hosts:
-       - "srvifruit:172.20.101.144"
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
@@ -58,3 +60,12 @@ services:
 # Networks define how your services communicate with each other. You can also
 # use them to define external networks to connect to a database or cache.
 
+
+networks:
+  ibdm_network:
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      config:
+        - subnet: 10.2.60.0/24  # Valid subnet
+          gateway: 10.2.60.254
