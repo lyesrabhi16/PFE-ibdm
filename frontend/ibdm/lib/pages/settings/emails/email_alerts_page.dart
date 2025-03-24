@@ -64,6 +64,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   static final _filtersPopoverController = ShadPopoverController();
   static final _filtersActive = false.obs;
 
+  final GlobalKey<ShadFormState> _formKey = GlobalKey<ShadFormState>();
+
   static final _perPageFormKey = GlobalKey<FormState>();
 
   static final _tagFilterController = TextEditingController();
@@ -366,26 +368,37 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               child: Text(strings.value.cancel),
             ),
             ShadButton(
-              onPressed: () => EmailActions.addAlert(
-                context,
-                monitoredValue: _addAlertMonitoredValue!,
-                customMessage: _addAlertCustomMessage,
-                dangerAlertInterval: _addAlertDangerAlertInterval,
-                dangerPoint: _addAlertDangerPoint,
-                enabled: _addAlertEnabled,
-                roles: _addAlertRoles,
-                users: _addAlertUsers,
-                warningAlertInterval: _addAlertWarningAlertInterval,
-                warningPoint: _addAlertWarningPoint,
-                onSuccess: () {
-                  _loadAlerts();
-                  Navigator.of(context).pop();
-                },
-              ),
+              onPressed: () {
+                if (_formKey.currentState != null &&
+                    !_formKey.currentState!.validate()) {
+                  logger.e("Form is not valid");
+                  Toasts.showErrorToastNotification(
+                      context: Get.overlayContext!,
+                      message: "¨Please fix the errors in the form");
+                  return;
+                }
+                EmailActions.addAlert(
+                  context,
+                  monitoredValue: _addAlertMonitoredValue!,
+                  customMessage: _addAlertCustomMessage,
+                  dangerAlertInterval: _addAlertDangerAlertInterval,
+                  dangerPoint: _addAlertDangerPoint,
+                  enabled: _addAlertEnabled,
+                  roles: _addAlertRoles,
+                  users: _addAlertUsers,
+                  warningAlertInterval: _addAlertWarningAlertInterval,
+                  warningPoint: _addAlertWarningPoint,
+                  onSuccess: () {
+                    _loadAlerts();
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
               child: Text(strings.value.add),
             )
           ],
           child: AlertEmailForm(
+            formKey: _formKey,
             onValuesChanged: (
                 {customMessage,
                 dangerAlertInterval,
@@ -403,6 +416,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               _addAlertMonitoredValue = monitoredValue;
               _addAlertRoles = roles;
               _addAlertUsers = users;
+              _formKey.currentState!.validate();
               _addAlertWarningAlertInterval = warningAlertInterval;
               _addAlertWarningPoint = warningPoint;
             },
@@ -502,6 +516,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             alert: alert,
             editable: false,
             showIdField: true,
+            formKey: _formKey,
           ),
         );
       },
@@ -558,6 +573,14 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                       icon: Icon(Icons.edit),
                       child: Text(strings.value.save),
                       onPressed: () {
+                        if (_formKey.currentState != null &&
+                            !_formKey.currentState!.validate()) {
+                          logger.e("Form is not valid");
+                          Toasts.showErrorToastNotification(
+                              context: Get.overlayContext!,
+                              message: "¨Please fix the errors in the form");
+                          return;
+                        }
                         EmailActions.saveAlert(
                           context,
                           alertId: alert.id,
@@ -575,6 +598,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                             Navigator.of(context).pop();
                           },
                         );
+
+                        // logger.e("Failed to save alert : $e");
                       },
                     )
                   : SizedBox.shrink();
@@ -602,6 +627,15 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                               icon: Icon(Icons.edit),
                               child: Text(strings.value.save),
                               onPressed: () {
+                                if (_formKey.currentState != null &&
+                                    !_formKey.currentState!.validate()) {
+                                  logger.e("Form is not valid");
+                                  Toasts.showErrorToastNotification(
+                                      context: Get.overlayContext!,
+                                      message:
+                                          "¨Please fix the errors in the form");
+                                  return;
+                                }
                                 EmailActions.saveAlert(
                                   context,
                                   alertId: alert.id,
@@ -637,6 +671,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                 )).removeWhen(isAtMostSmallScreen(context))
           ].nonNulls.toList(),
           child: AlertEmailForm(
+            formKey: _formKey,
             alert: alert,
             editable: true,
             showIdField: false,

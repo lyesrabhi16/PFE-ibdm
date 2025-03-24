@@ -36,6 +36,12 @@ class AppValidators {
     return null;
   }
 
+  static String? monitoredValueValidator(String? v) {
+    return FormBuilderValidators.compose([
+      FormBuilderValidators.required(errorText: "Monitored Value must be selected"),
+    ])(v);
+  }
+
   static String? superiorSelectionValidator(
       String? id, List<User> superiorOptions) {
     UserController userController = Get.find<UserController>();
