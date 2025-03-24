@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/permissions_controler.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
 import 'package:ibdm/pages/filtration.dart/filtration.dart';
+import 'package:ibdm/pages/no_permissions.dart';
+import 'package:ibdm/pages/not_found.dart';
 import 'package:ibdm/pages/settings/about_page.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
@@ -16,8 +19,11 @@ import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/pages/settings/emails/email_settings_page.dart';
 import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
 import 'package:ibdm/pages/settings/help_page.dart';
+import 'package:ibdm/pages/utilite/utilite.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
+import 'package:ibdm/utils/constants/route_permissions.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class Routes {
@@ -31,12 +37,15 @@ class Routes {
   static const String filtration = '/filtration';
   static const String settings = '/settings';
   static const String users = '/users';
-  static const String emailSettings = '/settings/emailsettings';
-  static const String emailSchedules = '/settings/emailsettings/schedules';
-  static const String emailAlerts = '/settings/emailsettings/alerts';
-  static const String emailSent = '/settings/emailsettings/sent';
+  static const String emailSettings = '/settings/email-settings';
+  static const String emailSchedules = '/settings/email-settings/schedules';
+  static const String emailAlerts = '/settings/email-settings/alerts';
+  static const String emailSent = '/settings/email-settings/sent';
   static const String about = '/settings/about';
   static const String help = '/settings/help';
+  static const String utilite = '/utilite';
+  static const String noPermissions = "/no-permissions";
+  static const String notFound = "/404";
 
   static List<Destination> get destinations => [
         Destination(
@@ -64,6 +73,12 @@ class Routes {
           page: routePages[Routes.filtration]!,
         ).withPermission(Permissions.viewFiltrationPage),
         Destination(
+          title: "Utilité",
+          icon: LucideIcons.gauge,
+          route: Routes.utilite,
+          page: routePages[Routes.utilite]!,
+        ).withPermission(Permissions.viewUtilitePage),
+        Destination(
           title: "Settings",
           icon: Icons.settings,
           route: Routes.settings,
@@ -79,7 +94,42 @@ class Routes {
     about: settings,
     help: settings,
   };
-
+  static final routePermissions = {
+    Routes.home: RoutePermissions(),
+    Routes.login: RoutePermissions(),
+    Routes.emailSettings: RoutePermissions(
+      anyOfPermissions: [
+        Permissions.viewEmailAlerts,
+        Permissions.viewEmailSchedules,
+        Permissions.viewEmailsSent,
+      ],
+    ),
+    Routes.emailSchedules: RoutePermissions(
+      requiredPermissions: [Permissions.viewEmailSchedules],
+    ),
+    Routes.emailAlerts: RoutePermissions(
+      requiredPermissions: [Permissions.viewEmailAlerts],
+    ),
+    Routes.emailSent: RoutePermissions(
+      requiredPermissions: [Permissions.viewEmailsSent],
+    ),
+    Routes.about: RoutePermissions(),
+    Routes.help: RoutePermissions(),
+    Routes.siroperie: RoutePermissions(
+      requiredPermissions: [Permissions.viewSiroperiePage],
+    ),
+    Routes.filtration: RoutePermissions(
+      requiredPermissions: [Permissions.viewFiltrationPage],
+    ),
+    Routes.settings: RoutePermissions(
+      requiredPermissions: [Permissions.viewSettingsPage],
+    ),
+    Routes.users: RoutePermissions(
+      requiredPermissions: [Permissions.viewUsersPage],
+    ),
+    Routes.noPermissions: RoutePermissions(),
+    Routes.utilite: RoutePermissions(),
+  };
   static final routePages = {
     Routes.home: GetPage(
       name: Routes.home,
@@ -94,50 +144,96 @@ class Routes {
     Routes.emailSettings: GetPage(
       name: emailSettings,
       page: () => EmailSettingsPage(),
-      middlewares: [ProtectedRouteMiddleware()],
+      middlewares: [
+        ProtectedRouteMiddleware(
+            routePermissions: routePermissions[emailSettings])
+      ],
     ),
     Routes.emailSchedules: GetPage(
       name: emailSchedules,
       page: () => EmailSchedulesPage(),
-      middlewares: [ProtectedRouteMiddleware()],
+      middlewares: [
+        ProtectedRouteMiddleware(
+            routePermissions: routePermissions[emailSchedules])
+      ],
     ),
     Routes.emailAlerts: GetPage(
       name: emailAlerts,
       page: () => EmailAlertsPage(),
-      middlewares: [ProtectedRouteMiddleware()],
+      middlewares: [
+        ProtectedRouteMiddleware(
+            routePermissions: routePermissions[emailAlerts])
+      ],
     ),
     Routes.emailSent: GetPage(
       name: emailSent,
       page: () => EmailSentsPage(),
-      middlewares: [ProtectedRouteMiddleware()],
+      middlewares: [
+        ProtectedRouteMiddleware(routePermissions: routePermissions[emailSent])
+      ],
     ),
-    Routes.about: GetPage(
-        name: about,
-        page: () => AboutPage(),
-        middlewares: [ProtectedRouteMiddleware()]),
-    Routes.help: GetPage(
-        name: help,
-        page: () => HelpPage(),
-        middlewares: [ProtectedRouteMiddleware()]),
+    Routes.about: GetPage(name: about, page: () => AboutPage(), middlewares: [
+      ProtectedRouteMiddleware(
+        routePermissions: routePermissions[about],
+      )
+    ]),
+    Routes.help: GetPage(name: help, page: () => HelpPage(), middlewares: [
+      ProtectedRouteMiddleware(
+        routePermissions: routePermissions[help],
+      )
+    ]),
     Routes.siroperie: GetPage(
       name: Routes.siroperie,
       page: () => SiroperiePage(),
-      middlewares: [ProtectedRouteMiddleware()],
+      middlewares: [
+        ProtectedRouteMiddleware(
+          routePermissions: routePermissions[Routes.siroperie],
+        )
+      ],
     ),
     Routes.filtration: GetPage(
       name: Routes.filtration,
       page: () => FiltrationPage(),
-      middlewares: [ProtectedRouteMiddleware()],
+      middlewares: [
+        ProtectedRouteMiddleware(
+          routePermissions: routePermissions[Routes.filtration],
+        )
+      ],
     ),
     Routes.settings: GetPage(
       name: Routes.settings,
       page: () => SettingsPage(),
-      middlewares: [ProtectedRouteMiddleware()],
+      middlewares: [
+        ProtectedRouteMiddleware(
+            routePermissions: routePermissions[Routes.settings])
+      ],
     ),
     Routes.users: GetPage(
       name: Routes.users,
       page: () => UsersPage(),
-      middlewares: [ProtectedRouteMiddleware()],
+      middlewares: [
+        ProtectedRouteMiddleware(
+            routePermissions: routePermissions[Routes.users])
+      ],
+    ),
+    Routes.utilite: GetPage(
+      name: Routes.utilite,
+      page: () => UtilitePage(),
+      middlewares: [
+        ProtectedRouteMiddleware(
+            routePermissions: routePermissions[Routes.utilite])
+      ],
+    ),
+    Routes.noPermissions: GetPage(
+        name: Routes.noPermissions,
+        page: () => NoPermissionsPage(),
+        middlewares: [
+          ProtectedRouteMiddleware(
+              routePermissions: routePermissions[Routes.noPermissions])
+        ]),
+    Routes.notFound: GetPage(
+      name: Routes.notFound,
+      page: () => NotFoundPage(),
     ),
   };
 

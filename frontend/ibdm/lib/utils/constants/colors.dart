@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
-import 'package:ibdm/utils/helpers/logger.dart';
 
 class AppColors {
   AppColors._();

@@ -43,6 +43,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   static final _searchController = TextEditingController();
   IbdmApiClient? api;
   final RxBool loaded = false.obs;
+  final RxBool _isDataLoading = false.obs;
 
   RxList<AlertEmail> alerts = <AlertEmail>[].obs;
   late PaginatedAlertEmailList alertsMeta;
@@ -53,6 +54,9 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   int page = 1;
   String? monitorValueTagFilter;
   bool? activationStateFilter;
+
+  int? lastPerPage;
+  String? lastSearch;
 
   static final _expandPerPage = false.obs;
   static final _perPageController = TextEditingController(text: "10");
@@ -143,7 +147,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   child: Padding(
                     padding: EdgeInsets.all(AppSizes.sm),
@@ -159,8 +163,14 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                       children: [
                         SearchBar(
                           controller: _searchController,
-                          onSubmitted: (_) => load(),
-                          onTapOutside: (_) => load(),
+                          onSubmitted: (_) =>
+                              _searchController.text != lastSearch
+                                  ? _loadAlerts()
+                                  : null,
+                          onTapOutside: (_) =>
+                              _searchController.text != lastSearch
+                                  ? _loadAlerts()
+                                  : null,
                           constraints: BoxConstraints(
                             maxWidth: AppSizes.lg * 8,
                             minHeight: AppSizes.lg * 1.5,
@@ -259,7 +269,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                       width: context.width,
                       decoration: BoxDecoration(
                         color: colorScheme.surfaceContainer,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius:
+                            BorderRadius.circular(AppSizes.borderRadius),
                       ),
                       child: _topPageActions(
                         alignment: WrapAlignment.spaceBetween,
@@ -286,23 +297,27 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                     ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surfaceContainer,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius:
+                          BorderRadius.circular(AppSizes.borderRadius),
                     ),
-                    child: DataTable2(
-                      columnSpacing: _getColumnSpacing(),
-                      onSelectAll: (selectedAll) => selectedAll == true
-                          ? _selectedAlerts.addAll(alerts)
-                          : _selectedAlerts.clear(),
-                      showCheckboxColumn: _showCheckboxColumn.value,
-                      sortColumnIndex: 0,
-                      dataRowColor: WidgetStateProperty.fromMap({
-                        WidgetState.hovered:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        WidgetState.focused: colorScheme.primaryContainer,
-                      }),
-                      columns: _getCols(),
-                      rows: _getRows(),
-                    ),
+                    child: _isDataLoading.value
+                        ? Center(child: CircularProgressIndicator())
+                        : DataTable2(
+                            columnSpacing: _getColumnSpacing(),
+                            onSelectAll: (selectedAll) => selectedAll == true
+                                ? _selectedAlerts.addAll(alerts)
+                                : _selectedAlerts.clear(),
+                            showCheckboxColumn: _showCheckboxColumn.value,
+                            sortColumnIndex: 0,
+                            dataRowColor: WidgetStateProperty.fromMap({
+                              WidgetState.hovered: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              WidgetState.focused: colorScheme.primaryContainer,
+                            }),
+                            columns: _getCols(),
+                            rows: _getRows(),
+                          ),
                   ),
                 ),
                 SizedBox(
@@ -313,9 +328,9 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   nbrTotalPages: alertsMeta.totalPages,
                   nbrShown: alertsMeta.data.length,
                   nbrTotal: alertsMeta.totalResults,
-                  onPrevPress: (p) => {page = p, load()},
-                  onNextPress: (p) => {page = p, load()},
-                  onPagePress: (p) => {page = p, load()},
+                  onPrevPress: (p) => {page = p, _loadAlerts()},
+                  onNextPress: (p) => {page = p, _loadAlerts()},
+                  onPagePress: (p) => {page = p, _loadAlerts()},
                   data: alerts,
                   label: strings.value.alerts,
                 )
@@ -374,7 +389,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   warningAlertInterval: _addAlertWarningAlertInterval,
                   warningPoint: _addAlertWarningPoint,
                   onSuccess: () {
-                    load();
+                    _loadAlerts();
                     Navigator.of(context).pop();
                   },
                 );
@@ -579,7 +594,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                           warningAlertInterval: _saveAlertWarningAlertInterval,
                           warningPoint: _saveAlertWarningPoint,
                           onSuccess: () {
-                            load();
+                            _loadAlerts();
                             Navigator.of(context).pop();
                           },
                         );
@@ -636,7 +651,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                                       _saveAlertWarningAlertInterval,
                                   warningPoint: _saveAlertWarningPoint,
                                   onSuccess: () {
-                                    load();
+                                    _loadAlerts();
                                     Navigator.of(context).pop();
                                   },
                                 );
@@ -741,7 +756,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                     ShadButton(
                       onPressed: () async {
                         await _deleteAlerts();
-                        load();
+                        _loadAlerts();
                         onDeleteConfirmed?.call();
                       },
                       child: Text(strings.value.yes),
@@ -779,8 +794,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       int totalPages, {
       int nbrAdditionalIndexesShown = 2,
     }) {
-      //print("currentPage: $currentPage");
-      //print("totalPages: $totalPages");
+      //printMessage("currentPage: $currentPage");
+      //printMessage("totalPages: $totalPages");
       List<int> indexes = [];
 
       indexes.add(1);
@@ -819,7 +834,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
 
         i++;
       }
-      //print(fIndexes);
+      //printMessage(fIndexes);
       return fIndexes;
     }
 
@@ -915,7 +930,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       width: context.width,
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(10)),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
       child: Padding(
         padding: EdgeInsets.all(AppSizes.sm),
         child: Wrap(
@@ -964,6 +979,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   }
 
   Future<void> _loadAlerts() async {
+    _isDataLoading.value = true;
     _getOrdering() {
       return _sortASC.value
           ? _sortersASC.entries
@@ -980,6 +996,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
 
     // Load alerts
     try {
+      lastSearch = _searchController.text;
+      lastPerPage = int.tryParse(_perPageController.text);
       alertsMeta = await api!.getAlertEmails(
         page: page,
         perPage: int.tryParse(_perPageController.text),
@@ -993,6 +1011,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     } catch (e) {
       logger.e("Failed to load alerts : $e");
     }
+    _isDataLoading.value = false;
   }
 
   Future<void> _loadAllTags() async {
@@ -1132,7 +1151,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   alertId: e.id,
                   enabled: v ?? false,
                   onSuccess: () {
-                    load();
+                    _loadAlerts();
                   },
                 );
               },
@@ -1170,7 +1189,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                             .surfaceContainerHighest,
                         border: ShadBorder.all(
                           width: 0,
-                          radius: BorderRadius.circular(10),
+                          radius: BorderRadius.circular(AppSizes.borderRadius),
                         )),
                     popover: (context) => SizedBox(
                       width: AppSizes.lg * 5,
@@ -1256,7 +1275,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     Future.delayed(Duration(seconds: 2), () {
       toastification.dismissById(toast.id);
     });
-    ShadToaster.of(Get.context!).hide();
+    ShadToaster.of(context).hide();
   }
 
   _topPageActions({
@@ -1272,7 +1291,6 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     required ShadPopoverController sortPopoverController,
     required RxBool sortASC,
     required RxBool sortActive,
-    bool center = false,
   }) {
     final context = getContext;
     final strings = getTranslations(context).obs;
@@ -1362,17 +1380,19 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   expandPerPage: _expandPerPage,
                   perPageController: _perPageController,
                   perPage: int.tryParse(_perPageController.text)!,
-                  load: load,
+                  load: () => _perPageController.text != lastPerPage.toString()
+                      ? _loadAlerts()
+                      : null,
                 ),
               ),
             ],
           ),
           //right refresh button
           SizedBox(
-            width: AppSizes.xl * 4,
+            width: AppSizes.xl * 5,
             child: IconWithLabelButton(
               icon: Icons.refresh_rounded,
-              onTap: () => load(),
+              onTap: _loadAlerts,
               text: strings.value.refresh,
             ),
           ),
@@ -1392,7 +1412,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             _sortersASC[s] = Sorter(
                 isSelected: selected,
                 orderingValue: sorter.value.orderingValue);
-            load();
+            _loadAlerts();
           } else {
             _sortersASC[sorter.key] = Sorter(
                 isSelected: false, orderingValue: sorter.value.orderingValue);
@@ -1404,7 +1424,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             _sortersDESC[s] = Sorter(
                 isSelected: selected,
                 orderingValue: sorter.value.orderingValue);
-            load();
+            _loadAlerts();
           } else {
             _sortersDESC[sorter.key] = Sorter(
                 isSelected: false, orderingValue: sorter.value.orderingValue);
@@ -1507,7 +1527,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               );
               sortASC.value = value == strings.value.asc;
               if (doLoad) {
-                load();
+                _loadAlerts();
               }
             },
           ),
@@ -1590,11 +1610,11 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             if (monitorValueTagFilter == value) {
               tagFilterController.clear();
               monitorValueTagFilter = null;
-              load();
+              _loadAlerts();
               return;
             }
             monitorValueTagFilter = value;
-            load();
+            _loadAlerts();
           },
           dropdownMenuEntries: [
             for (String tag in _allMonitorValueTags)
@@ -1627,11 +1647,11 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             if (activationStateFilter == value) {
               activationStateFilterController.clear();
               activationStateFilter = null;
-              load();
+              _loadAlerts();
               return;
             }
             activationStateFilter = value;
-            load();
+            _loadAlerts();
           },
           dropdownMenuEntries: [
             DropdownMenuEntry(
@@ -1655,7 +1675,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
         //right refresh button
         IconWithLabelButton(
           icon: Icons.refresh_rounded,
-          onTap: () => load(),
+          onTap: _loadAlerts,
           text: strings.value.refresh,
         ),
 
@@ -1665,7 +1685,9 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
         PerPageInput(
           expandPerPage: _expandPerPage,
           perPageController: _perPageController,
-          load: load,
+          load: () => _perPageController.text != lastPerPage.toString()
+              ? _loadAlerts()
+              : null,
         ),
         SizedBox(
           height: AppSizes.lg,

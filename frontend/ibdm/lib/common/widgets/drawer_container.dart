@@ -9,6 +9,7 @@ import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class DrawerContainer extends StatelessWidget {
@@ -24,7 +25,9 @@ class DrawerContainer extends StatelessWidget {
         IconWithLabelButton(
           icon: dest.icon,
           text: dest.title,
-          active: Get.currentRoute == dest.route,
+          active: (() {
+            return Get.currentRoute == dest.route;
+          })(),
           onTap: () {
             Navigator.of(context).pop();
             Get.toNamed(dest.route);

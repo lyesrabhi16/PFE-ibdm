@@ -229,3 +229,8 @@ api.config.dart
 
 # migrations
 migrations
+
+*.tar
+docker-images
+docker-images/
+docker-images/*

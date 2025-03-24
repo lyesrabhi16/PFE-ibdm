@@ -46,17 +46,19 @@ class AlertEmailForm extends StatelessWidget {
 
   _valuesChanged() {
     if (!editable) return;
-    print("monitoredValueController.text ${monitoredValueController.text}");
-    print(
+    printMessage(
+        "monitoredValueController.text ${monitoredValueController.text}");
+    printMessage(
         "dangerAlertIntervalController.text ${dangerAlertIntervalController.text}");
-    print("dangerPointController.text ${dangerPointController.text}");
-    print(
+    printMessage("dangerPointController.text ${dangerPointController.text}");
+    printMessage(
         "warningAlertIntervalController.text ${warningAlertIntervalController.text}");
-    print("warningPointController.text ${warningPointController.text}");
-    print("customMessageController.text ${customMessageController.text}");
-    print("sendToRoles ${sendToRoles.map((e) => e.name).join(', ')}");
-    print("sendToUsers ${sendToUsers.map((e) => e.email).join(', ')}");
-    print("enabled $enabled");
+    printMessage("warningPointController.text ${warningPointController.text}");
+    printMessage(
+        "customMessageController.text ${customMessageController.text}");
+    printMessage("sendToRoles ${sendToRoles.map((e) => e.name).join(', ')}");
+    printMessage("sendToUsers ${sendToUsers.map((e) => e.email).join(', ')}");
+    printMessage("enabled $enabled");
     onValuesChanged?.call(
       monitoredValue: monitoredValueController.text,
       dangerPoint: dangerPointController.text,
@@ -122,7 +124,7 @@ class AlertEmailForm extends StatelessWidget {
       warningAlertIntervalController.text =
           alert!.warningReminderInterval.toString();
       warningPointController.text = alert!.warningPoint.toString();
-      enabled = alert!.enabled;
+      enabled = alert!.enabled!;
       monitoredValueController.text = alert!.monitoredValue.toString();
       sendToRoles.addAll(
         userController.roles

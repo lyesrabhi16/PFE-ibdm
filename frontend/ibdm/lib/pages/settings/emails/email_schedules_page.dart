@@ -14,6 +14,7 @@ import 'package:ibdm/pages/settings/emails/actions.dart';
 import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart' as API_CLIENT;
+import 'package:ibdm/services/api_django/api_client/models/email_schedule.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
@@ -45,6 +46,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
   static final _searchController = TextEditingController();
   API_CLIENT.IbdmApiClient? api;
   final RxBool loaded = false.obs;
+  final RxBool _isDataLoading = false.obs;
 
   RxList<API_CLIENT.EmailSchedule> schedules = <API_CLIENT.EmailSchedule>[].obs;
   late API_CLIENT.PaginatedEmailScheduleList schedulesMeta;
@@ -57,6 +59,8 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
 
   static final _expandPerPage = false.obs;
   static final _perPageController = TextEditingController(text: "10");
+  int? lastPerPage;
+  String? lastSearch;
 
   static final _filtersPopoverController = ShadPopoverController();
   static final _filtersActive = false.obs;
@@ -136,7 +140,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                   ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   child: Padding(
                     padding: EdgeInsets.all(AppSizes.sm),
@@ -152,8 +156,14 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                       children: [
                         SearchBar(
                           controller: _searchController,
-                          onSubmitted: (_) => load(),
-                          onTapOutside: (_) => load(),
+                          onSubmitted: (_) =>
+                              _searchController.text != lastSearch
+                                  ? _loadSchedules()
+                                  : null,
+                          onTapOutside: (_) =>
+                              _searchController.text != lastSearch
+                                  ? _loadSchedules()
+                                  : null,
                           constraints: BoxConstraints(
                             maxWidth: AppSizes.lg * 8,
                             minHeight: AppSizes.lg * 1.5,
@@ -252,7 +262,8 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                       width: context.width,
                       decoration: BoxDecoration(
                         color: colorScheme.surfaceContainer,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius:
+                            BorderRadius.circular(AppSizes.borderRadius),
                       ),
                       child: _topPageActions(
                         alignment: WrapAlignment.spaceBetween,
@@ -279,23 +290,27 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                     ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surfaceContainer,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius:
+                          BorderRadius.circular(AppSizes.borderRadius),
                     ),
-                    child: DataTable2(
-                      columnSpacing: _getColumnSpacing(),
-                      onSelectAll: (selectedAll) => selectedAll == true
-                          ? _selectedSchedules.addAll(schedules)
-                          : _selectedSchedules.clear(),
-                      showCheckboxColumn: _showCheckboxColumn.value,
-                      sortColumnIndex: 0,
-                      dataRowColor: WidgetStateProperty.fromMap({
-                        WidgetState.hovered:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        WidgetState.focused: colorScheme.primaryContainer,
-                      }),
-                      columns: _getCols(),
-                      rows: _getRows(),
-                    ),
+                    child: _isDataLoading.value
+                        ? Center(child: CircularProgressIndicator())
+                        : DataTable2(
+                            columnSpacing: _getColumnSpacing(),
+                            onSelectAll: (selectedAll) => selectedAll == true
+                                ? _selectedSchedules.addAll(schedules)
+                                : _selectedSchedules.clear(),
+                            showCheckboxColumn: _showCheckboxColumn.value,
+                            sortColumnIndex: 0,
+                            dataRowColor: WidgetStateProperty.fromMap({
+                              WidgetState.hovered: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              WidgetState.focused: colorScheme.primaryContainer,
+                            }),
+                            columns: _getCols(),
+                            rows: _getRows(),
+                          ),
                   ),
                 ),
                 SizedBox(
@@ -306,9 +321,9 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                   nbrTotalPages: schedulesMeta.totalPages,
                   nbrShown: schedulesMeta.data.length,
                   nbrTotal: schedulesMeta.totalResults,
-                  onPrevPress: (p) => {page = p, load()},
-                  onNextPress: (p) => {page = p, load()},
-                  onPagePress: (p) => {page = p, load()},
+                  onPrevPress: (p) => {page = p, _loadSchedules()},
+                  onNextPress: (p) => {page = p, _loadSchedules()},
+                  onPagePress: (p) => {page = p, _loadSchedules()},
                   data: schedules,
                   label: strings.value.schedules,
                 )
@@ -362,7 +377,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                   scheduledRoles: _scheduledRoles,
                   scheduledUsers: _scheduledUsers,
                   onSuccess: () {
-                    load();
+                    _loadSchedules();
                     Navigator.of(context).pop();
                   },
                 );
@@ -557,7 +572,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                           scheduledRoles: _scheduledRoles,
                           scheduledUsers: _scheduledUsers,
                           onSuccess: () {
-                            load();
+                            _loadSchedules();
                             Navigator.of(context).pop();
                           },
                         );
@@ -608,7 +623,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                                   scheduledRoles: _scheduledRoles,
                                   scheduledUsers: _scheduledUsers,
                                   onSuccess: () {
-                                    load();
+                                    _loadSchedules();
                                     Navigator.of(context).pop();
                                   },
                                 );
@@ -690,7 +705,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                     ShadButton(
                       onPressed: () async {
                         await _deleteSchedules();
-                        load();
+                        _loadSchedules();
                         onDeleteConfirmed?.call();
                       },
                       child: Text(strings.value.yes),
@@ -726,8 +741,8 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
       int totalPages, {
       int nbrAdditionalIndexesShown = 2,
     }) {
-      //print("currentPage: $currentPage");
-      //print("totalPages: $totalPages");
+      //printMessage("currentPage: $currentPage");
+      //printMessage("totalPages: $totalPages");
       List<int> indexes = [];
 
       indexes.add(1);
@@ -766,7 +781,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
 
         i++;
       }
-      //print(fIndexes);
+      //printMessage(fIndexes);
       return fIndexes;
     }
 
@@ -862,7 +877,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
       width: context.width,
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(10)),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
       child: Padding(
         padding: EdgeInsets.all(AppSizes.sm),
         child: Wrap(
@@ -911,6 +926,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
   }
 
   Future<void> _loadSchedules() async {
+    _isDataLoading.value = true;
     _getOrdering() {
       return _sortASC.value
           ? _sortersASC.entries
@@ -927,9 +943,14 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
 
     // Load alerts
     try {
+      logger.e("PerPageController: ${_perPageController.text}");
+      lastPerPage = _perPageController.text.isNotEmpty
+          ? int.tryParse(_perPageController.text)
+          : null;
+      lastSearch = _searchController.text;
       schedulesMeta = await api!.getEmailSchedules(
         page: page,
-        perPage: int.tryParse(_perPageController.text),
+        perPage: lastPerPage,
         interval: intervalFilter != null
             ? API_CLIENT.Interval.fromJson(intervalFilter!.json!)
             : null,
@@ -937,13 +958,13 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             ? API_CLIENT.Rapport.fromJson(rapportFilter!.json!)
             : null,
         ordering: _getOrdering(),
-        search:
-            _searchController.text.isNotEmpty ? _searchController.text : null,
+        search: lastSearch,
       );
       schedules = schedulesMeta.data.obs;
     } catch (e) {
       logger.e("Failed to load alerts : $e");
     }
+    _isDataLoading.value = false;
   }
 
   Future<void> load() async {
@@ -1002,7 +1023,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
                 ),
-          )),
+          )).removeWhen(isAtMostSmallScreen(context)),
       DataColumn2(
         size: ColumnSize.S,
         label: Expanded(
@@ -1051,26 +1072,33 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                 : e.interval.json?.toUpperCase() ?? strings.value.unknown,
             style: Theme.of(context).textTheme.bodyMedium,
           )).removeWhen(isAtMostSmallScreen(context)),
-          DataCell(Text(
+          DataCell(FittedBox(
+              child: Text(
             e.tempsEnvoi
                 .toString()
                 .substring(0, e.tempsEnvoi.toString().lastIndexOf(":"))
                 .toString(),
             style: Theme.of(context).textTheme.bodyMedium,
-          )).removeWhen(isAtMostSmallScreen(context)),
-          DataCell(
-            Text(
+          ))).removeWhen(isAtMostSmallScreen(context)),
+          DataCell(FittedBox(
+            child: Text(
               e.nextRunTime?.toString().split(".")[0].substring(
                       0, e.nextRunTime?.toString().lastIndexOf(":")) ??
                   strings.value.unscheduled,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-          ),
+          )).removeWhen(isAtMostSmallScreen(context)),
           DataCell(
             FittedBox(
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  IconButton(
+                    onPressed: () {
+                      _sendEmailNow(schedule: e);
+                    },
+                    icon: Icon(Icons.email),
+                  ).removeWhen(isAtMostSmallScreen(context)),
                   IconButton(
                     onPressed: () {
                       _showViewScheduleEmailDialog(schedule: e);
@@ -1098,13 +1126,21 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                             .surfaceContainerHighest,
                         border: ShadBorder.all(
                           width: 0,
-                          radius: BorderRadius.circular(10),
+                          radius: BorderRadius.circular(AppSizes.borderRadius),
                         )),
                     popover: (context) => SizedBox(
                       width: AppSizes.lg * 5,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          IconWithLabelButton(
+                            icon: Icons.email,
+                            text: "send",
+                            onTap: () => {
+                              _sendEmailNow(schedule: e),
+                              actionsController.toggle(),
+                            },
+                          ),
                           IconWithLabelButton(
                             icon: Icons.remove_red_eye_rounded,
                             text: "view",
@@ -1149,6 +1185,27 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
     }).toList();
   }
 
+  _sendEmailNow({
+    required EmailSchedule schedule,
+  }) async {
+    final state = FutureState.loading.obs;
+    final toast = Toasts.showStatefulToast(
+      context: context,
+      message: strings.value.sendingEmail,
+      messageSuccess: strings.value.emailSent,
+      messageError: strings.value.failedToSendEmail,
+      state: state,
+    );
+    await api!.sendScheduledEmailNow(emailScheduleId: schedule.id);
+    if (state.value != FutureState.error) {
+      state.value = FutureState.success;
+    }
+    Future.delayed(Duration(seconds: 2), () {
+      toastification.dismissById(toast.id);
+    });
+    ShadToaster.of(context).hide();
+  }
+
   _getColumnSpacing() {
     return isSmallScreen(context) ? AppSizes.sm : AppSizes.md;
   }
@@ -1183,7 +1240,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
     Future.delayed(Duration(seconds: 2), () {
       toastification.dismissById(toast.id);
     });
-    ShadToaster.of(Get.context!).hide();
+    ShadToaster.of(context).hide();
   }
 
   _topPageActions({
@@ -1199,7 +1256,6 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
     required ShadPopoverController sortPopoverController,
     required RxBool sortASC,
     required RxBool sortActive,
-    bool center = false,
   }) {
     final context = getContext;
 
@@ -1288,7 +1344,9 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                   expandPerPage: _expandPerPage,
                   perPageController: _perPageController,
                   perPage: int.tryParse(_perPageController.text)!,
-                  load: load,
+                  load: () => _perPageController.text != lastPerPage.toString()
+                      ? _loadSchedules()
+                      : null,
                 ),
               ),
             ],
@@ -1298,7 +1356,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             width: AppSizes.xl * 5,
             child: IconWithLabelButton(
               icon: Icons.refresh_rounded,
-              onTap: () => load(),
+              onTap: _loadSchedules,
               text: strings.value.refresh,
             ),
           ),
@@ -1318,7 +1376,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             _sortersASC[s] = Sorter(
                 isSelected: selected,
                 orderingValue: sorter.value.orderingValue);
-            load();
+            _loadSchedules();
           } else {
             _sortersASC[sorter.key] = Sorter(
                 isSelected: false, orderingValue: sorter.value.orderingValue);
@@ -1330,7 +1388,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             _sortersDESC[s] = Sorter(
                 isSelected: selected,
                 orderingValue: sorter.value.orderingValue);
-            load();
+            _loadSchedules();
           } else {
             _sortersDESC[sorter.key] = Sorter(
                 isSelected: false, orderingValue: sorter.value.orderingValue);
@@ -1431,7 +1489,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
               );
               sortASC.value = value == strings.value.asc;
               if (doLoad) {
-                load();
+                _loadSchedules();
               }
             },
           ),
@@ -1513,11 +1571,11 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             if (rapportFilter == value) {
               tagFilterController.clear();
               rapportFilter = null;
-              load();
+              _loadSchedules();
               return;
             }
             rapportFilter = value;
-            load();
+            _loadSchedules();
           },
           dropdownMenuEntries: [
             for (API_CLIENT.RapportEnum rapport in API_CLIENT.RapportEnum.values
@@ -1552,11 +1610,11 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             if (intervalFilter == value) {
               activationStateFilterController.clear();
               intervalFilter = null;
-              load();
+              _loadSchedules();
               return;
             }
             intervalFilter = value;
-            load();
+            _loadSchedules();
           },
           dropdownMenuEntries: [
             for (API_CLIENT.IntervalEnum interval in API_CLIENT
@@ -1578,7 +1636,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
         //right refresh button
         IconWithLabelButton(
           icon: Icons.refresh_rounded,
-          onTap: () => load(),
+          onTap: _loadSchedules,
           text: strings.value.refresh,
         ),
 
@@ -1588,7 +1646,9 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
         PerPageInput(
           expandPerPage: _expandPerPage,
           perPageController: _perPageController,
-          load: load,
+          load: () => _perPageController.text != lastPerPage.toString()
+              ? _loadSchedules()
+              : null,
         ),
         SizedBox(
           height: AppSizes.lg,
