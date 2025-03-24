@@ -66,4 +66,4 @@ COPY . .
 EXPOSE 443
 
 # Run the application.
-CMD cd ibdm_api && daphne -e ssl:443:privateKey=certs/ibdm.key:certKey=certs/ibdm.crt ibdm_api.asgi:application
+CMD cd ibdm_api && daphne -e ssl:8443:privateKey=certs/ibdm.key:certKey=certs/ibdm.crt ibdm_api.asgi:application

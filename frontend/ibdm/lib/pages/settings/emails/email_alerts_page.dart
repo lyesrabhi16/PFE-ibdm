@@ -759,8 +759,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       int totalPages, {
       int nbrAdditionalIndexesShown = 2,
     }) {
-      //print("currentPage: $currentPage");
-      //print("totalPages: $totalPages");
+      //printMessage("currentPage: $currentPage");
+      //printMessage("totalPages: $totalPages");
       List<int> indexes = [];
 
       indexes.add(1);
@@ -799,7 +799,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
 
         i++;
       }
-      //print(fIndexes);
+      //printMessage(fIndexes);
       return fIndexes;
     }
 
@@ -1256,7 +1256,6 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     required ShadPopoverController sortPopoverController,
     required RxBool sortASC,
     required RxBool sortActive,
-    bool center = false,
   }) {
     final context = getContext;
     final strings = getTranslations(context).obs;

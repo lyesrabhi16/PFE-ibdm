@@ -14,6 +14,7 @@ import 'package:ibdm/pages/settings/emails/actions.dart';
 import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart' as API_CLIENT;
+import 'package:ibdm/services/api_django/api_client/models/email_schedule.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
@@ -706,8 +707,8 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
       int totalPages, {
       int nbrAdditionalIndexesShown = 2,
     }) {
-      //print("currentPage: $currentPage");
-      //print("totalPages: $totalPages");
+      //printMessage("currentPage: $currentPage");
+      //printMessage("totalPages: $totalPages");
       List<int> indexes = [];
 
       indexes.add(1);
@@ -746,7 +747,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
 
         i++;
       }
-      //print(fIndexes);
+      //printMessage(fIndexes);
       return fIndexes;
     }
 
@@ -988,7 +989,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
                 ),
-          )),
+          )).removeWhen(isAtMostSmallScreen(context)),
       DataColumn2(
         size: ColumnSize.S,
         label: Expanded(
@@ -1037,26 +1038,33 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                 : e.interval.json?.toUpperCase() ?? strings.value.unknown,
             style: Theme.of(context).textTheme.bodyMedium,
           )).removeWhen(isAtMostSmallScreen(context)),
-          DataCell(Text(
+          DataCell(FittedBox(
+              child: Text(
             e.tempsEnvoi
                 .toString()
                 .substring(0, e.tempsEnvoi.toString().lastIndexOf(":"))
                 .toString(),
             style: Theme.of(context).textTheme.bodyMedium,
-          )).removeWhen(isAtMostSmallScreen(context)),
-          DataCell(
-            Text(
+          ))).removeWhen(isAtMostSmallScreen(context)),
+          DataCell(FittedBox(
+            child: Text(
               e.nextRunTime?.toString().split(".")[0].substring(
                       0, e.nextRunTime?.toString().lastIndexOf(":")) ??
                   strings.value.unscheduled,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-          ),
+          )).removeWhen(isAtMostSmallScreen(context)),
           DataCell(
             FittedBox(
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  IconButton(
+                    onPressed: () {
+                      _sendEmailNow(schedule: e);
+                    },
+                    icon: Icon(Icons.email),
+                  ).removeWhen(isAtMostSmallScreen(context)),
                   IconButton(
                     onPressed: () {
                       _showViewScheduleEmailDialog(schedule: e);
@@ -1091,6 +1099,14 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          IconWithLabelButton(
+                            icon: Icons.email,
+                            text: "send",
+                            onTap: () => {
+                              _sendEmailNow(schedule: e),
+                              actionsController.toggle(),
+                            },
+                          ),
                           IconWithLabelButton(
                             icon: Icons.remove_red_eye_rounded,
                             text: "view",
@@ -1133,6 +1149,27 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
         ].nonNulls.toList(),
       );
     }).toList();
+  }
+
+  _sendEmailNow({
+    required EmailSchedule schedule,
+  }) async {
+    final state = FutureState.loading.obs;
+    final toast = Toasts.showStatefulToast(
+      context: context,
+      message: strings.value.sendingEmail,
+      messageSuccess: strings.value.emailSent,
+      messageError: strings.value.failedToSendEmail,
+      state: state,
+    );
+    await api!.sendScheduledEmailNow(emailScheduleId: schedule.id);
+    if (state.value != FutureState.error) {
+      state.value = FutureState.success;
+    }
+    Future.delayed(Duration(seconds: 2), () {
+      toastification.dismissById(toast.id);
+    });
+    ShadToaster.of(context).hide();
   }
 
   _getColumnSpacing() {
@@ -1185,7 +1222,6 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
     required ShadPopoverController sortPopoverController,
     required RxBool sortASC,
     required RxBool sortActive,
-    bool center = false,
   }) {
     final context = getContext;
 

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:data_table_2/data_table_2.dart';
 import 'dart:ui';
@@ -28,7 +27,6 @@ import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/common/widgets/sent_email_form.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:toastification/toastification.dart';
-import 'package:universal_html/html.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class EmailSentsPage extends StatefulWidget {
@@ -324,8 +322,8 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
       int totalPages, {
       int nbrAdditionalIndexesShown = 2,
     }) {
-      //print("currentPage: $currentPage");
-      //print("totalPages: $totalPages");
+      //printMessage("currentPage: $currentPage");
+      //printMessage("totalPages: $totalPages");
       List<int> indexes = [];
 
       indexes.add(1);
@@ -364,7 +362,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
 
         i++;
       }
-      //print(fIndexes);
+      //printMessage(fIndexes);
       return fIndexes;
     }
 

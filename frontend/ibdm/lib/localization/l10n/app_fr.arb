@@ -379,36 +379,10 @@
 			}
 		}
 	},
-	"hour": "Heure: {hour}",
-	"@hour": {
-		"placeholders": {
-			"hour": {
-				"type": "String",
-				"description": "the hour to display",
-				"example": "15"
-			}
-		}
-	},
-	"minute": "Minute: {minute}",
-	"@minute": {
-		"placeholders": {
-			"minute": {
-				"type": "String",
-				"description": "the minute to display",
-				"example": "30"
-			}
-		}
-	},
-	"second": "Seconde: {second}",
-	"@second": {
-		"placeholders": {
-			"second": {
-				"type": "String",
-				"description": "the second to display",
-				"example": "45"
-			}
-		}
-	},
+	"hour": "Heure",
+	"minute": "Minute",
+	"second": "Seconde",
+	"pick": "Choisir",
 	"totalSucre": "Sucre Total :",
 	"totalSucreTetra": "Sucre Total Tetra :",
 	"totalSucreAdue": "Sucre Total Adue:",
@@ -601,5 +575,14 @@
 	"savingUser": "Sauvegarde de l'utilisateur...",
 	"failedToSaveUser": "Échec de la sauvegarde de l'utilisateur",
 	"userSavedSuccessfully": "Utilisateur sauvegardé avec succès",
-	"welcome": "Bienvenue"
+	"welcome": "Bienvenue",
+	"dataFound": "Données trouvées",
+	"retrievingData": "Récupération des données...",
+	"dataNotFound": "Données non trouvées",
+	"failedToLoadData": "Échec du chargement des données",
+    "utiliteTitle": "Utilite",
+	"sendingEmail": "Envoi de l'email...",
+	"emailSent": "Email envoyé",
+	"failedToSendEmail": "Échec de l'envoi de l'email",
+	"find": "Rechercher"
 }

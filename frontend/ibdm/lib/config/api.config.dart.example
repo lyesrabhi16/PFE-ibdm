@@ -9,5 +9,6 @@ class ApiConfig {
       'wss://server.ibdm.local.ifri/ws/filtration';
   static String sent_emails_broadcast_websocket_url =
       'wss://server.ibdm.local.ifri/ws/emails/sent';
-  
+  static String utilite_broadcast_websocket_url =
+      'wss://server.ibdm.local.ifri/ws/utilite';
 }

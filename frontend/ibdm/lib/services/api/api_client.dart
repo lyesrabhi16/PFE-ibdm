@@ -23,8 +23,7 @@ import 'package:dio/io.dart' show IOHttpClientAdapter;
 import 'package:flutter/foundation.dart'
     show ByteData, TargetPlatform, Uint8List, defaultTargetPlatform, kIsWeb;
 import 'package:ibdm/config/api.config.dart' show ApiConfig;
-import 'package:cookie_jar/cookie_jar.dart'
-    show CookieJar, FileStorage, PersistCookieJar;
+import 'package:cookie_jar/cookie_jar.dart' show FileStorage, PersistCookieJar;
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:path_provider/path_provider.dart'
@@ -81,7 +80,7 @@ class ApiClientInstance {
     //dio.interceptors.add(CsrfInterceptor());
     dio.interceptors.add(EnumFixInterceptor());
 
-    print("ApiClientInstance: Initialized");
+    printMessage("ApiClientInstance: Initialized");
   }
 
   static Future<IbdmApiClient> getApiClient() async {
@@ -98,7 +97,7 @@ class CsrfInterceptor extends Interceptor {
   final cookieName = "csrftoken";
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print("CsrfInterceptor: Start");
+    printMessage("CsrfInterceptor: Start");
 
     Map<String, String> getCookies() {
       String cookieStr = "";
@@ -121,16 +120,16 @@ class CsrfInterceptor extends Interceptor {
       }
 
       // Print the cookies map
-      //print(cookies);
+      //printMessage(cookies);
       return cookies;
     }
 
     final cookies = getCookies();
     if (cookies.containsKey(cookieName) && cookies[cookieName] != null) {
       options.headers[headerName] = cookies[cookieName];
-      print("CsrfInterceptor: Added Header '$headerName'");
+      printMessage("CsrfInterceptor: Added Header '$headerName'");
     }
-    print("CsrfInterceptor: End");
+    printMessage("CsrfInterceptor: End");
     super.onRequest(options, handler);
   }
 }
@@ -459,13 +458,13 @@ extension WebUsersFixedApis on IbdmApiClient {
 class EnumFixInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print("EnumFixInterceptor: Start");
+    printMessage("EnumFixInterceptor: Start");
     if (options.data is FormData) {
       checkEnumFromForm(options, "monitored_value", AlertEnum.values);
       checkEnumFromForm(options, "rapport", RapportEnum.values);
       checkEnumFromForm(options, "interval", IntervalEnum.values);
     }
-    print("EnumFixInterceptor: Finished");
+    printMessage("EnumFixInterceptor: Finished");
     super.onRequest(options, handler);
   }
 
@@ -499,12 +498,12 @@ class EnumFixInterceptor extends Interceptor {
   void checkEnumFromForm(
       RequestOptions options, String fieldName, List values) {
     if (_hasField((options.data as FormData).fields, fieldName)) {
-      print("EnumFixInterceptor: request has $fieldName field");
+      printMessage("EnumFixInterceptor: request has $fieldName field");
       for (var e in (options.data as FormData).fields) {
         if (e.key == fieldName) {
-          print(
+          printMessage(
               "EnumFixInterceptor: Found $fieldName field with value: ${e.value}");
-          print("runtimeType: ${values.runtimeType}");
+          printMessage("runtimeType: ${values.runtimeType}");
 
           dynamic v = null;
 
@@ -517,15 +516,16 @@ class EnumFixInterceptor extends Interceptor {
               break;
             }
           }
-          print("v: $v");
+          printMessage("v: $v");
           MapEntry<String, String> newE =
               MapEntry(e.key, v != null ? getTypeSafeJson(v) ?? "" : "");
           (options.data as FormData)
               .fields
               .insert((options.data as FormData).fields.indexOf(e), newE);
-          print("EnumFixInterceptor: created new $fieldName value: $newE");
+          printMessage(
+              "EnumFixInterceptor: created new $fieldName value: $newE");
           (options.data as FormData).fields.remove(e);
-          print(
+          printMessage(
               "EnumFixInterceptor: Changed ${e.key} from ${e.value} to ${newE.value}");
         }
       }
@@ -549,20 +549,20 @@ class EnumFixInterceptor extends Interceptor {
 class TestInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print("Interceptor Request: ${options.uri}");
+    printMessage("Interceptor Request: ${options.uri}");
     super.onRequest(options, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print(
+    printMessage(
         "Interceptor Response: ${response.statusCode} ${response.statusMessage}");
     super.onResponse(response, handler);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    print("Interceptor Error: ${err.message} ${err.response?.data}");
+    printMessage("Interceptor Error: ${err.message} ${err.response?.data}");
     super.onError(err, handler);
   }
 }
@@ -570,7 +570,7 @@ class TestInterceptor extends Interceptor {
 class RoleFixInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print("RoleFixInterceptor: Start");
+    printMessage("RoleFixInterceptor: Start");
     if (options.data is Map<String, dynamic>) {
       if (options.data.containsKey('role')) {
         options.data.fields['role'] = Role.values
@@ -579,10 +579,10 @@ class RoleFixInterceptor extends Interceptor {
       }
     } else if (options.data is FormData) {
       if (_hasRoleField((options.data as FormData).fields)) {
-        print("RoleFixInterceptor: request has role field");
+        printMessage("RoleFixInterceptor: request has role field");
         for (var e in (options.data as FormData).fields) {
           if (e.key == "role") {
-            print(
+            printMessage(
                 "RoleFixInterceptor: Found role field with value: ${e.value}");
             MapEntry<String, String> newE = MapEntry(
                 e.key,
@@ -603,15 +603,15 @@ class RoleFixInterceptor extends Interceptor {
             (options.data as FormData)
                 .fields
                 .insert((options.data as FormData).fields.indexOf(e), newE);
-            print("RoleFixInterceptor: created new role value: $newE");
+            printMessage("RoleFixInterceptor: created new role value: $newE");
             (options.data as FormData).fields.remove(e);
-            print(
+            printMessage(
                 "RoleFixInterceptor: Changed ${e.key} from ${e.value} to ${newE.value}");
           }
         }
       }
     }
-    print("RoleFixInterceptor: Finished");
+    printMessage("RoleFixInterceptor: Finished");
     super.onRequest(options, handler);
   }
 

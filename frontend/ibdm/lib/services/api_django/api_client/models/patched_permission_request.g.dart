@@ -1,0 +1,23 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'patched_permission_request.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+PatchedPermissionRequest _$PatchedPermissionRequestFromJson(
+        Map<String, dynamic> json) =>
+    PatchedPermissionRequest(
+      name: json['name'] as String,
+      codename: json['codename'] as String,
+      contentType: (json['content_type'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$PatchedPermissionRequestToJson(
+        PatchedPermissionRequest instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'codename': instance.codename,
+      'content_type': instance.contentType,
+    };

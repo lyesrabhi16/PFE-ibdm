@@ -18,25 +18,14 @@ class _IbdmApiClient implements IbdmApiClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<LoginResponse> login({
-    required String email,
-    required String password,
-    bool rememberMe = false,
-  }) async {
+  Future<LoginResponse> login({required LoginRequestRequest body}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('email', email));
-    _data.fields.add(MapEntry('password', password));
-    _data.fields.add(MapEntry('remember_me', rememberMe.toString()));
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<LoginResponse>(
-      Options(
-        method: 'POST',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/auth/login',
@@ -235,61 +224,14 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<AlertEmail> addAlertEmail({
-    required AlertEnum monitoredValue,
-    List<String>? sendToUsers,
-    int? dangerPoint,
-    int? warningPoint,
-    int? dangerReminderInterval,
-    int? warningReminderInterval,
-    String? customAlertMessage,
-    bool? enabled,
-    List<int?>? sendToRoles,
-  }) async {
+  Future<AlertEmail> addAlertEmail({required AlertEmailRequest body}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
-    sendToUsers?.forEach((i) {
-      _data.fields.add(MapEntry('send_to_users', i));
-    });
-    if (dangerPoint != null) {
-      _data.fields.add(MapEntry('danger_point', dangerPoint.toString()));
-    }
-    if (warningPoint != null) {
-      _data.fields.add(MapEntry('warning_point', warningPoint.toString()));
-    }
-    if (dangerReminderInterval != null) {
-      _data.fields.add(
-        MapEntry('danger_reminder_interval', dangerReminderInterval.toString()),
-      );
-    }
-    if (warningReminderInterval != null) {
-      _data.fields.add(
-        MapEntry(
-          'warning_reminder_interval',
-          warningReminderInterval.toString(),
-        ),
-      );
-    }
-    if (customAlertMessage != null) {
-      _data.fields.add(MapEntry('custom_alert_message', customAlertMessage));
-    }
-    if (enabled != null) {
-      _data.fields.add(MapEntry('enabled', enabled.toString()));
-    }
-    sendToRoles?.forEach((i) {
-      _data.fields.add(MapEntry('send_to_roles', i.toString()));
-    });
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<AlertEmail>(
-      Options(
-        method: 'POST',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/emails/alerts/',
@@ -339,60 +281,15 @@ class _IbdmApiClient implements IbdmApiClient {
   @override
   Future<AlertEmail> updateAlertEmail({
     required int id,
-    required AlertEnum monitoredValue,
-    List<String>? sendToUsers,
-    int? dangerPoint,
-    int? warningPoint,
-    int? dangerReminderInterval,
-    int? warningReminderInterval,
-    String? customAlertMessage,
-    bool? enabled,
-    List<int?>? sendToRoles,
+    required AlertEmailRequest body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
-    sendToUsers?.forEach((i) {
-      _data.fields.add(MapEntry('send_to_users', i));
-    });
-    if (dangerPoint != null) {
-      _data.fields.add(MapEntry('danger_point', dangerPoint.toString()));
-    }
-    if (warningPoint != null) {
-      _data.fields.add(MapEntry('warning_point', warningPoint.toString()));
-    }
-    if (dangerReminderInterval != null) {
-      _data.fields.add(
-        MapEntry('danger_reminder_interval', dangerReminderInterval.toString()),
-      );
-    }
-    if (warningReminderInterval != null) {
-      _data.fields.add(
-        MapEntry(
-          'warning_reminder_interval',
-          warningReminderInterval.toString(),
-        ),
-      );
-    }
-    if (customAlertMessage != null) {
-      _data.fields.add(MapEntry('custom_alert_message', customAlertMessage));
-    }
-    if (enabled != null) {
-      _data.fields.add(MapEntry('enabled', enabled.toString()));
-    }
-    sendToRoles?.forEach((i) {
-      _data.fields.add(MapEntry('send_to_roles', i.toString()));
-    });
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<AlertEmail>(
-      Options(
-        method: 'PUT',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/emails/alerts/${id}/',
@@ -415,62 +312,16 @@ class _IbdmApiClient implements IbdmApiClient {
   @override
   Future<AlertEmail> partialUpdateAlertEmail({
     required int id,
-    List<String>? sendToUsers,
-    AlertEnum? monitoredValue,
-    int? dangerPoint,
-    int? warningPoint,
-    int? dangerReminderInterval,
-    int? warningReminderInterval,
-    String? customAlertMessage,
-    bool? enabled,
-    List<int?>? sendToRoles,
+    PatchedAlertEmailRequest? body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    sendToUsers?.forEach((i) {
-      _data.fields.add(MapEntry('send_to_users', i));
-    });
-    if (monitoredValue != null) {
-      _data.fields.add(MapEntry('monitored_value', monitoredValue.name));
-    }
-    if (dangerPoint != null) {
-      _data.fields.add(MapEntry('danger_point', dangerPoint.toString()));
-    }
-    if (warningPoint != null) {
-      _data.fields.add(MapEntry('warning_point', warningPoint.toString()));
-    }
-    if (dangerReminderInterval != null) {
-      _data.fields.add(
-        MapEntry('danger_reminder_interval', dangerReminderInterval.toString()),
-      );
-    }
-    if (warningReminderInterval != null) {
-      _data.fields.add(
-        MapEntry(
-          'warning_reminder_interval',
-          warningReminderInterval.toString(),
-        ),
-      );
-    }
-    if (customAlertMessage != null) {
-      _data.fields.add(MapEntry('custom_alert_message', customAlertMessage));
-    }
-    if (enabled != null) {
-      _data.fields.add(MapEntry('enabled', enabled.toString()));
-    }
-    sendToRoles?.forEach((i) {
-      _data.fields.add(MapEntry('send_to_roles', i.toString()));
-    });
+    final _data = <String, dynamic>{};
+    _data.addAll(body?.toJson() ?? <String, dynamic>{});
     final _options = _setStreamType<AlertEmail>(
-      Options(
-        method: 'PATCH',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/emails/alerts/${id}/',
@@ -718,6 +569,35 @@ class _IbdmApiClient implements IbdmApiClient {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     await _dio.fetch<void>(_options);
+  }
+
+  @override
+  Future<SuccessResponse> sendScheduledEmailNow({
+    required int emailScheduleId,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<SuccessResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/emails/send/schedule/${emailScheduleId}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SuccessResponse _value;
+    try {
+      _value = SuccessResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override
@@ -1405,19 +1285,14 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<Group> addGroup({required String name}) async {
+  Future<Group> addGroup({required GroupRequest body}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('name', name));
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<Group>(
-      Options(
-        method: 'POST',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/groups/',
@@ -1465,19 +1340,17 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<Group> updateGroup({required int id, required String name}) async {
+  Future<Group> updateGroup({
+    required int id,
+    required GroupRequest body,
+  }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('name', name));
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<Group>(
-      Options(
-        method: 'PUT',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/groups/${id}/',
@@ -1498,22 +1371,18 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<Group> partialUpdateGroup({required int id, String? name}) async {
+  Future<Group> partialUpdateGroup({
+    required int id,
+    PatchedGroupRequest? body,
+  }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (name != null) {
-      _data.fields.add(MapEntry('name', name));
-    }
+    final _data = <String, dynamic>{};
+    _data.addAll(body?.toJson() ?? <String, dynamic>{});
     final _options = _setStreamType<Group>(
-      Options(
-        method: 'PATCH',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/groups/${id}/',
@@ -1589,25 +1458,14 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<Permission> addPermission({
-    required String name,
-    required String codename,
-    required int contentType,
-  }) async {
+  Future<Permission> addPermission({required PermissionRequest body}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('name', name));
-    _data.fields.add(MapEntry('codename', codename));
-    _data.fields.add(MapEntry('content_type', contentType.toString()));
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<Permission>(
-      Options(
-        method: 'POST',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/permissions/',
@@ -1657,24 +1515,15 @@ class _IbdmApiClient implements IbdmApiClient {
   @override
   Future<Permission> updatePermission({
     required int id,
-    required String name,
-    required String codename,
-    required int contentType,
+    required PermissionRequest body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('name', name));
-    _data.fields.add(MapEntry('codename', codename));
-    _data.fields.add(MapEntry('content_type', contentType.toString()));
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<Permission>(
-      Options(
-        method: 'PUT',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/permissions/${id}/',
@@ -1697,31 +1546,16 @@ class _IbdmApiClient implements IbdmApiClient {
   @override
   Future<Permission> partialUpdatePermission({
     required int id,
-    String? name,
-    String? codename,
-    int? contentType,
+    PatchedPermissionRequest? body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (name != null) {
-      _data.fields.add(MapEntry('name', name));
-    }
-    if (codename != null) {
-      _data.fields.add(MapEntry('codename', codename));
-    }
-    if (contentType != null) {
-      _data.fields.add(MapEntry('content_type', contentType.toString()));
-    }
+    final _data = <String, dynamic>{};
+    _data.addAll(body?.toJson() ?? <String, dynamic>{});
     final _options = _setStreamType<Permission>(
-      Options(
-        method: 'PATCH',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/permissions/${id}/',
@@ -1797,30 +1631,14 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<Role> addRole({
-    required int groupId,
-    required List<String> managedRoles,
-    String? color,
-  }) async {
+  Future<Role> addRole({required RoleRequest body}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('group_id', groupId.toString()));
-    managedRoles.forEach((i) {
-      _data.fields.add(MapEntry('managed_roles', i));
-    });
-    if (color != null) {
-      _data.fields.add(MapEntry('color', color));
-    }
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<Role>(
-      Options(
-        method: 'POST',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/roles/',
@@ -1868,31 +1686,14 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
-  Future<Role> updateRole({
-    required int id,
-    required int groupId,
-    required List<String> managedRoles,
-    String? color,
-  }) async {
+  Future<Role> updateRole({required int id, required RoleRequest body}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('group_id', groupId.toString()));
-    managedRoles.forEach((i) {
-      _data.fields.add(MapEntry('managed_roles', i));
-    });
-    if (color != null) {
-      _data.fields.add(MapEntry('color', color));
-    }
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<Role>(
-      Options(
-        method: 'PUT',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/roles/${id}/',
@@ -1915,31 +1716,16 @@ class _IbdmApiClient implements IbdmApiClient {
   @override
   Future<Role> partialUpdateRole({
     required int id,
-    int? groupId,
-    List<String>? managedRoles,
-    String? color,
+    PatchedRoleRequest? body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (groupId != null) {
-      _data.fields.add(MapEntry('group_id', groupId.toString()));
-    }
-    managedRoles?.forEach((i) {
-      _data.fields.add(MapEntry('managed_roles', i));
-    });
-    if (color != null) {
-      _data.fields.add(MapEntry('color', color));
-    }
+    final _data = <String, dynamic>{};
+    _data.addAll(body?.toJson() ?? <String, dynamic>{});
     final _options = _setStreamType<Role>(
-      Options(
-        method: 'PATCH',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/roles/${id}/',
@@ -2016,22 +1802,15 @@ class _IbdmApiClient implements IbdmApiClient {
 
   @override
   Future<SubordinateAndSuperior> addSubordinateAndSuperior({
-    required int superior,
-    required int subordinate,
+    required SubordinateAndSuperiorRequest body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('superior', superior.toString()));
-    _data.fields.add(MapEntry('subordinate', subordinate.toString()));
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<SubordinateAndSuperior>(
-      Options(
-        method: 'POST',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/subordinates_superiors/',
@@ -2083,22 +1862,15 @@ class _IbdmApiClient implements IbdmApiClient {
   @override
   Future<SubordinateAndSuperior> updateSubordinateAndSuperior({
     required int id,
-    required int superior,
-    required int subordinate,
+    required SubordinateAndSuperiorRequest body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('superior', superior.toString()));
-    _data.fields.add(MapEntry('subordinate', subordinate.toString()));
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<SubordinateAndSuperior>(
-      Options(
-        method: 'PUT',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/subordinates_superiors/${id}/',
@@ -2121,27 +1893,16 @@ class _IbdmApiClient implements IbdmApiClient {
   @override
   Future<SubordinateAndSuperior> partialUpdateSubordinateAndSuperior({
     required int id,
-    int? superior,
-    int? subordinate,
+    PatchedSubordinateAndSuperiorRequest? body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    if (superior != null) {
-      _data.fields.add(MapEntry('superior', superior.toString()));
-    }
-    if (subordinate != null) {
-      _data.fields.add(MapEntry('subordinate', subordinate.toString()));
-    }
+    final _data = <String, dynamic>{};
+    _data.addAll(body?.toJson() ?? <String, dynamic>{});
     final _options = _setStreamType<SubordinateAndSuperior>(
-      Options(
-        method: 'PATCH',
-        headers: _headers,
-        extra: _extra,
-        contentType: 'multipart/form-data',
-      )
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/v1/user-management/subordinates_superiors/${id}/',
