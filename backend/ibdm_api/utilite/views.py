@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.http import JsonResponse
 from rest_framework import viewsets,permissions
-from api_v1.utils import with_operation_ids
+from api_v1.utils import get_value_at, with_operation_ids
 from api_v1.serializers import FeedMetaDataSerializer
 from utilite.models import Co2Ifruit, Utilite
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -86,25 +86,24 @@ def getCo2IfruitAtSpecificTime(request):
     """
     getCo2IfruitAtSpecificTime
     """
-    year = request.query_params.get('year', None)
-    month = request.query_params.get('month', "01")
-    day = request.query_params.get('day', "01")
-    hour = request.query_params.get('hour', "00")
-    minute = request.query_params.get('minute', "00")
-    second = request.query_params.get('second', "00")
+    year = int(request.query_params.get('year', None))
+    month = int(request.query_params.get('month', "01"))
+    day = int(request.query_params.get('day', "01"))
+    hour = int(request.query_params.get('hour', "00"))
+    minute = int(request.query_params.get('minute', "00"))
+    second = int(request.query_params.get('second', "00"))
 
-    filters = {
-        "date__year": year,
-        "date__month": month,
-        "date__day": day,
-        "date__hour": hour,
-        "date__minute": minute,
-        "date__second": second
-    }
-    
+    date = datetime(
+        year=year,
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        second=second,
+    )
+        
 
-    queryset = Co2Ifruit.objects.filter(**filters)
-    record = queryset.first()
+    record = get_value_at(Co2Ifruit, date)
 
     if (record):
         return JsonResponse(Co2IfruitSerializer(record).data)
@@ -167,25 +166,23 @@ def getUtiliteAtSpecificTime(request):
     """
     getUtiliteAtSpecificTime
     """
-    year = request.query_params.get('year', None)
-    month = request.query_params.get('month', "01")
-    day = request.query_params.get('day', "01")
-    hour = request.query_params.get('hour', "00")
-    minute = request.query_params.get('minute', "00")
-    second = request.query_params.get('second', "00")
+    year = int(request.query_params.get('year', None))
+    month = int(request.query_params.get('month', "01"))
+    day = int(request.query_params.get('day', "01"))
+    hour = int(request.query_params.get('hour', "00"))
+    minute = int(request.query_params.get('minute', "00"))
+    second = int(request.query_params.get('second', "00"))
 
-    filters = {
-        "date__year": year,
-        "date__month": month,
-        "date__day": day,
-        "date__hour": hour,
-        "date__minute": minute,
-        "date__second": second
-    }
-    
+    date = datetime(
+        year=year,
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        second=second,
+    )
 
-    queryset = Utilite.objects.filter(**filters)
-    record = queryset.first()
+    record = get_value_at(Utilite, date)
 
     if (record):
         return JsonResponse(UtiliteSerializer(record).data)

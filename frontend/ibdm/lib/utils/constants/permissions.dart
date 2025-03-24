@@ -8,4 +8,5 @@ class Permissions {
   static const viewEmailSchedules = "can_view_email_schedule_settings";
   static const viewEmailAlerts = "can_view_email_alerts";
   static const viewEmailsSent = "can_view_emails_sent";
+  static const viewUtilitePage = "can_view_utilite_page";
 }

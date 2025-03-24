@@ -1,0 +1,46 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, unused_import
+
+import 'package:json_annotation/json_annotation.dart';
+
+import 'alert_enum.dart';
+
+part 'alert_email_request.g.dart';
+
+@JsonSerializable()
+class AlertEmailRequest {
+  const AlertEmailRequest({
+    required this.monitoredValue,
+    this.dangerPoint,
+    this.warningPoint,
+    this.dangerReminderInterval,
+    this.warningReminderInterval,
+    this.customAlertMessage,
+    this.sendToUsers,
+    this.sendToRoles,
+    this.enabled,
+  });
+  
+  factory AlertEmailRequest.fromJson(Map<String, Object?> json) => _$AlertEmailRequestFromJson(json);
+  
+  @JsonKey(name: 'monitored_value')
+  final AlertEnum monitoredValue;
+  @JsonKey(name: 'danger_point')
+  final int? dangerPoint;
+  @JsonKey(name: 'warning_point')
+  final int? warningPoint;
+  @JsonKey(name: 'danger_reminder_interval')
+  final int? dangerReminderInterval;
+  @JsonKey(name: 'warning_reminder_interval')
+  final int? warningReminderInterval;
+  @JsonKey(name: 'custom_alert_message')
+  final String? customAlertMessage;
+  @JsonKey(name: 'send_to_users')
+  final List<String?>? sendToUsers;
+  @JsonKey(name: 'send_to_roles')
+  final List<int?>? sendToRoles;
+  final bool? enabled;
+
+  Map<String, Object?> toJson() => _$AlertEmailRequestToJson(this);
+}

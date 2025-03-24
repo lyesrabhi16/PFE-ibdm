@@ -7,6 +7,8 @@ base_path = os.path.abspath(os.path.dirname(__file__)).split('backend')[0]
 replacer_path = os.path.join(base_path, 'backend', 'replacer.json')
 openapi_client_path = os.path.join(base_path, 'frontend', 'ibdm', 'lib', 'api', 'openapi.spec.json')
 
+print(f"openapi client loaded: {os.path.exists(openapi_client_path)}")
+
 with open(openapi_client_path, 'r') as f:
     openapi_client : dict = json.load(f)
 

@@ -7,11 +7,11 @@ import 'package:ibdm/common/controllers/routes_controller.dart';
 import 'package:ibdm/common/controllers/side_menu_state_controller.dart';
 import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
-import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/initial_binding.dart';
 import 'package:ibdm/pages/filtration.dart/filtration.dart';
 import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
+import 'package:ibdm/pages/utilite/utilite.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ibdm/utils/theme/theme.dart';
@@ -63,6 +63,11 @@ class MyApp extends StatelessWidget {
             getPages: routesController.routes.value,
             textDirection: TextDirection.ltr,
             routingCallback: (routing) {
+              if (!Routes.routePages.keys.contains(routing?.current)) {
+                Get.toNamed(Routes.notFound);
+                return;
+              }
+
               if ((routing?.current != Routes.siroperie) &&
                   SiroperiePage.stream != null) {
                 logger.e("closing siroperie channel");
@@ -75,6 +80,13 @@ class MyApp extends StatelessWidget {
                 logger.e("closing filtration channel");
                 FiltrationPage.channel?.sink.close();
                 FiltrationPage.stream = null;
+              }
+
+              if ((routing?.current != Routes.utilite) &&
+                  (UtilitePage.stream != null)) {
+                logger.e("closing utilite channel");
+                UtilitePage.channel?.sink.close();
+                UtilitePage.stream = null;
               }
 
               if ((routing?.current != Routes.emailSent) &&
@@ -95,12 +107,11 @@ class MyApp extends StatelessWidget {
               return child ?? Container();
             },
             onUnknownRoute: (settings) {
+              logger.e("Unknown route: ${settings.name}");
+              Get.toNamed(Routes.notFound);
               return GetPageRoute(
-                page: () => Scaffold(
-                  body: Center(
-                    child: Text("Page not found"),
-                  ),
-                ),
+                page: Routes.routePages[Routes.notFound]!.page,
+                settings: settings,
               );
             },
           ),

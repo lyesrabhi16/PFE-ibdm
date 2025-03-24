@@ -1,7 +1,10 @@
+version: "2.4"
 services:
   dns_server_bind9:
     container_name: dns_server_bind9
     image: ubuntu/bind9:latest
+    security_opt:
+      - seccomp:unconfined
     environment:
       - BIND9_USER=root
     ports:

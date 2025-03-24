@@ -128,7 +128,7 @@ class UserForm extends StatelessWidget {
           child: CircularProgressIndicator(),
         );
       }
-      userRole.value ??= role ?? roles.firstOrNull;
+      userRole.value = role ?? roles.firstOrNull;
       logger
           .e("User: $user ${user?.avatarUrl} ${_addUserAvatarSelected.value}");
       return Form(

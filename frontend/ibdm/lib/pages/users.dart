@@ -22,7 +22,6 @@ import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
-import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:universal_io/io.dart';
@@ -46,7 +45,6 @@ class UsersPage extends StatelessWidget {
     text: "${perPage?.value}",
   );
   static final Rx<bool> _expandPerPage = false.obs;
-  static final _perPageFormKey = GlobalKey<FormState>();
 
   static final Rx<bool> _filtersActive = false.obs;
   static final Rx<bool> _optionsActive = false.obs;
@@ -197,8 +195,8 @@ class UsersPage extends StatelessWidget {
     int totalPages, {
     int nbrAdditionalIndexesShown = 2,
   }) {
-    //print("currentPage: $currentPage");
-    //print("totalPages: $totalPages");
+    //printMessage("currentPage: $currentPage");
+    //printMessage("totalPages: $totalPages");
     List<int> indexes = [];
 
     indexes.add(1);
@@ -237,7 +235,7 @@ class UsersPage extends StatelessWidget {
 
       i++;
     }
-    //print(fIndexes);
+    //printMessage(fIndexes);
     return fIndexes;
   }
 
@@ -1356,25 +1354,6 @@ class UsersPage extends StatelessWidget {
     }
   }
 
-  void _executeChangePerPageIfPossible(BuildContext context) {
-    if (_perPageFormKey.currentState != null &&
-        _perPageFormKey.currentState!.validate()) {
-      _loadUsers(context);
-    }
-  }
-
-  void _changePerPage(BuildContext context, String value) {
-    if (value.isEmpty) {
-      _perPageController.text = "${perPage?.value}";
-    }
-    int? newPerPage = int.tryParse(value);
-
-    if (newPerPage != null) {
-      perPage?.value = newPerPage;
-      LocalStorage.setPerPage(newPerPage);
-    }
-  }
-
   _getName(User user, {bool orEmail = false}) {
     return user.username.isNotEmpty
         ? user.username
@@ -1733,7 +1712,9 @@ class UsersPage extends StatelessWidget {
 
       if (_addUserSuperior != null) {
         await api.addSubordinateAndSuperior(
-            superior: _addUserSuperior!.userId, subordinate: res.userId);
+          body: SubordinateAndSuperiorRequest(
+              superior: _addUserSuperior!.userId, subordinate: res.userId),
+        );
       } else {
         logger.e("superior is null");
       }
@@ -1814,14 +1795,16 @@ class UsersPage extends StatelessWidget {
       if (_addUserSuperior != null) {
         if (user.superiors.isEmpty) {
           await api.addSubordinateAndSuperior(
-              superior: _addUserSuperior!.userId, subordinate: res.userId);
+              body: SubordinateAndSuperiorRequest(
+                  superior: _addUserSuperior!.userId, subordinate: res.userId));
         } else {
           final res = await api.getSubordinateAndSuperiorId(
               superior: user.superiors.first.userId, subordinate: user.userId);
           await api.partialUpdateSubordinateAndSuperior(
-              id: res.id,
-              superior: _addUserSuperior!.userId,
-              subordinate: user.userId);
+            id: res.id,
+            body: PatchedSubordinateAndSuperiorRequest(
+                superior: _addUserSuperior!.userId, subordinate: user.userId),
+          );
         }
       } else {
         logger.e("superior is null");

@@ -42,8 +42,8 @@ class EmailScheduleForm extends StatelessWidget {
 
   _valuesChanged() {
     if (!editable) return;
-    print("interval: ${interval!.value}");
-    print("nextRunTime: ${nextRunTime}");
+    printMessage("interval: ${interval!.value}");
+    printMessage("nextRunTime: ${nextRunTime}");
     onValuesChanged?.call(
       rapport: rapport,
       tempsEnvoi:
@@ -216,9 +216,9 @@ class EmailScheduleForm extends StatelessWidget {
                         child: Text(value.json ?? strings.value.unknown)),
                     initialValue: schedule?.interval ?? interval?.value,
                     onChanged: (v) {
-                      print("set interval: $v");
+                      printMessage("set interval: $v");
                       interval!.value = v!;
-                      print("interval set: ${interval!.value}");
+                      printMessage("interval set: ${interval!.value}");
                       _valuesChanged();
                     },
                     placeholder: Container(
