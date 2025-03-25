@@ -3,6 +3,7 @@ from datetime import datetime
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 
+from logs.logging import logger as logging
 
 def get_value_at(model, date):
 
@@ -30,15 +31,15 @@ def get_midnight_value(model):
     ).first()
 
 def print_log(name="LOG", *args):
-    print("="*5+">"+name+"<"+"="*5)
-    print("="*5+">"+name+"<"+"="*5)
-    print("="*5+">"+name+"<"+"="*5)
-    print("="*5+">"+name+"<"+"="*5)
-    print(datetime.now(), args)
-    print("="*5+">"+name+"<"+"="*5)
-    print("="*5+">"+name+"<"+"="*5)
-    print("="*5+">"+name+"<"+"="*5)
-    print("="*5+">"+name+"<"+"="*5)
+    logging.info("="*5+">"+name+"<"+"="*5)
+    logging.info("="*5+">"+name+"<"+"="*5)
+    logging.info("="*5+">"+name+"<"+"="*5)
+    logging.info("="*5+">"+name+"<"+"="*5)
+    logging.info(datetime.now(), args)
+    logging.info("="*5+">"+name+"<"+"="*5)
+    logging.info("="*5+">"+name+"<"+"="*5)
+    logging.info("="*5+">"+name+"<"+"="*5)
+    logging.info("="*5+">"+name+"<"+"="*5)
 
 def get_or_none(class_model, get_function, args, **kwargs):
     try:

@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"install:deps": "cd backend && pipenv sync",
-		"dev:server": "cd backend && pipenv run start_https",
+		"dev:server": "cd backend && pipenv run start_server",
 		"dev:app": "cd frontend/ibdm && flutter run",
 		"dev:web": "cd frontend/ibdm && flutter run -d chrome",
 		"dev:web:external": "cd frontend/ibdm && flutter run -d chrome --web-hostname app.ibdm.local.ifri --web-port 8001",

@@ -4,7 +4,7 @@ from openpyxl.utils import get_column_letter
 import os
 
 from ibdm_api.settings import BASE_DIR
-
+from logs.logging import logger as logging
 def ensurePathExists(path:str):
     _path = path.split("/")
     _path.pop()
@@ -25,21 +25,13 @@ def generateExcelReport(
     force=False,
 ):
     
-    print("GENERATE_EXCEL_REPORT")
-    print("GENERATE_EXCEL_REPORT")
-    print("GENERATE_EXCEL_REPORT")
     output_file = f"data/rapports/{filename}.xlsx"
     ensurePathExists(output_file)
     # check if report already exists
     if not force:
         exists = os.path.isfile(os.path.join(BASE_DIR, output_file))
         if exists:
-            print(f"re-using existing file {output_file}")
-            
-            print("GENERATE_EXCEL_REPORT")
-            print("GENERATE_EXCEL_REPORT")
-            print("GENERATE_EXCEL_REPORT")
-    
+            logging.info(f"re-using existing file {output_file}")
             return output_file
 
     # Create a new workbook and select the active worksheet
@@ -123,9 +115,6 @@ def generateExcelReport(
     # Save the workbook
     wb.save(output_file)
 
-    print(f"Excel file '{output_file}' created successfully!")
+    logging.info(f"Excel file '{output_file}' created successfully!")
     
-    print("GENERATE_EXCEL_REPORT")
-    print("GENERATE_EXCEL_REPORT")
-    print("GENERATE_EXCEL_REPORT")
     return output_file

@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from corsheaders.defaults import default_headers
-
+import logging
 from api_v1.env import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -176,17 +176,6 @@ DATABASES = {
             "driver": "ODBC Driver 17 for SQL Server",
         },
     },
-    "automate": {
-        "ENGINE": "mssql",
-        "NAME": Env.DATABASE_AUTOMATE_NAME,
-        "USER": Env.DATABASE_AUTOMATE_USER,
-        "PASSWORD": Env.DATABASE_AUTOMATE_PASSWORD,
-        "HOST": Env.DATABASE_AUTOMATE_HOST,
-        "PORT": Env.DATABASE_AUTOMATE_PORT,
-        "OPTIONS": {
-            "driver": "ODBC Driver 17 for SQL Server",
-        },
-    },
 }
 CONN_MAX_AGE = None
 
@@ -321,3 +310,85 @@ EMAIL_PORT = Env.EMAIL_PORT
 EMAIL_HOST_USER =  Env.EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD =  Env.EMAIL_HOST_PASSWORD
 EMAIL_OF_SENDER = Env.EMAIL_OF_SENDER
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '{asctime} {levelname} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file_debug': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'debug.log'),
+            'formatter': 'verbose',
+            'filters': ['debug_filter'],
+        },
+        'file_info': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'info.log'),
+            'formatter': 'verbose',
+            'filters': ['info_filter'],
+        },
+        'file_warning': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'warning.log'),
+            'formatter': 'verbose',
+            'filters': ['warning_filter'],
+        },
+        'file_error': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'error.log'),
+            'formatter': 'verbose',
+            'filters': ['error_filter'],
+        },
+        'file_critical': {
+            'level': 'CRITICAL',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'critical.log'),
+            'formatter': 'verbose',
+            'filters': ['critical_filter'],
+        },
+    },
+    "root": {
+        "level": "DEBUG",
+        "handlers": ["file_debug", "file_info", "file_warning", "file_error", "file_critical"],
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file_debug', 'file_info', "file_warning", "file_error", "file_critical"],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+    'filters': {
+        'debug_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: record.levelno == logging.DEBUG
+        },
+        'info_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: record.levelno == logging.INFO
+        },
+        'warning_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: record.levelno == logging.WARNING
+        },
+        'error_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: record.levelno == logging.ERROR
+        },
+        'critical_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: record.levelno == logging.CRITICAL
+        },
+    },
+}

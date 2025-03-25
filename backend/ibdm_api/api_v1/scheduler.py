@@ -1,4 +1,4 @@
-import logging
+from logs.logging import logger as logging
 from apscheduler.schedulers.twisted import TwistedScheduler
 from api_v1.broadcasts.filtration_broadcast import broadcast_filtration
 from api_v1.broadcasts.sucre_broadcast import broadcast_sucre
@@ -55,5 +55,4 @@ scheduler.add_job(
     id="email_scheduler",
 )
 
-logging.getLogger('apscheduler.executors.default').setLevel(logging.WARNING)
 scheduler.start()

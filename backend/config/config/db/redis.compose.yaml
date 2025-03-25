@@ -8,6 +8,7 @@ services:
         - '6379:6379'
       volumes:
         - data:/data
+        - ./config/redis.conf:/etc/redis.conf
 volumes:
   data:
     driver: local
