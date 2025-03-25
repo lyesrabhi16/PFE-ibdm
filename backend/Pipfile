@@ -29,7 +29,7 @@ python_version = "3.12.9"
 
 [scripts]
 "start_server" = "cd ibdm_api && daphne -e ssl:8443:privateKey=certs/ibdm.key:certKey=certs/ibdm.crt ibdm_api.asgi:application"
-"link_docker" = "docker-machine env | Invoke-Expression"
+"link_docker" = "docker-machine env default | Invoke-Expression"
 "start_dev" = "cd ibdm_api && python manage.py runserver"
 "migrate"  = "cd ibdm_api && python manage.py makemigrations && python manage.py migrate"
 "createsuperuser" = "cd ibdm_api && python manage.py createsuperuser"

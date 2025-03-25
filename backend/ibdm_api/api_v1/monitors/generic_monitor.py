@@ -2,11 +2,11 @@ from datetime import timedelta, datetime
 import threading
 from django.core.mail import send_mail
 from django.conf import settings
-import logging
+from logs.logging import logger as logging
 from emails.models import CUSTOM_MONITORED_VALUES, AlertEmail, SentAlertEmail, sentEmail
 from users.models import User
 from django.template.loader import render_to_string
-
+from logs.logging import logger as logging
 
 
 def getValueForCustomExpression(action:str, attrs: list, obj: object):
@@ -30,7 +30,7 @@ def GenericMonitor(monitored_value_tag: str, monitored_object_value: object, nam
             else:
                 value = getattr(monitored_object_value, monitored_value) or 0
 
-            print(f"{name} : {alert.monitored_value} value: {value} danger_point: {alert.danger_point} warning_point: {alert.warning_point}")
+            logging.info(f"{name} : {alert.monitored_value} value: {value} danger_point: {alert.danger_point} warning_point: {alert.warning_point}")
             if value <= alert.danger_point:
                 recipients = set().union(
                     alert.send_to_users.all(),

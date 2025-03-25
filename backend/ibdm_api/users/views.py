@@ -19,7 +19,7 @@ from .serializers import (
     GetSubordinateAndSuperiorIdResponseSerializer,
 )
 from rest_framework.decorators import api_view, permission_classes
-
+from logs.logging import logger as logging
 @with_operation_ids(
     on_list="getUsers",
     on_create="addUser",
@@ -121,7 +121,7 @@ class RoleViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_extra_action_url_map(self):
-        print("Extra action url map", super().get_extra_action_url_map())
+        logging.info("Extra action url map", super().get_extra_action_url_map())
         return super().get_extra_action_url_map()
 
 @with_operation_ids(

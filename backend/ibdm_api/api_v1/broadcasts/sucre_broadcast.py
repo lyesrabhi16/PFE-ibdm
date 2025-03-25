@@ -1,4 +1,4 @@
-import logging
+from logs.logging import logger as logging
 import time
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
