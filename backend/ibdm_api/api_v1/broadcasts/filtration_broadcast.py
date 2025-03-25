@@ -18,7 +18,7 @@ def broadcast_filtration():
     start = time.time()
     niveau_latest = get_or_none( Niveau ,Niveau.objects.latest, args=("date",))
     if niveau_latest is None:
-        logging.info(f"broadcast_filtration: No Niveau data found in {time.time() - start} seconds")
+        logging.info(f"broadcast_filtration# broadcast_filtration: No Niveau data found in {time.time() - start} seconds")
         return
     #logging.info(f"latest niveau: {str(niveau_latest)}")
     NiveauMonitor(niveau_latest)
@@ -26,26 +26,26 @@ def broadcast_filtration():
 
     debit_latest = get_or_none( Debit, Debit.objects.latest, args=("date",))
     if debit_latest is None:
-        logging.info(f"broadcast_filtration: No Debit data found in {time.time() - start} seconds")
+        logging.info(f"broadcast_filtration# No Debit data found in {time.time() - start} seconds")
         return 
     #logging.info(f"latest debit_latest: {str(debit_latest)}")
     DebitMonitor(debit_latest)
 
     volume_latest = get_or_none( Volume, Volume.objects.latest, args=("date",))
     if volume_latest is None:
-        logging.info(f"broadcast_filtration: No Volume data found in {time.time() - start} seconds")
+        logging.info(f"broadcast_filtration# No Volume data found in {time.time() - start} seconds")
         return 
     #logging.info(f"latest volume_latest: {str(volume_latest)}")
     VolumeMonitor(volume_latest)
 
     pres_cond_latest = get_or_none( PresCond, PresCond.objects.latest, args=("date",))
     if pres_cond_latest is None:
-        logging.info(f"broadcast_filtration: No PresCond data found in {time.time() - start} seconds")
+        logging.info(f"broadcast_filtration# No PresCond data found in {time.time() - start} seconds")
         return 
     #logging.info(f"latest pres_cond_latest: {str(pres_cond_latest)}")
     PresCondMonitor(pres_cond_latest)
 
-    logging.info(f"broadcast_filtration: {niveau_latest.date} retrieved in {time.time() - start}")
+    logging.info(f"broadcast_filtration# {niveau_latest.date} retrieved in {time.time() - start}")
 
     data = {
                 "niveau": NiveauSerializer(niveau_latest).data,
@@ -61,4 +61,4 @@ def broadcast_filtration():
             "data": data,
         },
     )
-    logging.info(f"broadcast_filtration: {niveau_latest.date} done in {time.time() - start_func}")
+    logging.info(f"broadcast_filtration# {niveau_latest.date} done in {time.time() - start_func}")
