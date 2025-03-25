@@ -16,12 +16,12 @@ def broadcast_sucre():
     start = time.time()
     data = get_or_none( Sucre , Sucre.objects.latest, args=("date",))
     if data is None:
-        logging.info(f"broadcast_sucre: No data found in {time.time() - start} seconds")
+        logging.info(f"broadcast_sucre# No data found in {time.time() - start} seconds")
         return
-    logging.info(f"broadcast_sucre: {data} retrieved in {time.time() - start} seconds")
+    logging.info(f"broadcast_sucre# {data} retrieved in {time.time() - start} seconds")
     start_monitor= time.time()
     sucreMonitor(data)
-    logging.info(f"broadcast_sucre: starting SucreMonitor {time.time() - start_monitor}")
+    logging.info(f"broadcast_sucre# starting SucreMonitor {time.time() - start_monitor}")
     async_to_sync(channel_layer.group_send)(
         "sucre",
         {
@@ -30,4 +30,4 @@ def broadcast_sucre():
         },
     )
 
-    logging.info(f"broadcast_sucre: {data} done in {time.time() - start_func}")
+    logging.info(f"broadcast_sucre# {data} done in {time.time() - start_func}")

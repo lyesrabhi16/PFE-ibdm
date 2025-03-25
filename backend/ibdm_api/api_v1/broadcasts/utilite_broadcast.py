@@ -17,17 +17,17 @@ def broadcast_utilite():
     start = time.time()
     co2_ifruit_latest = get_or_none( Co2Ifruit ,Co2Ifruit.objects.latest, args=("date",))
     if co2_ifruit_latest is None:
-        logging.info(f"broadcast_utilite: No Co2Ifruit data found in {time.time() - start} seconds")
+        logging.info(f"broadcast_utilite# No Co2Ifruit data found in {time.time() - start} seconds")
         return
     Co2IfruitMonitor(co2_ifruit_latest)
 
     utilite_latest = get_or_none(Utilite, Utilite.objects.latest, args=("date",))
     if utilite_latest is None:
-        logging.info(f"broadcast_utilite: No Utilite data found in {time.time() - start} seconds")
+        logging.info(f"broadcast_utilite# No Utilite data found in {time.time() - start} seconds")
         return
     UtiliteMonitor(utilite_latest)
 
-    logging.info(f"broadcast_utilite: {co2_ifruit_latest.date} retrieved in {time.time() - start}")
+    logging.info(f"broadcast_utilite# {co2_ifruit_latest.date} retrieved in {time.time() - start}")
 
     data = {
                 "co2_ifruit": Co2IfruitSerializer(co2_ifruit_latest).data,
@@ -41,4 +41,4 @@ def broadcast_utilite():
             "data": data,
         },
     )
-    logging.info(f"broadcast_utilite: {co2_ifruit_latest.date} done in {time.time() - start_func}")
+    logging.info(f"broadcast_utilite# {co2_ifruit_latest.date} done in {time.time() - start_func}")

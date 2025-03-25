@@ -16,10 +16,10 @@ def broadcast_sent_emails():
     start = time.time()
     data : sentEmail = get_or_none(sentEmail, sentEmail.objects.latest, args=("temps_envoi",))
     if data is None:
-        logging.info(f"broadcast_sent_emails: No data found in {time.time() - start} seconds")
+        logging.info(f"broadcast_sent_emails# No data found in {time.time() - start} seconds")
         return
      
-    logging.info(f"broadcast_sent_emails: {data} retrieved in {time.time() - start} seconds")
+    logging.info(f"broadcast_sent_emails# {data} retrieved in {time.time() - start} seconds")
     if last_sent is not None and data.pk == last_sent.pk:
         return
     async_to_sync(channel_layer.group_send)(
@@ -30,4 +30,4 @@ def broadcast_sent_emails():
         },
     )
     last_sent = data
-    logging.info(f"broadcast_sent_emails: {data} done in {time.time() - start_func}")
+    logging.info(f"broadcast_sent_emails# {data} done in {time.time() - start_func}")
