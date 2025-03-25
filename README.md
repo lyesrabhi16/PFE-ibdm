@@ -1,55 +1,55 @@
 # PFE-ibdm
 
 # START BACKEND:
-1. Change directory to [`backend`](backend):
+1. Make sure you have python 3.12.9 and pipenv installed:
     ```sh
-    cd backend
+    python --version # should be 3.12.9
+    pipenv --version # should be installed preferably version 2024.4.1
     ```
 
 2. Install dependencies:
     ```sh
-    pnpm install
+    pnpm install:deps
     ```
 
-3. Configure and run MongoDB database as stated in [`src/config/db/README.md`](backend/src/config/db/README.md).
+3. Configure and run databases as stated in [`backend/config/config/db/README.md`](backend/config/config/db/README.md).
 
-4. Copy [`.env.example`](backend/.env.example) to `.env`:
+4. Copy [`backend/ibdm_api/api_v1/.env.example`](backend/.env.example) to `backend/ibdm_api/api_v1/.env`:
     ```sh
-    cp .env.example .env
+    copy backend/ibdm_api/api_v1/.env.example backend/ibdm_api/api_v1/.env
     ```
 
-5. Reflect [`src/models/schema`](backend/src/models/schema/) into the database (creating collections, indexes, etc.):
+5. preform migration:
     ```sh
-    pnpm run prisma:dev
+    cd backend/ibdm_api
+    python manage.py makemigrations
+    python manage.py migrate
     ```
 
 6. Start the application:
     ```sh
-    pnpm start
+    pnpm run dev:server
     ```
 
 # Generate Api Client
-1. api client must be regenerated whenever an API described in [`backend/openapi.json`](backend/openapi.json) is added, modified or deleted.
-2. run this command to recreate the frontend api client:
+1. run this command to recreate the frontend api client:
 ```bash
-pnpm run generate:api-client
+pnpm run generate:api-client 
+# will copy file to frontend/ibdm/lib/api/openapi.spec.json,
+# must be modified to work with swagger_parser
+cd frontend/ibdm
+dart run swagger_parser
+dart run build_runner build
 ```
+
 
 # Api Documentation
 ### see the documentation
 1. run the backend server
 ```bash
-pnpm run dev
+pnpm run dev:server
 ```
 
-2. open your browser and navigate to: [`Docs`](https://localhost:8443/api/documentation). url: https://localhost:8443/api/documentation
+2. open your browser and navigate to: [`Docs`](https://localhost/api/v1/docs). url: https://localhost:8443/api/documentation
 
-3. you can checkout the [`openapi.json`](./backend/openapi.json) file.
-
-### write the documentation
-check out this: [`OpenAPI Specifications`](https://spec.openapis.org/oas/v3.0.0.html)
-1. you can write them directly inside the files in [`routes`](./backend/src/routes/) folder as comments with the decorator `@openapi`.
-example: [`Documentation Routes`](./backend/src/routes/documentation/documentation.routes.ts)
-
-2. or inside .spec.yml files.
-example: [`Auth Routes Spec File`](./backend/src/routes/authRoutes.spec.yml).
+3. you can checkout the [`openapi.json`](./backend/ibdm_api/openapi/openapi.json) file.
