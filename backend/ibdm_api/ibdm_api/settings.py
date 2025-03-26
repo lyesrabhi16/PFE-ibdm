@@ -29,6 +29,8 @@ SECRET_KEY = Env.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = Env.DEBUG
 
+SECURE_SSL_REDIRECT = True
+
 ALLOWED_HOSTS = ["*"]
 
 CORS_ALLOW_ALL_ORIGINS = True
