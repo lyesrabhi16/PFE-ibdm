@@ -10,13 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-import json
 import os
 from pathlib import Path
 from corsheaders.defaults import default_headers
 import logging
 from api_v1.env import Env
-
+from api_v1.smtp_backend import EmailBackend
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -222,7 +221,7 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -309,6 +308,14 @@ EMAIL_PORT = Env.EMAIL_PORT
 EMAIL_HOST_USER =  Env.EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD =  Env.EMAIL_HOST_PASSWORD
 EMAIL_OF_SENDER = Env.EMAIL_OF_SENDER
+EMAIL_OF_SENDER2 = Env.EMAIL_OF_SENDER2
+EMAIL_SECONDARY_PROVIDER = EmailBackend(
+   host=Env.EMAIL_HOST2,
+   use_tls=Env.EMAIL_USE_TLS2,
+   port=Env.EMAIL_PORT2,
+   username=Env.EMAIL_HOST_USER2,
+   password=Env.EMAIL_HOST_PASSWORD2,
+)
 
 
 LOG_DIR = os.path.join(BASE_DIR, "data", "logs")
@@ -412,28 +419,34 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'daphne.log'),
             'formatter': 'verbose',
         },
+        "file_monitors":{
+            'class': "logging.FileHandler",
+            'filename': os.path.join(LOG_DIR, 'monitors.log'),
+            'formatter': 'verbose',
+            'filters': ['monitors_filter'],
+        },
     },
     "root": {
         "level": "CRITICAL",
         "handlers": [
-                        "console", "file_debug", "file_info", "file_warning", "file_error", "file_critical",
-                        "file_emails","file_emails_broadcast", "file_utilite_broadcast", "file_filtration_broadcast", "file_sucre_broadcast"
+                        "console",
                     ],
         "propagate": True,
     },
     'loggers': {
         'django': {
             'handlers': [
-                            "console", 'file_debug', 'file_info', "file_warning", "file_error", "file_critical",
-                            "file_emails", "file_emails_broadcast", "file_utilite_broadcast", "file_filtration_broadcast", "file_sucre_broadcast"
+                            "console", 
+                            'file_debug', 'file_info', "file_warning", "file_error", "file_critical",
+                            "file_emails", "file_emails_broadcast", "file_utilite_broadcast", "file_filtration_broadcast", "file_sucre_broadcast",
+                            "file_monitors"
                         ],
             'level': 'DEBUG',
             'propagate': True,
         },
         'daphne': {
             'handlers': [
-                            "console", 'file_debug', 'file_info', "file_warning", "file_error", "file_critical",
-                            "file_emails", "file_emails_broadcast", "file_utilite_broadcast", "file_filtration_broadcast", "file_sucre_broadcast", "file_daphne"
+                "file_daphne"
                         ],
             'level': 'DEBUG',
             'propagate': True,
@@ -484,6 +497,13 @@ LOGGING = {
         'broadcast_utilite_filter': {
             '()': 'django.utils.log.CallbackFilter',
             'callback': lambda record: require_tags(record, ["broadcast_utilite"])
+        },
+        'monitors_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_tags(record, [
+                    "genericMonitor","sucreMonitor","niveauMonitor","co2IfruitMonitor","utiliteMonitor", "volumeMonitor",
+                    "Pres_CondMonitor", "debitMonitor"
+                ])
         },
     },
 }

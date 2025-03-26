@@ -21,13 +21,15 @@ def getHtmlMessage(email: EmailSchedule):
         case _:
             raise ValueError(f"emailScheduler# rapport {email.rapport} not found")
             
-def sendEmailWithFile(file, **kwargs):
+def sendEmailWithFile(file, provider=None, **kwargs):
     email_message = EmailMessage(**kwargs)
     email_message.content_subtype = "html"
     if file is not None:
         email_message.attach_file(file)
+    if provider:
+        email_message.connection = provider
     email_message.send()
-    logging.info(f"emailScheduler#: email sent to '{email_message.to}'")
+    logging.info(f"emailScheduler#: email {email_message.subject} sent to '{email_message.to}'")
 
 def sendEmail(email: EmailSchedule, schedule_next=True):
     logging.info(f"emailScheduler# send email: {email}")
@@ -54,8 +56,17 @@ def sendEmail(email: EmailSchedule, schedule_next=True):
             "from_email":settings.EMAIL_OF_SENDER,
             "to":[email_str]
         }).start()
+        threading.Thread(
+            target=sendEmailWithFile,kwargs={
+            "file": file,
+            "provider": settings.EMAIL_SECONDARY_PROVIDER,
+            "subject":f"IBDM {subject}",
+            "body": message,
+            "from_email":settings.EMAIL_OF_SENDER,
+            "to":[email_str]
+        }).start()
     for user in users:
-        sentEmail.objects.create(receptionist=user, schedule=email)
+        sentEmail.objects.create(temps_envoi=datetime.now(), receptionist=user, schedule=email)
 
     if email.next_run_time is None:
         raise ValueError("emailScheduler# next_run_time is None, how did this happen?")
