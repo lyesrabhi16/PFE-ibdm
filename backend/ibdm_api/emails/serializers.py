@@ -17,6 +17,7 @@ class AlertEmailSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "monitored_value",
+            "monitor_type",
             "danger_point",
             "warning_point",
             "danger_reminder_interval",
@@ -35,6 +36,7 @@ class AlertEmailSerializer(serializers.ModelSerializer):
             "send_to_users": {"allow_null": True, "required":False,},
             "send_to_roles": {"allow_null": True, "required":False,},
             "enabled": {"allow_null": True},
+            "monitor_type": {"allow_null": True, "default": "DESC"},
         }
 class SentAlertEmailSerializer(serializers.ModelSerializer):
     alert = AlertEmailSerializer()
