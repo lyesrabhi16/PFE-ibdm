@@ -20,18 +20,19 @@ django-crispy-forms = "*"
 daphne = "*"
 channels-redis = "*"
 apscheduler = "*"
-django-tailwind = "*"
 openpyxl = "*"
-channels-rabbitmq = "*"
+whitenoise = "*"
+django-cachalot = "*"
 
 [requires]
 python_version = "3.12.9"
 
 [scripts]
-"start" = "python manage.py runserver"
-"start_https" = "cd ibdm_api && daphne -e ssl:443:privateKey=certs/ibdm.key:certKey=certs/ibdm.crt ibdm_api.asgi:application"
-"migrate"  = "python manage.py makemigrations && python manage.py migrate"
-"createsuperuser" = "python manage.py createsuperuser"
+"start_server" = "cd ibdm_api && daphne -e ssl:8443:privateKey=certs/ibdm.key:certKey=certs/ibdm.crt ibdm_api.asgi:application --access-log=data/logs/http.log --proxy-headers"
+"link_docker" = "echo docker-machine env default | Invoke-Expression"
+"start_dev" = "cd ibdm_api && python manage.py runserver"
+"migrate"  = "cd ibdm_api && python manage.py makemigrations && python manage.py migrate"
+"createsuperuser" = "cd ibdm_api && python manage.py createsuperuser"
 "generate_schema_json" = "python ibdm_api/manage.py spectacular --file ibdm_api/openapi/openapi.spec.json --format openapi-json --validate --fail-on-warn"
 
 [dev-packages]

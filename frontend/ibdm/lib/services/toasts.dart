@@ -99,7 +99,7 @@ class Toasts {
     return toast;
   }
 
-static ElegantNotification showInfoToastNotification({
+  static ElegantNotification showInfoToastNotification({
     required BuildContext context,
     required String message,
     String? title,
@@ -133,6 +133,7 @@ static ElegantNotification showInfoToastNotification({
       title: title != null ? Text(title) : null,
       position: Alignment.bottomRight,
       animation: AnimationType.fromRight,
+      dismissDirection: DismissDirection.down,
     );
     toast.show(context);
     return toast;

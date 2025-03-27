@@ -1,10 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/services/api/api_client.dart';
-import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
-import 'package:ibdm/common/controllers/loading_page_controller.dart';
 
 class PermissionsController extends GetxController {
   PermissionsController() {
@@ -17,6 +14,10 @@ class PermissionsController extends GetxController {
   bool? hasViewUsersPagePerm;
   bool? hasViewFiltrationPagePerm;
   bool? hasViewSettingsPagePerm;
+  bool? hasViewEmailScheduleSettingsPerm;
+  bool? hasViewEmailAlertsPerm;
+  bool? hasViewEmailsSentPerm;
+  bool? hasViewUtilitePagePerm;
 
   Future<void> loadPermissions() async {
     if (permissions_loading) {
@@ -25,7 +26,7 @@ class PermissionsController extends GetxController {
     permissions_loading = true;
     ready.value = false;
     int permissionsLoadedCount = 0;
-    int maxPermissionsLoadedCount = 4;
+    int maxPermissionsLoadedCount = 8;
     _done() {
       permissionsLoadedCount++;
       logger.e("loaded ${permissionsLoadedCount} permissions");
@@ -37,41 +38,68 @@ class PermissionsController extends GetxController {
       permissions_loading = false;
     }
 
-    logger.e("await permissions");
-    await Future.wait([
-      _hasPermRequest(Permissions.viewSiroperiePage).then(
-        (value) {
-          hasViewSiroperiePagePerm = value;
+    try {
+      logger.e("await permissions");
+      await Future.wait([
+        _hasPermRequest(Permissions.viewSiroperiePage).then(
+          (value) {
+            hasViewSiroperiePagePerm = value;
+            _done();
+          },
+        ),
+        _hasPermRequest(Permissions.viewUsersPage).then((value) {
+          hasViewUsersPagePerm = value;
           _done();
-        },
-      ),
-      _hasPermRequest(Permissions.viewUsersPage).then((value) {
-        hasViewUsersPagePerm = value;
-        _done();
-      }),
-      _hasPermRequest(Permissions.viewFiltrationPage).then((value) {
-        hasViewFiltrationPagePerm = value;
-        _done();
-      }),
-      _hasPermRequest(Permissions.viewSettingsPage).then((value) {
-        hasViewSettingsPagePerm = value;
-        _done();
-      }),
-    ]);
+        }),
+        _hasPermRequest(Permissions.viewFiltrationPage).then((value) {
+          hasViewFiltrationPagePerm = value;
+          _done();
+        }),
+        _hasPermRequest(Permissions.viewSettingsPage).then((value) {
+          hasViewSettingsPagePerm = value;
+          _done();
+        }),
+        _hasPermRequest(Permissions.viewEmailSchedules).then((value) {
+          hasViewEmailScheduleSettingsPerm = value;
+          _done();
+        }),
+        _hasPermRequest(Permissions.viewEmailAlerts).then((value) {
+          hasViewEmailAlertsPerm = value;
+          _done();
+        }),
+        _hasPermRequest(Permissions.viewEmailsSent).then((value) {
+          hasViewEmailsSentPerm = value;
+          _done();
+        }),
+        _hasPermRequest(Permissions.viewUtilitePage).then((value) {
+          hasViewUtilitePagePerm = value;
+          _done();
+        }),
+      ]);
+    } catch (e) {
+      logger.e("Failed to get permissions: $e");
+    }
   }
 
   void resetPermissions() {
-    ready.value = false;
+    logger.e("reset permissions");
     hasViewSiroperiePagePerm = null;
     hasViewUsersPagePerm = null;
     hasViewFiltrationPagePerm = null;
     hasViewSettingsPagePerm = null;
+    hasViewEmailScheduleSettingsPerm = null;
+    hasViewEmailAlertsPerm = null;
+    hasViewEmailsSentPerm = null;
+    hasViewUtilitePagePerm = null;
+    ready.value = false;
+    logger.e("end reset permissions");
   }
 
   Future<bool> _hasPermRequest(String perm) async {
     try {
       final api = await ApiClientInstance.getApiClient();
       final res = await api.hasPerm(codename: perm);
+      printMessage("Has perm $perm: ${res.hasPerm}");
       return res.hasPerm;
     } catch (e) {
       logger.e("Failed to get permission $perm: $e");
@@ -82,10 +110,6 @@ class PermissionsController extends GetxController {
   bool hasPerm(String permission) {
     try {
       if (ready.value == false) {
-        final loadingPageController = Get.find<LoadingPageController>();
-        if (loadingPageController.isLoading.value == false) {
-          loadingPageController.isLoading.value = true;
-        }
         throw ("Permissions not ready");
       }
 
@@ -98,6 +122,14 @@ class PermissionsController extends GetxController {
           return hasViewFiltrationPagePerm!;
         case Permissions.viewSettingsPage:
           return hasViewSettingsPagePerm!;
+        case Permissions.viewEmailSchedules:
+          return hasViewEmailScheduleSettingsPerm!;
+        case Permissions.viewEmailAlerts:
+          return hasViewEmailAlertsPerm!;
+        case Permissions.viewEmailsSent:
+          return hasViewEmailsSentPerm!;
+        case Permissions.viewUtilitePage:
+          return hasViewUtilitePagePerm!;
         default:
           throw ("Permission not found");
       }

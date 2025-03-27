@@ -6,8 +6,12 @@ import 'package:json_annotation/json_annotation.dart';
 
 @JsonEnum()
 enum Rapport {
+  @JsonValue('filtration')
+  filtration('filtration'),
   @JsonValue('inventaire-sucre')
   inventaireSucre('inventaire-sucre'),
+  @JsonValue('utilite')
+  utilite('utilite'),
   /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
   $unknown(null);
 

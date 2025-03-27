@@ -3,55 +3,13 @@ import 'package:flutter/foundation.dart'; // Pour vérifier la plateforme
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
-import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/pages/loading_page.dart';
 import 'package:ibdm/pages/login/wide_login_page.dart';
 import 'package:ibdm/pages/login/small_login_page.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
-import 'package:ibdm/utils/helpers/logger.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-
-void downloadCertificate(BuildContext context) async {
-  final api = await ApiClientInstance.getApiClient();
-  if (kIsWeb) {
-    await api.downloadFile(
-        context: context, url: ApiConfig.ca_url, fileName: "ibdm_ca.crt");
-  } else {
-    await api.downloadFile(
-      context: context,
-      url: ApiConfig.ca_url,
-      fileName: "ibdm_ca.crt",
-    );
-  }
-  /* try {
-    final url = "https://localhost/ca";
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = "${directory.path}/ibdmCA.crt";
-      final file = File(filePath);
-      await file.writeAsBytes(response.bodyBytes);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Certificat téléchargé : $filePath")),
-      );
-      print("Fichier enregistré : $filePath");
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Échec du téléchargement du certificat.")),
-      );
-    }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Erreur : $e")),
-    );
-  } */
-}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -101,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(width: AppSizes.sm),
                       IconButton(
                         icon: Icon(Icons.card_membership),
-                        onPressed: () => downloadCertificate(context),
+                        onPressed: downloadCertificate,
                       ),
                       SizedBox(width: AppSizes.sm),
                     ],
@@ -118,5 +76,19 @@ class _LoginPageState extends State<LoginPage> {
               ),
       ),
     );
+  }
+
+  downloadCertificate() async {
+    final strings = getTranslations(context);
+    try {
+      final api = await ApiClientInstance.getApiClient();
+      api.downloadCertificate(context);
+    } catch (e) {
+      Get.snackbar(
+        strings.error,
+        strings.errorDownloadingCertificate,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 }

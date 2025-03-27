@@ -1,1052 +1,465 @@
 {% load custom_filters %}
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html
-	dir="ltr"
-	xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:o="urn:schemas-microsoft-com:office:office"
-	lang="en"
->
-	<head>
-		<meta charset="UTF-8" />
-		<meta content="width=device-width, initial-scale=1" name="viewport" />
-		<meta name="x-apple-disable-message-reformatting" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta content="telephone=no" name="format-detection" />
-		<title>Rapport {{ rapport_name }} {{ date }}</title>
-		<!--[if (mso 16)]>
-			<style type="text/css">
-				a {
-					text-decoration: none;
-				}
-			</style>
-		<![endif]-->
-		<!--[if gte mso 9]>
-			<style>
-				sup {
-					font-size: 100% !important;
-				}
-			</style>
-		<![endif]-->
-		<!--[if gte mso 9]>
-			<noscript>
-				<xml>
-					<o:OfficeDocumentSettings>
-						<o:AllowPNG></o:AllowPNG>
-						<o:PixelsPerInch>96</o:PixelsPerInch>
-					</o:OfficeDocumentSettings>
-				</xml>
-			</noscript>
-		<![endif]-->
-		<!--[if mso
-			]><xml>
-				<w:WordDocument xmlns:w="urn:schemas-microsoft-com:office:word">
-					<w:DontUseAdvancedTypographyReadingMail />
-				</w:WordDocument> </xml
-		><![endif]-->
-		<style type="text/css">
-			.rollover:hover .rollover-first {
-				max-height: 0px !important;
-				display: none !important;
-			}
-			.rollover:hover .rollover-second {
-				max-height: none !important;
-				display: block !important;
-			}
-			.rollover span {
-				font-size: 0px;
-			}
-			u + .body img ~ div div {
-				display: none;
-			}
-			#outlook a {
-				padding: 0;
-			}
-			span.MsoHyperlink,
-			span.MsoHyperlinkFollowed {
-				color: inherit;
-				mso-style-priority: 99;
-			}
-			a.es-button {
-				mso-style-priority: 100 !important;
-				text-decoration: none !important;
-			}
-			a[x-apple-data-detectors],
-			#MessageViewBody a {
-				color: inherit !important;
-				text-decoration: none !important;
-				font-size: inherit !important;
-				font-family: inherit !important;
-				font-weight: inherit !important;
-				line-height: inherit !important;
-			}
-			.es-desk-hidden {
-				display: none;
-				float: left;
-				overflow: hidden;
-				width: 0;
-				max-height: 0;
-				line-height: 0;
-				mso-hide: all;
-			}
-			@media only screen and (max-width: 600px) {
-				.es-m-p20b {
-					padding-bottom: 20px !important;
-				}
-				.es-p-default {
-				}
-				*[class="gmail-fix"] {
-					display: none !important;
-				}
-				p,
-				a {
-					line-height: 150% !important;
-				}
-				h1,
-				h1 a {
-					line-height: 120% !important;
-				}
-				h2,
-				h2 a {
-					line-height: 120% !important;
-				}
-				h3,
-				h3 a {
-					line-height: 120% !important;
-				}
-				h4,
-				h4 a {
-					line-height: 120% !important;
-				}
-				h5,
-				h5 a {
-					line-height: 120% !important;
-				}
-				h6,
-				h6 a {
-					line-height: 120% !important;
-				}
-				.es-header-body p {
-				}
-				.es-content-body p {
-				}
-				.es-footer-body p {
-				}
-				.es-infoblock p {
-				}
-				h1 {
-					font-size: 40px !important;
-					text-align: left;
-				}
-				h2 {
-					font-size: 32px !important;
-					text-align: left;
-				}
-				h3 {
-					font-size: 28px !important;
-					text-align: left;
-				}
-				h4 {
-					font-size: 24px !important;
-					text-align: left;
-				}
-				h5 {
-					font-size: 20px !important;
-					text-align: left;
-				}
-				h6 {
-					font-size: 16px !important;
-					text-align: left;
-				}
-				.es-header-body h1 a,
-				.es-content-body h1 a,
-				.es-footer-body h1 a {
-					font-size: 40px !important;
-				}
-				.es-header-body h2 a,
-				.es-content-body h2 a,
-				.es-footer-body h2 a {
-					font-size: 32px !important;
-				}
-				.es-header-body h3 a,
-				.es-content-body h3 a,
-				.es-footer-body h3 a {
-					font-size: 28px !important;
-				}
-				.es-header-body h4 a,
-				.es-content-body h4 a,
-				.es-footer-body h4 a {
-					font-size: 24px !important;
-				}
-				.es-header-body h5 a,
-				.es-content-body h5 a,
-				.es-footer-body h5 a {
-					font-size: 20px !important;
-				}
-				.es-header-body h6 a,
-				.es-content-body h6 a,
-				.es-footer-body h6 a {
-					font-size: 16px !important;
-				}
-				.es-menu td a {
-					font-size: 14px !important;
-				}
-				.es-header-body p,
-				.es-header-body a {
-					font-size: 14px !important;
-				}
-				.es-content-body p,
-				.es-content-body a {
-					font-size: 14px !important;
-				}
-				.es-footer-body p,
-				.es-footer-body a {
-					font-size: 14px !important;
-				}
-				.es-infoblock p,
-				.es-infoblock a {
-					font-size: 12px !important;
-				}
-				.es-m-txt-c,
-				.es-m-txt-c h1,
-				.es-m-txt-c h2,
-				.es-m-txt-c h3,
-				.es-m-txt-c h4,
-				.es-m-txt-c h5,
-				.es-m-txt-c h6 {
-					text-align: center !important;
-				}
-				.es-m-txt-r,
-				.es-m-txt-r h1,
-				.es-m-txt-r h2,
-				.es-m-txt-r h3,
-				.es-m-txt-r h4,
-				.es-m-txt-r h5,
-				.es-m-txt-r h6 {
-					text-align: right !important;
-				}
-				.es-m-txt-j,
-				.es-m-txt-j h1,
-				.es-m-txt-j h2,
-				.es-m-txt-j h3,
-				.es-m-txt-j h4,
-				.es-m-txt-j h5,
-				.es-m-txt-j h6 {
-					text-align: justify !important;
-				}
-				.es-m-txt-l,
-				.es-m-txt-l h1,
-				.es-m-txt-l h2,
-				.es-m-txt-l h3,
-				.es-m-txt-l h4,
-				.es-m-txt-l h5,
-				.es-m-txt-l h6 {
-					text-align: left !important;
-				}
-				.es-m-txt-r img,
-				.es-m-txt-c img,
-				.es-m-txt-l img {
-					display: inline !important;
-				}
-				.es-m-txt-r .rollover:hover .rollover-second,
-				.es-m-txt-c .rollover:hover .rollover-second,
-				.es-m-txt-l .rollover:hover .rollover-second {
-					display: inline !important;
-				}
-				.es-m-txt-r .rollover span,
-				.es-m-txt-c .rollover span,
-				.es-m-txt-l .rollover span {
-					line-height: 0 !important;
-					font-size: 0 !important;
-					display: block;
-				}
-				.es-spacer {
-					display: inline-table;
-				}
-				a.es-button,
-				button.es-button {
-					font-size: 14px !important;
-					padding: 10px 20px 10px 20px !important;
-					line-height: 120% !important;
-				}
-				a.es-button,
-				button.es-button,
-				.es-button-border {
-					display: inline-block !important;
-				}
-				.es-m-fw,
-				.es-m-fw.es-fw,
-				.es-m-fw .es-button {
-					display: block !important;
-				}
-				.es-m-il,
-				.es-m-il .es-button,
-				.es-social,
-				.es-social td,
-				.es-menu {
-					display: inline-block !important;
-				}
-				.es-adaptive table,
-				.es-left,
-				.es-right {
-					width: 100% !important;
-				}
-				.es-content table,
-				.es-header table,
-				.es-footer table,
-				.es-content,
-				.es-footer,
-				.es-header {
-					width: 100% !important;
-					max-width: 600px !important;
-				}
-				.adapt-img {
-					width: 100% !important;
-					height: auto !important;
-				}
-				.es-mobile-hidden,
-				.es-hidden {
-					display: none !important;
-				}
-				.es-desk-hidden {
-					width: auto !important;
-					overflow: visible !important;
-					float: none !important;
-					max-height: inherit !important;
-					line-height: inherit !important;
-				}
-				tr.es-desk-hidden {
-					display: table-row !important;
-				}
-				table.es-desk-hidden {
-					display: table !important;
-				}
-				td.es-desk-menu-hidden {
-					display: table-cell !important;
-				}
-				.es-menu td {
-					width: 1% !important;
-				}
-				table.es-table-not-adapt,
-				.esd-block-html table {
-					width: auto !important;
-				}
-				.h-auto {
-					height: auto !important;
-				}
-				.es-m-w-100 {
-					width: -100% !important;
-				}
-				.img-9033 {
-					width: 80px !important;
-					height: auto !important;
-				}
-			}
-			@media screen and (max-width: 384px) {
-				.mail-message-content {
-					width: 414px !important;
-				}
-			}
-		</style>
-	</head>
-	<body
-		class="body"
-		style="
-			width: 100%;
-			height: max(100%,100vh);
-			-webkit-text-size-adjust: 100%;
-			-ms-text-size-adjust: 100%;
-			padding: 0;
-			margin: 0;
-		"
-	>
-		<div
-			dir="ltr"
-			class="es-wrapper-color"
-			lang="en"
-			style="height: max(100%, 100vh); background-color: #f6f6f6"
-		>
-			<!--[if gte mso 9]>
-				<v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="t">
-					<v:fill type="tile" color="#f6f6f6"></v:fill>
-				</v:background>
-			<![endif]-->
-			<div
-				style="
-					height: max(100%, 100vh);
-					mso-table-lspace: 0pt;
-					mso-table-rspace: 0pt;
-					border-collapse: collapse;
-					border-spacing: 0px;
-					background-color: #ffffff;
-					width: 600px;
-					margin: auto;
-				"
-			>
-				<table
-					width="100%"
-					cellspacing="0"
-					cellpadding="0"
-					class="es-wrapper"
-					role="none"
-					style="
-						mso-table-lspace: 0pt;
-						mso-table-rspace: 0pt;
-						border-collapse: collapse;
-						border-spacing: 0px;
-						width: 100%;
-						table-layout: fixed !important;
-						background-color: transparent;
-					"
-				>
-					<tr>
-						<td valign="top" style="padding: 0; margin: 0">
-							<table
-								cellpadding="0"
-								align="center"
-								cellspacing="0"
-								class="es-header"
-								role="none"
-								style="
-									mso-table-lspace: 0pt;
-									mso-table-rspace: 0pt;
-									border-collapse: collapse;
-									border-spacing: 0px;
-									width: 100%;
-									table-layout: fixed !important;
-									background-color: transparent;
-								"
-							>
-								<tr>
-									<td
-										align="center"
-										bgcolor="transparent"
-										style="padding: 0; margin: 0"
-									>
-										<table
-											cellpadding="0"
-											cellspacing="0"
-											bgcolor="#ffffff"
-											align="center"
-											class="es-header-body"
-											role="none"
-											style="
-												mso-table-lspace: 0pt;
-												mso-table-rspace: 0pt;
-												border-collapse: collapse;
-												border-spacing: 0px;
-												background-color: #ffffff;
-												width: 600px;
-											"
-										>
-											<tr>
-												<td align="left" style="padding: 20px; margin: 0">
-													<table
-														cellspacing="0"
-														width="100%"
-														cellpadding="0"
-														role="none"
-														style="
-															mso-table-lspace: 0pt;
-															mso-table-rspace: 0pt;
-															border-collapse: collapse;
-															border-spacing: 0px;
-														"
-													>
-														<tr>
-															<td
-																align="left"
-																style="padding: 0; margin: 0; width: 560px"
-															>
-																<table
-																	cellpadding="0"
-																	cellspacing="0"
-																	width="100%"
-																	role="presentation"
-																	style="
-																		mso-table-lspace: 0pt;
-																		mso-table-rspace: 0pt;
-																		border-collapse: collapse;
-																		border-spacing: 0px;
-																	"
-																>
-																	<tr>
-																		<td
-																			align="center"
-																			style="
-																				padding: 0;
-																				margin: 0;
-																				font-size: 0;
-																			"
-																		>
-																			<img
-																				width="160"
-																				src="https://euolaet.stripocdn.email/content/guids/CABINET_4d42413c732c5e5da0fffc0f57739e4e5106996cbd110ca9328a17cdb9838993/images/logo.png"
-																				alt=""
-																				class="img-9033 adapt-img"
-																				height="160"
-																				style="
-																					display: block;
-																					font-size: 14px;
-																					border: 0;
-																					outline: none;
-																					text-decoration: none;
-																				"
-																			/>
-																		</td>
-																	</tr>
-																</table>
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-							<table
-								cellspacing="0"
-								cellpadding="0"
-								align="center"
-								class="es-header"
-								role="none"
-								style="
-									mso-table-lspace: 0pt;
-									mso-table-rspace: 0pt;
-									border-collapse: collapse;
-									border-spacing: 0px;
-									width: 100%;
-									table-layout: fixed !important;
-									background-color: transparent;
-								"
-							>
-								<tr>
-									<td align="center" style="padding: 0; margin: 0">
-										<table
-											cellspacing="0"
-											cellpadding="0"
-											bgcolor="#ffffff"
-											align="center"
-											class="es-header-body"
-											role="none"
-											style="
-												mso-table-lspace: 0pt;
-												mso-table-rspace: 0pt;
-												border-collapse: collapse;
-												border-spacing: 0px;
-												background-color: #ffffff;
-												width: 600px;
-											"
-										>
-											<tr>
-												<td
-													align="left"
-													style="
-														padding: 0;
-														margin: 0;
-														padding-top: 20px;
-														padding-right: 20px;
-														padding-left: 20px;
-													"
-												>
-													<table
-														cellspacing="0"
-														cellpadding="0"
-														align="left"
-														class="es-left"
-														role="none"
-														style="
-															mso-table-lspace: 0pt;
-															mso-table-rspace: 0pt;
-															border-collapse: collapse;
-															border-spacing: 0px;
-															float: left;
-														"
-													>
-														<tr>
-															<td
-																valign="top"
-																align="center"
-																class="es-m-p20b"
-																style="padding: 0; margin: 0; width: 560px"
-															>
-																<table
-																	width="100%"
-																	cellspacing="0"
-																	cellpadding="0"
-																	role="presentation"
-																	style="
-																		mso-table-lspace: 0pt;
-																		mso-table-rspace: 0pt;
-																		border-collapse: collapse;
-																		border-spacing: 0px;
-																	"
-																>
-																	<tr>
-																		<td
-																			align="center"
-																			style="padding: 0; margin: 0"
-																		>
-																			<h2
-																				class="es-m-txt-c"
-																				style="
-																					margin: 0;
-																					font-family: arial, 'helvetica neue',
-																						helvetica, sans-serif;
-																					mso-line-height-rule: exactly;
-																					letter-spacing: 0;
-																					font-size: 32px;
-																					font-style: normal;
-																					font-weight: normal;
-																					line-height: 38.4px;
-																					color: #333333;
-																				"
-																			>
-																				IBDM&nbsp;
-																			</h2>
-																		</td>
-																	</tr>
-																</table>
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-							<table
-								cellspacing="0"
-								cellpadding="0"
-								align="center"
-								class="es-content"
-								role="none"
-								style="
-									mso-table-lspace: 0pt;
-									mso-table-rspace: 0pt;
-									border-collapse: collapse;
-									border-spacing: 0px;
-									width: 100%;
-									table-layout: fixed !important;
-								"
-							>
-								<tr>
-									<td align="center" style="padding: 0; margin: 0">
-										<table
-											cellspacing="0"
-											cellpadding="0"
-											bgcolor="#ffffff"
-											align="center"
-											class="es-content-body"
-											role="none"
-											style="
-												mso-table-lspace: 0pt;
-												mso-table-rspace: 0pt;
-												border-collapse: collapse;
-												border-spacing: 0px;
-												background-color: #ffffff;
-												width: 600px;
-											"
-										>
-											<tr>
-												<td
-													align="left"
-													style="
-														padding: 0;
-														margin: 0;
-														padding-top: 20px;
-														padding-right: 20px;
-														padding-left: 20px;
-													"
-												>
-													<table
-														cellspacing="0"
-														cellpadding="0"
-														align="left"
-														class="es-left"
-														role="none"
-														style="
-															mso-table-lspace: 0pt;
-															mso-table-rspace: 0pt;
-															border-collapse: collapse;
-															border-spacing: 0px;
-															float: left;
-														"
-													>
-														<tr>
-															<td
-																align="center"
-																valign="top"
-																style="padding: 0; margin: 0; width: 560px"
-															>
-																<table
-																	width="100%"
-																	role="presentation"
-																	cellpadding="0"
-																	cellspacing="0"
-																	style="
-																		mso-table-lspace: 0pt;
-																		mso-table-rspace: 0pt;
-																		border-collapse: collapse;
-																		border-spacing: 0px;
-																		background-color: #f9f9f9;
-																		border-radius: 8px;
-																		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-																	"
-																>
-																	<tr>
-																		<td
-																			align="left"
-																			style="padding: 20px; margin: 0"
-																		>
-																			<!-- Row 1: Rapport -->
-																			<div
-																				style="
-																					display: flex;
-																					align-items: center;
-																					margin-bottom: 15px;
-																				"
-																			>
-																				<span
-																					style="
-																						font-family: 'Segoe UI', Tahoma,
-																							Geneva, Verdana, sans-serif;
-																						font-size: 16px;
-																						font-weight: 600;
-																						color: #333333;
-																						min-width: 100px;
-																					"
-																				>
-																					Rapport:
-																				</span>
-																				<span
-																					style="
-																						font-family: 'Segoe UI', Tahoma,
-																							Geneva, Verdana, sans-serif;
-																						font-size: 16px;
-																						color: #555555;
-																					"
-																				>
-																					{{ rapport_name }}
-																				</span>
-																			</div>
+<html dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta name="x-apple-disable-message-reformatting" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta content="telephone=no" name="format-detection" />
+<title>Rapport {{ rapport_name }} {{ date }}</title>
+<!--[if (mso 16)]>
+<style type="text/css">
+a {text-decoration: none;}
+</style>
+<![endif]-->
+<!--[if gte mso 9]>
+<style>sup { font-size: 100% !important; }</style>
+<![endif]-->
+<!--[if gte mso 9]>
+<xml>
+  <o:OfficeDocumentSettings>
+    <o:AllowPNG></o:AllowPNG>
+    <o:PixelsPerInch>96</o:PixelsPerInch>
+  </o:OfficeDocumentSettings>
+</xml>
+<![endif]-->
+<!--[if mso]>
+<style type="text/css">
+body, table, td, p, a, li, blockquote {font-family: Arial, sans-serif !important;}
+th {font-family: Arial, sans-serif !important; font-weight: bold !important;}
+.es-wrapper {width: 100% !important;}
+/* Outlook specific table fixes */
+.report-table {border-collapse: collapse !important; width: 560px !important; table-layout: fixed !important;}
+.report-table th {background-color: #009879 !important; color: white !important; padding: 5px !important; font-size: 11px !important; border: 1px solid #dddddd !important; word-wrap: normal !important; overflow-wrap: normal !important;}
+.report-table td {padding: 5px !important; font-size: 11px !important; border: 1px solid #dddddd !important; word-wrap: normal !important; overflow-wrap: normal !important;}
+.report-table tr {border-bottom: 1px solid #dddddd !important;}
+/* Info box fixes for Outlook */
+.info-box {background-color: #f9f9f9 !important; border: 1px solid #e0e0e0 !important; padding: 15px !important; width: 560px !important;}
+/* Fix table layout for Outlook */
+table {table-layout: fixed !important;}
+/* Prevent word breaks */
+* {word-wrap: normal !important; overflow-wrap: normal !important; -ms-word-break: normal !important; word-break: normal !important;}
+</style>
+<![endif]-->
+<style type="text/css">
+/* Reset styles */
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  height: 100%;
+}
+table, td {
+  mso-table-lspace: 0pt;
+  mso-table-rspace: 0pt;
+  border-collapse: collapse;
+}
+img {
+  -ms-interpolation-mode: bicubic;
+  border: 0;
+  height: auto;
+  line-height: 100%;
+  outline: none;
+  text-decoration: none;
+}
 
-																			<!-- Row 2: Interval -->
-																			<div
-																				style="
-																					display: flex;
-																					align-items: center;
-																					margin-bottom: 15px;
-																				"
-																			>
-																				<span
-																					style="
-																						font-family: 'Segoe UI', Tahoma,
-																							Geneva, Verdana, sans-serif;
-																						font-size: 16px;
-																						font-weight: 600;
-																						color: #333333;
-																						min-width: 100px;
-																					"
-																				>
-																					Interval:
-																				</span>
-																				<span
-																					style="
-																						font-family: 'Segoe UI', Tahoma,
-																							Geneva, Verdana, sans-serif;
-																						font-size: 16px;
-																						color: #555555;
-																					"
-																				>
-																					{{ interval }}
-																				</span>
-																			</div>
+/* Wrapper styles */
+.es-wrapper {
+  width: 100%;
+  height: 100%;
+  background-color: #f6f6f6;
+}
+.es-wrapper-color {
+  background-color: #f6f6f6;
+}
+.es-content, .es-header, .es-footer {
+  width: 100%;
+  max-width: 600px;
+}
 
-																			<!-- Row 3: Date -->
-																			<div
-																				style="
-																					display: flex;
-																					align-items: center;
-																				"
-																			>
-																				<span
-																					style="
-																						font-family: 'Segoe UI', Tahoma,
-																							Geneva, Verdana, sans-serif;
-																						font-size: 16px;
-																						font-weight: 600;
-																						color: #333333;
-																						min-width: 100px;
-																					"
-																				>
-																					Date:
-																				</span>
-																				<span
-																					style="
-																						font-family: 'Segoe UI', Tahoma,
-																							Geneva, Verdana, sans-serif;
-																						font-size: 16px;
-																						color: #555555;
-																					"
-																				>
-																					{{ date }}
-																				</span>
-																			</div>
-																		</td>
-																	</tr>
-																</table>
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-							<table
-								cellspacing="0"
-								cellpadding="0"
-								align="center"
-								class="es-footer"
-								role="none"
-								style="
-									mso-table-lspace: 0pt;
-									mso-table-rspace: 0pt;
-									border-collapse: collapse;
-									border-spacing: 0px;
-									width: 100%;
-									table-layout: fixed !important;
-									background-color: transparent;
-								"
-							>
-								<tr>
-									<td align="center" style="padding: 0; margin: 0">
-										<table
-											cellspacing="0"
-											cellpadding="0"
-											bgcolor="#ffffff"
-											align="center"
-											class="es-footer-body"
-											role="none"
-											style="
-												mso-table-lspace: 0pt;
-												mso-table-rspace: 0pt;
-												border-collapse: collapse;
-												border-spacing: 0px;
-												background-color: #ffffff;
-												width: 600px;
-											"
-										>
-											<tr>
-												<td
-													align="left"
-													style="
-														padding: 0;
-														margin: 0;
-														padding-top: 20px;
-														padding-right: 20px;
-														padding-left: 20px;
-													"
-												>
-													<table
-														cellpadding="0"
-														cellspacing="0"
-														width="100%"
-														role="none"
-														style="
-															mso-table-lspace: 0pt;
-															mso-table-rspace: 0pt;
-															border-collapse: collapse;
-															border-spacing: 0px;
-														"
-													>
-														<tr>
-															<td
-																align="left"
-																style="padding: 0; margin: 0; width: 560px"
-															>
-																<table
-																	width="100%"
-																	role="presentation"
-																	cellpadding="0"
-																	cellspacing="0"
-																	style="
-																		mso-table-lspace: 0pt;
-																		mso-table-rspace: 0pt;
-																		border-collapse: collapse;
-																		border-spacing: 0px;
-																	"
-																>
-																	<tr>
-																		<td
-																			align="left"
-																			style="padding: 0; margin: 0"
-																		>
-																			<table
-																				cellspacing="0"
-																				cellpadding="0"
-																				style="
-																					width: 100%;
-																					border-collapse: collapse;
-																					font-family: Arial, sans-serif;
-																					margin: 25px 0;
-																					box-shadow: 0 0 20px
-																						rgba(0, 0, 0, 0.15);
-																					border-radius: 8px;
-																					overflow: hidden;
-																				"
-																			>
-																				<thead>
-																					<tr
-																						style="
-																							background-color: #009879;
-																							color: white;
-																							text-align: left;
-																						"
-																					>
-																						{% for header in headers %}
-																						<th
-																							style="
-																								padding: 12px 15px;
-																								font-weight: bold;
-																							"
-																						>
-																							{{ header.title }}
-																						</th>
-																						{% endfor %}
-																					</tr>
-																				</thead>
-																				<tbody>
-																					{% for row in rows %}
-																					<tr 
-																					{% if row == rows|last %} style = "border-bottom: 1px solid #dddddd; background-color: #009879;font-weight: bold; color:white;"
-																					{% elif row.highlight == True %} style="border-bottom: 1px solid #dddddd; background-color: #f3f3f3;font-weight: bold; color:#23db0b" {% else %} style="border-bottom: 1px solid #dddddd;"{% endif %}>
-																						{% for k, v in row.items %} 
-                                              {% if k in header_codes %}
-                                                    <td 
-                                                    {% if row.danger == True %}
-                                                    style="{% if k == header_codes|first %} font-weight: bold; {% endif %} padding: 12px 15px; color:red"
-                                                    {% else %}
-                                                    style="{% if k == header_codes|first %} font-weight: bold; {% endif %} padding: 12px 15px"
-                                                    {% endif %}
-                                                    >
-                                                    {% if k == header_codes|first %}
-                                                      {{ v|upper }}
-                                                    {% else %}
-                                                      {{ v }}
-                                                    {% endif %}
-                                                    {{ suffixes|get_item:k }}
-                                                    </td>
-																						  {% endif %} 
-                                            {% endfor %}
-																					</tr>
-																					{% endfor %}
-																				</tbody>
-																			</table>
-																		</td>
-																	</tr>
-																</table>
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td
-										align="left"
-										style="
-											margin: 0;
-											padding-top: 20px;
-											padding-right: 20px;
-											padding-left: 20px;
-											padding-bottom: 20px;
-										"
-									>
-										<table
-											cellspacing="0"
-											cellpadding="0"
-											align="left"
-											class="es-left"
-											role="none"
-											style="
-												mso-table-lspace: 0pt;
-												mso-table-rspace: 0pt;
-												border-collapse: collapse;
-												border-spacing: 0px;
-												float: left;
-												max-width: 560px;
-												width: 100%;
-											"
-										>
-											<tr>
-												<td
-													align="left"
-													class="es-m-p20b"
-													style="padding: 0; margin: 0; width: 560px"
-												>
-													<table
-														width="100%"
-														cellspacing="0"
-														cellpadding="0"
-														style="
-															mso-table-lspace: 0pt;
-															mso-table-rspace: 0pt;
-															border-collapse: separate;
-															border-spacing: 0px;
-															background-color: #f5f5f5;
-															border-radius: 12px;
-															box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-															border: 1px solid #e0e0e0;
-														"
-														role="presentation"
-													>
-														<tr>
-															<td align="left" style="padding: 20px; margin: 0">
-																<p
-																	style="
-																		margin: 0;
-																		mso-line-height-rule: exactly;
-																		font-family: arial, 'helvetica neue',
-																			helvetica, sans-serif;
-																		line-height: 24px;
-																		letter-spacing: 0;
-																		font-size: 16px;
-																	"
-																>
-																	<span
-																		style="
-																			color: #009879;
-																			font-weight: 600;
-																			font-size: 18px;
-																			margin-bottom: 8px;
-																			display: block;
-																		"
-																		>Synthèse</span
-																	>
-																	<span style="color: #333333; font-size: 15px"
-																		>{{ synthese }}</span
-																	>
-																</p>
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-	</body>
+/* Main content wrapper */
+.es-content-body, .es-header-body, .es-footer-body {
+  background-color: #ffffff;
+  width: 600px;
+}
+
+/* Outlook-specific fixes */
+.ExternalClass {width: 100%;}
+.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {line-height: 100%;}
+
+/* Logo styles */
+.logo {
+  display: block;
+  border: 0;
+  outline: none;
+  text-decoration: none;
+  width: 120px;
+  height: auto;
+}
+
+/* Company name */
+.company-name {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  line-height: 28px;
+  color: #333333;
+  padding: 0 0 10px 0;
+}
+
+/* Info box styles */
+.info-box {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 560px !important; /* Fixed width to match table */
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+}
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.info-row:last-child {
+  margin-bottom: 0;
+}
+.info-label {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  min-width: 80px;
+  display: inline-block;
+}
+.info-value {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 14px;
+  color: #555555;
+  display: inline-block;
+  word-wrap: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+/* Report table styles - COMPACT VERSION */
+.report-table {
+  width: 560px !important; /* Fixed width for consistency */
+  border-collapse: collapse;
+  margin: 15px auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  font-size: 11px; /* Smaller font size for compactness */
+  table-layout: fixed;
+}
+.report-table th {
+  background-color: #009879;
+  color: white;
+  text-align: left;
+  padding: 5px; /* Reduced padding for Outlook */
+  font-weight: bold;
+  font-size: 11px; /* Smaller font size for compactness */
+  border: 1px solid #dddddd;
+  word-wrap: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  white-space: normal;
+}
+.report-table td {
+  padding: 5px; /* Reduced padding for compactness */
+  border-bottom: 1px solid #dddddd;
+  border: 1px solid #dddddd;
+  font-size: 11px; /* Smaller font size for compactness */
+  word-wrap: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  white-space: normal;
+}
+.report-table tr:last-child {
+  border-bottom: 2px solid #009879;
+}
+.report-table tr.highlight {
+  background-color: #f3f3f3;
+  font-weight: bold;
+  color: #23db0b;
+}
+
+/* Synthese Section styles */
+.synthese-box {
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  margin-top: 15px;
+  width: 560px !important; /* Fixed width to match table */
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+}
+.synthese-title {
+  color: #009879;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
+  display: block;
+}
+.synthese-content {
+  color: #333333;
+  font-size: 14px;
+  line-height: 20px;
+  word-wrap: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  white-space: normal;
+}
+
+/* Responsive styles */
+@media only screen and (max-width: 600px) {
+  .mobile-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .mobile-padding {
+    padding-left: 5% !important;
+    padding-right: 5% !important;
+  }
+  .logo {
+    width: 80px !important;
+  }
+  .report-table, .info-box, .synthese-box {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .info-label {
+    min-width: 70px !important;
+  }
+}
+
+/* Fix for Gmail */
+u ~ div .gmail-hide {
+  display: none;
+}
+
+/* Global word-wrap settings to prevent breaking words */
+* {
+  word-wrap: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  -ms-word-break: normal;
+}
+</style>
+</head>
+<body style="width: 100%; height: 100%; padding: 0; margin: 0; background-color: #f6f6f6;">
+<!--[if mso]>
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f6f6f6">
+<tr>
+<td align="center">
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600">
+<tr>
+<td bgcolor="#ffffff">
+<![endif]-->
+
+<div class="es-wrapper-color" style="background-color: #f6f6f6; height: 100%;">
+  <table role="presentation" class="es-wrapper" width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse; background-color: #f6f6f6; table-layout: fixed;">
+    <tr>
+      <td valign="top" align="center">
+        <!-- Main Content Container -->
+        <table role="presentation" class="es-content" align="center" cellspacing="0" cellpadding="0" width="600" style="border-collapse: collapse; background-color: #ffffff; table-layout: fixed;">
+          <!-- Logo Section -->
+          <tr>
+            <td align="center" style="padding: 15px 20px 5px 20px; background-color: #ffffff;">
+              <!--[if mso]>
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+              <td align="center">
+              <![endif]-->
+              <img src="https://euolaet.stripocdn.email/content/guids/CABINET_4d42413c732c5e5da0fffc0f57739e4e5106996cbd110ca9328a17cdb9838993/images/logo.png" alt="IBDM Logo" width="100" height="100" class="logo" style="display: block; border: 0; outline: none; text-decoration: none; margin: 0 auto;" />
+              <!--[if mso]>
+              </td>
+              </tr>
+              </table>
+              <![endif]-->
+            </td>
+          </tr>
+          
+          <!-- Company Name -->
+          <tr>
+            <td align="center" style="padding: 0 20px 10px 20px; background-color: #ffffff;">
+              <h2 class="company-name">IBDM</h2>
+            </td>
+          </tr>
+          
+          <!-- Info Box -->
+          <tr>
+            <td style="padding: 0 20px 15px 20px; background-color: #ffffff;">
+              <!--[if mso]>
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="560" align="center">
+              <tr>
+              <td style="background-color: #f9f9f9; border: 1px solid #e0e0e0; padding: 15px;">
+              <![endif]-->
+              
+              <div class="info-box">
+                <!-- Row 1: Rapport -->
+                <div class="info-row">
+                  <!--[if mso]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                  <td width="80" style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #333333; word-wrap: normal; word-break: normal;">
+                  <![endif]-->
+                  <span class="info-label">Rapport:</span>
+                  <!--[if mso]>
+                  </td>
+                  <td style="font-family: Arial, sans-serif; font-size: 14px; color: #555555; word-wrap: normal; word-break: normal;">
+                  <![endif]-->
+                  <span class="info-value">{{ rapport_name }}</span>
+                  <!--[if mso]>
+                  </td>
+                  </tr>
+                  </table>
+                  <![endif]-->
+                </div>
+                
+                <!-- Row 2: Interval -->
+                <div class="info-row">
+                  <!--[if mso]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                  <td width="80" style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #333333; word-wrap: normal; word-break: normal;">
+                  <![endif]-->
+                  <span class="info-label">Interval:</span>
+                  <!--[if mso]>
+                  </td>
+                  <td style="font-family: Arial, sans-serif; font-size: 14px; color: #555555; word-wrap: normal; word-break: normal;">
+                  <![endif]-->
+                  <span class="info-value">{{ interval }}</span>
+                  <!--[if mso]>
+                  </td>
+                  </tr>
+                  </table>
+                  <![endif]-->
+                </div>
+                
+                <!-- Row 3: Date -->
+                <div class="info-row">
+                  <!--[if mso]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                  <td width="80" style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #333333; word-wrap: normal; word-break: normal;">
+                  <![endif]-->
+                  <span class="info-label">Date:</span>
+                  <!--[if mso]>
+                  </td>
+                  <td style="font-family: Arial, sans-serif; font-size: 14px; color: #555555; word-wrap: normal; word-break: normal;">
+                  <![endif]-->
+                  <span class="info-value">{{ date }}</span>
+                  <!--[if mso]>
+                  </td>
+                  </tr>
+                  </table>
+                  <![endif]-->
+                </div>
+              </div>
+              
+              <!--[if mso]>
+              </td>
+              </tr>
+              </table>
+              <![endif]-->
+            </td>
+          </tr>
+          
+          <!-- Report Table -->
+          <tr>
+            <td style="padding: 0 20px 15px 20px; background-color: #ffffff;">
+              <!--[if mso]>
+              <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="560" class="report-table">
+              <![endif]-->
+              <!--[if !mso]><!-->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" align="center" class="report-table">
+              <!--<![endif]-->
+                <!-- Table Header -->
+                <tr>
+                  {% for header in headers %}
+                  <th style="word-wrap: normal; word-break: normal; overflow-wrap: normal; white-space: normal;">{{ header.title }}</th>
+                  {% endfor %}
+                </tr>
+                
+                <!-- Table Body -->
+                {% for row in rows %}
+                <tr {% if row == rows|last %}style="background-color: #009879; color: white; font-weight: bold;"
+                    {% elif row.highlight == True %}style="background-color: #f3f3f3; font-weight: bold; color: #23db0b;"{% endif %}>
+                  
+                  {% for k, v in row.items %}
+                    {% if k in header_codes %}
+                    <td {% if row.danger == True %}
+                        style="{% if k == header_codes|first %}font-weight: bold;{% endif %} color: red; word-wrap: normal; word-break: normal; overflow-wrap: normal; white-space: normal;"
+                        {% else %}
+                        style="{% if k == header_codes|first %}font-weight: bold;{% endif %} word-wrap: normal; word-break: normal; overflow-wrap: normal; white-space: normal;"
+                        {% endif %}>
+                      {% if k == header_codes|first %}
+                        {{ v|upper }}
+                      {% else %}
+                        {{ v }}
+                      {% endif %}
+                      {{ suffixes|get_item:k }}
+                    </td>
+                    {% endif %}
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </table>
+              <!--[if mso]>
+              </table>
+              <![endif]-->
+            </td>
+          </tr>
+          
+          <!-- Synthese Section (if available) -->
+          {% if synthese %}
+          <tr>
+            <td style="padding: 0 20px 20px 20px; background-color: #ffffff;">
+              <!--[if mso]>
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="560" align="center">
+              <tr>
+              <td style="background-color: #f5f5f5; border: 1px solid #e0e0e0; padding: 15px;">
+              <![endif]-->
+              
+              <div class="synthese-box">
+                <span class="synthese-title">Synthèse</span>
+                <span class="synthese-content" style="word-wrap: normal; word-break: normal; overflow-wrap: normal; white-space: normal;">{{ synthese }}</span>
+              </div>
+              
+              <!--[if mso]>
+              </td>
+              </tr>
+              </table>
+              <![endif]-->
+            </td>
+          </tr>
+          {% endif %}
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!--[if mso]>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<![endif]-->
+</body>
 </html>

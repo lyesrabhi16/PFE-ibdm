@@ -22,5 +22,6 @@ const _$CodeEnumEnumMap = {
   CodeEnum.invalidInput: 'invalid_input',
   CodeEnum.invalidCredentials: 'invalid_credentials',
   CodeEnum.notFound: 'not_found',
+  CodeEnum.serverError: 'server_error',
   CodeEnum.$unknown: r'$unknown',
 };

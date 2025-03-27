@@ -74,6 +74,7 @@
     web_socket_channel: ^3.0.2
     widget_arrows: ^0.6.0
     url_launcher: ^6.0.9
+    time_picker_spinner: ^1.0.2
     open_filex: ^4.7.0
 
   dev_dependencies:
@@ -118,7 +119,7 @@
       - assets/
       - assets/images/
       - assets/certificates/
-      - assets/certificates/myCA.pem
+      - assets/certificates/ifruit_CA.pem
       - assets/google_fonts/
     #   - images/a_dot_burr.jpeg
     #   - images/a_dot_ham.jpeg

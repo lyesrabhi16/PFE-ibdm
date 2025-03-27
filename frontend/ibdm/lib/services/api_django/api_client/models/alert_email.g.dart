@@ -8,34 +8,39 @@ part of 'alert_email.dart';
 
 AlertEmail _$AlertEmailFromJson(Map<String, dynamic> json) => AlertEmail(
       id: (json['id'] as num).toInt(),
+      monitoredValue: AlertEnum.fromJson(json['monitored_value'] as String),
       sendToUsers: (json['send_to_users'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      monitoredValue: AlertEnum.fromJson(json['monitored_value'] as String),
-      dangerPoint: (json['danger_point'] as num).toInt(),
-      warningPoint: (json['warning_point'] as num).toInt(),
-      dangerReminderInterval: (json['danger_reminder_interval'] as num).toInt(),
-      warningReminderInterval:
-          (json['warning_reminder_interval'] as num).toInt(),
-      enabled: json['enabled'] as bool,
       sendToRoles: (json['send_to_roles'] as List<dynamic>)
           .map((e) => (e as num?)?.toInt())
           .toList(),
+      monitorType: json['monitor_type'] == null
+          ? null
+          : MonitorTypeEnum.fromJson(json['monitor_type'] as String),
+      dangerPoint: (json['danger_point'] as num?)?.toInt(),
+      warningPoint: (json['warning_point'] as num?)?.toInt(),
+      dangerReminderInterval:
+          (json['danger_reminder_interval'] as num?)?.toInt(),
+      warningReminderInterval:
+          (json['warning_reminder_interval'] as num?)?.toInt(),
       customAlertMessage: json['custom_alert_message'] as String?,
+      enabled: json['enabled'] as bool?,
     );
 
 Map<String, dynamic> _$AlertEmailToJson(AlertEmail instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'send_to_users': instance.sendToUsers,
       'monitored_value': _$AlertEnumEnumMap[instance.monitoredValue]!,
+      'monitor_type': _$MonitorTypeEnumEnumMap[instance.monitorType],
       'danger_point': instance.dangerPoint,
       'warning_point': instance.warningPoint,
       'danger_reminder_interval': instance.dangerReminderInterval,
       'warning_reminder_interval': instance.warningReminderInterval,
       'custom_alert_message': instance.customAlertMessage,
-      'enabled': instance.enabled,
+      'send_to_users': instance.sendToUsers,
       'send_to_roles': instance.sendToRoles,
+      'enabled': instance.enabled,
     };
 
 const _$AlertEnumEnumMap = {
@@ -160,8 +165,14 @@ const _$AlertEnumEnumMap = {
   AlertEnum.undefined118: 'utilite.ut_sid_pg',
   AlertEnum.undefined119: 'utilite.ut_sid_tt',
   AlertEnum.undefined120: 'utilite.ut_sid_tc',
-  AlertEnum.undefined121: 'sucre.total',
+  AlertEnum.undefined121: 'sucre.total.adue',
   AlertEnum.undefined122: 'sucre.total.tetra',
-  AlertEnum.undefined123: 'sucre.total.adue',
+  AlertEnum.undefined123: 'sucre.total',
   AlertEnum.$unknown: r'$unknown',
+};
+
+const _$MonitorTypeEnumEnumMap = {
+  MonitorTypeEnum.asc: 'ASC',
+  MonitorTypeEnum.desc: 'DESC',
+  MonitorTypeEnum.$unknown: r'$unknown',
 };

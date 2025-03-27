@@ -11,7 +11,9 @@ import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
+import 'package:ibdm/utils/helpers/user_helpers.dart';
 import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
@@ -25,7 +27,6 @@ class UserForm extends StatelessWidget {
     required this.addUserNameController,
     required this.addUserPasswordController,
     required this.addUserPhoneController,
-    required this.loadSuperiorsOptions,
     this.editable = true,
     this.role,
     this.user,
@@ -35,12 +36,7 @@ class UserForm extends StatelessWidget {
     required this.addLastNameController,
     this.onAddUser,
   });
-  bool get isEditing => user != null && editable == true;
   final User? user;
-  final Function(BuildContext context) loadSuperiorsOptions;
-  final Rx<bool> _loaded = false.obs;
-  final Rx<bool> _loadedSuperiorInitialValue = false.obs;
-  User? _superiorInitialValue;
   static final UserController userController = Get.find();
   final Function(
     String email,
@@ -67,19 +63,34 @@ class UserForm extends StatelessWidget {
   final TextEditingController addLastNameController;
   final TextEditingController addUserPasswordController;
   final TextEditingController addUserPhoneController;
+  final RxList<ShadOption<User>> addUserSuperiorOptions;
+
+  bool get isEditing => user != null && editable == true;
+
+  final Rx<bool> _loaded = false.obs;
+
+  final Rx<bool> _loadedSuperiorInitialValue = false.obs;
+
+  User? _superiorInitialValue;
+
   Rx<Role?> get _addUserRole => roles.firstOrNull.obs;
+
   final Rx<bool> _searchAddUserSuperior = false.obs;
+
   final RxList<ShadOption<User>> _searchAddUserSuperiorOptions =
       <ShadOption<User>>[].obs;
+
   Rx<Icon> get _addUserPlaceHolderAvatar => Icon(
         LucideIcons.circleUserRound,
         size: AppSizes.xl * 3,
       ).obs;
-  final Rx<bool> _addUserAvatarSelected = false.obs;
-  File? _addUserAvatarFile; // use on non-web
-  Uint8List? _addUserAvatarBytes; // use on web
 
-  final RxList<ShadOption<User>> addUserSuperiorOptions;
+  final Rx<bool> _addUserAvatarSelected = false.obs;
+
+  File? _addUserAvatarFile;
+
+  // use on non-web
+  Uint8List? _addUserAvatarBytes;
 
   Role getInitialRoleValue({required List<Role> userRoles}) {
     return userController.roles.firstWhereOrNull((e) => e.name == user?.role) ??
@@ -107,6 +118,7 @@ class UserForm extends StatelessWidget {
   final Rx<bool> _showUserAvatar = true.obs;
 
   User? _addUserSuperior;
+
   Future<void> _load(context) async {
     _loaded.value = false;
     roles.clear();
@@ -118,6 +130,7 @@ class UserForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = getTranslations(context).obs;
     logger.d("building user form");
     final userRole = _addUserRole;
     _load(context);
@@ -128,7 +141,7 @@ class UserForm extends StatelessWidget {
           child: CircularProgressIndicator(),
         );
       }
-      userRole.value ??= role ?? roles.firstOrNull;
+      userRole.value = role ?? roles.firstOrNull;
       logger
           .e("User: $user ${user?.avatarUrl} ${_addUserAvatarSelected.value}");
       return Form(
@@ -219,9 +232,9 @@ class UserForm extends StatelessWidget {
                                       FutureState.loading.obs;
                                   final toast = Toasts.showStatefulToast(
                                     context: context,
-                                    message: "Opening File Picker...",
-                                    messageError: "Canceled",
-                                    messageSuccess: "File Selected",
+                                    message: strings.value.openingFilePicker,
+                                    messageError: strings.value.canceled,
+                                    messageSuccess: strings.value.fileSelected,
                                     state: openFilePickerToast,
                                   );
                                   // show image picker
@@ -283,7 +296,7 @@ class UserForm extends StatelessWidget {
                 controller: addUserEmailController,
                 keyboardType: TextInputType.emailAddress,
                 validator: FormBuilderValidators.email(),
-                label: Text("Email"),
+                label: Text(strings.value.email),
                 placeholder: Text("account@exmaple.com"),
               ),
               SizedBox(height: AppSizes.sm),
@@ -295,7 +308,9 @@ class UserForm extends StatelessWidget {
                 validator: (v) => AppValidators.customPasswordValidator(v,
                     optional: isEditing),
                 obscureText: true,
-                label: Text(isEditing ? "New Password" : "Password"),
+                label: Text(isEditing
+                    ? strings.value.newPassword
+                    : strings.value.password),
                 placeholder: Text("********"),
               ),
               SizedBox(height: AppSizes.sm),
@@ -305,7 +320,7 @@ class UserForm extends StatelessWidget {
                 controller: addFirstNameController,
                 keyboardType: TextInputType.name,
                 validator: FormBuilderValidators.firstName(),
-                label: Text("First Name"),
+                label: Text(strings.value.firstName),
                 placeholder: showPlaceHolders ? Text("Lyes") : null,
               ),
               // last_name
@@ -314,7 +329,7 @@ class UserForm extends StatelessWidget {
                 controller: addLastNameController,
                 keyboardType: TextInputType.name,
                 validator: FormBuilderValidators.lastName(),
-                label: Text("Last Name"),
+                label: Text(strings.value.lastName),
                 placeholder: showPlaceHolders ? Text("Rabhi") : null,
               ),
               // username
@@ -322,8 +337,14 @@ class UserForm extends StatelessWidget {
                 enabled: editable,
                 controller: addUserNameController,
                 keyboardType: TextInputType.name,
-                validator: FormBuilderValidators.username(),
-                label: Text("Username"),
+                validator: FormBuilderValidators.username(
+                  allowDash: true,
+                  allowDots: true,
+                  allowNumbers: true,
+                  allowSpace: true,
+                  allowUnderscore: true,
+                ),
+                label: Text(strings.value.username),
                 placeholder: showPlaceHolders ? Text("Lyes Rabhi") : null,
               ),
               SizedBox(height: AppSizes.sm),
@@ -338,7 +359,7 @@ class UserForm extends StatelessWidget {
                   validator: (v) =>
                       AppValidators.roleSelectionValidator(v?.name),
                   options: getRoleOptions(context),
-                  label: Text("Role"),
+                  label: Text(strings.value.role),
                   onChanged: (value) {
                     logger.e(
                         "before value: ${value?.name} __userRole: ${userRole.value?.name}");
@@ -363,7 +384,8 @@ class UserForm extends StatelessWidget {
                       constraints: BoxConstraints(
                         minWidth: context.width,
                       ),
-                      child: Text("Role: ${value.name.toUpperCase()}",
+                      child: Text(
+                          strings.value.selectedRole(value.name.toUpperCase()),
                           style: Theme.of(context)
                               .textTheme
                               .titleSmall
@@ -372,7 +394,7 @@ class UserForm extends StatelessWidget {
                               )),
                     );
                   },
-                  placeholder: Text("Role"),
+                  placeholder: Text(strings.value.role),
                   shrinkWrap: false,
                 ),
               ),
@@ -383,7 +405,7 @@ class UserForm extends StatelessWidget {
                 controller: addUserPhoneController,
                 keyboardType: TextInputType.phone,
                 validator: (v) => AppValidators.phoneNumberValidator(v),
-                label: Text("Phone number"),
+                label: Text(strings.value.phoneNumber),
                 placeholder: showPlaceHolders ? Text("0549267381") : null,
               ),
 
@@ -396,7 +418,7 @@ class UserForm extends StatelessWidget {
                 child: ShadSelectFormField<User>.withSearch(
                   initialValue: _superiorInitialValue,
                   enabled: editable,
-                  label: Text("Superior"),
+                  label: Text(strings.value.superior),
                   validator: (value) =>
                       AppValidators.superiorSelectionValidator(
                     "${value?.userId}",
@@ -410,7 +432,7 @@ class UserForm extends StatelessWidget {
                       constraints: BoxConstraints(
                         minWidth: context.width,
                       ),
-                      child: Text("Select a Superior")),
+                      child: Text(strings.value.selectASuperior)),
                   anchor: ShadAnchorAuto(
                     preferBelow: false,
                   ),
@@ -435,7 +457,8 @@ class UserForm extends StatelessWidget {
                       minWidth: context.width,
                     ),
                     child: Text(
-                        "Superior: ${value.role} ${value.username.isNotEmpty ? value.username : value.email}",
+                        strings.value.selectedSuperior(
+                            "${value.role} ${getUserName(value)}"),
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               color: AppColors.getRoleColorWithRoleValue(
                                   value.role),

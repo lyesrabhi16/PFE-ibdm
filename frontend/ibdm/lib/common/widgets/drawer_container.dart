@@ -9,6 +9,7 @@ import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class DrawerContainer extends StatelessWidget {
@@ -17,6 +18,7 @@ class DrawerContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = getTranslations(context).obs;
     // build nav destinations(buttons)
     final items = [];
     for (Destination dest in Destination.getDestinations(context)) {
@@ -24,7 +26,9 @@ class DrawerContainer extends StatelessWidget {
         IconWithLabelButton(
           icon: dest.icon,
           text: dest.title,
-          active: Get.currentRoute == dest.route,
+          active: (() {
+            return Get.currentRoute == dest.route;
+          })(),
           onTap: () {
             Navigator.of(context).pop();
             Get.toNamed(dest.route);
@@ -37,98 +41,104 @@ class DrawerContainer extends StatelessWidget {
       );
     }
 
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.menu),
-                  onPressed: () {
-                    showShadSheet(
-                      context: context,
-                      side: ShadSheetSide.left,
-                      builder: (context) => ShadSheet(
-                        constraints: BoxConstraints(
-                            minWidth: min(300, context.width * 0.8),
-                            maxWidth: min(300, context.width * 0.8)),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.surfaceContainer,
-                        titleTextAlign: TextAlign.center,
-                        actions: [ActionsRow()],
-                        actionsMainAxisAlignment: MainAxisAlignment.center,
-                        closeIcon: IconButton(
-                          icon: Icon(
-                            LucideIcons.x,
-                            color: Theme.of(context).colorScheme.onSurface,
+    return Obx(() {
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.menu),
+                    onPressed: () {
+                      showShadSheet(
+                        context: context,
+                        side: ShadSheetSide.left,
+                        builder: (context) => ShadSheet(
+                          constraints: BoxConstraints(
+                              minWidth: min(300, context.width * 0.8),
+                              maxWidth: min(300, context.width * 0.8)),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.surfaceContainer,
+                          titleTextAlign: TextAlign.center,
+                          actions: [ActionsRow()],
+                          actionsMainAxisAlignment: MainAxisAlignment.center,
+                          closeIcon: IconButton(
+                            icon: Icon(
+                              LucideIcons.x,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                            onPressed: () => Navigator.of(context).pop(),
                           ),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                        title: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              FittedBox(
-                                child: Image.asset(
-                                  "assets/images/logo.png",
-                                  width: AppSizes.xl * 5,
-                                  height: AppSizes.xl * 5,
-                                ),
-                              ),
-                              FittedBox(
-                                child: Padding(
-                                  padding: EdgeInsets.all(AppSizes.sm / 2),
-                                  child: Text(
-                                    "IBDM",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineLarge,
-                                    softWrap: false,
+                          title: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                FittedBox(
+                                  child: Image.asset(
+                                    "assets/images/logo.png",
+                                    width: AppSizes.xl * 5,
+                                    height: AppSizes.xl * 5,
                                   ),
                                 ),
-                              ),
-                              Text("Ifri Base de Données Machines",
-                                  style:
-                                      Theme.of(context).textTheme.bodyMedium),
-                              SizedBox(height: AppSizes.md),
-                              ShadButton.destructive(
-                                width: context.width,
-                                icon: Icon(Icons.logout),
-                                onPressed: () {
-                                  Get.find<UserController>().logoutUser();
-                                  Get.offAllNamed(Routes.login);
-                                },
-                                child: FittedBox(child: Text("Logout")),
-                              ),
-                              Divider(),
-                            ],
+                                FittedBox(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(AppSizes.sm / 2),
+                                    child: Text(
+                                      strings.value.ibdm,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineLarge,
+                                      softWrap: false,
+                                    ),
+                                  ),
+                                ),
+                                Text(strings.value.ifri_bdd,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium),
+                                SizedBox(height: AppSizes.md),
+                                ShadButton.destructive(
+                                  width: context.width,
+                                  icon: Icon(Icons.logout),
+                                  onPressed: () {
+                                    Get.find<UserController>().logoutUser();
+                                    Get.offAllNamed(Routes.login);
+                                  },
+                                  child: FittedBox(
+                                      child: Text(strings.value.logout)),
+                                ),
+                                Divider(),
+                              ],
+                            ),
+                          ),
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                ...items,
+                              ],
+                            ),
                           ),
                         ),
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              ...items,
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                Text("IBDM"),
-              ],
-            ),
-            ActionsRow(),
-          ],
-        ),
-        Expanded(child: child)
-      ],
-    );
+                      );
+                    },
+                  ),
+                  Text(
+                    strings.value.ibdm,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ],
+              ),
+              ActionsRow(),
+            ],
+          ),
+          Expanded(child: child)
+        ],
+      );
+    });
   }
 }

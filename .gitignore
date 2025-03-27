@@ -1,5 +1,4 @@
 # Logs
-logs
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -142,6 +141,7 @@ data
 *.key
 *.pem
 *.csr
+*.srl
 
 
 # Node.js dependencies
@@ -149,7 +149,6 @@ node_modules/
 
 # Logs
 *.log
-logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -228,4 +227,12 @@ app.*.map.json
 api.config.dart
 
 # migrations
-migrations
+#migrations
+
+*.tar
+docker-images
+docker-images/
+docker-images/*
+
+*.xlsx
+*.env

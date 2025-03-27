@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from emails.views import AlertEamilViewset, EmailScheduleViewset, SentEamilViewset, getPossibleMonitorValuesAlertEmails
+from emails.views import AlertEamilViewset, EmailScheduleViewset, SentEamilViewset, getPossibleMonitorValuesAlertEmails, sendScheduledEmailNow
 
 router = routers.DefaultRouter()
 
@@ -13,4 +13,5 @@ router.register(r"alerts", AlertEamilViewset)
 urlpatterns = [
     path("", include(router.urls), name="Emails Api Root"),
     path("monitored-values", getPossibleMonitorValuesAlertEmails, name="Get Possible Monitor Values"),
+    path("send/schedule/<int:email_schedule_id>", sendScheduledEmailNow, name="Send Email Schedule"),
 ]

@@ -15,9 +15,9 @@ class AddUserForm(forms.ModelForm):
         user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
-            print("User saved, adding groups")
+            logging.info("User saved, adding groups")
             user.groups.add(user.role.group)
-            print("User groups added", user.groups.all())
+            logging.info("User groups added", user.groups.all())
         return user
 
 class CustomUserAdmin(UserAdmin):

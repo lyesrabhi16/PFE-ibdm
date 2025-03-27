@@ -170,9 +170,13 @@ ALL_MONITORED_VALUES = (
 )
 
 # Create your models here.
-
+RAPPORTS = (
+    ("inventaire-sucre", "inventaire-sucre"),
+    ("utilite", "utilite"),
+    ("filtration", "filtration"),
+)
 class EmailSchedule(models.Model):
-    rapport = models.CharField(max_length=255, choices=[('inventaire-sucre', 'inventaire-sucre')])
+    rapport = models.CharField(max_length=255, choices=RAPPORTS)
     temps_envoi = models.TimeField()
     interval = models.CharField(max_length=255, choices=[('jour', 'jour'), ('semaine', 'semaine'), ('mois', 'mois'), ("manual", "manual")])
     interval_manual = models.IntegerField(blank=True, null=True)
@@ -204,6 +208,7 @@ class sentEmail(models.Model):
 
 class AlertEmail(models.Model):
     monitored_value = models.CharField(max_length=255,choices=ALL_MONITORED_VALUES, unique=True)
+    monitor_type = models.CharField(max_length=255, choices=[('ASC', 'ASC'), ('DESC','DESC')], default='DESC')
     danger_point = models.IntegerField(default=10)
     warning_point = models.IntegerField(default=25)
     

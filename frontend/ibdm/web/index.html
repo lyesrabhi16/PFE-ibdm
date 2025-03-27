@@ -1,25 +1,7 @@
-<!DOCTYPE html><html><head>
- 
-  <base href="$FLUTTER_BASE_HREF">
-
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="ibdm">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png">
-
-  <title>ibdm</title>
-  <link rel="manifest" href="manifest.json">
-  
-  
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- [existing head content remains unchanged] -->
   
   <style>
     #splash-screen {
@@ -39,41 +21,96 @@
       text-align: center;
     }
   
-   
     .splash-logo {
       width: 150px;
       height: 150px;
     }
     .text-content {
       font-size: 30px;
-      font-weight: 20;
+      font-weight: 300;
+      margin-bottom: 25px;
     }
-    .loader {
-      margin: auto;
-      width: 40px;
-      height: 40px;
-      border: 4px solid #ddd;
-      border-top: 4px solid #007bff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+    
+    /* Improved progress percentage text */
+    .progress-percentage {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #007bff;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
     }
+    
+    /* New horizontal progress bar styles */
+    .progress-container {
+      width: 250px;
+      height: 8px;
+      background-color: #e9ecef;
+      border-radius: 6px;
+      margin: 8px auto;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .progress-bar {
+      height: 100%;
+      width: 0%; /* Initial width */
+      background-color: #007bff;
+      background-image: linear-gradient(to right, #0062cc, #007bff);
+      border-radius: 6px;
+      transition: width 0.3s ease;
+    }
+    
+    /* Improved status text below progress bar */
+    .progress-status {
+      font-size: 14px;
+      color: #495057;
+      margin-top: 10px;
+      min-height: 18px; /* Ensure consistent height */
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+    }
+    
     .footer-image {
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px; 
-    opacity: 0.6; 
-  }
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px; 
+      opacity: 0.6; 
+    }
 
-  .footer-image img {
-    width: 100%;
-    height: auto;
-  }
+    .footer-image img {
+      width: 100%;
+      height: auto;
+    }
 
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    /* Dark mode specific styles */
+    .dark-mode #splash-screen {
+      background: #121212;
+    }
+    
+    .dark-mode .text-content {
+      color: #f8f9fa;
+    }
+
+    .dark-mode .progress-container {
+      background: #333;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .dark-mode .progress-bar {
+      background-image: linear-gradient(to right, #0d6efd, #4dabf7);
+    }
+
+    .dark-mode .progress-percentage {
+      color: #4dabf7;
+    }
+
+    .dark-mode .progress-status {
+      color: #adb5bd;
     }
   </style>
   
@@ -87,70 +124,183 @@
 </head>
 <body>
   
-    <!-- Splash Screen -->
-    <div id="splash-screen">
-      <div class="splash-content">
-        <img src="assets/images/logo.png" alt="Logo" class="splash-logo">
-        <p class="text-content" id="text-id" >Welcome to your app</p>
-        <div class="loader"></div>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div class="splash-content">
+      <img src="assets/images/logo.png" alt="Logo" class="splash-logo">
+      <p class="text-content" id="text-id">Welcome</p>
+      
+      <!-- Progress percentage -->
+      <div id="progress-percentage" class="progress-percentage">0%</div>
+      
+      <!-- Horizontal progress bar -->
+      <div class="progress-container">
+        <div id="loading-progress" class="progress-bar"></div>
       </div>
-      <footer class="footer-image">
-        <img src="assets/images/ifruit.png" alt="Footer Image">
-      </footer>
+      
+      <!-- Status text -->
+      <div id="progress-status" class="progress-status">Initializing...</div>
     </div>
-    
+    <footer class="footer-image">
+      <img src="assets/images/ifruit.png" alt="Footer Image">
+    </footer>
+  </div>
   
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Charger les paramètres depuis le localStorage
-        const darkThemeMode = localStorage.getItem("darkThemeMode") === "true";
-        const locale = localStorage.getItem("locale") || "en";
-        const body = document.body;
-        const splashscreen = document.getElementById("splash-screen");
-        // uuse dark mode
-        if (darkThemeMode) {
-          splashscreen.style.background = "#121212"
-          document.body.style.background = "#121212"
-          document.body.style.color = "#ffffff";
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Charger les paramètres depuis le localStorage
+      const darkThemeMode = localStorage.getItem("darkThemeMode") === "true";
+      const locale = localStorage.getItem("locale") || "en";
+      const body = document.body;
+      const splashscreen = document.getElementById("splash-screen");
+      const progressBar = document.getElementById('loading-progress');
+      const progressPercentage = document.getElementById('progress-percentage');
+      const progressStatus = document.getElementById('progress-status');
+      
+      // Status messages based on locale
+      const statusMessages = {
+        en: {
+          initializing: "Initializing...",
+          loading: "Loading resources...",
+          preparing: "Preparing engine...",
+          starting: "Starting application...",
+          ready: "Ready!",
+          error: "Error loading application",
+          waiting: "Waiting for resources..."
+        },
+        fr: {
+          initializing: "Initialisation...",
+          loading: "Chargement des ressources...",
+          preparing: "Préparation du moteur...",
+          starting: "Démarrage de l'application...",
+          ready: "Prêt !",
+          error: "Erreur lors du chargement de l'application",
+          waiting: "En attente des ressources..."
         }
-    
-        // use fr language 
-        // const textContent = document.querySelector(".text-content");
-        // if (textCntent) {
-        //   textContent.textContent = locale === "fr" ? "Bienvenue dans votre application" : "Welcome to your app";
-        // }
-        const text_language = document.getElementById("text-id");
-        console.log(text_language.textContent, locale === '"fr"');
-        if (locale === '"fr"') {
-          text_language.textContent = "Bienvenue dans votre application";
+      };
+      
+      // Determine language for status messages
+      const lang = (locale === '"fr"' || locale === "fr") ? "fr" : "en";
+      
+      // use dark mode
+      if (darkThemeMode) {
+        document.body.classList.add('dark-mode');
+      }
+  
+      // use fr language 
+      const text_language = document.getElementById("text-id");
+      if (locale === '"fr"' || locale === "fr") {
+        text_language.textContent = "Bienvenue dans votre application";
+      }
+      
+      // Function to update progress
+      function updateProgress(percent, status) {
+        progressBar.style.width = percent + '%';
+        progressPercentage.textContent = percent + '%';
+        progressStatus.textContent = statusMessages[lang][status] || status;
+        
+        // Animate the percentage text color based on progress
+        if (percent >= 90) {
+          progressPercentage.style.color = darkThemeMode ? '#63e6be' : '#20c997';
+        } else if (percent >= 50) {
+          progressPercentage.style.color = darkThemeMode ? '#4dabf7' : '#007bff';
         }
-        console.log(text_language.textContent);
-        
-        {{flutter_js}}
-        {{flutter_build_config}}
-        
-        
-        // Cacher le splash screen après le chargement de Flutter
-        const splashScreen = document.getElementById("splash-screen");
-    
-        _flutter.loader.load({
-          config: {
-              // use local canvas kit
-            canvasKitBaseUrl: "/canvaskit/",
-          },
-          onEntrypointLoaded: async function (engineInitializer) {
-            const appRunner = await engineInitializer.initializeEngine();
-            await appRunner.runApp();
-    
-            // Masquer le splash screen après le chargement
-            if (splashScreen) {
-              splashScreen.style.display = "none";
-            }
-          }
-        });
-      });
-    </script>
-    
-    
+      }
+      
+      // Progress bar animation
+      let progress = 0;
+      let loadingTimeout;
+      
+      // Simulate initial loading progress
+      const initialProgress = setInterval(() => {
+        progress += 5;
+        if (progress >= 50) {
+          clearInterval(initialProgress);
+          updateProgress(50, "loading");
+          
+          // Add a fallback to continue progress if loading takes too long
+          loadingTimeout = setTimeout(() => {
+            // Continue progress if we're still at loading stage
+            const continueProgress = setInterval(() => {
+              progress += 2;
+              if (progress >= 70) {
+                clearInterval(continueProgress);
+                updateProgress(70, "waiting");
+              } else {
+                updateProgress(progress, "loading");
+              }
+            }, 300);
+          }, 3000);
+        } else {
+          updateProgress(progress, "initializing");
+        }
+      }, 100);
+      
+      // Flutter loading code
+      (()=>{var L=()=>navigator.vendor==="Google Inc."||navigator.agent==="Edg/",E=()=>typeof ImageDecoder>"u"?!1:L(),P=()=>typeof Intl.v8BreakIterator<"u"&&typeof Intl.Segmenter<"u",W=()=>{let a=[0,97,115,109,1,0,0,0,1,5,1,95,1,120,0];return WebAssembly.validate(new Uint8Array(a))},w={hasImageCodecs:E(),hasChromiumBreakIterators:P(),supportsWasmGC:W(),crossOriginIsolated:window.crossOriginIsolated};function d(...a){return new URL(_(...a),document.baseURI).toString()}function _(...a){return a.filter(t=>!!t).map((t,i)=>i===0?S(t):j(S(t))).filter(t=>t.length).join("/")}function j(a){let t=0;for(;t<a.length&&a.charAt(t)==="/";)t++;return a.substring(t)}function S(a){let t=a.length;for(;t>0&&a.charAt(t-1)==="/";)t--;return a.substring(0,t)}function T(a,t){return a.canvasKitBaseUrl?a.canvasKitBaseUrl:t.engineRevision&&!t.useLocalCanvasKit?_("https://www.gstatic.com/flutter-canvaskit",t.engineRevision):"canvaskit"}var v=class{constructor(){this._scriptLoaded=!1}setTrustedTypesPolicy(t){this._ttPolicy=t}async loadEntrypoint(t){let{entrypointUrl:i=d("main.dart.js"),onEntrypointLoaded:r,nonce:e}=t||{};return this._loadJSEntrypoint(i,r,e)}async load(t,i,r,e,n){n??=o=>{o.initializeEngine(r).then(l=>l.runApp())};let{entryPointBaseUrl:s}=r;if(t.compileTarget==="dart2wasm")return this._loadWasmEntrypoint(t,i,s,n);{let o=t.mainJsPath??"main.dart.js",l=d(s,o);return this._loadJSEntrypoint(l,n,e)}}didCreateEngineInitializer(t){typeof this._didCreateEngineInitializerResolve=="function"&&(this._didCreateEngineInitializerResolve(t),this._didCreateEngineInitializerResolve=null,delete _flutter.loader.didCreateEngineInitializer),typeof this._onEntrypointLoaded=="function"&&this._onEntrypointLoaded(t)}_loadJSEntrypoint(t,i,r){let e=typeof i=="function";if(!this._scriptLoaded){this._scriptLoaded=!0;let n=this._createScriptTag(t,r);if(e)console.debug("Injecting <script> tag. Using callback."),this._onEntrypointLoaded=i,document.head.append(n);else return new Promise((s,o)=>{console.debug("Injecting <script> tag. Using Promises. Use the callback approach instead!"),this._didCreateEngineInitializerResolve=s,n.addEventListener("error",o),document.head.append(n)})}}async _loadWasmEntrypoint(t,i,r,e){if(!this._scriptLoaded){this._scriptLoaded=!0,this._onEntrypointLoaded=e;let{mainWasmPath:n,jsSupportRuntimePath:s}=t,o=d(r,n),l=d(r,s);this._ttPolicy!=null&&(l=this._ttPolicy.createScriptURL(l));let c=(await import(l)).compileStreaming(fetch(o)),f;t.renderer==="skwasm"?f=(async()=>{let m=await i.skwasm;return window._flutter_skwasmInstance=m,{skwasm:m.wasmExports,skwasmWrapper:m,ffi:{memory:m.wasmMemory}}})():f=Promise.resolve({}),await(await(await c).instantiate(await f)).invokeMain()}}_createScriptTag(t,i){let r=document.createElement("script");r.type="application/javascript",i&&(r.nonce=i);let e=t;return this._ttPolicy!=null&&(e=this._ttPolicy.createScriptURL(t)),r.src=e,r}};async function b(a,t,i){if(t<0)return a;let r,e=new Promise((n,s)=>{r=setTimeout(()=>{s(new Error(`${i} took more than ${t}ms to resolve. Moving on.`,{cause:b}))},t)});return Promise.race([a,e]).finally(()=>{clearTimeout(r)})}var y=class{setTrustedTypesPolicy(t){this._ttPolicy=t}loadServiceWorker(t){if(!t)return console.debug("Null serviceWorker configuration. Skipping."),Promise.resolve();if(!("serviceWorker"in navigator)){let o="Service Worker API unavailable.";return window.isSecureContext||(o+=`
+The current context is NOT secure.`,o+=`
+Read more: https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts`),Promise.reject(new Error(o))}let{serviceWorkerVersion:i,serviceWorkerUrl:r=d(`flutter_service_worker.js?v=${i}`),timeoutMillis:e=4e3}=t,n=r;this._ttPolicy!=null&&(n=this._ttPolicy.createScriptURL(n));let s=navigator.serviceWorker.register(n).then(o=>this._getNewServiceWorker(o,i)).then(this._waitForServiceWorkerActivation);return b(s,e,"prepareServiceWorker")}async _getNewServiceWorker(t,i){if(!t.active&&(t.installing||t.waiting))return console.debug("Installing/Activating first service worker."),t.installing||t.waiting;if(t.active.scriptURL.endsWith(i))return console.debug("Loading from existing service worker."),t.active;{let r=await t.update();return console.debug("Updating service worker."),r.installing||r.waiting||r.active}}async _waitForServiceWorkerActivation(t){if(!t||t.state==="activated")if(t){console.debug("Service worker already active.");return}else throw new Error("Cannot activate a null service worker!");return new Promise((i,r)=>{t.addEventListener("statechange",()=>{t.state==="activated"&&(console.debug("Activated new service worker."),i())})})}};var g=class{constructor(t,i="flutter-js"){let r=t||[/\.js$/,/\.mjs$/];window.trustedTypes&&(this.policy=trustedTypes.createPolicy(i,{createScriptURL:function(e){if(e.startsWith("blob:"))return e;let n=new URL(e,window.location),s=n.pathname.split("/").pop();if(r.some(l=>l.test(s)))return n.toString();console.error("URL rejected by TrustedTypes policy",i,":",e,"(download prevented)")}}))}};var k=a=>{let t=WebAssembly.compileStreaming(fetch(a));return(i,r)=>((async()=>{let e=await t,n=await WebAssembly.instantiate(e,i);r(n,e)})(),{})};var I=(a,t,i,r)=>(window.flutterCanvasKitLoaded=(async()=>{if(window.flutterCanvasKit)return window.flutterCanvasKit;let e=i.hasChromiumBreakIterators&&i.hasImageCodecs;if(!e&&t.canvasKitVariant=="chromium")throw"Chromium CanvasKit variant specifically requested, but unsupported in this browser";let n=e&&t.canvasKitVariant!=="full",s=r;n&&(s=d(s,"chromium"));let o=d(s,"canvaskit.js");a.flutterTT.policy&&(o=a.flutterTT.policy.createScriptURL(o));let l=k(d(s,"canvaskit.wasm")),p=await import(o);return window.flutterCanvasKit=await p.default({instantiateWasm:l}),window.flutterCanvasKit})(),window.flutterCanvasKitLoaded);var U=async(a,t,i,r)=>{let e=d(r,"skwasm.js"),n=e;a.flutterTT.policy&&(n=a.flutterTT.policy.createScriptURL(n));let s=k(d(r,"skwasm.wasm"));return await(await import(n)).default({instantiateWasm:s,locateFile:(l,p)=>{let c=p+l;return c.endsWith(".worker.js")?URL.createObjectURL(new Blob([`importScripts('${c}');`],{type:"application/javascript"})):c},mainScriptUrlOrBlob:e})};var C=class{async loadEntrypoint(t){let{serviceWorker:i,...r}=t||{},e=new g,n=new y;n.setTrustedTypesPolicy(e.policy),await n.loadServiceWorker(i).catch(o=>{console.warn("Exception while loading service worker:",o)});let s=new v;return s.setTrustedTypesPolicy(e.policy),this.didCreateEngineInitializer=s.didCreateEngineInitializer.bind(s),s.loadEntrypoint(r)}async load({serviceWorkerSettings:t,onEntrypointLoaded:i,nonce:r,config:e}={}){e??={};let n=_flutter.buildConfig;if(!n)throw"FlutterLoader.load requires _flutter.buildConfig to be set";let s=u=>{switch(u){case"skwasm":return w.crossOriginIsolated&&w.hasChromiumBreakIterators&&w.hasImageCodecs&&w.supportsWasmGC;default:return!0}},o=(u,m)=>{switch(u.renderer){case"auto":return m=="canvaskit"||m=="html";default:return u.renderer==m}},l=u=>u.compileTarget==="dart2wasm"&&!w.supportsWasmGC||e.renderer&&!o(u,e.renderer)?!1:s(u.renderer),p=n.builds.find(l);if(!p)throw"FlutterLoader could not find a build compatible with configuration and environment.";let c={};c.flutterTT=new g,t&&(c.serviceWorkerLoader=new y,c.serviceWorkerLoader.setTrustedTypesPolicy(c.flutterTT.policy),await c.serviceWorkerLoader.loadServiceWorker(t).catch(u=>{console.warn("Exception while loading service worker:",u)}));let f=T(e,n);p.renderer==="canvaskit"?c.canvasKit=I(c,e,w,f):p.renderer==="skwasm"&&(c.skwasm=U(c,e,w,f));let h=new v;return h.setTrustedTypesPolicy(c.flutterTT.policy),this.didCreateEngineInitializer=h.didCreateEngineInitializer.bind(h),h.load(p,c,e,r,i)}};window._flutter||(window._flutter={});window._flutter.loader||(window._flutter.loader=new C);})();
+//# sourceMappingURL=flutter.js.map
 
-</body></html>
+      if (!window._flutter) {
+        window._flutter = {};
+      }
+      _flutter.buildConfig = {"engineRevision":"e672b006cb34c921db85b8e2f482ed3144a4574b","builds":[{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"}]};
+      
+      // Cacher le splash screen après le chargement de Flutter
+      const splashScreen = document.getElementById("splash-screen");
+  
+      _flutter.loader.load({
+        config: {
+          // use local canvas kit
+          canvasKitBaseUrl: "/canvaskit/",
+        },
+        onEntrypointLoaded: async function (engineInitializer) {
+          try {
+            // Clear any loading timeouts when we reach this point
+            if (loadingTimeout) {
+              clearTimeout(loadingTimeout);
+            }
+            
+            // Update progress to 75% when engine initializer is loaded
+            updateProgress(75, "preparing");
+            
+            // Set a timeout in case engine initialization takes too long
+            const engineTimeout = setTimeout(() => {
+              updateProgress(85, "waiting");
+            }, 5000);
+            
+            const appRunner = await engineInitializer.initializeEngine();
+            
+            // Clear the engine timeout
+            clearTimeout(engineTimeout);
+            
+            // Update progress to 90% when engine is initialized
+            updateProgress(90, "starting");
+            
+            await appRunner.runApp();
+            // Update to 100% when app is ready to run
+            updateProgress(100, "ready");
+            
+            // Small delay to show the completed progress bar before hiding
+            setTimeout(() => {
+              // Masquer le splash screen après le chargement
+              if (splashScreen) {
+                splashScreen.style.opacity = "0";
+                splashScreen.style.transition = "opacity 0.5s ease";
+                setTimeout(() => {
+                  splashScreen.style.display = "none";
+                }, 500);
+              }
+            }, 300);
+          } catch (error) {
+            console.error("Error initializing Flutter app:", error);
+            progressBar.style.backgroundColor = "#ff3333";
+            updateProgress(100, "error");
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

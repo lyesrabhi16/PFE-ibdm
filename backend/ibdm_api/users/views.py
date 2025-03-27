@@ -6,6 +6,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from api_v1.constants import ErrorCodes
+from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 from users.models import SubordinateAndSuperior
 from api_v1.serializers import ErrorResponseSerializer
 from .models import Role, User
@@ -18,8 +19,7 @@ from .serializers import (
     GetSubordinateAndSuperiorIdResponseSerializer,
 )
 from rest_framework.decorators import api_view, permission_classes
-
-
+from logs.logging import logger as logging
 @with_operation_ids(
     on_list="getUsers",
     on_create="addUser",
@@ -57,6 +57,11 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
+    parser_classes=[
+        JSONParser,
+        FormParser,
+        MultiPartParser,
+    ]
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
@@ -116,7 +121,7 @@ class RoleViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_extra_action_url_map(self):
-        print("Extra action url map", super().get_extra_action_url_map())
+        logging.info("Extra action url map", super().get_extra_action_url_map())
         return super().get_extra_action_url_map()
 
 @with_operation_ids(

@@ -1,15 +1,20 @@
+from copy import deepcopy
 from django.http import JsonResponse
+from logs.logging import logger as logging
 from rest_framework import viewsets, permissions
 
 from emails.serializers import AlertEmailSerializer, EmailScheduleSerializer, PossibleMonitorValuesAlertEmailsSerializer, SentEmailSerializer
 from api_v1.utils import with_operation_ids
 from emails.filters import CustomAlertFilter, SentEmailFilters
+from api_v1.emails.emails_scheduler import sendEmail
+from api_v1.constants import ErrorCodes
+from api_v1.serializers import ErrorResponseSerializer, SuccessResponseSerializer
 from .models import ALL_MONITORED_VALUES, AlertEmail, EmailSchedule, sentEmail
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.parsers import JSONParser
+from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 # Create your views here.
 @with_operation_ids(
     on_create="addEmailSchedule",
@@ -53,7 +58,6 @@ from rest_framework.parsers import JSONParser
 )
 class EmailScheduleViewset(viewsets.ModelViewSet):
     queryset = EmailSchedule.objects.all()
-    parser_classes = [JSONParser]
     serializer_class = EmailScheduleSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
@@ -61,6 +65,28 @@ class EmailScheduleViewset(viewsets.ModelViewSet):
     search_fields = ["rapport", "scheduled_users__username", "scheduled_users__email", "scheduled_users__first_name", "scheduled_users__last_name", "scheduled_roles__group__name"]
     ordering_fields = ["rapport", "interval_manual", "temps_envoi"]
 
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        data = deepcopy(request.data)
+        data["temps_envoi"] = data["next_run_time"].split("T")[1]
+        return self.run_update(instance, data, partial)
+    def partial_update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        data = deepcopy(request.data)
+        if (
+            next_run_time := data.get("next_run_time", None)
+            or instance.next_run_time
+        ):
+            data["temps_envoi"] = next_run_time.split("T")[1]
+        return self.run_update(instance, data, partial)
+
+    def run_update(self, instance, data, partial):
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return JsonResponse(self.get_serializer(instance).data)
 
 @extend_schema(
     tags=["emails"]
@@ -192,3 +218,38 @@ def getPossibleMonitorValuesAlertEmails(request):
         "possible_values": sorted(possible_values)
     }).data
     )
+
+@extend_schema(
+    tags=["emails"],
+    operation_id="sendScheduledEmailNow",
+    summary="Send scheduled email now",
+    request=None,
+    responses={200: SuccessResponseSerializer, 404: ErrorResponseSerializer, 500:ErrorResponseSerializer}
+)
+@api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
+def sendScheduledEmailNow(request, email_schedule_id):
+    logging.info(f"emailScheduler# request => send email with id: {email_schedule_id}")
+    try:
+        email = EmailSchedule.objects.get(pk=email_schedule_id)
+        sendEmail(email, schedule_next=False)
+        return JsonResponse(
+            SuccessResponseSerializer({
+                "status": "success",
+                "message": "email sent",
+            }).data,status=200
+        )
+    except EmailSchedule.DoesNotExist:
+        return JsonResponse(ErrorResponseSerializer(
+            {
+                "status": "error",
+                "code": ErrorCodes.NOT_FOUND.code,
+            }
+        ).data, status=ErrorCodes.NOT_FOUND.status_code)
+    except Exception as e:
+        return JsonResponse(ErrorResponseSerializer(
+            {
+                "status": "error",
+                "code": ErrorCodes.SERVER_ERROR.code,
+            }
+        ).data, status=ErrorCodes.SERVER_ERROR.status_code)
