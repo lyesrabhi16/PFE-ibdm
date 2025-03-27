@@ -22,14 +22,16 @@ def getHtmlMessage(email: EmailSchedule):
             raise ValueError(f"emailScheduler# rapport {email.rapport} not found")
             
 def sendEmailWithFile(file, provider=None, **kwargs):
+    provider_text = f"{getattr(provider, 'host')} " if provider else ""
     email_message = EmailMessage(**kwargs)
+    logging.info(f"emailScheduler#: {provider_text}sending email {email_message.subject} to '{email_message.to}'")
     email_message.content_subtype = "html"
     if file is not None:
         email_message.attach_file(file)
     if provider:
         email_message.connection = provider
     email_message.send()
-    logging.info(f"emailScheduler#: email {email_message.subject} sent to '{email_message.to}'")
+    logging.info(f"emailScheduler#: {provider_text}email {email_message.subject} sent to '{email_message.to}'")
 
 def sendEmail(email: EmailSchedule, schedule_next=True):
     logging.info(f"emailScheduler# send email: {email}")

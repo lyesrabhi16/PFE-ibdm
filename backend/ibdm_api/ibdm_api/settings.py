@@ -516,11 +516,15 @@ def require_level(record, level):
 def require_tags(record, tags):
     if (record.levelno == logging.DEBUG):
         return False
-    message_split = record.message.split("#")
-    if len(message_split) == 1:
-        return False
-    tag = message_split[0]
-    if tag not in seen_tags:
-        print("new tag:", tag)
-        seen_tags.add(tag)
-    return tag in tags
+    try:
+        message_split = record.getMessage().split("#")
+        if len(message_split) == 1:
+            return False
+        tag = message_split[0]
+        if tag not in seen_tags:
+            print("new tag:", tag)
+            seen_tags.add(tag)
+        return tag in tags
+    except Exception as e:
+        logging.getLogger("django").error(f"logger# failed to log message({record.msg}) args({record.args}) with error {e}")
+    return False

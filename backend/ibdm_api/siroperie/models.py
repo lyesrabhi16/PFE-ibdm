@@ -1,5 +1,5 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
+# self is an auto-generated Django model module.
+# You'll have to do the following manually to clean self up:
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
@@ -24,3 +24,6 @@ class Sucre(models.Model):
     class Meta:
         managed = False
         db_table = 'Sucre'
+    
+    def __str__(self):
+        return f"Sucres({str(self.date)})"

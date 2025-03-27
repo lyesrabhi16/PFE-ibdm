@@ -79,6 +79,7 @@ class Role(models.Model):
         return self.group.name
 
 
+
 class SubordinateAndSuperior(models.Model):
     superior = models.ForeignKey("User", on_delete=models.CASCADE, related_name="superior")
     subordinate = models.ForeignKey("User", on_delete=models.CASCADE, related_name="subordinate")
