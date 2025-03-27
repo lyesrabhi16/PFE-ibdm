@@ -22,7 +22,7 @@ class LanguageSwitchButton extends StatelessWidget {
           width: AppSizes.xl * 2,
         ),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppSizes.sm),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -42,8 +42,8 @@ class LanguageSwitchButton extends StatelessWidget {
                   shape: WidgetStateProperty.all(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(AppSizes.sm),
-                        bottomLeft: Radius.circular(AppSizes.sm),
+                        topLeft: Radius.circular(AppSizes.borderRadius),
+                        bottomLeft: Radius.circular(AppSizes.borderRadius),
                       ),
                     ),
                   ),
@@ -82,8 +82,8 @@ class LanguageSwitchButton extends StatelessWidget {
                   shape: WidgetStateProperty.all(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(AppSizes.sm),
-                        bottomRight: Radius.circular(AppSizes.sm),
+                        topRight: Radius.circular(AppSizes.borderRadius),
+                        bottomRight: Radius.circular(AppSizes.borderRadius),
                       ),
                     ),
                   ),

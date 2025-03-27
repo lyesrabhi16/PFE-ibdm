@@ -22,48 +22,87 @@ import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
+import 'package:ibdm/utils/helpers/user_helpers.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:universal_io/io.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 
-class UsersPage extends StatelessWidget {
-  UsersPage({super.key});
+class UsersPage extends StatefulWidget {
+  const UsersPage({super.key});
 
   static final UserController userController = Get.find();
   static final List<Role> roles = <Role>[];
-
-  final Rx<bool> _loaded = false.obs;
-  final Rx<bool> _loadedAddUserSuperiorOptions = false.obs;
-  final RxList<ShadOption<User>> _addUserSuperiorOptions =
-      <ShadOption<User>>[].obs;
-
-  final RxMap<int, bool> _hovered = <int, bool>{}.obs;
 
   static Rx<int>? perPage = 10.obs;
   static final _perPageController = TextEditingController(
     text: "${perPage?.value}",
   );
-  static final Rx<bool> _expandPerPage = false.obs;
+  static final Rx<bool> expandPerPage = false.obs;
 
-  static final Rx<bool> _filtersActive = false.obs;
-  static final Rx<bool> _optionsActive = false.obs;
-  static final _filtersPopoverController = ShadPopoverController();
+  static final Rx<bool> filtersActive = false.obs;
+  static final Rx<bool> optionsActive = false.obs;
+  static final filtersPopoverController = ShadPopoverController();
 
-  static final Rx<bool> _roleFilterSelected = false.obs;
-  static Role? _roleFilter;
+  static final Rx<bool> roleFilterSelected = false.obs;
+  static Role? roleFilter;
 
   ///
-  static final _roleFilterController = TextEditingController();
+  static final roleFilterController = TextEditingController();
   static final Rx<bool> _sortActive = false.obs;
-  static final _sortPopoverController = ShadPopoverController();
+  static final sortPopoverController = ShadPopoverController();
+  static final RxList<PageIndex> searchedPageIndexes = <PageIndex>[].obs;
+
+  static final searchController = TextEditingController();
+
+  // add user form
+  static final formKeyAddUser = GlobalKey<FormState>();
+  static final addUserEmailController = TextEditingController();
+  static final addUserNameController = TextEditingController();
+  static final addFirstNameController = TextEditingController();
+  static final addLastNameController = TextEditingController();
+
+  static final addUserPasswordController = TextEditingController();
+  static final addUserPhoneController = TextEditingController();
+  static Role? addUserRole;
+  static User? addUserSuperior;
+  static File? addUserAvatarFile; // use on non-web
+  static Uint8List? addUserAvatarBytes; // use on web
+  static String? addUserAvatarBytesFileName; // use on web
+
+  static final Rx<bool> showCheckboxColumn = false.obs;
+
+  static final RxSet<User> selectedUsers = <User>{}.obs;
+
+  static final ShadPopoverController actionsPopoverController =
+      ShadPopoverController();
+
+  static final ShadPopoverController optionsPopoverController =
+      ShadPopoverController();
+
+  @override
+  State<UsersPage> createState() => _UsersPageState();
+}
+
+class _UsersPageState extends State<UsersPage> {
+  final Rx<bool> _loaded = false.obs;
+
+  final Rx<bool> _loadedAddUserSuperiorOptions = false.obs;
+
+  final RxList<ShadOption<User>> _addUserSuperiorOptions =
+      <ShadOption<User>>[].obs;
+
+  final RxMap<int, bool> _hovered = <int, bool>{}.obs;
+
   final Rx<bool> _sortASC = true.obs;
+
   final RxMap<String, Sorter> _sortersASC = {
     "id": Sorter(isSelected: false, orderingValue: "id"),
     "email": Sorter(isSelected: false, orderingValue: "email"),
     "name": Sorter(isSelected: false, orderingValue: "username"),
     "role": Sorter(isSelected: false, orderingValue: "role"),
   }.obs;
+
   final RxMap<String, Sorter> _sortersDESC = {
     "id": Sorter(isSelected: false, orderingValue: "-id"),
     "email": Sorter(isSelected: false, orderingValue: "-email"),
@@ -72,59 +111,38 @@ class UsersPage extends StatelessWidget {
   }.obs;
 
   int? nbrTotalUsers;
+
   int? nbrUsersShown;
+
   int? nbrTotalPages;
+
   int? currentPage;
+
   List<User> usersData = [];
-
-  static final RxList<PageIndex> searchedPageIndexes = <PageIndex>[].obs;
-
-  static final _searchController = TextEditingController();
-
-  // add user form
-  static final _formKeyAddUser = GlobalKey<FormState>();
-  static final _addUserEmailController = TextEditingController();
-  static final _addUserNameController = TextEditingController();
-  static final _addFirstNameController = TextEditingController();
-  static final _addLastNameController = TextEditingController();
-
-  static final _addUserPasswordController = TextEditingController();
-  static final _addUserPhoneController = TextEditingController();
-  static Role? _addUserRole;
-  static User? _addUserSuperior;
-  static File? _addUserAvatarFile; // use on non-web
-  static Uint8List? _addUserAvatarBytes; // use on web
-  static String? _addUserAvatarBytesFileName; // use on web
-
-  static final Rx<bool> _showCheckboxColumn = false.obs;
-
-  static final RxSet<User> _selectedUsers = <User>{}.obs;
-
-  static final ShadPopoverController _actionsPopoverController =
-      ShadPopoverController();
-
-  static final ShadPopoverController _optionsPopoverController =
-      ShadPopoverController();
 
   Future<void> _loadUsers(
     BuildContext context, {
     int page = 1,
   }) async {
+    final strings = getTranslations(context);
     try {
       _loaded.value = false;
       final apiClient = await ApiClientInstance.getApiClient();
       // use stored perPage if it exists
       int? perPageInStorage = await LocalStorage.getPerPage();
-      if (perPageInStorage != null && perPageInStorage != perPage?.value) {
-        perPage?.value = perPageInStorage;
+      if (perPageInStorage != null &&
+          perPageInStorage != UsersPage.perPage?.value) {
+        UsersPage.perPage?.value = perPageInStorage;
       }
-      logger.d("perPage?.value: ${perPage?.value}");
+      logger.d("perPage?.value: ${UsersPage.perPage?.value}");
       // get data from api
       PaginatedUserList res = await apiClient.getUsers(
-          perPage: perPage?.value,
+          perPage: UsersPage.perPage?.value,
           page: page,
-          role: _roleFilterSelected.value ? _roleFilter!.roleId : null,
-          search: _searchController.text,
+          role: UsersPage.roleFilterSelected.value
+              ? UsersPage.roleFilter!.roleId
+              : null,
+          search: UsersPage.searchController.text,
           ordering: _sortASC.value
               ? _sortersASC.entries
                   .where((e) => e.value.isSelected)
@@ -143,7 +161,7 @@ class UsersPage extends StatelessWidget {
       nbrUsersShown = usersData.length;
       nbrTotalUsers = res.totalResults;
       currentPage = res.currentPage;
-      perPage = res.perPage.obs;
+      UsersPage.perPage = res.perPage.obs;
     } catch (err) {
       if (err is dio.DioException) {
         logger.e(
@@ -152,9 +170,7 @@ class UsersPage extends StatelessWidget {
         );
         if (context.mounted) {
           Toasts.showErrorToastNotification(
-              context: context,
-              message: "Details: ${err.message}",
-              title: "Error: Failed to load data of users");
+              context: context, message: strings.failedToLoadUsers);
         }
 
         return;
@@ -165,29 +181,13 @@ class UsersPage extends StatelessWidget {
       );
       if (context.mounted) {
         Toasts.showErrorToastNotification(
-            context: context,
-            message: "Details: Unknown Error Occurred",
-            title: "Error: Failed to load data of users");
+          context: context,
+          message: strings.unknownError,
+        );
       }
     } finally {
       _loaded.value = true;
     }
-  }
-
-  _loadSuperiors(BuildContext context, User user) {
-    logger.d("loading superiors for user: ${user.username}");
-    /* if (user.superiors == null || user.superiors!.isEmpty) {
-    return [];
-  }
-  return user.superiors!.map(
-    (s) {
-      return ShadOption<User>(
-        value: s.superior!,
-        child: Text(s.superior!.name ?? s.superior!.email),
-      );
-    },
-  ).toList(); */
-    return [];
   }
 
   List<int> _getIndexesOfPages(
@@ -267,9 +267,9 @@ class UsersPage extends StatelessWidget {
 
   void _load(BuildContext context) async {
     _loaded.value = false;
-    roles.clear();
-    roles.addAll(await userController.getRoles(context));
-    logger.e("Roles $roles");
+    UsersPage.roles.clear();
+    UsersPage.roles.addAll(await UsersPage.userController.getRoles(context));
+    logger.e("Roles ${UsersPage.roles}");
     await _loadUsers(context);
     _loaded.value = true;
 
@@ -321,7 +321,7 @@ class UsersPage extends StatelessWidget {
                   );
                 }
                 // set display to all
-                searchedPageIndexes.value = items;
+                UsersPage.searchedPageIndexes.value = items;
                 return Obx(() {
                   return ConstrainedBox(
                     constraints: BoxConstraints(
@@ -348,13 +348,15 @@ class UsersPage extends StatelessWidget {
                         ),
                       ),
                       anchor: ShadAnchorAuto(preferBelow: false),
-                      options: [...searchedPageIndexes.map((pi) => pi.button)],
+                      options: [
+                        ...UsersPage.searchedPageIndexes.map((pi) => pi.button)
+                      ],
                       searchPlaceholder: Text(strings.value.search),
                       onSearchChanged: (String value) {
                         if (value.isEmpty) {
-                          searchedPageIndexes.value = items;
+                          UsersPage.searchedPageIndexes.value = items;
                         } else {
-                          searchedPageIndexes.value = items
+                          UsersPage.searchedPageIndexes.value = items
                               .where((pi) => pi.index == int.tryParse(value))
                               .toList();
                         }
@@ -395,7 +397,8 @@ class UsersPage extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.borderRadius),
                           ),
                           child: Padding(
                             padding: EdgeInsets.all(AppSizes.sm),
@@ -408,7 +411,7 @@ class UsersPage extends StatelessWidget {
                               verticalDirection: VerticalDirection.down,
                               children: [
                                 SearchBar(
-                                  controller: _searchController,
+                                  controller: UsersPage.searchController,
                                   onSubmitted: (_) => _loadUsers(context),
                                   onTapOutside: (_) => _loadUsers(context),
                                   constraints: BoxConstraints(
@@ -445,7 +448,8 @@ class UsersPage extends StatelessWidget {
                                     ShadButton.destructive(
                                         onPressed: () =>
                                             _onDeleteButtonClick(context),
-                                        enabled: !_showCheckboxColumn.value,
+                                        enabled:
+                                            !UsersPage.showCheckboxColumn.value,
                                         child: Text(strings.value.delete)),
                                     SizedBox(
                                       width: AppSizes.xl * 4,
@@ -454,8 +458,8 @@ class UsersPage extends StatelessWidget {
                                         decoration: ShadDecoration(
                                           border: ShadBorder.all(
                                               width: 0,
-                                              radius:
-                                                  BorderRadius.circular(10)),
+                                              radius: BorderRadius.circular(
+                                                  AppSizes.borderRadius)),
                                           color: Theme.of(context)
                                               .colorScheme
                                               .surfaceContainer,
@@ -472,16 +476,18 @@ class UsersPage extends StatelessWidget {
                                             customExpandPerPage: context.width,
                                           ),
                                         ),
-                                        controller: _optionsPopoverController,
+                                        controller:
+                                            UsersPage.optionsPopoverController,
                                         child: IconWithLabelButton(
                                           icon: Icons.settings,
                                           text: strings.value.options,
                                           onTap: () {
-                                            _optionsActive.value =
-                                                !_optionsActive.value;
-                                            _optionsPopoverController.toggle();
+                                            UsersPage.optionsActive.value =
+                                                !UsersPage.optionsActive.value;
+                                            UsersPage.optionsPopoverController
+                                                .toggle();
                                           },
-                                          active: _optionsActive.value,
+                                          active: UsersPage.optionsActive.value,
                                         ),
                                       ).removeWhen(
                                           isAtLeastMediumScreen(context)),
@@ -499,11 +505,13 @@ class UsersPage extends StatelessWidget {
                                     width: context.width,
                                     decoration: BoxDecoration(
                                       color: colorScheme.surfaceContainer,
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(
+                                          AppSizes.borderRadius),
                                     ),
                                     child: _getTopActionBar(
                                         context, colorScheme,
-                                        expandPerPage: _expandPerPage.value))
+                                        expandPerPage:
+                                            UsersPage.expandPerPage.value))
                                 .removeWhen(isAtMostSmallScreen(context)) ??
                             SizedBox.shrink(),
 
@@ -521,15 +529,17 @@ class UsersPage extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .surfaceContainer,
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.borderRadius),
                             ),
                             child: DataTable2(
                               sortAscending: true,
                               columnSpacing: _getColumnSpacing(context),
                               onSelectAll: (selectedAll) => selectedAll == true
-                                  ? _selectedUsers.addAll(usersData)
-                                  : _selectedUsers.clear(),
-                              showCheckboxColumn: _showCheckboxColumn.value,
+                                  ? UsersPage.selectedUsers.addAll(usersData)
+                                  : UsersPage.selectedUsers.clear(),
+                              showCheckboxColumn:
+                                  UsersPage.showCheckboxColumn.value,
                               sortColumnIndex: 0,
                               dataRowColor: WidgetStateProperty.fromMap({
                                 WidgetState.hovered: Theme.of(context)
@@ -552,7 +562,8 @@ class UsersPage extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .surfaceContainer,
-                              borderRadius: BorderRadius.circular(10)),
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.borderRadius)),
                           child: Padding(
                             padding: EdgeInsets.all(AppSizes.sm),
                             child: Wrap(
@@ -628,7 +639,7 @@ class UsersPage extends StatelessWidget {
     double? customExpandPerPage,
   }) {
     final strings = getTranslations(context).obs;
-    _actionsPopoverController.setOpen(true);
+    UsersPage.actionsPopoverController.setOpen(true);
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: AppSizes.md,
@@ -654,7 +665,7 @@ class UsersPage extends StatelessWidget {
               SizedBox(
                 width: AppSizes.xl * 4,
                 child: ShadPopover(
-                  controller: _filtersPopoverController,
+                  controller: UsersPage.filtersPopoverController,
                   decoration: ShadDecoration(
                     border: ShadBorder.none,
                     color: Theme.of(context).colorScheme.surfaceContainer,
@@ -689,7 +700,7 @@ class UsersPage extends StatelessWidget {
                         DropdownMenu<Role>(
                           hintText: strings.value.role,
                           label: Text(strings.value.role),
-                          controller: _roleFilterController,
+                          controller: UsersPage.roleFilterController,
                           enableFilter: false,
                           enableSearch: false,
                           requestFocusOnTap: false,
@@ -699,34 +710,35 @@ class UsersPage extends StatelessWidget {
                                     fillColor:
                                         Theme.of(context).colorScheme.surface,
                                   ),
-                          initialSelection:
-                              _roleFilterSelected.value ? _roleFilter! : null,
+                          initialSelection: UsersPage.roleFilterSelected.value
+                              ? UsersPage.roleFilter!
+                              : null,
                           textStyle: Theme.of(context)
                               .textTheme
                               .bodyMedium
                               ?.copyWith(
                                   color: AppColors.getRoleColorWithRoleValue(
-                                      _roleFilter?.name ?? "")),
+                                      UsersPage.roleFilter?.name ?? "")),
                           onSelected: (value) {
-                            _roleFilterSelected.value = false;
-                            if (value == _roleFilter) {
-                              _roleFilter = null;
-                              _roleFilterController.clear();
+                            UsersPage.roleFilterSelected.value = false;
+                            if (value == UsersPage.roleFilter) {
+                              UsersPage.roleFilter = null;
+                              UsersPage.roleFilterController.clear();
                               _loadUsers(context);
                               return;
                             }
                             logger.e(
-                                "${strings.value.role} :${_roleFilter?.name} $value");
+                                "${strings.value.role} :${UsersPage.roleFilter?.name} $value");
                             if (value != null) {
-                              _roleFilter = value;
-                              _roleFilterSelected.value = true;
+                              UsersPage.roleFilter = value;
+                              UsersPage.roleFilterSelected.value = true;
                               _loadUsers(context);
                             }
                             logger.e(
-                                "${strings.value.role} :${_roleFilter?.name} $value");
+                                "${strings.value.role} :${UsersPage.roleFilter?.name} $value");
                           },
                           dropdownMenuEntries: [
-                            for (var role in roles)
+                            for (var role in UsersPage.roles)
                               DropdownMenuEntry(
                                   value: role,
                                   label: role.name,
@@ -742,11 +754,12 @@ class UsersPage extends StatelessWidget {
                   ),
                   child: IconWithLabelButton(
                     icon: Icons.filter_alt,
-                    active: _filtersActive.value,
+                    active: UsersPage.filtersActive.value,
                     text: strings.value.filter,
                     onTap: () {
-                      _filtersActive.value = !_filtersActive.value;
-                      _filtersPopoverController.toggle();
+                      UsersPage.filtersActive.value =
+                          !UsersPage.filtersActive.value;
+                      UsersPage.filtersPopoverController.toggle();
                     },
                   ),
                 ),
@@ -755,7 +768,7 @@ class UsersPage extends StatelessWidget {
               SizedBox(
                 width: AppSizes.xl * 4,
                 child: ShadPopover(
-                  controller: _sortPopoverController,
+                  controller: UsersPage.sortPopoverController,
                   decoration: ShadDecoration(
                     border: ShadBorder.none,
                     color: Theme.of(context).colorScheme.surfaceContainer,
@@ -886,11 +899,12 @@ class UsersPage extends StatelessWidget {
                   ),
                   child: IconWithLabelButton(
                     icon: Icons.sort_rounded,
-                    active: _sortActive.value,
+                    active: UsersPage._sortActive.value,
                     text: strings.value.sort,
                     onTap: () {
-                      _sortActive.value = !_sortActive.value;
-                      _sortPopoverController.toggle();
+                      UsersPage._sortActive.value =
+                          !UsersPage._sortActive.value;
+                      UsersPage.sortPopoverController.toggle();
                     },
                   ),
                 ),
@@ -901,9 +915,9 @@ class UsersPage extends StatelessWidget {
                       ? customExpandPerPage ?? AppSizes.xl * 8
                       : AppSizes.xl * 3,
                   child: PerPageInput(
-                    expandPerPage: _expandPerPage as RxBool,
-                    perPageController: _perPageController,
-                    perPage: perPage?.value ?? 10,
+                    expandPerPage: UsersPage.expandPerPage as RxBool,
+                    perPageController: UsersPage._perPageController,
+                    perPage: UsersPage.perPage?.value ?? 10,
                     load: () => _loadUsers(context),
                   )),
             ],
@@ -996,7 +1010,7 @@ class UsersPage extends StatelessWidget {
 
   void _onDeleteButtonClick(BuildContext context,
       {Function()? onDeleteConfirmed}) {
-    _showCheckboxColumn.value = !_showCheckboxColumn.value;
+    UsersPage.showCheckboxColumn.value = !UsersPage.showCheckboxColumn.value;
     final strings = getTranslations(context).obs;
 
     ShadToaster.of(context).show(
@@ -1006,18 +1020,18 @@ class UsersPage extends StatelessWidget {
         title: Text(strings.value.deleteUser),
         description: Obx(
           () {
-            return _selectedUsers.isEmpty
+            return UsersPage.selectedUsers.isEmpty
                 ? Text(strings.value.selectUserDelete)
-                : Text(
-                    "Are you sure you want to delete ${_selectedUsers.length} user(s)?");
+                : Text(strings.value
+                    .confirmUsersDeletion(UsersPage.selectedUsers.length));
           },
         ),
         action: Obx(
-          () => _selectedUsers.isEmpty
+          () => UsersPage.selectedUsers.isEmpty
               ? ShadButton(
                   onPressed: () {
-                    _selectedUsers.clear();
-                    _showCheckboxColumn.value = false;
+                    UsersPage.selectedUsers.clear();
+                    UsersPage.showCheckboxColumn.value = false;
                     ShadToaster.of(context).hide();
                   },
                   child: Text(strings.value.cancel),
@@ -1034,8 +1048,8 @@ class UsersPage extends StatelessWidget {
                     ),
                     ShadButton(
                       onPressed: () {
-                        _selectedUsers.clear();
-                        _showCheckboxColumn.value = false;
+                        UsersPage.selectedUsers.clear();
+                        UsersPage.showCheckboxColumn.value = false;
                         ShadToaster.of(context).hide();
                       },
                       child: Text(strings.value.no),
@@ -1049,14 +1063,14 @@ class UsersPage extends StatelessWidget {
 
   Future<void> _deleteUsers(BuildContext context) async {
     final api = await ApiClientInstance.getApiClient();
-    for (User user in _selectedUsers) {
+    for (User user in UsersPage.selectedUsers) {
       api.removeUser(
         id: user.userId,
       );
     }
 
-    _selectedUsers.clear();
-    _showCheckboxColumn.value = false;
+    UsersPage.selectedUsers.clear();
+    UsersPage.showCheckboxColumn.value = false;
     ShadToaster.of(context).hide();
   }
 
@@ -1084,23 +1098,22 @@ class UsersPage extends StatelessWidget {
             }
 
             return UserForm(
-              addUserEmailController: _addUserEmailController,
-              addUserNameController: _addUserNameController,
-              addFirstNameController: _addFirstNameController,
-              addLastNameController: _addLastNameController,
-              addUserPasswordController: _addUserPasswordController,
-              addUserPhoneController: _addUserPhoneController,
-              formKeyAddUser: _formKeyAddUser,
-              loadSuperiorsOptions: _loadSuperiorsOptions,
+              addUserEmailController: UsersPage.addUserEmailController,
+              addUserNameController: UsersPage.addUserNameController,
+              addFirstNameController: UsersPage.addFirstNameController,
+              addLastNameController: UsersPage.addLastNameController,
+              addUserPasswordController: UsersPage.addUserPasswordController,
+              addUserPhoneController: UsersPage.addUserPhoneController,
+              formKeyAddUser: UsersPage.formKeyAddUser,
               addUserSuperiorOptions: _addUserSuperiorOptions,
               onAddUser: (email, username, password, phone, role, superior,
                   firstName, lastName, avatarBytes, avatarFile) {
                 logger.e("setRole: ${role.name}");
-                _addUserRole = role;
-                _addUserSuperior = superior;
-                _addUserAvatarBytes = avatarBytes;
-                _addUserAvatarBytesFileName = "avatar.jpg";
-                _addUserAvatarFile = avatarFile;
+                UsersPage.addUserRole = role;
+                UsersPage.addUserSuperior = superior;
+                UsersPage.addUserAvatarBytes = avatarBytes;
+                UsersPage.addUserAvatarBytesFileName = "avatar.jpg";
+                UsersPage.addUserAvatarFile = avatarFile;
               },
             );
           },
@@ -1166,11 +1179,7 @@ class UsersPage extends StatelessWidget {
           ),
           DataCell(
             Text(
-              user.username.isNotEmpty
-                  ? user.username
-                  : user.firstName.isNotEmpty
-                      ? '${user.firstName} ${user.lastName}'
-                      : "",
+              getUserName(user, orEmail: false),
               style: Theme.of(context).textTheme.bodyMedium,
               softWrap: false,
               overflow: TextOverflow.ellipsis,
@@ -1213,7 +1222,7 @@ class UsersPage extends StatelessWidget {
                   ).removeWhen(isAtMostSmallScreen(context)),
                   IconButton(
                     onPressed: () {
-                      _selectedUsers.add(user);
+                      UsersPage.selectedUsers.add(user);
                       _onDeleteButtonClick(context);
                     },
                     icon: Icon(Icons.delete),
@@ -1226,7 +1235,7 @@ class UsersPage extends StatelessWidget {
                             .surfaceContainerHighest,
                         border: ShadBorder.all(
                           width: 0,
-                          radius: BorderRadius.circular(10),
+                          radius: BorderRadius.circular(AppSizes.borderRadius),
                         )),
                     popover: (context) => SizedBox(
                       width: AppSizes.lg * 5,
@@ -1273,14 +1282,14 @@ class UsersPage extends StatelessWidget {
             ),
           ),
         ].nonNulls.toList(),
-        selected: _selectedUsers.contains(user),
+        selected: UsersPage.selectedUsers.contains(user),
         onSelectChanged: (value) {
-          if (_selectedUsers.contains(user)) {
+          if (UsersPage.selectedUsers.contains(user)) {
             logger.d("unselected ${user.userId}: $value");
-            _selectedUsers.remove(user);
+            UsersPage.selectedUsers.remove(user);
           } else {
             logger.d("selected ${user.userId}: $value");
-            _selectedUsers.add(user);
+            UsersPage.selectedUsers.add(user);
           }
         },
       );
@@ -1291,15 +1300,15 @@ class UsersPage extends StatelessWidget {
     _loadedAddUserSuperiorOptions.value = false;
     final strings = getTranslations(context).obs;
     final me =
-        "${userController.user!.username.isEmpty ? userController.user!.email : userController.user!.username}(${strings.value.me})";
+        "${UsersPage.userController.user!.username.isEmpty ? UsersPage.userController.user!.email : UsersPage.userController.user!.username}(${strings.value.me})";
     List<ShadOption<User>> options = [
       ShadOption(
-        value: userController.user!,
+        value: UsersPage.userController.user!,
         child: Text(
           me,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: AppColors.getRoleColorWithRoleValue(
-                    userController.user!.role),
+                    UsersPage.userController.user!.role),
               ),
         ),
       ),
@@ -1319,7 +1328,7 @@ class UsersPage extends StatelessWidget {
       }
 
       await traverseSubordinatesTree(
-        userController.user!,
+        UsersPage.userController.user!,
         (user) => options.add(
           ShadOption(
               value: user,
@@ -1352,16 +1361,6 @@ class UsersPage extends StatelessWidget {
       _loadedAddUserSuperiorOptions.value = true;
       return;
     }
-  }
-
-  _getName(User user, {bool orEmail = false}) {
-    return user.username.isNotEmpty
-        ? user.username
-        : user.firstName.isNotEmpty
-            ? "${user.firstName} ${user.lastName}"
-            : orEmail
-                ? user.email
-                : "";
   }
 
   Future _showEditUserDialog(BuildContext context, User user) async {
@@ -1400,16 +1399,15 @@ class UsersPage extends StatelessWidget {
     }).catchError((e) {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
-          context: context,
-          message: "${strings.value.details} : ${e.toString()}",
-          title: "Error: Failed to get user details");
+          context: context, message: strings.value.failedToGetUser);
       loadedUserDetails.value = true;
     });
 
     return showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
-        title: Text("${strings.value.user}: ${_getName(user, orEmail: true)}"),
+        title:
+            Text("${strings.value.user}: ${getUserName(user, orEmail: true)}"),
         description: Text(strings.value.editUser),
         actions: [
           Obx(() => Expanded(
@@ -1424,7 +1422,7 @@ class UsersPage extends StatelessWidget {
                           ShadButton.destructive(
                             child: Text(strings.value.delete),
                             onPressed: () {
-                              _selectedUsers.add(userDetails!);
+                              UsersPage.selectedUsers.add(userDetails!);
                               _onDeleteButtonClick(
                                 context,
                                 onDeleteConfirmed: () =>
@@ -1483,7 +1481,7 @@ class UsersPage extends StatelessWidget {
                 editUserAvatarFile = avatarFile,
                 password = password,
                 logger.e("superior: $superior"),
-                _addUserSuperior = superior,
+                UsersPage.addUserSuperior = superior,
                 newUser = User(
                   userId: newUser.userId,
                   email: email,
@@ -1509,9 +1507,8 @@ class UsersPage extends StatelessWidget {
               addUserPasswordController: TextEditingController(),
               addUserPhoneController:
                   TextEditingController(text: userDetails!.phoneNumber),
-              formKeyAddUser: _formKeyAddUser,
+              formKeyAddUser: UsersPage.formKeyAddUser,
               addUserSuperiorOptions: _addUserSuperiorOptions,
-              loadSuperiorsOptions: _loadSuperiorsOptions,
             );
           },
         ),
@@ -1538,16 +1535,17 @@ class UsersPage extends StatelessWidget {
     }).catchError((e) {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
-          context: context,
-          message: "${strings.value.details}: ${e.toString()}",
-          title: strings.value.errorFailedToGetUsers);
+        context: context,
+        message: strings.value.errorFailedToGetUsers,
+      );
       loadedUserDetails.value = true;
     });
 
     return showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
-        title: Text("${strings.value.user}: ${_getName(user, orEmail: true)}"),
+        title:
+            Text("${strings.value.user}: ${getUserName(user, orEmail: true)}"),
         description: Text(strings.value.viewUserDetails),
         removeBorderRadiusWhenTiny: true,
         actions: [
@@ -1563,7 +1561,7 @@ class UsersPage extends StatelessWidget {
                 ? ShadButton.destructive(
                     child: Text(strings.value.delete),
                     onPressed: () {
-                      _selectedUsers.add(userDetails!);
+                      UsersPage.selectedUsers.add(userDetails!);
                       _onDeleteButtonClick(
                         context,
                         onDeleteConfirmed: () => Navigator.of(context).pop(),
@@ -1596,7 +1594,7 @@ class UsersPage extends StatelessWidget {
                           ShadButton.destructive(
                             child: Text(strings.value.delete),
                             onPressed: () {
-                              _selectedUsers.add(userDetails!);
+                              UsersPage.selectedUsers.add(userDetails!);
                               _onDeleteButtonClick(
                                 context,
                                 onDeleteConfirmed: () =>
@@ -1656,8 +1654,6 @@ class UsersPage extends StatelessWidget {
                     TextEditingController(text: userDetails!.phoneNumber),
                 formKeyAddUser: GlobalKey<FormState>(),
                 addUserSuperiorOptions: <ShadOption<User>>[].obs,
-                loadSuperiorsOptions: (context) =>
-                    _loadSuperiors(context, userDetails!),
               );
             },
           ),
@@ -1667,12 +1663,12 @@ class UsersPage extends StatelessWidget {
   }
 
   void _onAddUserPressed(BuildContext context) async {
-    if (!_formKeyAddUser.currentState!.validate()) {
+    final strings = getTranslations(context).obs;
+    if (!UsersPage.formKeyAddUser.currentState!.validate()) {
       Toasts.showErrorToastNotification(
-          context: context, message: "¨Please fix the errors in the form");
+          context: context, message: strings.value.pleaseFixErrorsInTheForm);
       return;
     }
-    final strings = getTranslations(context).obs;
     Rx<FutureState> loadingToastState = FutureState.loading.obs;
     // show loading toast
     final toast = Toasts.showStatefulToast(
@@ -1685,35 +1681,36 @@ class UsersPage extends StatelessWidget {
     // add user request
     try {
       final api = await ApiClientInstance.getApiClient();
-      logger.e("addUserRole: ${_addUserRole!.name}");
+      logger.e("addUserRole: ${UsersPage.addUserRole!.name}");
       late final User res;
       if (kIsWeb) {
         res = await api.addUsersOnWeb(
-          avatar: _addUserAvatarBytes,
-          avatarFileName: _addUserAvatarBytesFileName,
-          email: _addUserEmailController.text,
-          password: _addUserPasswordController.text,
-          role: _addUserRole!.name,
-          phoneNumber: _addUserPhoneController.text,
-          username: _addUserNameController.text,
-          firstName: _addFirstNameController.text,
-          lastName: _addLastNameController.text,
+          avatar: UsersPage.addUserAvatarBytes,
+          avatarFileName: UsersPage.addUserAvatarBytesFileName,
+          email: UsersPage.addUserEmailController.text,
+          password: UsersPage.addUserPasswordController.text,
+          role: UsersPage.addUserRole!.name,
+          phoneNumber: UsersPage.addUserPhoneController.text,
+          username: UsersPage.addUserNameController.text,
+          firstName: UsersPage.addFirstNameController.text,
+          lastName: UsersPage.addLastNameController.text,
         );
       } else {
         res = await api.addUser(
-          avatar: _addUserAvatarFile,
-          email: _addUserEmailController.text,
-          password: _addUserPasswordController.text,
-          role: _addUserRole!.name,
-          phoneNumber: _addUserPhoneController.text,
-          username: _addUserNameController.text,
+          avatar: UsersPage.addUserAvatarFile,
+          email: UsersPage.addUserEmailController.text,
+          password: UsersPage.addUserPasswordController.text,
+          role: UsersPage.addUserRole!.name,
+          phoneNumber: UsersPage.addUserPhoneController.text,
+          username: UsersPage.addUserNameController.text,
         );
       }
 
-      if (_addUserSuperior != null) {
+      if (UsersPage.addUserSuperior != null) {
         await api.addSubordinateAndSuperior(
           body: SubordinateAndSuperiorRequest(
-              superior: _addUserSuperior!.userId, subordinate: res.userId),
+              superior: UsersPage.addUserSuperior!.userId,
+              subordinate: res.userId),
         );
       } else {
         logger.e("superior is null");
@@ -1743,12 +1740,12 @@ class UsersPage extends StatelessWidget {
     File? userAvatarFile,
     String? password,
   }) async {
-    if (!_formKeyAddUser.currentState!.validate()) {
+    final strings = getTranslations(context).obs;
+    if (!UsersPage.formKeyAddUser.currentState!.validate()) {
       Toasts.showErrorToastNotification(
-          context: context, message: "¨Please fix the errors in the form");
+          context: context, message: strings.value.pleaseFixErrorsInTheForm);
       return;
     }
-    final strings = getTranslations(context).obs;
     Rx<FutureState> loadingToastState = FutureState.loading.obs;
     // show loading toast
     final toast = Toasts.showStatefulToast(
@@ -1763,13 +1760,13 @@ class UsersPage extends StatelessWidget {
       final api = await ApiClientInstance.getApiClient();
       //logger.e("addUserRole: ${_addUserRole!.name}");
       logger.e(
-          "${strings.value.avatar} : ${userAvatarBytes != null} $_addUserAvatarBytesFileName ${userAvatarFile != null}");
+          "${strings.value.avatar} : ${userAvatarBytes != null} ${UsersPage.addUserAvatarBytesFileName} ${userAvatarFile != null}");
       late final User res;
       if (kIsWeb) {
         res = await api.partialUpdateUserOnWeb(
           id: user.userId,
           avatar: userAvatarBytes,
-          avatarFileName: _addUserAvatarBytesFileName ?? "avatar.jpg",
+          avatarFileName: UsersPage.addUserAvatarBytesFileName ?? "avatar.jpg",
           email: user.email,
           password: password,
           role: user.role,
@@ -1791,19 +1788,21 @@ class UsersPage extends StatelessWidget {
           lastName: user.lastName,
         );
       }
-      logger.e("superior: ${_addUserSuperior?.userId}");
-      if (_addUserSuperior != null) {
+      logger.e("superior: ${UsersPage.addUserSuperior?.userId}");
+      if (UsersPage.addUserSuperior != null) {
         if (user.superiors.isEmpty) {
           await api.addSubordinateAndSuperior(
               body: SubordinateAndSuperiorRequest(
-                  superior: _addUserSuperior!.userId, subordinate: res.userId));
+                  superior: UsersPage.addUserSuperior!.userId,
+                  subordinate: res.userId));
         } else {
           final res = await api.getSubordinateAndSuperiorId(
               superior: user.superiors.first.userId, subordinate: user.userId);
           await api.partialUpdateSubordinateAndSuperior(
             id: res.id,
             body: PatchedSubordinateAndSuperiorRequest(
-                superior: _addUserSuperior!.userId, subordinate: user.userId),
+                superior: UsersPage.addUserSuperior!.userId,
+                subordinate: user.userId),
           );
         }
       } else {

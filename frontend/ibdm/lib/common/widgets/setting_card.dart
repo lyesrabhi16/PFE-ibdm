@@ -1,22 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:ibdm/utils/constants/sizes.dart';
 
-Widget SettingCard({
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    Widget? trailing,
-    VoidCallback? onTap,
-  }) {
+class SettingCard extends StatelessWidget {
+  const SettingCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
       child: ListTile(
         leading: Icon(icon, color: Colors.blueAccent),
         title: Text(title),
-        subtitle: subtitle != null ? Text(subtitle) : null,
+        subtitle: subtitle != null ? Text(subtitle!) : null,
         trailing: trailing,
         onTap: onTap,
       ),
     );
   }
+}

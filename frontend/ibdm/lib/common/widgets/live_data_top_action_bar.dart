@@ -8,17 +8,15 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
 
 class LiveDataTopActionBar extends StatelessWidget {
-  Function? _getContext;
-  BuildContext get context => _getContext!.call()!;
   final RxBool isLive;
 
   final DateTime? selectedDate;
   final DateTime startDate;
   final DateTime endDate;
 
-  List<Widget>? afterDataDisplayWidgets;
+  final List<Widget>? afterDataDisplayWidgets;
 
-  List<Widget>? beforeDataDisplayWidgets;
+  final List<Widget>? beforeDataDisplayWidgets;
 
   LiveDataTopActionBar({
     super.key,
@@ -31,35 +29,11 @@ class LiveDataTopActionBar extends StatelessWidget {
     this.searchPressed,
   });
 
-  _getMonthFromInt(int month) {
-    final strings = getTranslations(context).obs;
-    switch (month) {
-      case 1:
-        return strings.value.january;
-      case 2:
-        return strings.value.february;
-      case 3:
-        return strings.value.march;
-      case 4:
-        return strings.value.april;
-      case 5:
-        return strings.value.may;
-      case 6:
-        return strings.value.june;
-      case 7:
-        return strings.value.july;
-      case 8:
-        return strings.value.august;
-      case 9:
-        return strings.value.september;
-      case 10:
-        return strings.value.october;
-      case 11:
-        return strings.value.november;
-      case 12:
-        return strings.value.december;
-    }
-  }
+  Function(DateTime dateTime)? searchPressed;
+
+  Function? _getContext;
+
+  BuildContext get context => _getContext!.call()!;
 
   Color _getBackgroundColor(bool active) {
     return active
@@ -72,8 +46,6 @@ class LiveDataTopActionBar extends StatelessWidget {
         ? Theme.of(context).colorScheme.onPrimary
         : Theme.of(context).colorScheme.onSurface;
   }
-
-  Function(DateTime dateTime)? searchPressed;
 
   String _getTimeString(DateTime dt) {
     return "${dt.hour.toString().padLeft(2, "0")}:${dt.minute.toString().padLeft(2, "0")}:${dt.second.toString().padLeft(2, "0")}";
@@ -126,10 +98,13 @@ class LiveDataTopActionBar extends StatelessWidget {
                       width: 160,
                       height: 40,
                       allowDeselection: false,
-                      backgroundColor: _getBackgroundColor(!isLive.value),
-                      hoverBackgroundColor: _getBackgroundColor(isLive.value),
+                      backgroundColor:
+                          _getBackgroundColor(!isLive.value),
+                      hoverBackgroundColor:
+                          _getBackgroundColor(isLive.value),
                       foregroundColor: _getForgroundColor(!isLive.value),
-                      hoverForegroundColor: _getForgroundColor(isLive.value),
+                      hoverForegroundColor:
+                          _getForgroundColor(isLive.value),
                       enabled: !isLive.value,
                       icon: Icon(LucideIcons.calendar, size: 16),
                       formatDate: (d) => "${d.day}/${d.month}/${d.year}",
@@ -150,14 +125,18 @@ class LiveDataTopActionBar extends StatelessWidget {
                   ShadButton(
                       width: 120,
                       height: 40,
-                      backgroundColor: _getBackgroundColor(!isLive.value),
-                      hoverBackgroundColor: _getBackgroundColor(isLive.value),
+                      backgroundColor:
+                          _getBackgroundColor(!isLive.value),
+                      hoverBackgroundColor:
+                          _getBackgroundColor(isLive.value),
                       foregroundColor: _getForgroundColor(!isLive.value),
-                      hoverForegroundColor: _getForgroundColor(isLive.value),
+                      hoverForegroundColor:
+                          _getForgroundColor(isLive.value),
                       enabled: !isLive.value,
                       onHoverChange: (hovered) => {
-                            _textColor.value = _getForgroundColor(
-                                hovered ? isLive.value : !isLive.value),
+                            _textColor.value = _getForgroundColor(hovered
+                                ? isLive.value
+                                : !isLive.value),
                           },
                       icon: Icon(
                         LucideIcons.clock,
@@ -227,7 +206,8 @@ class LiveDataTopActionBar extends StatelessWidget {
                   ),
                   child: Text(strings.value.find.capitalize!),
                 ),
-              if (afterDataDisplayWidgets != null) ...afterDataDisplayWidgets!,
+              if (afterDataDisplayWidgets != null)
+                ...afterDataDisplayWidgets!,
             ],
           ),
         );

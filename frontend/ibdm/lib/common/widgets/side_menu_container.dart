@@ -178,7 +178,7 @@ class SideMenuContainer extends StatelessWidget {
                     showTooltip: true,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(15),
+                        bottomRight: Radius.circular(AppSizes.borderRadius),
                       ),
                       color: Theme.of(context).colorScheme.surfaceContainerHigh,
                     ),

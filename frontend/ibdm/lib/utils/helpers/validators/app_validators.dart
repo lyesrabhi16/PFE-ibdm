@@ -2,6 +2,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
 
 class AppValidators {
   const AppValidators._();
@@ -37,8 +38,10 @@ class AppValidators {
   }
 
   static String? monitoredValueValidator(String? v) {
+    final strings = getTranslations(Get.context!);
     return FormBuilderValidators.compose([
-      FormBuilderValidators.required(errorText: "Monitored Value must be selected"),
+      FormBuilderValidators.required(
+          errorText: strings.valueIsRequired(strings.monitoredValue)),
     ])(v);
   }
 
