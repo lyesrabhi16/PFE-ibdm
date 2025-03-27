@@ -30,7 +30,9 @@ import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
 import 'package:universal_html/html.dart' as uhtml;
+import 'package:open_filex/open_filex.dart';
 import 'package:flutter/material.dart';
+
 /* 
 extension RoleExtension on Role {
   String get name {
@@ -137,7 +139,7 @@ class CsrfInterceptor extends Interceptor {
 
 extension DownloadFile on IbdmApiClient {
   Future<void> downloadFile({
-    required BuildContext context, // 🔹 Ajout du contexte
+    required BuildContext context,
     required String url,
     required String fileName,
   }) async {
@@ -151,22 +153,35 @@ extension DownloadFile on IbdmApiClient {
       filePath = "Téléchargé via le navigateur";
     } else {
       try {
-        // Gestion pour Windows & iOS
+        // Gestion pour Windows & iOS & Android
         Directory directory;
         if (Platform.isIOS) {
           directory = await getApplicationDocumentsDirectory();
         } else if (Platform.isWindows) {
           directory =
               await getDownloadsDirectory() ?? await getTemporaryDirectory();
+        } else if (Platform.isAndroid) {
+          directory = await getExternalStorageDirectory() ??
+              await getTemporaryDirectory();
         } else {
           throw Exception("Plateforme non supportée !");
         }
 
         filePath = "${directory.path}/$fileName";
         Dio dio = Dio();
-
-        // Télécharger le fichier
+        // download file
         await dio.download(url, filePath);
+        // Open File after download
+        if (Platform.isWindows) {
+          Process.run('explorer.exe', [directory.path]);
+        } else if (Platform.isAndroid) {
+          OpenFilex.open(filePath);
+        } else if (Platform.isIOS) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text("Fichier enregistré dans : ${directory.path}")),
+          );
+        }
       } catch (e) {
         filePath = "Erreur de téléchargement : $e";
       }

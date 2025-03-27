@@ -28,7 +28,6 @@ import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/common/widgets/sent_email_form.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:toastification/toastification.dart';
-import 'package:universal_html/html.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class EmailSentsPage extends StatefulWidget {
@@ -690,12 +689,12 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
       DataColumn2(
           fixedWidth: 60,
           label: Text(
-        strings.value.num,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Colors.grey,
-              fontWeight: FontWeight.bold,
-            ),
-      )).removeWhen(isAtMostSmallScreen(context)),
+            strings.value.num,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
+          )).removeWhen(isAtMostSmallScreen(context)),
       DataColumn2(
           size: isAtMostSmallScreen(context) ? ColumnSize.M : ColumnSize.S,
           label: Text(

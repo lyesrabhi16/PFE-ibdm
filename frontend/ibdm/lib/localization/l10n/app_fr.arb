@@ -600,5 +600,10 @@
 	"userAddedSuccessfully": "Utilisateur ajouté avec succès",
 	"savingUser": "Sauvegarde de l'utilisateur...",
 	"failedToSaveUser": "Échec de la sauvegarde de l'utilisateur",
-	"userSavedSuccessfully": "Utilisateur sauvegardé avec succès"
+	"userSavedSuccessfully": "Utilisateur sauvegardé avec succès",
+	"aProposIBDM": "À propos d'IBDM",
+	"aProposIBDMDescription": "IBDM est un logiciel de gestion de données industrielles conçu pour faciliter le suivi et l'analyse des performances des équipements industriels.",
+	"contactezNous": "Contactez-nous",
+	"adresse": "Akbou, Bejaia, Algérie",
+	"createdBy": "Créé par : Lyes Rabhi (lyes.rabhi.020@gmail.com) & Kheloufi Mounir (mounirkheloufi2002@gmail.com)"
 }
