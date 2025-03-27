@@ -9,6 +9,9 @@ part of 'alert_email_request.dart';
 AlertEmailRequest _$AlertEmailRequestFromJson(Map<String, dynamic> json) =>
     AlertEmailRequest(
       monitoredValue: AlertEnum.fromJson(json['monitored_value'] as String),
+      monitorType: json['monitor_type'] == null
+          ? null
+          : MonitorTypeEnum.fromJson(json['monitor_type'] as String),
       dangerPoint: (json['danger_point'] as num?)?.toInt(),
       warningPoint: (json['warning_point'] as num?)?.toInt(),
       dangerReminderInterval:
@@ -28,6 +31,7 @@ AlertEmailRequest _$AlertEmailRequestFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$AlertEmailRequestToJson(AlertEmailRequest instance) =>
     <String, dynamic>{
       'monitored_value': _$AlertEnumEnumMap[instance.monitoredValue]!,
+      'monitor_type': _$MonitorTypeEnumEnumMap[instance.monitorType],
       'danger_point': instance.dangerPoint,
       'warning_point': instance.warningPoint,
       'danger_reminder_interval': instance.dangerReminderInterval,
@@ -160,8 +164,14 @@ const _$AlertEnumEnumMap = {
   AlertEnum.undefined118: 'utilite.ut_sid_pg',
   AlertEnum.undefined119: 'utilite.ut_sid_tt',
   AlertEnum.undefined120: 'utilite.ut_sid_tc',
-  AlertEnum.undefined121: 'sucre.total.tetra',
-  AlertEnum.undefined122: 'sucre.total.adue',
+  AlertEnum.undefined121: 'sucre.total.adue',
+  AlertEnum.undefined122: 'sucre.total.tetra',
   AlertEnum.undefined123: 'sucre.total',
   AlertEnum.$unknown: r'$unknown',
+};
+
+const _$MonitorTypeEnumEnumMap = {
+  MonitorTypeEnum.asc: 'ASC',
+  MonitorTypeEnum.desc: 'DESC',
+  MonitorTypeEnum.$unknown: r'$unknown',
 };

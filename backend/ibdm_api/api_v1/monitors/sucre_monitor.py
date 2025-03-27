@@ -1,4 +1,4 @@
-import logging
+from logs.logging import logger as logging
 import threading
 from api_v1.monitors.generic_monitor import GenericMonitor
 from siroperie.models import Sucre

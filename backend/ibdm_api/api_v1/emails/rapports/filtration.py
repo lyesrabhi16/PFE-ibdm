@@ -81,7 +81,7 @@ def rapport_filtration(email):
                 cond_calculer = (c_os1*d_os1/10+c_os2*d_os2/10+c_os3*d_os3/10)/10/(d_os1/10+d_os2/10+d_os3/10)
         except Exception as e:
             # Handle any errors in calculation
-            print(f"Error calculating cond_calculer: {e}")
+            logging.info(f"Error calculating cond_calculer: {e}")
             cond_calculer = 0 """
         return cond_calculer
 

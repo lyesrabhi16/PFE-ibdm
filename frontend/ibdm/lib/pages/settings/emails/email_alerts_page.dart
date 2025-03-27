@@ -346,6 +346,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     String? _addAlertDangerPoint;
     bool? _addAlertEnabled;
     String? _addAlertMonitoredValue;
+    String? _addAlertMonitorType;
     List<Role>? _addAlertRoles;
     List<User>? _addAlertUsers;
     String? _addAlertWarningAlertInterval;
@@ -380,6 +381,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                 EmailActions.addAlert(
                   context,
                   monitoredValue: _addAlertMonitoredValue!,
+                  monitorType: _addAlertMonitorType,
                   customMessage: _addAlertCustomMessage,
                   dangerAlertInterval: _addAlertDangerAlertInterval,
                   dangerPoint: _addAlertDangerPoint,
@@ -405,6 +407,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                 dangerPoint,
                 enabled,
                 monitoredValue,
+                monitorType,
                 roles,
                 users,
                 warningAlertInterval,
@@ -414,6 +417,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               _addAlertDangerPoint = dangerPoint;
               _addAlertEnabled = enabled;
               _addAlertMonitoredValue = monitoredValue;
+              _addAlertMonitorType = monitorType;
               _addAlertRoles = roles;
               _addAlertUsers = users;
               _formKey.currentState!.validate();
@@ -532,6 +536,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     String? _saveAlertDangerPoint;
     bool? _saveAlertEnabled;
     String? _saveAlertMonitoredValue;
+    String? _saveAlertMonitorType;
     List<Role>? _saveAlertRoles;
     List<User>? _saveAlertUsers;
     String? _saveAlertWarningAlertInterval;
@@ -578,7 +583,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                           logger.e("Form is not valid");
                           Toasts.showErrorToastNotification(
                               context: Get.overlayContext!,
-                              message: "¨Please fix the errors in the form");
+                              message: strings.value.pleaseFixErrorsInTheForm);
                           return;
                         }
                         EmailActions.saveAlert(
@@ -589,6 +594,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                           dangerPoint: _saveAlertDangerPoint,
                           enabled: _saveAlertEnabled,
                           monitoredValue: _saveAlertMonitoredValue,
+                          monitorType: _saveAlertMonitorType,
                           roles: _saveAlertRoles,
                           users: _saveAlertUsers,
                           warningAlertInterval: _saveAlertWarningAlertInterval,
@@ -681,6 +687,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               dangerPoint,
               enabled,
               monitoredValue,
+              monitorType,
               roles,
               users,
               warningAlertInterval,
@@ -702,6 +709,10 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               if (monitoredValue != null) {
                 _saveAlertMonitoredValue =
                     monitoredValue.isNotEmpty ? monitoredValue : null;
+              }
+              if (monitorType != null) {
+                _saveAlertMonitorType =
+                    monitorType.isNotEmpty ? monitoredValue : null;
               }
               _saveAlertRoles = roles;
               _saveAlertUsers = users;

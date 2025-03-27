@@ -58,6 +58,18 @@
             "nullable": true
         },
         "nullable": true
+    },
+    "components.schemas.AlertEmail.properties.monitor_type":{
+        "$ref": "#/components/schemas/MonitorTypeEnum",
+        "nullable": true
+    },
+    "components.schemas.AlertEmailRequest.properties.monitor_type":{
+        "$ref": "#/components/schemas/MonitorTypeEnum",
+        "nullable": true
+    },
+    "components.schemas.PatchedAlertEmailRequest.properties.monitor_type":{
+        "$ref": "#/components/schemas/MonitorTypeEnum",
+        "nullable": true
     }
     
 }
