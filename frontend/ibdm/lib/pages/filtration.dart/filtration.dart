@@ -188,8 +188,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
           decoration: BoxDecoration(
               color: colorScheme.surfaceContainer,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
+                topLeft: Radius.circular(AppSizes.borderRadius),
+                topRight: Radius.circular(AppSizes.borderRadius),
               )),
           child: _getTopActionsBar(),
         ),
@@ -260,8 +260,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainer,
                     borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(15),
-                      bottomRight: Radius.circular(15),
+                      bottomLeft: Radius.circular(AppSizes.borderRadius),
+                      bottomRight: Radius.circular(AppSizes.borderRadius),
                     ),
                   ),
                   child: SingleChildScrollView(
@@ -279,7 +279,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: successColor,
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(AppSizes.sm),
@@ -371,7 +372,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Expanded(
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
+                                      borderRadius: BorderRadius.circular(
+                                          AppSizes.borderRadius),
                                       border: Border.all(
                                         width: 2,
                                         color: successColor,
@@ -394,7 +396,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: successColor,
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                   ),
                                   child: Padding(
                                       padding:
@@ -516,7 +519,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Expanded(
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
+                                      borderRadius: BorderRadius.circular(
+                                          AppSizes.borderRadius),
                                       border: Border.all(
                                         width: 2,
                                         color: colorScheme.primary,
@@ -541,7 +545,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: successColor,
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(AppSizes.sm),
@@ -642,7 +647,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 color: successColor,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                     border: Border.all(
                                       width: 2,
                                       color: successColor,
@@ -665,7 +671,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: successColor,
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(AppSizes.sm),
@@ -782,7 +789,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 color: colorScheme.primary,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                     border: Border.all(
                                       width: 2,
                                       color: colorScheme.primary,
@@ -810,7 +818,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(
+                                      AppSizes.borderRadius),
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(AppSizes.sm),
@@ -1063,7 +1072,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                             child: Container(
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(
+                                    AppSizes.borderRadius),
                                 border: Border.all(
                                   width: 2,
                                   color: colorScheme.primaryContainer,
@@ -1085,12 +1095,13 @@ class _FiltrationPageState extends State<FiltrationPage> {
   }
 
   _getFiltrationData() async {
+    final strings = getTranslations(context);
     final _state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
         context: getContext,
-        messageSuccess: "data found",
-        message: "getting data...",
-        messageError: "data not found",
+        messageSuccess: strings.dataFound,
+        message: strings.retrievingData,
+        messageError: strings.dataNotFound,
         state: _state);
 
     try {
@@ -1495,7 +1506,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: colorScheme.primaryContainer,
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(
+                                    AppSizes.borderRadius),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(AppSizes.sm),
@@ -1512,7 +1524,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                       ),
                                     ),
                                     Text(
-                                      "Not Found ${(0).toStringAsFixed(2)} M3/H", // TODO: fix this
+                                      "${(0).toStringAsFixed(2)} M3/H", // TODO: fix this
                                       style: Theme.of(getContext)
                                           .textTheme
                                           .titleMedium
@@ -1531,7 +1543,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                       ),
                                     ),
                                     Text(
-                                      "Not Found ${(0).toStringAsFixed(2)} M3", // TODO: fix this
+                                      "${(0).toStringAsFixed(2)} M3",
                                       style: Theme.of(getContext)
                                           .textTheme
                                           .titleMedium
@@ -1562,7 +1574,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.borderRadius),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(AppSizes.sm),
@@ -1579,7 +1592,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                   ),
                                 ),
                                 Text(
-                                  "Not Found ${(0).toStringAsFixed(2)} M3/H",
+                                  "${(0).toStringAsFixed(2)} M3/H",
                                   style: Theme.of(getContext)
                                       .textTheme
                                       .titleMedium
@@ -1598,7 +1611,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                   ),
                                 ),
                                 Text(
-                                  "Not Found ${(0).toStringAsFixed(2)} M3",
+                                  "${(0).toStringAsFixed(2)} M3",
                                   style: Theme.of(getContext)
                                       .textTheme
                                       .titleMedium
@@ -1661,7 +1674,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                             ),
                             child: Center(
                               child: Text(
-                                "USINE",
+                                strings.value.usine,
                                 style: Theme.of(getContext)
                                     .textTheme
                                     .bodyMedium
@@ -1825,7 +1838,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.borderRadius),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(AppSizes.sm),
@@ -1886,7 +1900,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                             ),
                             child: Center(
                               child: Text(
-                                "USINE",
+                                strings.value.usine,
                                 style: Theme.of(getContext)
                                     .textTheme
                                     .bodyMedium
@@ -1904,6 +1918,9 @@ class _FiltrationPageState extends State<FiltrationPage> {
             ),
             Cuve(
               title: "Concentrat",
+              okColor: colorScheme.primary,
+              niveau1: 0,
+              niveau2: 0,
               niveau1Trailing: "M3",
               niveau2Trailing: "%",
             ),
@@ -1923,6 +1940,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
   }
 
   Future<void> load() async {
+    final strings = getTranslations(context);
     printMessage("load...");
 
     loaded.value = false;
@@ -1957,8 +1975,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
           }
           Toasts.showErrorToastNotification(
               context: context,
-              message:
-                  "Failed To Connect To Filtration Broadcast${retries > 0 ? ',retrying' : ''}");
+              message: strings.failedToConnectToFiltrationBroadcast(retries));
         }
       } else {
         printMessage("Not Loading because Stream is not null");

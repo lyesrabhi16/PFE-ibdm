@@ -182,6 +182,26 @@ extension DownloadFile on IbdmApiClient {
   }
 }
 
+extension DownloadCertificate on IbdmApiClient {
+  void downloadCertificate(BuildContext context) async {
+    final api = await ApiClientInstance.getApiClient();
+    if (kIsWeb) {
+      if (context.mounted) {
+        await api.downloadFile(
+            context: context, url: ApiConfig.ca_url, fileName: "ibdm_ca.crt");
+      }
+    } else {
+      if (context.mounted) {
+        await api.downloadFile(
+          context: context,
+          url: ApiConfig.ca_url,
+          fileName: "ibdm_ca.crt",
+        );
+      }
+    }
+  }
+}
+
 extension WebUsersFixedApis on IbdmApiClient {
   Future<User> addUsersOnWeb({
     required String email,
