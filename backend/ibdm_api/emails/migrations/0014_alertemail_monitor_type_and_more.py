@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('emails', '0013_alter_alertemail_monitored_value'),
+        ('emails', '0001_initial'),
     ]
 
     operations = [
