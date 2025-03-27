@@ -45,7 +45,7 @@ class _AboutPageState extends State<AboutPage> {
             ),
 
             const SizedBox(height: 20),
-
+            
             // Contact
             _buildCard(
               icon: Icons.contact_mail,
@@ -65,7 +65,7 @@ class _AboutPageState extends State<AboutPage> {
             ),
 
             const SizedBox(height: 20),
-
+            
             // Footer
             Container(
               width: double.infinity,
