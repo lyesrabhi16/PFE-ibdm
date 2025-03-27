@@ -28,6 +28,10 @@ def redirect_home(request):
     )[1]
     return redirect(f'/{path}')
 
+def redirectTo404Page(request, exception):
+    return redirect('/404')
+
+handler404 = redirectTo404Page
 urlpatterns = [
     path('admin', admin.site.urls),
     path("ca", getCA),
@@ -35,9 +39,11 @@ urlpatterns = [
     path('drf/auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     path("app/", index),
+    re_path(r"app/login.*$", redirect_home),
     re_path(r"^app/siroperie.*$", redirect_home),
     re_path(r"^app/filtration.*$", redirect_home),
     re_path(r"^app/settings.*$", redirect_home),
+    re_path(r"^app/utilite.*$", redirect_home),
 
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),

@@ -8,6 +8,7 @@ import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/pages/loading_page.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:ibdm/common/controllers/loading_page_controller.dart';
 
@@ -17,8 +18,27 @@ class AppCustomContainer extends StatelessWidget {
   final Widget child;
   final bool backButton;
   static final userController = Get.find<UserController>();
+
+  _checkPermissions() {
+    final permissionsController = Get.find<PermissionsController>();
+
+    if (permissionsController.ready.value == false) {
+      throw ("permissions not ready in _checkPermission of AppCustomContainer");
+    }
+
+    final RoutePermissions = Routes.routePermissions[Get.currentRoute];
+    if (RoutePermissions != null) {
+      if (!RoutePermissions.checkPermissions()) {
+        Get.offAllNamed(Routes.noPermissions);
+      }
+    } else {
+      throw ("RoutePermissions not found in _checkPermission of AppCustomContainer");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final strings = getTranslations(context).obs;
     final loadingPageController = Get.find<LoadingPageController>();
 
     return Obx(() {
@@ -26,10 +46,22 @@ class AppCustomContainer extends StatelessWidget {
         return LoadingPage();
       }
 
+      _checkPermissions();
+
+      _getBackRoute() {
+        final _urlParts = Get.currentRoute.split("/");
+        if (_urlParts.length > 2) {
+          return _urlParts.sublist(0, _urlParts.length - 1).join("/");
+        }
+        return null;
+      }
+
+      final _backRoute = _getBackRoute();
+
       final _child = Container(
         child: Column(
           children: [
-            if (backButton && Get.previousRoute.isNotEmpty)
+            if (_backRoute != null)
               Padding(
                 padding: const EdgeInsets.all(AppSizes.sm),
                 child: Row(
@@ -37,14 +69,14 @@ class AppCustomContainer extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.arrow_back),
                       onPressed: () {
-                        Get.back();
+                        Get.toNamed(_backRoute);
                       },
                     ),
                   ],
                 ),
               ),
             Expanded(
-              child: child,
+              child: (() => child)(),
             ),
           ],
         ),
@@ -53,7 +85,7 @@ class AppCustomContainer extends StatelessWidget {
       return SafeArea(
         child: Scaffold(
           appBar: ResponsiveAppBar(
-            userName: userController.user?.username ?? "No Name",
+            userName: userController.user?.username ?? strings.value.noName,
             userImage: (userController.user?.avatarUrl != null &&
                     userController.user!.avatarUrl!.isNotEmpty)
                 ? userController.user!.avatarUrl!

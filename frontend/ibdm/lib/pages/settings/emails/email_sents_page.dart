@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:data_table_2/data_table_2.dart';
 import 'dart:ui';
@@ -323,8 +322,8 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
       int totalPages, {
       int nbrAdditionalIndexesShown = 2,
     }) {
-      //print("currentPage: $currentPage");
-      //print("totalPages: $totalPages");
+      //printMessage("currentPage: $currentPage");
+      //printMessage("totalPages: $totalPages");
       List<int> indexes = [];
 
       indexes.add(1);
@@ -363,7 +362,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
 
         i++;
       }
-      //print(fIndexes);
+      //printMessage(fIndexes);
       return fIndexes;
     }
 
@@ -1192,6 +1191,11 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
   Future<void> connectToEmailBroadcast() async {
     final strings = getTranslations(context).obs;
     try {
+      if (EmailSentsPage.channel != null) {
+        EmailSentsPage.channel!.sink.close();
+        EmailSentsPage.channel = null;
+      }
+
       EmailSentsPage.channel ??= WebSocketChannel.connect(
         Uri.parse(ApiConfig.sent_emails_broadcast_websocket_url),
       );
@@ -1220,24 +1224,38 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
           perPage: prevPerPage ?? 10,
           emailType: emailTypeFilter,
         );
-        final firstMatches = sentsMetaFromApi.data.firstOrNull?.id ==
-            sentsMetaFromApi.data.firstOrNull?.id;
-        final lastMatches = sentsMetaFromApi.data.lastOrNull?.id ==
-            sentsMetaFromApi.data.lastOrNull?.id;
+        if (sents.isEmpty) {
+          sents.insert(0, sentEmail);
+          Toasts.showInfoToastNotification(
+            context: context,
+            title: strings.value.newEmailSent,
+            autoDismiss: false,
+            message:
+                "${strings.value.to}: ${sentEmail.receptionist} ${sentEmail.alert != null ? strings.value.alert.toUpperCase() : strings.value.schedule.toUpperCase()} ${sentEmail.alert?.alertType.json ?? sentEmail.schedule?.rapport.json}",
+          );
+          return;
+        }
+
+        final firstMatches =
+            sentsMetaFromApi.data.first.id == sentsMeta.data.first.id;
+        final lastMatches =
+            sentsMetaFromApi.data.last.id == sentsMeta.data.last.id;
 
         if (firstMatches && lastMatches) {
-          logger
-              .e("first and last items match, list didn't change, aborting...");
+          logger.e(
+              "${sentsMetaFromApi.data.first.id} ${sentsMeta.data.first.id} first and last items match, list didn't change, aborting...");
           return;
         }
         Toasts.showInfoToastNotification(
-          context: Get.context!,
+          context: context,
           title: strings.value.newEmailSent,
           autoDismiss: false,
           message:
-              "TO: ${sentEmail.receptionist} ${sentEmail.alert != null ? strings.value.alert.toUpperCase() : strings.value.schedule.toUpperCase()} ${sentEmail.alert?.alertType.json ?? sentEmail.schedule?.rapport.json}",
+              "${strings.value.to}: ${sentEmail.receptionist} ${sentEmail.alert != null ? strings.value.alert.toUpperCase() : strings.value.schedule.toUpperCase()} ${sentEmail.alert?.alertType.json ?? sentEmail.schedule?.rapport.json}",
         );
         sentsMeta = sentsMetaFromApi;
+        sents.clear();
+        sents.addAll(sentsMeta.data);
       });
     } catch (e) {
       logger.e("Error: $e");

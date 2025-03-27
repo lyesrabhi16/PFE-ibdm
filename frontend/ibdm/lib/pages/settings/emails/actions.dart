@@ -15,6 +15,7 @@ class EmailActions {
   static Future<void> addAlert(
     BuildContext context, {
     required String monitoredValue,
+    String? monitorType,
     String? customMessage,
     String? dangerAlertInterval,
     String? dangerPoint,
@@ -27,36 +28,44 @@ class EmailActions {
     Function? onFail,
     GlobalKey<FormState>? formKey,
   }) async {
+    final strings = getTranslations(context);
     // add alert
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
         context: context,
-        message: "Adding Alert...",
-        messageSuccess: "Alert Added",
-        messageError: "Failed to add alert",
+        message: strings.addingAlert,
+        messageSuccess: strings.alertAdded,
+        messageError: strings.failedToAddAlert,
         state: state);
     try {
       final api = await ApiClientInstance.getApiClient();
-      final res = await api.addAlertEmail(
-        monitoredValue: AlertEnum.fromJson(monitoredValue),
-        dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
-        warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
-        dangerReminderInterval:
-            dangerAlertInterval != null ? int.parse(dangerAlertInterval) : null,
-        warningReminderInterval: warningAlertInterval != null
-            ? int.parse(warningAlertInterval)
-            : null,
-        customAlertMessage: customMessage,
-        enabled: enabled,
-        sendToUsers: users?.map((e) => e.email).toList(),
-        sendToRoles: roles?.map((e) => e.roleId).toList(),
+      await api.addAlertEmail(
+        body: AlertEmailRequest(
+          monitoredValue: AlertEnum.fromJson(monitoredValue),
+          monitorType: monitorType != null
+              ? MonitorTypeEnum.fromJson(monitorType)
+              : null,
+          dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
+          warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
+          dangerReminderInterval: dangerAlertInterval != null
+              ? int.parse(dangerAlertInterval)
+              : null,
+          warningReminderInterval: warningAlertInterval != null
+              ? int.parse(warningAlertInterval)
+              : null,
+          customAlertMessage: customMessage,
+          enabled: enabled,
+          sendToUsers: users?.map((e) => e.email).toList(),
+          sendToRoles: roles?.map((e) => e.roleId).toList(),
+        ),
       );
       state.value = FutureState.success;
       onSuccess?.call();
     } on Exception catch (e) {
       logger.e("Failed to add alert : $e");
       state.value = FutureState.error;
-      Toasts.showErrorToast(context: context, message: "Failed to add alert");
+      Toasts.showErrorToast(
+          context: context, message: strings.failedToAddAlert);
       onFail?.call();
     } finally {
       Future.delayed(Duration(seconds: 2), () {
@@ -70,6 +79,7 @@ class EmailActions {
     BuildContext context, {
     required int alertId,
     String? monitoredValue,
+    String? monitorType,
     String? customMessage,
     String? dangerAlertInterval,
     String? dangerPoint,
@@ -82,39 +92,47 @@ class EmailActions {
     Function? onFail,
     GlobalKey<FormState>? formKey,
   }) async {
+    final strings = getTranslations(context);
     // add alert
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
         context: context,
-        message: "Saving Alert...",
-        messageSuccess: "Alert Saved",
-        messageError: "Failed to save alert",
+        message: strings.savingAlert,
+        messageSuccess: strings.alertSaved,
+        messageError: strings.failedToSaveAlert,
         state: state);
     try {
       final api = await ApiClientInstance.getApiClient();
 
-      final res = await api.partialUpdateAlertEmail(
-        id: alertId,
-        monitoredValue:
-            monitoredValue != null ? AlertEnum.fromJson(monitoredValue) : null,
-        dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
-        warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
-        dangerReminderInterval:
-            dangerAlertInterval != null ? int.parse(dangerAlertInterval) : null,
-        warningReminderInterval: warningAlertInterval != null
-            ? int.parse(warningAlertInterval)
-            : null,
-        customAlertMessage: customMessage,
-        enabled: enabled,
-        sendToUsers: users?.map((e) => e.email).toList(),
-        sendToRoles: roles?.map((e) => e.roleId).toList(),
-      );
+      await api.partialUpdateAlertEmail(
+          id: alertId,
+          body: PatchedAlertEmailRequest(
+            monitoredValue: monitoredValue != null
+                ? AlertEnum.fromJson(monitoredValue)
+                : null,
+            monitorType: monitorType != null
+                ? MonitorTypeEnum.fromJson(monitorType)
+                : null,
+            dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
+            warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
+            dangerReminderInterval: dangerAlertInterval != null
+                ? int.parse(dangerAlertInterval)
+                : null,
+            warningReminderInterval: warningAlertInterval != null
+                ? int.parse(warningAlertInterval)
+                : null,
+            customAlertMessage: customMessage,
+            enabled: enabled,
+            sendToUsers: users?.map((e) => e.email).toList(),
+            sendToRoles: roles?.map((e) => e.roleId).toList(),
+          ));
       state.value = FutureState.success;
       onSuccess?.call();
     } on Exception catch (e) {
       logger.e("Failed to save alert : $e");
       state.value = FutureState.error;
-      Toasts.showErrorToast(context: context, message: "Failed to save alert");
+      Toasts.showErrorToast(
+          context: context, message: strings.failedToSaveAlert);
       onFail?.call();
     } finally {
       Future.delayed(Duration(seconds: 2), () {
@@ -131,31 +149,39 @@ class EmailActions {
     Function? onSuccess,
     Function? onFail,
   }) async {
+    final strings = getTranslations(context);
     // enable or disable alert
-    final actionStr = enabled ? 'Activating' : 'Deactivating';
-    final actionDoneStr = enabled ? 'Activated' : 'Deactivated';
+    final actionStr = enabled ? strings.activating : strings.deactivating;
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
       context: context,
-      message: "$actionStr Alert...",
-      messageSuccess: "Alert $actionDoneStr",
-      messageError: "Failed to $actionDoneStr alert",
+      message: enabled ? strings.activatingAlert : strings.deactivatingAlert,
+      messageSuccess:
+          enabled ? strings.alertActivated : strings.alertDeactivated,
+      messageError: enabled
+          ? strings.failedToActivateAlert
+          : strings.failedToDeactivateAlert,
       state: state,
     );
     try {
       final api = await ApiClientInstance.getApiClient();
 
       await api.partialUpdateAlertEmail(
-        id: alertId,
-        enabled: enabled,
-      );
+          id: alertId,
+          body: PatchedAlertEmailRequest(
+            enabled: enabled,
+          ));
       state.value = FutureState.success;
       onSuccess?.call();
     } on Exception catch (e) {
       logger.e("Failed to $actionStr alert : $e");
       state.value = FutureState.error;
       Toasts.showErrorToast(
-          context: context, message: "Failed to $actionStr alert");
+        context: context,
+        message: enabled
+            ? strings.failedToActivateAlert
+            : strings.failedToDeactivateAlert,
+      );
       onFail?.call();
     } finally {
       Future.delayed(Duration(seconds: 2), () {
@@ -178,13 +204,13 @@ class EmailActions {
     Function? onFail,
     GlobalKey<FormState>? formKey,
   }) async {
+    final strings = getTranslations(context);
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       logger.e("Form is not valid");
       Toasts.showErrorToastNotification(
-          context: context, message: "¨Please fix the errors in the form");
+          context: context, message: strings.pleaseFixErrorsInTheForm);
       return;
     }
-    final strings = getTranslations(context);
     // enable or disable alert
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
@@ -242,13 +268,13 @@ class EmailActions {
     Function? onFail,
     GlobalKey<FormState>? formKey,
   }) async {
+    final strings = getTranslations(context);
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       logger.e("Form is not valid");
       Toasts.showErrorToastNotification(
-          context: context, message: "¨Please fix the errors in the form");
+          context: context, message: strings.pleaseFixErrorsInTheForm);
       return;
     }
-    final strings = getTranslations(context);
     // enable or disable alert
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(

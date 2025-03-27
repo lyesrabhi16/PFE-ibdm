@@ -20,6 +20,11 @@ class ErrorCodes:
         status_code=404,
         code="not_found"
     )
+
+    SERVER_ERROR = ErrorCode(
+        status_code=500,
+        code="server_error"
+    )
     
     @classmethod
     def getChoices(cls):

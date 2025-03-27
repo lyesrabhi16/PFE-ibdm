@@ -1,10 +1,9 @@
 from datetime import datetime
-from math import e
 from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets
 from rest_framework import permissions
-from api_v1.utils import with_operation_ids
+from api_v1.utils import get_value_at, with_operation_ids
 from siroperie.models import Sucre
 from siroperie.serializers import SucreSerializer
 from api_v1.serializers import FeedMetaDataSerializer
@@ -73,25 +72,23 @@ def getSucreAtSpecificTime(request):
     """
     getSucreAtSpecificTime
     """
-    year = request.query_params.get('year', None)
-    month = request.query_params.get('month', "01")
-    day = request.query_params.get('day', "01")
-    hour = request.query_params.get('hour', "00")
-    minute = request.query_params.get('minute', "00")
-    second = request.query_params.get('second', "00")
+    year = int(request.query_params.get('year', None))
+    month = int(request.query_params.get('month', "01"))
+    day = int(request.query_params.get('day', "01"))
+    hour = int(request.query_params.get('hour', "00"))
+    minute = int(request.query_params.get('minute', "00"))
+    second = int(request.query_params.get('second', "00"))
 
-    filters = {
-        "date__year": year,
-        "date__month": month,
-        "date__day": day,
-        "date__hour": hour,
-        "date__minute": minute,
-        "date__second": second
-    }
-    
+    date = datetime.now().replace(
+        year=year,
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        second=second,
+    )
 
-    queryset = Sucre.objects.filter(**filters)
-    record = queryset.first()
+    record = get_value_at(Sucre, date)
 
     if (record):
         return JsonResponse(SucreSerializer(record, context={ "request": request }).data)

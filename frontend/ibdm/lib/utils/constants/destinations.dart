@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/utils/constants/routes.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 
 class Destination {
   final String title;
@@ -29,8 +30,16 @@ class Destination {
     }
 
     for (var e in Routes.customRoutes.entries) {
-      Destination dest = destMap[e.value]!;
-      destMap[e.key] = dest;
+      printMessage("set dest ${e.key} ${destMap[e.value]} ");
+      final v = destMap[e.value];
+      if (v != null) {
+        Destination dest = v;
+        destMap[e.key] = dest;
+        printMessage("dest ${e.key} ${destMap[e.value]} is set");
+      } else {
+        printMessage(
+            "dest ${e.key} ${destMap[e.value]} is not set because it is null");
+      }
     }
 
     return destMap;
