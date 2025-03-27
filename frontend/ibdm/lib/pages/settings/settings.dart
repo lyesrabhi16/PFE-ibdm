@@ -7,6 +7,7 @@ import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
+import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -41,21 +42,36 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: strings.value.email,
                     onTap: () => Get.toNamed(Routes.emailSettings),
                   ),
-                  SettingCard(
-                    icon: Get.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                    title: Get.isDarkMode
-                        ? strings.value.lightmode
-                        : strings.value.darkmode,
-                    trailing: ThemeModeSwitchButton(),
+                  GestureDetector(
+                    onTap: () {
+                      Get.find<ThemeModeController>().toggleTheme();
+                    },
+                    child: SettingCard(
+                      icon: Get.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                      title: Get.isDarkMode
+                          ? strings.value.lightmode
+                          : strings.value.darkmode,
+                      trailing: ThemeModeSwitchButton(),
+                    ),
                   ),
-                  SettingCard(
-                    icon: Icons.language,
-                    title: strings.value.language,
-                    subtitle: localecontroller.locale.value.languageCode,
-                    trailing: SizedBox(
-                      height: 30,
-                      width: 60,
-                      child: LanguageSwitchButton(),
+                  GestureDetector(
+                    onTap: () {
+                      final int nextIndex = (localecontroller.supportedLocales
+                                  .indexOf(localecontroller.locale.value) +
+                              1) %
+                          localecontroller.supportedLocales.length;
+                      localecontroller.setLocale(
+                          localecontroller.supportedLocales[nextIndex]);
+                    },
+                    child: SettingCard(
+                      icon: Icons.language,
+                      title: strings.value.language,
+                      subtitle: localecontroller.locale.value.languageCode,
+                      trailing: SizedBox(
+                        height: 30,
+                        width: 60,
+                        child: LanguageSwitchButton(),
+                      ),
                     ),
                   ),
                   SettingCard(
