@@ -62,6 +62,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           ? strings.value.lightmode
                           : strings.value.darkmode,
                       trailing: ThemeModeSwitchButton(),
+                      onTap: () =>
+                          Get.find<ThemeModeController>().toggleTheme(),
                     ),
                     SettingCard(
                       icon: Icons.language,
@@ -72,6 +74,14 @@ class _SettingsPageState extends State<SettingsPage> {
                         width: 60,
                         child: LanguageSwitchButton(),
                       ),
+                      onTap: () {
+                        final int nextIndex = (localecontroller.supportedLocales
+                                    .indexOf(localecontroller.locale.value) +
+                                1) %
+                            localecontroller.supportedLocales.length;
+                        localecontroller.setLocale(
+                            localecontroller.supportedLocales[nextIndex]);
+                      },
                     ),
                     SettingCard(
                       icon: Icons.help,
