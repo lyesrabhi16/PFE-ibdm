@@ -155,9 +155,9 @@ class _SiroperiePageState extends State<SiroperiePage> {
     return AppCustomContainer(
       child: Obx(
         () {
-          print("loaded: ${loaded.value}");
+          printMessage("loaded: ${loaded.value}");
           if (!loaded.value) {
-            print("loading because of loaded value");
+            printMessage("loading because of loaded value");
             _load();
             logger.e("loading because of loaded value");
             return Center(
@@ -167,275 +167,287 @@ class _SiroperiePageState extends State<SiroperiePage> {
           if (refresh.value) {
             refresh.value = false;
           }
-          return StreamBuilder(
-              stream: SiroperiePage.stream,
-              builder: (context, snapshot) {
-                print("snapshot: $snapshot");
-                if (isLive.value &&
-                    (snapshot == null ||
-                        snapshot.connectionState == ConnectionState.waiting ||
-                        snapshot.data == null ||
-                        snapshot.data == "" ||
-                        JsonCodec().decode(snapshot.data) == null ||
-                        JsonCodec().decode(snapshot.data)["data"] == null)) {
-                  print("loading inside of stream builder");
-                  if (snapshot.connectionState == ConnectionState.none ||
-                      snapshot.connectionState == ConnectionState.done) {
-                    print("loading because of connection state");
-                    _load();
-                  }
-                  logger.e("loading inside of stream builder");
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                if (isLive.value) {
-                  sucre =
-                      Sucre.fromJson(JsonCodec().decode(snapshot.data)["data"]);
-                  sucre_end_date.value = sucre.date;
-                  year = sucre.date.year;
-                  month = sucre.date.month;
-                  day = sucre.date.day;
-                  hour = sucre.date.hour;
-                  minute = sucre.date.minute;
-                  second = sucre.date.second;
-                }
 
-                T02_value = sucre.aT02 != null ? sucre.aT02! * 100 / 140000 : 0;
-                T03_value = sucre.aT03 != null ? sucre.aT03! * 100 / 140000 : 0;
-                T04_value = sucre.aT04 != null ? sucre.aT04! * 100 / 140000 : 0;
-                T05_value = sucre.aT05 != null ? sucre.aT05! * 100 / 60000 : 0;
-                T06_value = sucre.aT06 != null ? sucre.aT06! * 100 / 60000 : 0;
-                TS21_value = sucre.tS21 != null ? sucre.tS21! * 100 / 60000 : 0;
-                TS22_value = sucre.tS22 != null ? sucre.tS22! * 100 / 60000 : 0;
-                TS23_value = sucre.tS23 != null ? sucre.tS23! * 100 / 60000 : 0;
-                TS24_value = sucre.tS24 != null ? sucre.tS24! * 100 / 60000 : 0;
-                TS25_value = sucre.tS25 != null ? sucre.tS25! * 100 / 60000 : 0;
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.all(AppSizes.sm),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Title
+                  Center(
+                    child: Text(strings.value.siroperieTitle,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            )),
+                  ).marginAll(AppSizes.md),
+                  // top actions bar
+                  Container(
+                    width: context.width,
+                    decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainer,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                        )),
+                    child: _getTopActionsBar(),
+                  ),
 
-                sommeTetraL = (sucre.tS21 ?? 0) +
-                    (sucre.tS22 ?? 0) +
-                    (sucre.tS23 ?? 0) +
-                    (sucre.tS24 ?? 0) +
-                    (sucre.tS25 ?? 0);
-                sommeAdueL = (sucre.aT02 ?? 0) +
-                    (sucre.aT03 ?? 0) +
-                    (sucre.aT04 ?? 0) +
-                    (sucre.aT05 ?? 0) +
-                    (sucre.aT06 ?? 0);
+                  // main view
+                  Expanded(
+                    child: StreamBuilder(
+                      stream: SiroperiePage.stream,
+                      builder: (context, snapshot) {
+                        printMessage("snapshot: $snapshot");
+                        if (isLive.value &&
+                            (snapshot == null ||
+                                snapshot.connectionState ==
+                                    ConnectionState.waiting ||
+                                snapshot.data == null ||
+                                snapshot.data == "" ||
+                                JsonCodec().decode(snapshot.data) == null ||
+                                JsonCodec().decode(snapshot.data)["data"] ==
+                                    null)) {
+                          printMessage("loading inside of stream builder");
+                          if (snapshot.connectionState ==
+                                  ConnectionState.none ||
+                              snapshot.connectionState ==
+                                  ConnectionState.done) {
+                            printMessage("loading because of connection state");
+                            _load();
+                          }
+                          logger.e("loading inside of stream builder");
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (isLive.value) {
+                          sucre = Sucre.fromJson(
+                              JsonCodec().decode(snapshot.data)["data"]);
+                          Future.delayed(Duration(microseconds: 100),
+                              () => sucre_end_date.value = sucre.date);
+                          year = sucre.date.year;
+                          month = sucre.date.month;
+                          day = sucre.date.day;
+                          hour = sucre.date.hour;
+                          minute = sucre.date.minute;
+                          second = sucre.date.second;
+                        }
 
-                return Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(AppSizes.sm),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Title
-                        Center(
-                          child: Text(strings.value.siroperieTitle,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                        ).marginAll(AppSizes.md),
-                        // top actions bar
-                        Container(
+                        T02_value =
+                            sucre.aT02 != null ? sucre.aT02! * 100 / 140000 : 0;
+                        T03_value =
+                            sucre.aT03 != null ? sucre.aT03! * 100 / 140000 : 0;
+                        T04_value =
+                            sucre.aT04 != null ? sucre.aT04! * 100 / 140000 : 0;
+                        T05_value =
+                            sucre.aT05 != null ? sucre.aT05! * 100 / 60000 : 0;
+                        T06_value =
+                            sucre.aT06 != null ? sucre.aT06! * 100 / 60000 : 0;
+                        TS21_value =
+                            sucre.tS21 != null ? sucre.tS21! * 100 / 60000 : 0;
+                        TS22_value =
+                            sucre.tS22 != null ? sucre.tS22! * 100 / 60000 : 0;
+                        TS23_value =
+                            sucre.tS23 != null ? sucre.tS23! * 100 / 60000 : 0;
+                        TS24_value =
+                            sucre.tS24 != null ? sucre.tS24! * 100 / 60000 : 0;
+                        TS25_value =
+                            sucre.tS25 != null ? sucre.tS25! * 100 / 60000 : 0;
+
+                        sommeTetraL = (sucre.tS21 ?? 0) +
+                            (sucre.tS22 ?? 0) +
+                            (sucre.tS23 ?? 0) +
+                            (sucre.tS24 ?? 0) +
+                            (sucre.tS25 ?? 0);
+                        sommeAdueL = (sucre.aT02 ?? 0) +
+                            (sucre.aT03 ?? 0) +
+                            (sucre.aT04 ?? 0) +
+                            (sucre.aT05 ?? 0) +
+                            (sucre.aT06 ?? 0);
+                        return Container(
+                          color: colorScheme.surfaceContainer,
                           width: context.width,
-                          decoration: BoxDecoration(
-                              color: colorScheme.surfaceContainer,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
-                              )),
-                          child: _getTopActionsBar(),
-                        ),
+                          height: context.height / 2,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                // sucre tetra
+                                Column(
+                                  children: [
+                                    Wrap(
+                                      alignment: WrapAlignment.center,
+                                      children: [
+                                        Text(strings.value.sucreTetraTitle,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                )).marginAll(AppSizes.sm),
+                                        _getBottomDataBarTetra(label: false),
+                                      ],
+                                    ),
+                                    Wrap(
+                                      alignment: WrapAlignment.spaceEvenly,
+                                      children: [
+                                        Cuve(
+                                          title: "TS21",
+                                          value: TS21_value,
+                                          niveau1: sucre.tS21 ?? 0,
+                                          niveau2: convertSugarLToKG(
+                                              sucre.tS21 ?? 0),
+                                        ),
+                                        Cuve(
+                                          title: "TS22",
+                                          value: TS22_value,
+                                          niveau1: sucre.tS22 ?? 0,
+                                          niveau2: convertSugarLToKG(
+                                              sucre.tS22 ?? 0),
+                                        ),
+                                        Cuve(
+                                          title: "TS23",
+                                          value: TS23_value,
+                                          niveau1: sucre.tS23 ?? 0,
+                                          niveau2: convertSugarLToKG(
+                                              sucre.tS23 ?? 0),
+                                        ),
+                                        Cuve(
+                                          title: "TS24",
+                                          value: TS24_value,
+                                          niveau1: sucre.tS24 ?? 0,
+                                          niveau2: convertSugarLToKG(
+                                              sucre.tS24 ?? 0),
+                                        ),
+                                        Cuve(
+                                          title: "TS25",
+                                          value: TS25_value,
+                                          niveau1: sucre.tS25 ?? 0,
+                                          niveau2: convertSugarLToKG(
+                                              sucre.tS25 ?? 0),
+                                        ),
+                                      ],
+                                    ),
+                                    _getBottomDataBarTetra(),
+                                  ],
+                                ),
 
-                        // main view
-                        Expanded(
-                          child: Container(
-                            color: colorScheme.surfaceContainer,
-                            width: context.width,
-                            height: context.height / 2,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  // sucre tetra
-                                  Column(
+                                // sucre adue
+                                Container(
+                                  color: colorScheme.secondaryContainer,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Wrap(
                                         alignment: WrapAlignment.center,
                                         children: [
-                                          Text(strings.value.sucreTetraTitle,
+                                          Text(strings.value.sucreAdueTitle,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleLarge
                                                   ?.copyWith(
                                                     fontWeight: FontWeight.bold,
                                                   )).marginAll(AppSizes.sm),
-                                          _getBottomDataBarTetra(label: false),
+                                          _getBottomDataBarAdue(label: false),
                                         ],
                                       ),
                                       Wrap(
                                         alignment: WrapAlignment.spaceEvenly,
                                         children: [
                                           Cuve(
-                                            title: "TS21",
-                                            value: TS21_value,
-                                            niveau1: sucre.tS21 ?? 0,
+                                            title: "T02",
+                                            value: T02_value,
+                                            niveau1: sucre.aT02 ?? 0,
                                             niveau2: convertSugarLToKG(
-                                                sucre.tS21 ?? 0),
+                                                sucre.aT02 ?? 0),
                                           ),
                                           Cuve(
-                                            title: "TS22",
-                                            value: TS22_value,
-                                            niveau1: sucre.tS22 ?? 0,
+                                            title: "T03",
+                                            value: T03_value,
+                                            niveau1: sucre.aT03 ?? 0,
                                             niveau2: convertSugarLToKG(
-                                                sucre.tS22 ?? 0),
+                                                sucre.aT03 ?? 0),
                                           ),
                                           Cuve(
-                                            title: "TS23",
-                                            value: TS23_value,
-                                            niveau1: sucre.tS23 ?? 0,
+                                            title: "T04",
+                                            value: T04_value,
+                                            niveau1: sucre.aT04 ?? 0,
                                             niveau2: convertSugarLToKG(
-                                                sucre.tS23 ?? 0),
+                                                sucre.aT04 ?? 0),
                                           ),
                                           Cuve(
-                                            title: "TS24",
-                                            value: TS24_value,
-                                            niveau1: sucre.tS24 ?? 0,
+                                            title: "T05",
+                                            value: T05_value,
+                                            niveau1: sucre.aT05 ?? 0,
                                             niveau2: convertSugarLToKG(
-                                                sucre.tS24 ?? 0),
+                                                sucre.aT05 ?? 0),
                                           ),
                                           Cuve(
-                                            title: "TS25",
-                                            value: TS25_value,
-                                            niveau1: sucre.tS25 ?? 0,
+                                            title: "T06",
+                                            value: T06_value,
+                                            niveau1: sucre.aT06 ?? 0,
                                             niveau2: convertSugarLToKG(
-                                                sucre.tS25 ?? 0),
+                                                sucre.aT06 ?? 0),
                                           ),
                                         ],
                                       ),
-                                      _getBottomDataBarTetra(),
+                                      _getBottomDataBarAdue(),
                                     ],
                                   ),
-
-                                  // sucre adue
-                                  Container(
-                                    color: colorScheme.secondaryContainer,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Wrap(
-                                          alignment: WrapAlignment.center,
-                                          children: [
-                                            Text(strings.value.sucreAdueTitle,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleLarge
-                                                    ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    )).marginAll(AppSizes.sm),
-                                            _getBottomDataBarAdue(label: false),
-                                          ],
-                                        ),
-                                        Wrap(
-                                          alignment: WrapAlignment.spaceEvenly,
-                                          children: [
-                                            Cuve(
-                                              title: "T02",
-                                              value: T02_value,
-                                              niveau1: sucre.aT02 ?? 0,
-                                              niveau2: convertSugarLToKG(
-                                                  sucre.aT02 ?? 0),
-                                            ),
-                                            Cuve(
-                                              title: "T03",
-                                              value: T03_value,
-                                              niveau1: sucre.aT03 ?? 0,
-                                              niveau2: convertSugarLToKG(
-                                                  sucre.aT03 ?? 0),
-                                            ),
-                                            Cuve(
-                                              title: "T04",
-                                              value: T04_value,
-                                              niveau1: sucre.aT04 ?? 0,
-                                              niveau2: convertSugarLToKG(
-                                                  sucre.aT04 ?? 0),
-                                            ),
-                                            Cuve(
-                                              title: "T05",
-                                              value: T05_value,
-                                              niveau1: sucre.aT05 ?? 0,
-                                              niveau2: convertSugarLToKG(
-                                                  sucre.aT05 ?? 0),
-                                            ),
-                                            Cuve(
-                                              title: "T06",
-                                              value: T06_value,
-                                              niveau1: sucre.aT06 ?? 0,
-                                              niveau2: convertSugarLToKG(
-                                                  sucre.aT06 ?? 0),
-                                            ),
-                                          ],
-                                        ),
-                                        _getBottomDataBarAdue(),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        Container(
-                          width: context.width,
-                          decoration: BoxDecoration(
-                              color: colorScheme.surfaceContainer,
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(15),
-                                bottomRight: Radius.circular(15),
-                              )),
-                          child: _getBottomDataBar(),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   ),
-                );
-              });
+                  Container(
+                    width: context.width,
+                    decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainer,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
+                        )),
+                    child: _getBottomDataBar(),
+                  ),
+                ],
+              ),
+            ),
+          );
         },
       ),
     );
   }
 
   _load() async {
-    print("siroperie page loading");
+    printMessage("siroperie page loading");
     loaded.value = false;
     if (SiroperiePage.stream == null) {
       try {
-        print("connecting to sucre broadcast");
+        printMessage("connecting to sucre broadcast");
         SiroperiePage.channel = WebSocketChannel.connect(
             Uri.parse(ApiConfig.sucre_broadcast_websocket_url));
         final res =
             await (await ApiClientInstance.getApiClient()).getSucreMetaData();
-        print("sucre broadcast connected");
+        printMessage("sucre broadcast connected");
         sucre_start_date.value = res.startDate;
         sucre_end_date.value = res.endDate;
         await SiroperiePage.channel!.ready;
-        print("sucre broadcast ready");
+        printMessage("sucre broadcast ready");
         SiroperiePage.stream =
             SiroperiePage.channel!.stream.asBroadcastStream();
         loaded.value = true;
-        print("sucre broadcast loaded");
+        printMessage("sucre broadcast loaded");
       } catch (e) {
-        print("error connecting to sucre broadcast: $e");
+        printMessage("error connecting to sucre broadcast: $e");
         logger.e(
             "Error connecting to sucre broadcast${retries > 0 ? ',retrying' : ''}");
         if (retries > 0) {
-          print("retrying in 1 second");
+          printMessage("retrying in 1 second");
           retries--;
           Future.delayed(Duration(seconds: 1), _load);
         } else {
@@ -454,44 +466,18 @@ class _SiroperiePageState extends State<SiroperiePage> {
     final strings = getTranslations(getContext).obs;
     return LiveDataTopActionBar(
       isLive: isLive,
-      years: List.generate(
-          sucre_end_date.value.year - sucre_start_date.value.year + 1,
-          (index) => sucre_start_date.value.year + index),
-      months: List.generate(12, (index) => index + 1),
-      days: List.generate(31, (index) => index + 1),
-      hours: List.generate(24, (index) => index),
-      minutes: List.generate(60, (index) => index),
-      seconds: List.generate(60, (index) => index),
-      onYearChanged: (value) {
-        year = value!;
+      startDate: sucre_start_date.value,
+      endDate: sucre_end_date.value,
+      selectedDate: sucre_end_date.value,
+      searchPressed: (dt) {
+        year = dt.year;
+        month = dt.month;
+        day = dt.day;
+        hour = dt.hour;
+        minute = dt.minute;
+        second = dt.second;
         _getSucreData();
       },
-      onMonthChanged: (value) {
-        month = value;
-        _getSucreData();
-      },
-      onDayChanged: (value) {
-        day = value;
-        _getSucreData();
-      },
-      onHourChanged: (value) {
-        hour = value;
-        _getSucreData();
-      },
-      onMinuteChanged: (value) {
-        minute = value;
-        _getSucreData();
-      },
-      onSecondChanged: (value) {
-        second = value;
-        _getSucreData();
-      },
-      yearInitialValue: sucre_end_date.value.year,
-      monthInitialValue: sucre_end_date.value.month,
-      dayInitialValue: sucre_end_date.value.day,
-      hourInitialValue: sucre_end_date.value.hour,
-      minuteInitialValue: sucre_end_date.value.minute,
-      secondInitialValue: sucre_end_date.value.second,
       afterDataDisplayWidgets: [
         // inventory button
         ShadButton(

@@ -142,9 +142,9 @@ class _FiltrationPageState extends State<FiltrationPage> {
         child: Padding(
       padding: EdgeInsets.all(AppSizes.sm),
       child: Obx(() {
-        print("loaded: ${loaded.value}");
+        printMessage("loaded: ${loaded.value}");
         if (!loaded.value) {
-          print("loading because of loaded value");
+          printMessage("loading because of loaded value");
           load();
           logger.e("loading because of loaded value");
           return Center(
@@ -158,7 +158,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
         try {
           return _build();
         } catch (e) {
-          print("error: $e");
+          printMessage("error: $e");
           FiltrationPage.channel?.sink.close();
           FiltrationPage.stream = null;
           load();
@@ -170,91 +170,92 @@ class _FiltrationPageState extends State<FiltrationPage> {
     ));
   }
 
-  StreamBuilder<dynamic> _build() {
-    return StreamBuilder(
-        stream: FiltrationPage.stream,
-        builder: (context, snapshot) {
-          //print("snapshot: $snapshot");
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            print("waiting for connection");
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (!snapshot.hasData ||
-              snapshot.data == null ||
-              snapshot.hasError ||
-              snapshot.data.isEmpty) {
-            logger.e("loading inside of stream builder");
-            if (FiltrationPage.channel?.closeCode != null ||
-                snapshot.connectionState != ConnectionState.active) {
-              logger.e("closing channel");
-              FiltrationPage.channel?.sink.close();
-              FiltrationPage.stream = null;
-              logger.e("reopening channel...");
-              Future.delayed(Duration(seconds: 1), load);
-            }
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final data = JsonCodec().decode(snapshot.data);
-          if (data["data"] == null || data["data"].isEmpty) {
-            logger.e("data is null");
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (isLive.value) {
-            niveau = Niveau.fromJson(data["data"]["niveau"]);
-            debit = Debit.fromJson(data["data"]["debit"]);
-            volume = Volume.fromJson(data["data"]["volume"]);
-            presCond = PresCond.fromJson(data["data"]["pres_cond"]);
+  _build() {
+    return Column(
+      children: [
+        Text(
+          strings.value.filtrationTitle,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        // top actions bar
+        Container(
+          width: context.width,
+          decoration: BoxDecoration(
+              color: colorScheme.surfaceContainer,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              )),
+          child: _getTopActionsBar(),
+        ),
+        Expanded(
+          child: StreamBuilder(
+              stream: FiltrationPage.stream,
+              builder: (context, snapshot) {
+                //printMessage("snapshot: $snapshot");
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  printMessage("waiting for connection");
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (!snapshot.hasData ||
+                    snapshot.data == null ||
+                    snapshot.hasError ||
+                    snapshot.data.isEmpty) {
+                  logger.e("loading inside of stream builder");
+                  if (FiltrationPage.channel?.closeCode != null ||
+                      snapshot.connectionState != ConnectionState.active) {
+                    logger.e("closing channel");
+                    FiltrationPage.channel?.sink.close();
+                    FiltrationPage.stream = null;
+                    logger.e("reopening channel...");
+                    Future.delayed(Duration(seconds: 1), load);
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                final data = JsonCodec().decode(snapshot.data);
+                if (data["data"] == null || data["data"].isEmpty) {
+                  logger.e("data is null");
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (isLive.value) {
+                  niveau = Niveau.fromJson(data["data"]["niveau"]);
+                  debit = Debit.fromJson(data["data"]["debit"]);
+                  volume = Volume.fromJson(data["data"]["volume"]);
+                  presCond = PresCond.fromJson(data["data"]["pres_cond"]);
 
-            filtrationEndDate.value = niveau.date;
-            year = niveau.date.year;
-            month = niveau.date.month;
-            day = niveau.date.day;
-            hour = niveau.date.hour;
-            minute = niveau.date.minute;
-            second = niveau.date.second;
-          }
+                  Future.delayed(Duration(microseconds: 100),
+                      () => filtrationEndDate.value = niveau.date);
+                  year = niveau.date.year;
+                  month = niveau.date.month;
+                  day = niveau.date.day;
+                  hour = niveau.date.hour;
+                  minute = niveau.date.minute;
+                  second = niveau.date.second;
+                }
 
-          F1_value = (niveau.nivF1 ?? 0) * 100 / 450;
-          F2_value = (niveau.nivF2 ?? 0) * 100 / 450;
-          UF1_value = (niveau.nivUf1 ?? 0) * 100 / 520;
-          UF2_value = (niveau.nivUf2 ?? 0) * 100 / 520;
-          OS1_value = (niveau.nivOs1 ?? 0) * 100 / 60;
-          OS2_value = (niveau.nivOs2 ?? 0) * 100 / 60;
-          OS3_value = (niveau.nivOs3 ?? 0) * 100 / 60;
-          OS4_value = (niveau.nivOs4 ?? 0) * 100 / 180;
-          OS5_value = (niveau.nivOs5 ?? 0) * 100 / 45;
-          OS6_value = (niveau.nivOs6 ?? 0) * 100 / 45;
-          OS7_value = (niveau.nivOs7 ?? 0) * 100 / 10;
-          return Column(
-            children: [
-              Text(
-                strings.value.filtrationTitle,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              SizedBox(
-                height: AppSizes.sm,
-              ),
-              // top actions bar
-              Container(
-                width: context.width,
-                decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainer,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(15),
-                      topRight: Radius.circular(15),
-                    )),
-                child: _getTopActionsBar(),
-              ),
-              Expanded(
-                child: Container(
+                F1_value = (niveau.nivF1 ?? 0) * 100 / 450;
+                F2_value = (niveau.nivF2 ?? 0) * 100 / 450;
+                UF1_value = (niveau.nivUf1 ?? 0) * 100 / 520;
+                UF2_value = (niveau.nivUf2 ?? 0) * 100 / 520;
+                OS1_value = (niveau.nivOs1 ?? 0) * 100 / 60;
+                OS2_value = (niveau.nivOs2 ?? 0) * 100 / 60;
+                OS3_value = (niveau.nivOs3 ?? 0) * 100 / 60;
+                OS4_value = (niveau.nivOs4 ?? 0) * 100 / 180;
+                OS5_value = (niveau.nivOs5 ?? 0) * 100 / 45;
+                OS6_value = (niveau.nivOs6 ?? 0) * 100 / 45;
+                OS7_value = (niveau.nivOs7 ?? 0) * 100 / 10;
+                return Container(
                   constraints: BoxConstraints(),
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainer,
@@ -1076,11 +1077,11 @@ class _FiltrationPageState extends State<FiltrationPage> {
                       ),
                     ),
                   ),
-                ),
-              ),
-            ],
-          );
-        });
+                );
+              }),
+        ),
+      ],
+    );
   }
 
   _getFiltrationData() async {
@@ -1163,42 +1164,16 @@ class _FiltrationPageState extends State<FiltrationPage> {
   _getTopActionsBar() {
     return LiveDataTopActionBar(
       isLive: isLive,
-      years: List.generate(
-          filtrationEndDate.value.year - filtrationStartDate.value.year + 1,
-          (index) => filtrationStartDate.value.year + index),
-      months: List.generate(12, (index) => index + 1),
-      days: List.generate(31, (index) => index + 1),
-      hours: List.generate(24, (index) => index),
-      minutes: List.generate(60, (index) => index),
-      seconds: List.generate(60, (index) => index),
-      yearInitialValue: filtrationEndDate.value.year,
-      monthInitialValue: filtrationEndDate.value.month,
-      dayInitialValue: filtrationEndDate.value.day,
-      hourInitialValue: filtrationEndDate.value.hour,
-      minuteInitialValue: filtrationEndDate.value.minute,
-      secondInitialValue: filtrationEndDate.value.second,
-      onYearChanged: (value) {
-        year = value!;
-        _getFiltrationData();
-      },
-      onMonthChanged: (value) {
-        month = value;
-        _getFiltrationData();
-      },
-      onDayChanged: (value) {
-        day = value;
-        _getFiltrationData();
-      },
-      onHourChanged: (value) {
-        hour = value;
-        _getFiltrationData();
-      },
-      onMinuteChanged: (value) {
-        minute = value;
-        _getFiltrationData();
-      },
-      onSecondChanged: (value) {
-        second = value;
+      startDate: filtrationStartDate.value,
+      endDate: filtrationEndDate.value,
+      selectedDate: filtrationEndDate.value,
+      searchPressed: (dt) {
+        year = dt.year;
+        month = dt.month;
+        day = dt.day;
+        hour = dt.hour;
+        minute = dt.minute;
+        second = dt.second;
         _getFiltrationData();
       },
     );
@@ -1948,33 +1923,33 @@ class _FiltrationPageState extends State<FiltrationPage> {
   }
 
   Future<void> load() async {
-    print("load...");
+    printMessage("load...");
 
     loaded.value = false;
 
     try {
       if (FiltrationPage.stream == null) {
         try {
-          print("connecting to filtration broadcast");
+          printMessage("connecting to filtration broadcast");
           FiltrationPage.channel = WebSocketChannel.connect(
               Uri.parse(ApiConfig.filtration_broadcast_websocket_url));
           final res = await (await ApiClientInstance.getApiClient())
               .getFiltrationMetaData();
-          print("filtration broadcast connected");
+          printMessage("filtration broadcast connected");
           filtrationStartDate.value = res.startDate;
           filtrationEndDate.value = res.endDate;
           await FiltrationPage.channel!.ready;
-          print("filtration broadcast ready");
+          printMessage("filtration broadcast ready");
           FiltrationPage.stream =
               FiltrationPage.channel!.stream.asBroadcastStream();
           loaded.value = true;
-          print("filtration broadcast loaded");
+          printMessage("filtration broadcast loaded");
         } catch (e) {
-          print("error connecting to filtration broadcast: $e");
+          printMessage("error connecting to filtration broadcast: $e");
           logger.e(
               "Error connecting to filtration broadcast${retries > 0 ? ',retrying' : ''}");
           if (retries > 0) {
-            print("retrying in 1 second");
+            printMessage("retrying in 1 second");
             retries--;
             Future.delayed(Duration(seconds: 1), load);
           } else {
@@ -1986,10 +1961,10 @@ class _FiltrationPageState extends State<FiltrationPage> {
                   "Failed To Connect To Filtration Broadcast${retries > 0 ? ',retrying' : ''}");
         }
       } else {
-        print("Not Loading because Stream is not null");
+        printMessage("Not Loading because Stream is not null");
       }
     } catch (e) {
-      print("loading faild: $e");
+      printMessage("loading faild: $e");
     } finally {
       loaded.value = true;
     }

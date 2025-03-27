@@ -128,7 +128,7 @@ class UserForm extends StatelessWidget {
           child: CircularProgressIndicator(),
         );
       }
-      userRole.value ??= role ?? roles.firstOrNull;
+      userRole.value = role ?? roles.firstOrNull;
       logger
           .e("User: $user ${user?.avatarUrl} ${_addUserAvatarSelected.value}");
       return Form(
@@ -304,6 +304,7 @@ class UserForm extends StatelessWidget {
                 enabled: editable,
                 controller: addFirstNameController,
                 keyboardType: TextInputType.name,
+                validator: FormBuilderValidators.firstName(),
                 label: Text("First Name"),
                 placeholder: showPlaceHolders ? Text("Lyes") : null,
               ),
@@ -312,6 +313,7 @@ class UserForm extends StatelessWidget {
                 enabled: editable,
                 controller: addLastNameController,
                 keyboardType: TextInputType.name,
+                validator: FormBuilderValidators.lastName(),
                 label: Text("Last Name"),
                 placeholder: showPlaceHolders ? Text("Rabhi") : null,
               ),
@@ -320,6 +322,7 @@ class UserForm extends StatelessWidget {
                 enabled: editable,
                 controller: addUserNameController,
                 keyboardType: TextInputType.name,
+                validator: FormBuilderValidators.username(),
                 label: Text("Username"),
                 placeholder: showPlaceHolders ? Text("Lyes Rabhi") : null,
               ),

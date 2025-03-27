@@ -42,11 +42,11 @@ class SentEmailForm extends StatelessWidget {
 
   _valuesChanged() {
     if (!editable) return;
-    print("tempenvoiController.text ${tempenvoiController.text}");
-    print("receptionistController.text ${receptionistController.text}");
-    print("scheduleController.text ${scheduleController.text}");
-    print("alertController.text ${alertController.text}");
-    print("enabled $enabled");
+    printMessage("tempenvoiController.text ${tempenvoiController.text}");
+    printMessage("receptionistController.text ${receptionistController.text}");
+    printMessage("scheduleController.text ${scheduleController.text}");
+    printMessage("alertController.text ${alertController.text}");
+    printMessage("enabled $enabled");
     onValuesChanged?.call(
       tempsEnvoi: tempenvoiController.text,
       receptionist: scheduleController.text,
@@ -75,6 +75,8 @@ class SentEmailForm extends StatelessWidget {
 
   final EmailSchedule? schedule;
   final AlertEmail? alert;
+
+  final _formKey = GlobalKey<ShadFormState>();
 
   _loadUsers() async {
     try {
@@ -177,6 +179,7 @@ class SentEmailForm extends StatelessWidget {
                       showIdField: true,
                     )
                   : AlertEmailForm(
+                      formKey: _formKey,
                       alert: alert,
                       editable: false,
                       showIdField: true,

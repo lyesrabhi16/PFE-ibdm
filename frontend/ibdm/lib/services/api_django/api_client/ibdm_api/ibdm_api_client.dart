@@ -9,7 +9,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../models/alert_email.dart';
-import '../models/alert_enum.dart';
+import '../models/alert_email_request.dart';
 import '../models/co2_ifruit.dart';
 import '../models/debit.dart';
 import '../models/email_schedule.dart';
@@ -18,9 +18,11 @@ import '../models/feed_meta_data.dart';
 import '../models/format.dart';
 import '../models/get_subordinate_and_superior_id_response.dart';
 import '../models/group.dart';
+import '../models/group_request.dart';
 import '../models/has_perm_response.dart';
 import '../models/interval.dart';
 import '../models/lang.dart';
+import '../models/login_request_request.dart';
 import '../models/login_response.dart';
 import '../models/niveau.dart';
 import '../models/paginated_alert_email_list.dart';
@@ -38,14 +40,22 @@ import '../models/paginated_sucre_list.dart';
 import '../models/paginated_user_list.dart';
 import '../models/paginated_utilite_list.dart';
 import '../models/paginated_volume_list.dart';
+import '../models/patched_alert_email_request.dart';
 import '../models/patched_email_schedule_request.dart';
+import '../models/patched_group_request.dart';
+import '../models/patched_permission_request.dart';
+import '../models/patched_role_request.dart';
+import '../models/patched_subordinate_and_superior_request.dart';
 import '../models/permission.dart';
+import '../models/permission_request.dart';
 import '../models/possible_monitor_values_alert_emails.dart';
 import '../models/pres_cond.dart';
 import '../models/rapport.dart';
 import '../models/role.dart';
+import '../models/role_request.dart';
 import '../models/sent_email.dart';
 import '../models/subordinate_and_superior.dart';
+import '../models/subordinate_and_superior_request.dart';
 import '../models/success_response.dart';
 import '../models/sucre.dart';
 import '../models/user.dart';
@@ -58,12 +68,9 @@ part 'ibdm_api_client.g.dart';
 abstract class IbdmApiClient {
   factory IbdmApiClient(Dio dio, {String? baseUrl}) = _IbdmApiClient;
 
-  @MultiPart()
   @POST('/api/v1/auth/login')
   Future<LoginResponse> login({
-    @Part(name: 'email') required String email,
-    @Part(name: 'password') required String password,
-    @Part(name: 'remember_me') bool rememberMe = false,
+    @Body() required LoginRequestRequest body,
   });
 
   @POST('/api/v1/auth/logout')
@@ -117,18 +124,9 @@ abstract class IbdmApiClient {
     @Query('tag') String? tag,
   });
 
-  @MultiPart()
   @POST('/api/v1/emails/alerts/')
   Future<AlertEmail> addAlertEmail({
-    @Part(name: 'monitored_value') required AlertEnum monitoredValue,
-    @Part(name: 'send_to_users') List<String>? sendToUsers,
-    @Part(name: 'danger_point') int? dangerPoint,
-    @Part(name: 'warning_point') int? warningPoint,
-    @Part(name: 'danger_reminder_interval') int? dangerReminderInterval,
-    @Part(name: 'warning_reminder_interval') int? warningReminderInterval,
-    @Part(name: 'custom_alert_message') String? customAlertMessage,
-    @Part(name: 'enabled') bool? enabled,
-    @Part(name: 'send_to_roles') List<int?>? sendToRoles,
+    @Body() required AlertEmailRequest body,
   });
 
   /// [id] - A unique integer value identifying this alert email.
@@ -138,35 +136,17 @@ abstract class IbdmApiClient {
   });
 
   /// [id] - A unique integer value identifying this alert email.
-  @MultiPart()
   @PUT('/api/v1/emails/alerts/{id}/')
   Future<AlertEmail> updateAlertEmail({
     @Path('id') required int id,
-    @Part(name: 'monitored_value') required AlertEnum monitoredValue,
-    @Part(name: 'send_to_users') List<String>? sendToUsers,
-    @Part(name: 'danger_point') int? dangerPoint,
-    @Part(name: 'warning_point') int? warningPoint,
-    @Part(name: 'danger_reminder_interval') int? dangerReminderInterval,
-    @Part(name: 'warning_reminder_interval') int? warningReminderInterval,
-    @Part(name: 'custom_alert_message') String? customAlertMessage,
-    @Part(name: 'enabled') bool? enabled,
-    @Part(name: 'send_to_roles') List<int?>? sendToRoles,
+    @Body() required AlertEmailRequest body,
   });
 
   /// [id] - A unique integer value identifying this alert email.
-  @MultiPart()
   @PATCH('/api/v1/emails/alerts/{id}/')
   Future<AlertEmail> partialUpdateAlertEmail({
     @Path('id') required int id,
-    @Part(name: 'send_to_users') List<String>? sendToUsers,
-    @Part(name: 'monitored_value') AlertEnum? monitoredValue,
-    @Part(name: 'danger_point') int? dangerPoint,
-    @Part(name: 'warning_point') int? warningPoint,
-    @Part(name: 'danger_reminder_interval') int? dangerReminderInterval,
-    @Part(name: 'warning_reminder_interval') int? warningReminderInterval,
-    @Part(name: 'custom_alert_message') String? customAlertMessage,
-    @Part(name: 'enabled') bool? enabled,
-    @Part(name: 'send_to_roles') List<int?>? sendToRoles,
+    @Body() PatchedAlertEmailRequest? body,
   });
 
   /// [id] - A unique integer value identifying this alert email.
@@ -193,6 +173,8 @@ abstract class IbdmApiClient {
   /// [perPage] - Number of results per page.
   ///
   /// [rapport] - * `inventaire-sucre` - inventaire-sucre.
+  /// * `utilite` - utilite.
+  /// * `filtration` - filtration.
   ///
   /// [search] - A search term.
   @GET('/api/v1/emails/schedules/')
@@ -235,6 +217,12 @@ abstract class IbdmApiClient {
   @DELETE('/api/v1/emails/schedules/{id}/')
   Future<void> destroyEmailSchedule({
     @Path('id') required int id,
+  });
+
+  /// Send scheduled email now
+  @POST('/api/v1/emails/send/schedule/{email_schedule_id}')
+  Future<SuccessResponse> sendScheduledEmailNow({
+    @Path('email_schedule_id') required int emailScheduleId,
   });
 
   /// get sent emails.
@@ -434,10 +422,9 @@ abstract class IbdmApiClient {
   });
 
   /// API endpoint that allows groups to be viewed or edited.
-  @MultiPart()
   @POST('/api/v1/user-management/groups/')
   Future<Group> addGroup({
-    @Part(name: 'name') required String name,
+    @Body() required GroupRequest body,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
@@ -451,21 +438,19 @@ abstract class IbdmApiClient {
   /// API endpoint that allows groups to be viewed or edited.
   ///
   /// [id] - A unique integer value identifying this group.
-  @MultiPart()
   @PUT('/api/v1/user-management/groups/{id}/')
   Future<Group> updateGroup({
     @Path('id') required int id,
-    @Part(name: 'name') required String name,
+    @Body() required GroupRequest body,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
   ///
   /// [id] - A unique integer value identifying this group.
-  @MultiPart()
   @PATCH('/api/v1/user-management/groups/{id}/')
   Future<Group> partialUpdateGroup({
     @Path('id') required int id,
-    @Part(name: 'name') String? name,
+    @Body() PatchedGroupRequest? body,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
@@ -491,12 +476,9 @@ abstract class IbdmApiClient {
   });
 
   /// API endpoint that allows groups to be viewed or edited.
-  @MultiPart()
   @POST('/api/v1/user-management/permissions/')
   Future<Permission> addPermission({
-    @Part(name: 'name') required String name,
-    @Part(name: 'codename') required String codename,
-    @Part(name: 'content_type') required int contentType,
+    @Body() required PermissionRequest body,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
@@ -510,25 +492,19 @@ abstract class IbdmApiClient {
   /// API endpoint that allows groups to be viewed or edited.
   ///
   /// [id] - A unique integer value identifying this permission.
-  @MultiPart()
   @PUT('/api/v1/user-management/permissions/{id}/')
   Future<Permission> updatePermission({
     @Path('id') required int id,
-    @Part(name: 'name') required String name,
-    @Part(name: 'codename') required String codename,
-    @Part(name: 'content_type') required int contentType,
+    @Body() required PermissionRequest body,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
   ///
   /// [id] - A unique integer value identifying this permission.
-  @MultiPart()
   @PATCH('/api/v1/user-management/permissions/{id}/')
   Future<Permission> partialUpdatePermission({
     @Path('id') required int id,
-    @Part(name: 'name') String? name,
-    @Part(name: 'codename') String? codename,
-    @Part(name: 'content_type') int? contentType,
+    @Body() PatchedPermissionRequest? body,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
@@ -554,12 +530,9 @@ abstract class IbdmApiClient {
   });
 
   /// API endpoint that allows groups to be viewed or edited.
-  @MultiPart()
   @POST('/api/v1/user-management/roles/')
   Future<Role> addRole({
-    @Part(name: 'group_id') required int groupId,
-    @Part(name: 'managed_roles') required List<String> managedRoles,
-    @Part(name: 'color') String? color,
+    @Body() required RoleRequest body,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
@@ -573,25 +546,19 @@ abstract class IbdmApiClient {
   /// API endpoint that allows groups to be viewed or edited.
   ///
   /// [id] - A unique integer value identifying this role.
-  @MultiPart()
   @PUT('/api/v1/user-management/roles/{id}/')
   Future<Role> updateRole({
     @Path('id') required int id,
-    @Part(name: 'group_id') required int groupId,
-    @Part(name: 'managed_roles') required List<String> managedRoles,
-    @Part(name: 'color') String? color,
+    @Body() required RoleRequest body,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
   ///
   /// [id] - A unique integer value identifying this role.
-  @MultiPart()
   @PATCH('/api/v1/user-management/roles/{id}/')
   Future<Role> partialUpdateRole({
     @Path('id') required int id,
-    @Part(name: 'group_id') int? groupId,
-    @Part(name: 'managed_roles') List<String>? managedRoles,
-    @Part(name: 'color') String? color,
+    @Body() PatchedRoleRequest? body,
   });
 
   /// API endpoint that allows groups to be viewed or edited.
@@ -614,11 +581,9 @@ abstract class IbdmApiClient {
     @Query('per_page') int? perPage,
   });
 
-  @MultiPart()
   @POST('/api/v1/user-management/subordinates_superiors/')
   Future<SubordinateAndSuperior> addSubordinateAndSuperior({
-    @Part(name: 'superior') required int superior,
-    @Part(name: 'subordinate') required int subordinate,
+    @Body() required SubordinateAndSuperiorRequest body,
   });
 
   /// [id] - A unique integer value identifying this subordinate and superior.
@@ -628,21 +593,17 @@ abstract class IbdmApiClient {
   });
 
   /// [id] - A unique integer value identifying this subordinate and superior.
-  @MultiPart()
   @PUT('/api/v1/user-management/subordinates_superiors/{id}/')
   Future<SubordinateAndSuperior> updateSubordinateAndSuperior({
     @Path('id') required int id,
-    @Part(name: 'superior') required int superior,
-    @Part(name: 'subordinate') required int subordinate,
+    @Body() required SubordinateAndSuperiorRequest body,
   });
 
   /// [id] - A unique integer value identifying this subordinate and superior.
-  @MultiPart()
   @PATCH('/api/v1/user-management/subordinates_superiors/{id}/')
   Future<SubordinateAndSuperior> partialUpdateSubordinateAndSuperior({
     @Path('id') required int id,
-    @Part(name: 'superior') int? superior,
-    @Part(name: 'subordinate') int? subordinate,
+    @Body() PatchedSubordinateAndSuperiorRequest? body,
   });
 
   /// [id] - A unique integer value identifying this subordinate and superior.

@@ -1,7 +1,7 @@
 services:
   sql_server_db:
     container_name: sql_server_db
-    image: mcr.microsoft.com/mssql/server:latest
+    image: mcr.microsoft.com/mssql/server:2022-CU18-ubuntu-20.04
     env_file: .env
     restart: always
     ports:

@@ -35,7 +35,7 @@ class UserController extends GetxController {
   }
 
   bool get isAuthenticated => () {
-        print(
+        printMessage(
             "Checking if user is authenticated: ${user != null} ${user?.email}");
         return user != null;
       }();

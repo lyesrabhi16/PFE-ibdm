@@ -380,38 +380,10 @@
 		}
 	}
 	,
-	"hour": "Hour: {hour}",
-	"@hour": {
-		"placeholders": {
-			"hour": {
-				"type": "String",
-				"description": "the hour to display",
-				"example": "17"
-			}
-		}
-	}
-	,
-	"minute": "Minute: {minute}",
-	"@minute": {
-		"placeholders": {
-			"minute": {
-				"type": "String",
-				"description": "the minute to display",
-				"example": "17"
-			}
-		}
-	}
-	,
-	"second": "Second: {second}",
-	"@second": {
-		"placeholders": {
-			"second": {
-				"type": "String",
-				"description": "the second to display",
-				"example": "17"
-			}
-		}
-	},
+	"hour": "Hour",
+	"minute": "Minute",
+	"second": "Second",
+    "pick":"Pick",
 	"totalSucre": "Sucre Total :",
 	"totalSucreTetra": "Sucre Total Tetra :",
 	"totalSucreAdue": "Sucre Total Adue:",
@@ -602,6 +574,15 @@
     "sent": "Sent",
     "sentAt": "Sent At",
     "newEmailSent": "A new email was sent",
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "dataFound": "Data Found",
+    "retrievingData": "Retrieving Data...",
+    "dataNotFound": "Data not found",
+    "failedToLoadData": "Failed to load data",
+    "utiliteTitle": "Utilite",
+    "sendingEmail": "Sending Email...",
+    "emailSent": "Email Sent",
+    "failedToSendEmail": "Failed to send Email",
+    "find": "find"
     
 }

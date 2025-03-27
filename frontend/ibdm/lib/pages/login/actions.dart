@@ -4,6 +4,7 @@ import 'package:ibdm/common/controllers/loading_page_controller.dart';
 import 'package:ibdm/common/controllers/permissions_controler.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api/api_client.dart';
+import 'package:ibdm/services/api_django/api_client/models/login_request_request.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/types.dart';
@@ -50,9 +51,11 @@ class LoginActions {
 
       final apiClient = await ApiClientInstance.getApiClient();
       final response = await apiClient.login(
-        email: emailController.text,
-        password: passwordController.text,
-        rememberMe: rememberMe,
+        body: LoginRequestRequest(
+          email: emailController.text,
+          password: passwordController.text,
+          rememberMe: rememberMe,
+        ),
       );
       logger.d("Login Response: $response");
       // set login progress to success
@@ -96,7 +99,7 @@ class LoginActions {
       });
 
       if (e is DioException) {
-        print("Login Failed: ${e.message}");
+        printMessage("Login Failed: ${e.message}");
         logger.e("Login Failed: ${e.message}", error: e);
 
         // show error toast
@@ -126,7 +129,7 @@ class LoginActions {
               title: strings.loginFailed);
         }
       } else {
-        print("Login Failed uncaught exception: $e");
+        printMessage("Login Failed uncaught exception: $e");
         logger.f("Login Failed uncaught exception: $e");
 
         // show uncaught error toast
