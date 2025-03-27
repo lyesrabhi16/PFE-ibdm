@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 from django.core.mail import EmailMessage
 from django.conf import settings
-import logging
+from logs.logging import logger as logging
 import threading
 from emails.models import EmailSchedule, sentEmail
 from api_v1.emails.rapports.inventaire_sucre import rapport_inventaire_sucre
@@ -19,22 +19,20 @@ def getHtmlMessage(email: EmailSchedule):
         case "filtration":
             return rapport_filtration(email)
         case _:
-            raise ValueError(f"rapport {email.rapport} not found")
+            raise ValueError(f"emailScheduler# rapport {email.rapport} not found")
             
-def sendEmailWithFile(file, **kwargs):
+def sendEmailWithFile(file, provider=None, **kwargs):
     email_message = EmailMessage(**kwargs)
     email_message.content_subtype = "html"
     if file is not None:
         email_message.attach_file(file)
+    if provider:
+        email_message.connection = provider
     email_message.send()
-    logging.info(f"emailScheduler: email sent to '{email_message.to}'")
+    logging.info(f"emailScheduler#: email {email_message.subject} sent to '{email_message.to}'")
 
 def sendEmail(email: EmailSchedule, schedule_next=True):
-    print("SEND EMAIL")
-    print("SEND EMAIL")
-    print("SEND EMAIL")
-    print("SEND EMAIL")
-    logging.log(logging.WARNING, f"emailScheduler: send email: {email}")
+    logging.info(f"emailScheduler# send email: {email}")
     emails_in_process.add(email)
     send_to = set()
     users = set()
@@ -47,7 +45,7 @@ def sendEmail(email: EmailSchedule, schedule_next=True):
         for user in User.objects.filter(role=role):
             send_to.add(user.email)
             users.add(user)
-    logging.log(logging.WARNING, f"emailScheduler: send email to: {send_to}")
+    logging.info(f"emailScheduler# send email to: {send_to}")
     message, file, subject = getHtmlMessage(email)
     for email_str in send_to:
         threading.Thread(
@@ -58,43 +56,34 @@ def sendEmail(email: EmailSchedule, schedule_next=True):
             "from_email":settings.EMAIL_OF_SENDER,
             "to":[email_str]
         }).start()
+        threading.Thread(
+            target=sendEmailWithFile,kwargs={
+            "file": file,
+            "provider": settings.EMAIL_SECONDARY_PROVIDER,
+            "subject":f"IBDM {subject}",
+            "body": message,
+            "from_email":settings.EMAIL_OF_SENDER,
+            "to":[email_str]
+        }).start()
     for user in users:
-        sentEmail.objects.create(receptionist=user, schedule=email)
+        sentEmail.objects.create(temps_envoi=datetime.now(), receptionist=user, schedule=email)
 
     if email.next_run_time is None:
-        raise ValueError("next_run_time is None, how did this happen?")
+        raise ValueError("emailScheduler# next_run_time is None, how did this happen?")
     if schedule_next:
-        logging.log(logging.INFO, "emailScheduler: setting next run time")
+        logging.info("emailScheduler# setting next run time")
         email.next_run_time = email.next_run_time + timedelta(days=email.interval_manual or 1)
         email.save()
     emails_in_process.remove(email)
 
-    print("SEND EMAIL")
-    print("SEND EMAIL")
-    print("SEND EMAIL")
-    print("SEND EMAIL")  
-
 emails_in_process = set()
 def email_scheduler():
-    print("IN EMAIL SCHEDULER")
-    print("IN EMAIL SCHEDULER")
-    print("IN EMAIL SCHEDULER")
-    print("IN EMAIL SCHEDULER")
-    logging.log(logging.WARNING, "email_scheduler")
-    logging.info("EMAILS IN SENDING PROCESS: "+ str(emails_in_process))
+    logging.info(f"emailScheduler# EMAILS IN SENDING PROCESS: {emails_in_process}")
     schedule_unscheduled_emails()
     send_scheduled_emails()
     reschedule_emails()
-    print("IN EMAIL SCHEDULER")
-    print("IN EMAIL SCHEDULER")
-    print("IN EMAIL SCHEDULER")
-    print("IN EMAIL SCHEDULER")
 
 def send_scheduled_emails():
-    print("SEND EMAILS")
-    print("SEND EMAILS")
-    print("SEND EMAILS")
-    print("SEND EMAILS")
     now = datetime.now()
     scheduled_emails = EmailSchedule.objects.filter(
         next_run_time__year=now.year,
@@ -103,26 +92,22 @@ def send_scheduled_emails():
         next_run_time__hour=now.hour,
         next_run_time__minute=now.minute,
         )
-    logging.log(logging.WARNING, f"scheduled emails: {scheduled_emails}")
+    logging.info(f"emailScheduler# scheduled emails: {scheduled_emails}")
     emails_to_be_sent = {
         email for email in scheduled_emails if email not in emails_in_process
     }
 
-    logging.log(logging.WARNING, f'emails to send: {emails_to_be_sent}')
+    logging.info(f'emailScheduler# emails to send: {emails_to_be_sent}')
     for email in emails_to_be_sent:
        threading.Thread(target=sendEmail, args=(email,)).start()
 
-    print("SEND EMAILS")
-    print("SEND EMAILS")
-    print("SEND EMAILS")
-    print("SEND EMAILS")
 def reschedule_emails():
     now = datetime.now()
     reschedule_emails  = EmailSchedule.objects.filter(next_run_time__lt=now)
-    logging.log(logging.WARNING, f"emails to reschedule: {reschedule_emails}")
+    logging.info(f"emailScheduler# emails to reschedule: {reschedule_emails}")
     for email in reschedule_emails:
         if email.next_run_time is None:
-            raise ValueError("next_run_time is None, how did this happen?")
+            raise ValueError("emailScheduler# next_run_time is None, how did this happen?")
         days_to_add = max(
             (now - email.next_run_time.replace(tzinfo=None)).days, (email.interval_manual or 1)
         )
@@ -132,7 +117,7 @@ def reschedule_emails():
 def schedule_unscheduled_emails():
     now = datetime.now()
     unscheduled_emails = EmailSchedule.objects.filter(next_run_time=None)
-    logging.log(logging.WARNING, f"emails to schedule: {unscheduled_emails}")
+    logging.info(f"emailScheduler# emails to schedule: {unscheduled_emails}")
     for email in unscheduled_emails:
         next_r_t = datetime(
                 year=now.year,
@@ -149,7 +134,7 @@ def schedule_unscheduled_emails():
         elif email.interval == "semaine":
             email.interval_manual = 7
         if email.interval == "manual" and email.interval_manual is None:
-            raise ValueError("interval_manual is None, how did this happen?")
+            raise ValueError("emailScheduler# interval_manual is None, how did this happen?")
 
         email.next_run_time = next_r_t if next_r_t > datetime.now() else next_r_t + timedelta(days= email.interval_manual or 1)
         email.save()

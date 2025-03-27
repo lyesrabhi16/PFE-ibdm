@@ -583,6 +583,37 @@
     "sendingEmail": "Sending Email...",
     "emailSent": "Email Sent",
     "failedToSendEmail": "Failed to send Email",
-    "find": "find"
+    "find": "Find",
+    "failedToLoadUsers": "Failed to load Users",
+    "monitoredValue": "Monitored Value",
+    "selectAValueToMonitor": "Select a value to monitor",
+    "requiredField": "Field is Required",
+    "monitorType": "Monitor Type",
+    "selectAMonitorType": "Select a monitor type",
+    "enterAValidInteger": "Enter a valid integer",
+    "dangerPoint": "Danger Point",
+    "warningPoint":"Warning Point",
+    "dangerAlertIntervalInDays": "Danger Alert Interval (In Days)",
+    "warningAlertIntervalInDays": "Warning Alert Interval (In Days)",
+    "customMessage": "Custom Message",
+    "failedToLoadPossibleValuesForMonitoring": "Failed to load possible values for monitoring",
+    "addingAlert": "Adding Alert...",
+    "alertAdded": "Alert Added",
+    "failedToAddAlert": "Failed to add alert",
+    "activatingAlert": "Activating Alert...",
+    "alertActivated": "Alert Activated",
+    "failedToActivateAlert": "Failed to activate alert",
+    "deactivatingAlert": "Deactivating Alert...",
+    "alertDeactivated": "Alert Deactivated",
+    "failedToDeactivateAlert": "Failed to Deactivate alert",
+    "savingAlert": "Saving Alert...",
+    "alertSaved": "Alert Saved",
+    "failedToSaveAlert": "Failed to save alert",
+    "activating": "activating",
+    "deactivating": "deactivating",
+    "activated": "activated",
+    "deactivated": "deactivated"
+    
+
     
 }

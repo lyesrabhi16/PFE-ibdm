@@ -5,6 +5,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'alert_enum.dart';
+import 'monitor_type_enum.dart';
 
 part 'patched_alert_email_request.g.dart';
 
@@ -12,6 +13,7 @@ part 'patched_alert_email_request.g.dart';
 class PatchedAlertEmailRequest {
   const PatchedAlertEmailRequest({
     this.monitoredValue,
+    this.monitorType,
     this.dangerPoint,
     this.warningPoint,
     this.dangerReminderInterval,
@@ -26,6 +28,8 @@ class PatchedAlertEmailRequest {
   
   @JsonKey(name: 'monitored_value')
   final AlertEnum? monitoredValue;
+  @JsonKey(name: 'monitor_type')
+  final MonitorTypeEnum? monitorType;
   @JsonKey(name: 'danger_point')
   final int? dangerPoint;
   @JsonKey(name: 'warning_point')

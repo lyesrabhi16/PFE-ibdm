@@ -34,6 +34,7 @@ class AlertEmailForm extends StatelessWidget {
 
   final Function({
     String? monitoredValue,
+    String? monitorType,
     String? dangerPoint,
     String? warningPoint,
     String? dangerAlertInterval,
@@ -61,6 +62,7 @@ class AlertEmailForm extends StatelessWidget {
     printMessage("enabled $enabled");
     onValuesChanged?.call(
       monitoredValue: monitoredValueController.text,
+      monitorType: monitorTypeController.text,
       dangerPoint: dangerPointController.text,
       warningPoint: warningPointController.text,
       dangerAlertInterval: dangerAlertIntervalController.text,
@@ -75,6 +77,7 @@ class AlertEmailForm extends StatelessWidget {
   final GlobalKey<ShadFormState> formKey;
   final idController = TextEditingController(text: "Auto Generated");
   final monitoredValueController = TextEditingController();
+  final monitorTypeController = TextEditingController();
   final dangerPointController = TextEditingController(text: "1000");
   final warningPointController = TextEditingController(text: "2500");
   final dangerAlertIntervalController = TextEditingController(text: "1");
@@ -85,7 +88,6 @@ class AlertEmailForm extends StatelessWidget {
 
   bool enabled = true;
 
-  late final strings = getTranslations(getContext).obs;
   final bool showIdField;
   final userController = Get.find<UserController>();
   IbdmApiClient? api;
@@ -94,6 +96,7 @@ class AlertEmailForm extends StatelessWidget {
   RxBool loaded = false.obs;
 
   _loadUsers() async {
+    final strings = getTranslations(getContext).obs;
     try {
       final res = await api!.getUsers(
         enablePagination: false,
@@ -102,7 +105,7 @@ class AlertEmailForm extends StatelessWidget {
     } catch (e) {
       logger.e("Failed to load users : $e");
       Toasts.showErrorToast(
-          context: getContext, message: "Failed to load users");
+          context: getContext, message: strings.value.failedToLoadUsers);
       Navigator.of(getContext).pop();
     }
   }
@@ -126,6 +129,7 @@ class AlertEmailForm extends StatelessWidget {
       warningPointController.text = alert!.warningPoint.toString();
       enabled = alert!.enabled!;
       monitoredValueController.text = alert!.monitoredValue.toString();
+      monitorTypeController.text = alert!.monitorType.toString();
       sendToRoles.addAll(
         userController.roles
             .where((role) => alert!.sendToRoles.contains(role.roleId)),
@@ -141,6 +145,7 @@ class AlertEmailForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _getContext = () => context;
+    final strings = getTranslations(context).obs;
     return Obx(() {
       if (!loaded.value) {
         load();
@@ -163,7 +168,7 @@ class AlertEmailForm extends StatelessWidget {
                 ShadInputFormField(
                   enabled: editable,
                   controller: idController,
-                  label: Text("id"),
+                  label: Text(strings.value.id),
                 ),
               SizedBox(height: AppSizes.sm),
               Container(
@@ -173,7 +178,7 @@ class AlertEmailForm extends StatelessWidget {
                 child: ShadSelectFormField<String>(
                   enabled: editable,
                   validator: (v) => AppValidators.monitoredValueValidator(v),
-                  label: Text("Monitored Value"),
+                  label: Text(strings.value.monitoredValue),
                   options: _possibleMonitorValues.map(
                     (value) => ShadOption(
                       value: value,
@@ -194,7 +199,43 @@ class AlertEmailForm extends StatelessWidget {
                       constraints: BoxConstraints(
                         minWidth: context.width,
                       ),
-                      child: Text("Select a Value to Monitor")),
+                      child: Text(strings.value.selectAValueToMonitor)),
+                ),
+              ),
+              SizedBox(height: AppSizes.sm),
+              Container(
+                constraints: BoxConstraints(
+                  minWidth: context.width,
+                ),
+                child: ShadSelectFormField<String>(
+                  enabled: editable,
+                  validator: FormBuilderValidators.required(
+                    errorText: strings.value.requiredField,
+                  ),
+                  label: Text(strings.value.monitorType),
+                  options: MonitorTypeEnum.values
+                      .where((mt) => mt != MonitorTypeEnum.$unknown)
+                      .map(
+                        (value) => ShadOption(
+                          value: value.json,
+                          child: Text(value.json!),
+                        ),
+                      ),
+                  selectedOptionBuilder: (context, value) => Container(
+                      constraints: BoxConstraints(
+                        minWidth: context.width,
+                      ),
+                      child: Text(value)),
+                  initialValue: alert?.monitorType!.json,
+                  onChanged: (v) {
+                    monitorTypeController.text = v!;
+                    _valuesChanged();
+                  },
+                  placeholder: Container(
+                      constraints: BoxConstraints(
+                        minWidth: context.width,
+                      ),
+                      child: Text(strings.value.selectAMonitorType)),
                 ),
               ),
               SizedBox(height: AppSizes.sm),
@@ -202,9 +243,9 @@ class AlertEmailForm extends StatelessWidget {
                 enabled: editable,
                 controller: dangerPointController,
                 validator: FormBuilderValidators.numeric(
-                  errorText: "Please enter a valid number",
+                  errorText: strings.value.enterAValidInteger,
                 ),
-                label: Text("Danger Point"),
+                label: Text(strings.value.dangerPoint),
                 keyboardType: TextInputType.number,
                 initialValue: "1000",
                 onChanged: (v) => {
@@ -216,9 +257,9 @@ class AlertEmailForm extends StatelessWidget {
                 enabled: editable,
                 controller: warningPointController,
                 validator: FormBuilderValidators.numeric(
-                  errorText: "Please enter a valid number",
+                  errorText: strings.value.enterAValidInteger,
                 ),
-                label: Text("Warning Point"),
+                label: Text(strings.value.warningPoint),
                 keyboardType: TextInputType.number,
                 initialValue: "2500",
                 onChanged: (v) => {
@@ -230,9 +271,9 @@ class AlertEmailForm extends StatelessWidget {
                 enabled: editable,
                 controller: dangerAlertIntervalController,
                 validator: FormBuilderValidators.numeric(
-                  errorText: "Please enter a valid number",
+                  errorText: strings.value.enterAValidInteger,
                 ),
-                label: Text("Danger Alert Interval (in days)"),
+                label: Text(strings.value.dangerAlertIntervalInDays),
                 keyboardType: TextInputType.number,
                 initialValue: "1",
                 onChanged: (v) => {
@@ -244,9 +285,9 @@ class AlertEmailForm extends StatelessWidget {
                 enabled: editable,
                 controller: warningAlertIntervalController,
                 validator: FormBuilderValidators.numeric(
-                  errorText: "Please enter a valid number",
+                  errorText: strings.value.enterAValidInteger,
                 ),
-                label: Text("Warning Alert Interval (in days)"),
+                label: Text(strings.value.warningAlertIntervalInDays),
                 keyboardType: TextInputType.number,
                 initialValue: "7",
                 onChanged: (v) => {
@@ -269,7 +310,7 @@ class AlertEmailForm extends StatelessWidget {
                       content: ShadCard(
                         child: Column(
                           children: [
-                            Text("Send This Alert To Roles"),
+                            Text(strings.value.sendThisAlertToRoles),
                             SizedBox(height: AppSizes.sm),
                             ShadSelect<Role>.multiple(
                               enabled: editable,
@@ -322,19 +363,19 @@ class AlertEmailForm extends StatelessWidget {
                                   constraints: BoxConstraints(
                                     minWidth: context.width,
                                   ),
-                                  child: Text("Select Roles")),
+                                  child: Text(strings.value.selectRoles)),
                             ),
                           ],
                         ),
                       ),
-                      child: Text("Roles"),
+                      child: Text(strings.value.roles),
                     ),
                     ShadTab(
                         value: "users",
                         content: ShadCard(
                           child: Column(
                             children: [
-                              Text("Send This Alert To Users"),
+                              Text(strings.value.sendThisAlertToUsers),
                               SizedBox(height: AppSizes.sm),
                               ShadSelect<User>.multiple(
                                 enabled: editable,
@@ -387,12 +428,12 @@ class AlertEmailForm extends StatelessWidget {
                                     constraints: BoxConstraints(
                                       minWidth: context.width,
                                     ),
-                                    child: Text("Select Users")),
+                                    child: Text(strings.value.selectUsers)),
                               ),
                             ],
                           ),
                         ),
-                        child: Text("Users")),
+                        child: Text(strings.value.users)),
                   ]),
               SizedBox(height: AppSizes.sm),
               ShadInputFormField(
@@ -400,7 +441,7 @@ class AlertEmailForm extends StatelessWidget {
                 controller: customMessageController,
                 minLines: 4,
                 maxLines: 30,
-                label: Text("Custom Message"),
+                label: Text(strings.value.customMessage),
                 onChanged: (v) => {
                   _valuesChanged(),
                 },
@@ -413,7 +454,7 @@ class AlertEmailForm extends StatelessWidget {
                   ShadCheckboxFormField(
                     enabled: editable,
                     initialValue: alert?.enabled ?? true,
-                    inputLabel: Text("Enabled"),
+                    inputLabel: Text(strings.value.active),
                     onChanged: (v) {
                       enabled = v;
                       _valuesChanged();
@@ -429,6 +470,7 @@ class AlertEmailForm extends StatelessWidget {
 
   _loadPossibleMonitorValues() async {
     // load possible monitor values
+    final strings = getTranslations(getContext).obs;
     try {
       final res = await api!.getPossibleMonitorValuesAlertEmails();
       _possibleMonitorValues = res.possibleValues;
@@ -436,7 +478,7 @@ class AlertEmailForm extends StatelessWidget {
       logger.e("Failed to load users : $e");
       Toasts.showErrorToast(
           context: getContext,
-          message: "Failed to load possible values for monitoring");
+          message: strings.value.failedToLoadPossibleValuesForMonitoring);
       Navigator.of(getContext).pop();
     }
   }

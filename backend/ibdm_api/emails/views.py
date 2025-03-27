@@ -1,5 +1,6 @@
 from copy import deepcopy
 from django.http import JsonResponse
+from logs.logging import logger as logging
 from rest_framework import viewsets, permissions
 
 from emails.serializers import AlertEmailSerializer, EmailScheduleSerializer, PossibleMonitorValuesAlertEmailsSerializer, SentEmailSerializer
@@ -228,6 +229,7 @@ def getPossibleMonitorValuesAlertEmails(request):
 @api_view(["POST"])
 @permission_classes([permissions.IsAuthenticated])
 def sendScheduledEmailNow(request, email_schedule_id):
+    logging.info(f"emailScheduler# request => send email with id: {email_schedule_id}")
     try:
         email = EmailSchedule.objects.get(pk=email_schedule_id)
         sendEmail(email, schedule_next=False)

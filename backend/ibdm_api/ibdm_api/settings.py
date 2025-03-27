@@ -13,9 +13,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from corsheaders.defaults import default_headers
-
+import logging
 from api_v1.env import Env
-
+from api_v1.smtp_backend import EmailBackend
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -42,8 +42,6 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SAMESITE = "None"
-
-USE_TZ = False
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -176,17 +174,6 @@ DATABASES = {
             "driver": "ODBC Driver 17 for SQL Server",
         },
     },
-    "automate": {
-        "ENGINE": "mssql",
-        "NAME": Env.DATABASE_AUTOMATE_NAME,
-        "USER": Env.DATABASE_AUTOMATE_USER,
-        "PASSWORD": Env.DATABASE_AUTOMATE_PASSWORD,
-        "HOST": Env.DATABASE_AUTOMATE_HOST,
-        "PORT": Env.DATABASE_AUTOMATE_PORT,
-        "OPTIONS": {
-            "driver": "ODBC Driver 17 for SQL Server",
-        },
-    },
 }
 CONN_MAX_AGE = None
 
@@ -234,7 +221,7 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -321,3 +308,218 @@ EMAIL_PORT = Env.EMAIL_PORT
 EMAIL_HOST_USER =  Env.EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD =  Env.EMAIL_HOST_PASSWORD
 EMAIL_OF_SENDER = Env.EMAIL_OF_SENDER
+EMAIL_OF_SENDER2 = Env.EMAIL_OF_SENDER2
+EMAIL_SECONDARY_PROVIDER = EmailBackend(
+   host=Env.EMAIL_HOST2,
+   use_tls=Env.EMAIL_USE_TLS2,
+   port=Env.EMAIL_PORT2,
+   username=Env.EMAIL_HOST_USER2,
+   password=Env.EMAIL_HOST_PASSWORD2,
+)
+
+
+LOG_DIR = os.path.join(BASE_DIR, "data", "logs")
+if os.path.exists(LOG_DIR) is False:
+    os.makedirs(LOG_DIR)
+
+logging.addLevelName(11, "EMAILS")
+logging.addLevelName(12, "USERS")
+logging.addLevelName(13, "SIROPERIE")
+logging.addLevelName(14, "FILTRATION")
+logging.addLevelName(15, "UTILITE")
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '{asctime} {levelname} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        "console": {
+            "level": "CRITICAL",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        'file_debug': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'debug.log'),
+            'formatter': 'verbose',
+            'filters': ['debug_filter'],
+        },
+        'file_info': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'info.log'),
+            'formatter': 'verbose',
+            'filters': ['info_filter'],
+        },
+        'file_warning': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'warning.log'),
+            'formatter': 'verbose',
+            'filters': ['warning_filter'],
+        },
+        'file_error': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'error.log'),
+            'formatter': 'verbose',
+            'filters': ['error_filter'],
+        },
+        'file_critical': {
+            'level': 'CRITICAL',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'critical.log'),
+            'formatter': 'verbose',
+            'filters': ['critical_filter'],
+        },
+        'file_emails': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'emails.log'),
+            'formatter': 'verbose',
+            'filters': ['emails_filter'],
+        },
+        
+        'file_emails_broadcast': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'emails_broadcast.log'),
+            'formatter': 'verbose',
+            'filters': ['broadcast_sent_emails_filter'],
+        },
+        'file_sucre_broadcast': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'sucre_broadcast.log'),
+            'formatter': 'verbose',
+            'filters': ['broadcast_sucre_filter'],
+        },
+        'file_filtration_broadcast': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'filtration_broadcast.log'),
+            'formatter': 'verbose',
+            'filters': ['broadcast_filtration_filter'],
+        },
+        'file_utilite_broadcast': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'utilite_broadcast.log'),
+            'formatter': 'verbose',
+            'filters': ['broadcast_utilite_filter'],
+        },
+        "file_http":{
+            'class': "logging.FileHandler",
+            'filename': os.path.join(LOG_DIR, 'http.log'),
+            'formatter': 'verbose',
+        },
+        "file_daphne":{
+            'class': "logging.FileHandler",
+            'filename': os.path.join(LOG_DIR, 'daphne.log'),
+            'formatter': 'verbose',
+        },
+        "file_monitors":{
+            'class': "logging.FileHandler",
+            'filename': os.path.join(LOG_DIR, 'monitors.log'),
+            'formatter': 'verbose',
+            'filters': ['monitors_filter'],
+        },
+    },
+    "root": {
+        "level": "CRITICAL",
+        "handlers": [
+                        "console",
+                    ],
+        "propagate": True,
+    },
+    'loggers': {
+        'django': {
+            'handlers': [
+                            "console", 
+                            'file_debug', 'file_info', "file_warning", "file_error", "file_critical",
+                            "file_emails", "file_emails_broadcast", "file_utilite_broadcast", "file_filtration_broadcast", "file_sucre_broadcast",
+                            "file_monitors"
+                        ],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'daphne': {
+            'handlers': [
+                "file_daphne"
+                        ],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'daphne.request': {
+            'level': 'DEBUG',
+            'handlers': ['file_http'],
+            'propagate': True,
+        }
+    },
+    'filters': {
+        'debug_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_level(record, logging.DEBUG)
+        },
+        'info_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_level(record, logging.INFO)
+        },
+        'warning_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_level(record, logging.WARNING)
+        },
+        'error_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_level(record, logging.ERROR)
+        },
+        'critical_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_level(record, logging.CRITICAL)
+        },
+        'emails_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_tags(record, ["emailScheduler"])
+        },
+        'broadcast_sent_emails_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_tags(record, ["broadcast_sent_emails"])
+        },
+        'broadcast_sucre_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_tags(record, ["broadcast_sucre"])
+        },
+        'broadcast_filtration_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_tags(record, ["broadcast_filtration"])
+        },
+        'broadcast_utilite_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_tags(record, ["broadcast_utilite"])
+        },
+        'monitors_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_tags(record, [
+                    "genericMonitor","sucreMonitor","niveauMonitor","co2IfruitMonitor","utiliteMonitor", "volumeMonitor",
+                    "Pres_CondMonitor", "debitMonitor"
+                ])
+        },
+    },
+}
+
+
+seen_tags = set()
+def require_level(record, level):
+    return record.levelno == level
+def require_tags(record, tags):
+    if (record.levelno == logging.DEBUG):
+        return False
+    message_split = record.message.split("#")
+    if len(message_split) == 1:
+        return False
+    tag = message_split[0]
+    if tag not in seen_tags:
+        print("new tag:", tag)
+        seen_tags.add(tag)
+    return tag in tags
