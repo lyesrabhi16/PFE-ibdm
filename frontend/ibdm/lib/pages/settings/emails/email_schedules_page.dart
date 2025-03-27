@@ -39,8 +39,6 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
 
   ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
 
-  late var strings;
-
   final _showCheckboxColumn = false.obs;
 
   static final _searchController = TextEditingController();
@@ -108,7 +106,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
   @override
   Widget build(BuildContext context) {
     _getContext = () => context;
-    strings = getTranslations(context).obs;
+    final strings = getTranslations(context).obs;
     return AppCustomContainer(
         backButton: true,
         child: Padding(
@@ -334,6 +332,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
   }
 
   _showAddScheduleEmailDialog() {
+    final strings = getTranslations(context).obs;
     API_CLIENT.RapportEnum? _rapport;
     API_CLIENT.IntervalEnum? _interval;
     String? _tempsEnvoi;
@@ -364,7 +363,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                   logger.e("Form is not valid");
                   Toasts.showErrorToastNotification(
                       context: Get.overlayContext!,
-                      message: "¨Please fix the errors in the form");
+                      message: strings.value.pleaseFixErrorsInTheForm);
                   return;
                 }
                 EmailActions.addSchedule(
@@ -414,6 +413,8 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
   _showViewScheduleEmailDialog({
     required API_CLIENT.EmailSchedule schedule,
   }) {
+    final strings = getTranslations(context).obs;
+
     return showShadDialog(
       context: context,
       builder: (context) {
@@ -517,6 +518,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
     DateTime? _nextRunTime;
     List<String>? _scheduledUsers;
     List<int>? _scheduledRoles;
+    final strings = getTranslations(context).obs;
     return showShadDialog(
       context: context,
       builder: (context) {
@@ -558,7 +560,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                           logger.e("Form is not valid");
                           Toasts.showErrorToastNotification(
                               context: Get.overlayContext!,
-                              message: "¨Please fix the errors in the form");
+                              message: strings.value.pleaseFixErrorsInTheForm);
                           return;
                         }
                         EmailActions.saveSchedule(
@@ -608,8 +610,8 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                                   logger.e("Form is not valid");
                                   Toasts.showErrorToastNotification(
                                       context: Get.overlayContext!,
-                                      message:
-                                          "¨Please fix the errors in the form");
+                                      message: strings
+                                          .value.pleaseFixErrorsInTheForm);
                                   return;
                                 }
                                 EmailActions.saveSchedule(
@@ -676,6 +678,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
     void Function()? onDeleteConfirmed,
   }) {
     _showCheckboxColumn.value = !_showCheckboxColumn.value;
+    final strings = getTranslations(context).obs;
 
     ShadToaster.of(context).show(
       ShadToast.destructive(
@@ -786,6 +789,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
     }
 
     List<Widget> pageIndexesButtons() {
+      final strings = getTranslations(context).obs;
       List<Widget> pageIndexesButtons = [];
       if (data.isNotEmpty) {
         final indexes = getIndexesOfPages(currentPage, nbrTotalPages,
@@ -873,6 +877,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
       return pageIndexesButtons;
     }
 
+    final strings = getTranslations(context).obs;
     return Container(
       width: context.width,
       decoration: BoxDecoration(
@@ -889,7 +894,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
           children: [
             if (isAtLeastMediumScreen(context) && !SideMenuContainer.open)
               Text(
-                "Page: $currentPage", // if it is at least a small screen show it in this position
+                "${strings.value.page}: $currentPage", // if it is at least a small screen show it in this position
               ),
             Row(
               mainAxisSize:
@@ -917,7 +922,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             ),
             if (isAtMostSmallScreen(context) || SideMenuContainer.open)
               Text(
-                  "Page: $currentPage"), // if it is at most a small screen show it in this position
+                  "${strings.value.page}: $currentPage"), // if it is at most a small screen show it in this position
             Text("$label: $nbrShown/$nbrTotal")
           ],
         ),
@@ -978,6 +983,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
   }
 
   _getCols() {
+    final strings = getTranslations(context).obs;
     return [
       DataColumn2(
           fixedWidth: 60,
@@ -1040,6 +1046,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
   }
 
   _getRows() {
+    final strings = getTranslations(context).obs;
     return schedules.map((e) {
       final actionsController = ShadPopoverController();
       return DataRow2(
@@ -1135,7 +1142,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                         children: [
                           IconWithLabelButton(
                             icon: Icons.email,
-                            text: "send",
+                            text: strings.value.send,
                             onTap: () => {
                               _sendEmailNow(schedule: e),
                               actionsController.toggle(),
@@ -1143,7 +1150,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                           ),
                           IconWithLabelButton(
                             icon: Icons.remove_red_eye_rounded,
-                            text: "view",
+                            text: strings.value.view,
                             onTap: () => {
                               _showViewScheduleEmailDialog(schedule: e),
                               actionsController.toggle(),
@@ -1155,11 +1162,11 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                               _showEditAlertEmailDialog(schedule: e);
                               actionsController.toggle();
                             },
-                            text: "edit",
+                            text: strings.value.edit,
                           ).removeWhen(isAtLeastMediumScreen(context)),
                           IconWithLabelButton(
                             icon: Icons.delete,
-                            text: "delete",
+                            text: strings.value.delete,
                             activeColor: errorColor,
                           ),
                         ].nonNulls.toList(),
@@ -1189,6 +1196,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
     required EmailSchedule schedule,
   }) async {
     final state = FutureState.loading.obs;
+    final strings = getTranslations(context).obs;
     final toast = Toasts.showStatefulToast(
       context: context,
       message: strings.value.sendingEmail,
@@ -1216,6 +1224,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
       schedules.removeWhere((element) => element.id == id);
     }
 
+    final strings = getTranslations(context).obs;
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
         context: context,
@@ -1259,6 +1268,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
   }) {
     final context = getContext;
 
+    final strings = getTranslations(context).obs;
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: AppSizes.md,
@@ -1441,6 +1451,8 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
       return true;
     }
 
+    final strings = getTranslations(context).obs;
+
     return Obx(
       () => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1530,6 +1542,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
       BuildContext context,
       TextEditingController tagFilterController,
       TextEditingController activationStateFilterController) {
+    final strings = getTranslations(context).obs;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -1631,6 +1644,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
   }
 
   _topPageActionsSmallScreen() {
+    final strings = getTranslations(context).obs;
     return Column(
       children: [
         //right refresh button

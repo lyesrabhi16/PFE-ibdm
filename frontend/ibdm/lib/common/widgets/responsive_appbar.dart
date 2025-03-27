@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/user_helpers.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
@@ -33,7 +34,7 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
   Widget build(BuildContext context) {
     bool isSmallScreen = MediaQuery.of(context).size.width < 600;
     final userController = Get.find<UserController>();
-
+    final strings = getTranslations(context).obs;
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
@@ -79,14 +80,14 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
               controller: _popoverController,
               decoration: ShadDecoration(
                 border: ShadBorder(
-                  radius: BorderRadius.circular(AppSizes.sm),
+                  radius: BorderRadius.circular(AppSizes.borderRadius),
                 ),
               ),
               padding: EdgeInsets.zero,
               popover: (context) {
                 return Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(AppSizes.sm),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   constraints: BoxConstraints(
                     maxWidth: AppSizes.xl * 5,
@@ -101,7 +102,8 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                           child: Container(
                             decoration: BoxDecoration(
                               color: _logoutHover.value ? errorColor : null,
-                              borderRadius: BorderRadius.circular(AppSizes.sm),
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.borderRadius),
                             ),
                             child: ListTile(
                               leading: const Icon(Icons.logout, size: 18),
@@ -109,7 +111,7 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                                   ? errorColor
                                   : Theme.of(context).colorScheme.onSurface,
                               title: Text(
-                                'Logout',
+                                strings.value.logout,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium
