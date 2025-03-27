@@ -42,6 +42,8 @@ Map<String, dynamic> _$EmailScheduleToJson(EmailSchedule instance) =>
 
 const _$RapportEnumEnumMap = {
   RapportEnum.inventaireSucre: 'inventaire-sucre',
+  RapportEnum.utilite: 'utilite',
+  RapportEnum.filtration: 'filtration',
   RapportEnum.$unknown: r'$unknown',
 };
 

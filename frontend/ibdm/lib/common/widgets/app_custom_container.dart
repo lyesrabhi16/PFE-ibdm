@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/permissions_controler.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/drawer_container.dart';
 import 'package:ibdm/common/widgets/responsive_appbar.dart';
@@ -16,6 +17,24 @@ class AppCustomContainer extends StatelessWidget {
   final Widget child;
   final bool backButton;
   static final userController = Get.find<UserController>();
+
+  _checkPermissions() {
+    final permissionsController = Get.find<PermissionsController>();
+
+    if (permissionsController.ready.value == false) {
+      throw ("permissions not ready in _checkPermission of AppCustomContainer");
+    }
+
+    final RoutePermissions = Routes.routePermissions[Get.currentRoute];
+    if (RoutePermissions != null) {
+      if (!RoutePermissions.checkPermissions()) {
+        Get.offAllNamed(Routes.noPermissions);
+      }
+    } else {
+      throw ("RoutePermissions not found in _checkPermission of AppCustomContainer");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final loadingPageController = Get.find<LoadingPageController>();
@@ -24,6 +43,9 @@ class AppCustomContainer extends StatelessWidget {
       if (loadingPageController.isLoading.value) {
         return LoadingPage();
       }
+
+      _checkPermissions();
+
       _getBackRoute() {
         final _urlParts = Get.currentRoute.split("/");
         if (_urlParts.length > 2) {

@@ -1,10 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/services/api/api_client.dart';
-import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
-import 'package:ibdm/common/controllers/loading_page_controller.dart';
 
 class PermissionsController extends GetxController {
   PermissionsController() {
@@ -20,6 +17,7 @@ class PermissionsController extends GetxController {
   bool? hasViewEmailScheduleSettingsPerm;
   bool? hasViewEmailAlertsPerm;
   bool? hasViewEmailsSentPerm;
+  bool? hasViewUtilitePagePerm;
 
   Future<void> loadPermissions() async {
     if (permissions_loading) {
@@ -28,7 +26,7 @@ class PermissionsController extends GetxController {
     permissions_loading = true;
     ready.value = false;
     int permissionsLoadedCount = 0;
-    int maxPermissionsLoadedCount = 7;
+    int maxPermissionsLoadedCount = 8;
     _done() {
       permissionsLoadedCount++;
       logger.e("loaded ${permissionsLoadedCount} permissions");
@@ -73,6 +71,10 @@ class PermissionsController extends GetxController {
           hasViewEmailsSentPerm = value;
           _done();
         }),
+        _hasPermRequest(Permissions.viewUtilitePage).then((value) {
+          hasViewUtilitePagePerm = value;
+          _done();
+        }),
       ]);
     } catch (e) {
       logger.e("Failed to get permissions: $e");
@@ -88,6 +90,7 @@ class PermissionsController extends GetxController {
     hasViewEmailScheduleSettingsPerm = null;
     hasViewEmailAlertsPerm = null;
     hasViewEmailsSentPerm = null;
+    hasViewUtilitePagePerm = null;
     ready.value = false;
     logger.e("end reset permissions");
   }
@@ -96,7 +99,7 @@ class PermissionsController extends GetxController {
     try {
       final api = await ApiClientInstance.getApiClient();
       final res = await api.hasPerm(codename: perm);
-      print("Has perm $perm: ${res.hasPerm}");
+      printMessage("Has perm $perm: ${res.hasPerm}");
       return res.hasPerm;
     } catch (e) {
       logger.e("Failed to get permission $perm: $e");
@@ -125,6 +128,8 @@ class PermissionsController extends GetxController {
           return hasViewEmailAlertsPerm!;
         case Permissions.viewEmailsSent:
           return hasViewEmailsSentPerm!;
+        case Permissions.viewUtilitePage:
+          return hasViewUtilitePagePerm!;
         default:
           throw ("Permission not found");
       }

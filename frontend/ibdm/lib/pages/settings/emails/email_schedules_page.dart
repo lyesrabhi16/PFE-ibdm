@@ -14,6 +14,7 @@ import 'package:ibdm/pages/settings/emails/actions.dart';
 import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart' as API_CLIENT;
+import 'package:ibdm/services/api_django/api_client/models/email_schedule.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
@@ -50,6 +51,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
   RxList<API_CLIENT.EmailSchedule> schedules = <API_CLIENT.EmailSchedule>[].obs;
   late API_CLIENT.PaginatedEmailScheduleList schedulesMeta;
   final _selectedSchedules = <API_CLIENT.EmailSchedule>[].obs;
+  final GlobalKey<ShadFormState> _formKey = GlobalKey<ShadFormState>();
 
   int page = 1;
   API_CLIENT.RapportEnum? rapportFilter;
@@ -356,39 +358,52 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
               child: Text(strings.value.cancel),
             ),
             ShadButton(
-              onPressed: () => EmailActions.addSchedule(
-                context,
-                rapport: _rapport!,
-                interval: _interval!,
-                tempsEnvoi: _tempsEnvoi!,
-                intervalManual: _intervalManual,
-                nextRunTime: _nextRunTime,
-                scheduledRoles: _scheduledRoles,
-                scheduledUsers: _scheduledUsers,
-                onSuccess: () {
-                  _loadSchedules();
-                  Navigator.of(context).pop();
-                },
-              ),
+              onPressed: () {
+                if (_formKey.currentState != null &&
+                    !_formKey.currentState!.validate()) {
+                  logger.e("Form is not valid");
+                  Toasts.showErrorToastNotification(
+                      context: Get.overlayContext!,
+                      message: "¨Please fix the errors in the form");
+                  return;
+                }
+                EmailActions.addSchedule(
+                  context,
+                  rapport: _rapport!,
+                  interval: _interval!,
+                  tempsEnvoi: _tempsEnvoi!,
+                  intervalManual: _intervalManual,
+                  nextRunTime: _nextRunTime,
+                  scheduledRoles: _scheduledRoles,
+                  scheduledUsers: _scheduledUsers,
+                  onSuccess: () {
+                    _loadSchedules();
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
               child: Text(strings.value.add),
             )
           ],
           child: EmailScheduleForm(
             onValuesChanged: (
-                {interval,
+                {formKey,
+                interval,
                 intervalManual,
                 nextRunTime,
                 rapport,
                 roles,
                 tempsEnvoi,
                 users}) {
-              _rapport = rapport;
-              _interval = interval;
-              _intervalManual = intervalManual;
-              _nextRunTime = nextRunTime;
-              _tempsEnvoi = tempsEnvoi;
-              _scheduledRoles = roles?.map((r) => r.roleId).toList();
-              _scheduledUsers = users?.map((u) => u.email).toList();
+              _rapport = rapport ?? _rapport;
+              _interval = interval ?? _interval;
+              _intervalManual = intervalManual ?? _intervalManual;
+              _nextRunTime = nextRunTime ?? _nextRunTime;
+              _tempsEnvoi = tempsEnvoi ?? _tempsEnvoi;
+              _scheduledRoles =
+                  roles?.map((r) => r.roleId).toList() ?? _scheduledRoles;
+              _scheduledUsers =
+                  users?.map((u) => u.email).toList() ?? _scheduledUsers;
             },
           ),
         );
@@ -538,6 +553,14 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                       icon: Icon(Icons.edit),
                       child: Text(strings.value.save),
                       onPressed: () {
+                        if (_formKey.currentState != null &&
+                            !_formKey.currentState!.validate()) {
+                          logger.e("Form is not valid");
+                          Toasts.showErrorToastNotification(
+                              context: Get.overlayContext!,
+                              message: "¨Please fix the errors in the form");
+                          return;
+                        }
                         EmailActions.saveSchedule(
                           context,
                           id: schedule.id,
@@ -580,6 +603,15 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                               icon: Icon(Icons.edit),
                               child: Text(strings.value.save),
                               onPressed: () {
+                                if (_formKey.currentState != null &&
+                                    !_formKey.currentState!.validate()) {
+                                  logger.e("Form is not valid");
+                                  Toasts.showErrorToastNotification(
+                                      context: Get.overlayContext!,
+                                      message:
+                                          "¨Please fix the errors in the form");
+                                  return;
+                                }
                                 EmailActions.saveSchedule(
                                   context,
                                   id: schedule.id,
@@ -616,20 +648,23 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             showIdField: false,
             showNextRunTime: true,
             onValuesChanged: (
-                {interval,
+                {formKey,
+                interval,
                 intervalManual,
                 nextRunTime,
                 rapport,
                 roles,
                 tempsEnvoi,
                 users}) {
-              _rapport = rapport;
-              _interval = interval;
-              _intervalManual = intervalManual;
-              _nextRunTime = nextRunTime;
-              _tempsEnvoi = tempsEnvoi;
-              _scheduledRoles = roles?.map((r) => r.roleId).toList();
-              _scheduledUsers = users?.map((u) => u.email).toList();
+              _rapport = rapport ?? _rapport;
+              _interval = interval ?? _interval;
+              _intervalManual = intervalManual ?? _intervalManual;
+              _nextRunTime = nextRunTime ?? _nextRunTime;
+              _tempsEnvoi = tempsEnvoi ?? _tempsEnvoi;
+              _scheduledRoles =
+                  roles?.map((r) => r.roleId).toList() ?? _scheduledRoles;
+              _scheduledUsers =
+                  users?.map((u) => u.email).toList() ?? _scheduledUsers;
             },
           ),
         );
@@ -706,8 +741,8 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
       int totalPages, {
       int nbrAdditionalIndexesShown = 2,
     }) {
-      //print("currentPage: $currentPage");
-      //print("totalPages: $totalPages");
+      //printMessage("currentPage: $currentPage");
+      //printMessage("totalPages: $totalPages");
       List<int> indexes = [];
 
       indexes.add(1);
@@ -746,7 +781,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
 
         i++;
       }
-      //print(fIndexes);
+      //printMessage(fIndexes);
       return fIndexes;
     }
 
@@ -988,7 +1023,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
                 ),
-          )),
+          )).removeWhen(isAtMostSmallScreen(context)),
       DataColumn2(
         size: ColumnSize.S,
         label: Expanded(
@@ -1037,26 +1072,33 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                 : e.interval.json?.toUpperCase() ?? strings.value.unknown,
             style: Theme.of(context).textTheme.bodyMedium,
           )).removeWhen(isAtMostSmallScreen(context)),
-          DataCell(Text(
+          DataCell(FittedBox(
+              child: Text(
             e.tempsEnvoi
                 .toString()
                 .substring(0, e.tempsEnvoi.toString().lastIndexOf(":"))
                 .toString(),
             style: Theme.of(context).textTheme.bodyMedium,
-          )).removeWhen(isAtMostSmallScreen(context)),
-          DataCell(
-            Text(
+          ))).removeWhen(isAtMostSmallScreen(context)),
+          DataCell(FittedBox(
+            child: Text(
               e.nextRunTime?.toString().split(".")[0].substring(
                       0, e.nextRunTime?.toString().lastIndexOf(":")) ??
                   strings.value.unscheduled,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-          ),
+          )).removeWhen(isAtMostSmallScreen(context)),
           DataCell(
             FittedBox(
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  IconButton(
+                    onPressed: () {
+                      _sendEmailNow(schedule: e);
+                    },
+                    icon: Icon(Icons.email),
+                  ).removeWhen(isAtMostSmallScreen(context)),
                   IconButton(
                     onPressed: () {
                       _showViewScheduleEmailDialog(schedule: e);
@@ -1091,6 +1133,14 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          IconWithLabelButton(
+                            icon: Icons.email,
+                            text: "send",
+                            onTap: () => {
+                              _sendEmailNow(schedule: e),
+                              actionsController.toggle(),
+                            },
+                          ),
                           IconWithLabelButton(
                             icon: Icons.remove_red_eye_rounded,
                             text: "view",
@@ -1133,6 +1183,27 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
         ].nonNulls.toList(),
       );
     }).toList();
+  }
+
+  _sendEmailNow({
+    required EmailSchedule schedule,
+  }) async {
+    final state = FutureState.loading.obs;
+    final toast = Toasts.showStatefulToast(
+      context: context,
+      message: strings.value.sendingEmail,
+      messageSuccess: strings.value.emailSent,
+      messageError: strings.value.failedToSendEmail,
+      state: state,
+    );
+    await api!.sendScheduledEmailNow(emailScheduleId: schedule.id);
+    if (state.value != FutureState.error) {
+      state.value = FutureState.success;
+    }
+    Future.delayed(Duration(seconds: 2), () {
+      toastification.dismissById(toast.id);
+    });
+    ShadToaster.of(context).hide();
   }
 
   _getColumnSpacing() {
@@ -1185,7 +1256,6 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
     required ShadPopoverController sortPopoverController,
     required RxBool sortASC,
     required RxBool sortActive,
-    bool center = false,
   }) {
     final context = getContext;
 

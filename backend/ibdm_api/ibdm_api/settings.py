@@ -43,6 +43,8 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SAMESITE = "None"
 
+USE_TZ = False
+
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
@@ -63,8 +65,6 @@ INSTALLED_APPS = [
     # "djoser",
     "drf_spectacular",
     "drf_spectacular_sidecar",
-    "tailwind",
-    "theme",
     "api_v1",
     "app_auth",
     "documentation",
@@ -80,6 +80,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -87,6 +88,14 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+STORAGES = {
+    "default": {
+        "BACKEND":"django.core.files.storage.FileSystemStorage"
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 ROOT_URLCONF = "ibdm_api.urls"
 
 TEMPLATES = [
@@ -107,7 +116,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ibdm_api.wsgi.application"
 
-TAILWIND_APP_NAME = "theme"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -191,6 +199,11 @@ CHANNEL_LAYERS = {
     }
 }
 
+CACHALOT_DATABASES = [
+    "default",
+    "ibdm",
+]
+
 DATABASE_ROUTERS = ["ibdm_api.db_routers.DB_Router"]
 
 # Password validation
@@ -247,6 +260,11 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",  # drf-spectacular for OpenAPI schema
     "DEFAULT_PAGINATION_CLASS": "api_v1.custom_pagination.CustomPagination",
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
+        #"rest_framework.parsers.FormParser",
+        #"rest_framework.parsers.MultiPartParser",
+    ],
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
     ],
@@ -293,7 +311,6 @@ JAZZMIN_SETTINGS = {
     # Copyright on the footer
     "copyright": "IBDM, ifruit 2025",
 }
-
 MEDIA_URL = "/media/"
 
 ## Email settings

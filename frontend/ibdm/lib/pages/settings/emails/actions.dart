@@ -8,6 +8,8 @@ import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:toastification/toastification.dart';
 
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
 class EmailActions {
   EmailActions._();
   static Future<void> addAlert(
@@ -23,6 +25,7 @@ class EmailActions {
     String? warningPoint,
     Function? onSuccess,
     Function? onFail,
+    GlobalKey<FormState>? formKey,
   }) async {
     // add alert
     final state = FutureState.loading.obs;
@@ -34,19 +37,22 @@ class EmailActions {
         state: state);
     try {
       final api = await ApiClientInstance.getApiClient();
-      final res = await api.addAlertEmail(
-        monitoredValue: AlertEnum.fromJson(monitoredValue),
-        dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
-        warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
-        dangerReminderInterval:
-            dangerAlertInterval != null ? int.parse(dangerAlertInterval) : null,
-        warningReminderInterval: warningAlertInterval != null
-            ? int.parse(warningAlertInterval)
-            : null,
-        customAlertMessage: customMessage,
-        enabled: enabled,
-        sendToUsers: users?.map((e) => e.email).toList(),
-        sendToRoles: roles?.map((e) => e.roleId).toList(),
+      await api.addAlertEmail(
+        body: AlertEmailRequest(
+          monitoredValue: AlertEnum.fromJson(monitoredValue),
+          dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
+          warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
+          dangerReminderInterval: dangerAlertInterval != null
+              ? int.parse(dangerAlertInterval)
+              : null,
+          warningReminderInterval: warningAlertInterval != null
+              ? int.parse(warningAlertInterval)
+              : null,
+          customAlertMessage: customMessage,
+          enabled: enabled,
+          sendToUsers: users?.map((e) => e.email).toList(),
+          sendToRoles: roles?.map((e) => e.roleId).toList(),
+        ),
       );
       state.value = FutureState.success;
       onSuccess?.call();
@@ -77,6 +83,7 @@ class EmailActions {
     String? warningPoint,
     Function? onSuccess,
     Function? onFail,
+    GlobalKey<FormState>? formKey,
   }) async {
     // add alert
     final state = FutureState.loading.obs;
@@ -89,22 +96,25 @@ class EmailActions {
     try {
       final api = await ApiClientInstance.getApiClient();
 
-      final res = await api.partialUpdateAlertEmail(
-        id: alertId,
-        monitoredValue:
-            monitoredValue != null ? AlertEnum.fromJson(monitoredValue) : null,
-        dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
-        warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
-        dangerReminderInterval:
-            dangerAlertInterval != null ? int.parse(dangerAlertInterval) : null,
-        warningReminderInterval: warningAlertInterval != null
-            ? int.parse(warningAlertInterval)
-            : null,
-        customAlertMessage: customMessage,
-        enabled: enabled,
-        sendToUsers: users?.map((e) => e.email).toList(),
-        sendToRoles: roles?.map((e) => e.roleId).toList(),
-      );
+      await api.partialUpdateAlertEmail(
+          id: alertId,
+          body: PatchedAlertEmailRequest(
+            monitoredValue: monitoredValue != null
+                ? AlertEnum.fromJson(monitoredValue)
+                : null,
+            dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
+            warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
+            dangerReminderInterval: dangerAlertInterval != null
+                ? int.parse(dangerAlertInterval)
+                : null,
+            warningReminderInterval: warningAlertInterval != null
+                ? int.parse(warningAlertInterval)
+                : null,
+            customAlertMessage: customMessage,
+            enabled: enabled,
+            sendToUsers: users?.map((e) => e.email).toList(),
+            sendToRoles: roles?.map((e) => e.roleId).toList(),
+          ));
       state.value = FutureState.success;
       onSuccess?.call();
     } on Exception catch (e) {
@@ -142,9 +152,10 @@ class EmailActions {
       final api = await ApiClientInstance.getApiClient();
 
       await api.partialUpdateAlertEmail(
-        id: alertId,
-        enabled: enabled,
-      );
+          id: alertId,
+          body: PatchedAlertEmailRequest(
+            enabled: enabled,
+          ));
       state.value = FutureState.success;
       onSuccess?.call();
     } on Exception catch (e) {
@@ -172,7 +183,14 @@ class EmailActions {
     DateTime? nextRunTime,
     Function? onSuccess,
     Function? onFail,
+    GlobalKey<FormState>? formKey,
   }) async {
+    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+      logger.e("Form is not valid");
+      Toasts.showErrorToastNotification(
+          context: context, message: "¨Please fix the errors in the form");
+      return;
+    }
     final strings = getTranslations(context);
     // enable or disable alert
     final state = FutureState.loading.obs;
@@ -229,7 +247,14 @@ class EmailActions {
     DateTime? nextRunTime,
     Function? onSuccess,
     Function? onFail,
+    GlobalKey<FormState>? formKey,
   }) async {
+    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+      logger.e("Form is not valid");
+      Toasts.showErrorToastNotification(
+          context: context, message: "¨Please fix the errors in the form");
+      return;
+    }
     final strings = getTranslations(context);
     // enable or disable alert
     final state = FutureState.loading.obs;

@@ -5,7 +5,7 @@ import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum storageKeys { locale, darkThemeMode, user, perPage }
+enum StorageKeys { locale, darkThemeMode, user, perPage }
 
 class LocalStorage {
   LocalStorage._();
@@ -15,11 +15,11 @@ class LocalStorage {
   static final LocalStorage instance = LocalStorage._();
 
   static Future<void> setLocale(Locale locale) async {
-    return perfs.setString(storageKeys.locale.name, locale.languageCode);
+    return perfs.setString(StorageKeys.locale.name, locale.languageCode);
   }
 
   static Future<Locale?> getLocale() async {
-    final String? locale = await perfs.getString(storageKeys.locale.name);
+    final String? locale = await perfs.getString(StorageKeys.locale.name);
     if (locale == null) {
       return null;
     }
@@ -27,25 +27,25 @@ class LocalStorage {
   }
 
   static Future<void> setDarkThemeMode(bool isDark) async {
-    return perfs.setBool(storageKeys.darkThemeMode.name, isDark);
+    return perfs.setBool(StorageKeys.darkThemeMode.name, isDark);
   }
 
   static Future<bool?> getDarkThemeMode() async {
-    return perfs.getBool(storageKeys.darkThemeMode.name);
+    return perfs.getBool(StorageKeys.darkThemeMode.name);
   }
 
   static Future<void> setUser(User user) async {
     return perfs.setString(
-        storageKeys.user.name, JsonCodec().encode(user.toJson()));
+        StorageKeys.user.name, JsonCodec().encode(user.toJson()));
   }
 
   static Future<void> removeUser() async {
-    return perfs.remove(storageKeys.user.name);
+    return perfs.remove(StorageKeys.user.name);
   }
 
   static Future<User?> getUser() async {
     try {
-      final String? userStr = await perfs.getString(storageKeys.user.name);
+      final String? userStr = await perfs.getString(StorageKeys.user.name);
       if (userStr == null) {
         return null;
       }
@@ -57,10 +57,10 @@ class LocalStorage {
   }
 
   static Future<void> setPerPage(int perPage) async {
-    return await perfs.setInt(storageKeys.perPage.name, perPage);
+    return await perfs.setInt(StorageKeys.perPage.name, perPage);
   }
 
   static Future<int?> getPerPage() async {
-    return await perfs.getInt(storageKeys.perPage.name);
+    return await perfs.getInt(StorageKeys.perPage.name);
   }
 }
