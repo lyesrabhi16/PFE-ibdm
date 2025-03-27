@@ -375,7 +375,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   logger.e("Form is not valid");
                   Toasts.showErrorToastNotification(
                       context: Get.overlayContext!,
-                      message: "¨Please fix the errors in the form");
+                      message: strings.value.pleaseFixErrorsInTheForm);
                   return;
                 }
                 EmailActions.addAlert(
@@ -441,7 +441,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           title: Text("${strings.value.alers}: ${alert.monitoredValue.json} ",
               style: Theme.of(context).textTheme.headlineMedium),
           description: Text(
-              "view alert settings of ${alert.monitoredValue.json}",
+              strings.value.viewAlertSettingsOf(alert.monitoredValue.json!),
               style: Theme.of(context).textTheme.bodyMedium),
           actions: [
             ShadButton(
@@ -549,7 +549,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               "${strings.value.editAlert} : ${alert.monitoredValue.json} ",
               style: Theme.of(context).textTheme.headlineMedium),
           description: Text(
-              "edit alert settings of ${alert.monitoredValue.json}",
+              strings.value.editAlertSettingsOf(alert.monitoredValue.json!),
               style: Theme.of(context).textTheme.bodyMedium),
           actions: [
             ShadButton(
@@ -638,8 +638,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                                   logger.e("Form is not valid");
                                   Toasts.showErrorToastNotification(
                                       context: Get.overlayContext!,
-                                      message:
-                                          "¨Please fix the errors in the form");
+                                      message: strings
+                                          .value.pleaseFixErrorsInTheForm);
                                   return;
                                 }
                                 EmailActions.saveAlert(
@@ -748,8 +748,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           () {
             return _selectedAlerts.isEmpty
                 ? Text(strings.value.selectAlertsToDelete)
-                : Text(
-                    "Are you sure you want to delete ${_selectedAlerts.length} Alert(s)?");
+                : Text(strings.value
+                    .confirmAlertsDeletion(_selectedAlerts.length));
           },
         ),
         action: Obx(
@@ -990,6 +990,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   }
 
   Future<void> _loadAlerts() async {
+    final strings = getTranslations(context);
     _isDataLoading.value = true;
     _getOrdering() {
       return _sortASC.value
@@ -1021,11 +1022,14 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       alerts = alertsMeta.data.obs;
     } catch (e) {
       logger.e("Failed to load alerts : $e");
+      Toasts.showErrorToastNotification(
+          context: context, message: strings.failedToLoadAlerts);
     }
     _isDataLoading.value = false;
   }
 
   Future<void> _loadAllTags() async {
+    final strings = getTranslations(context);
     // Load alerts
     try {
       final res = await api!.getPossibleMonitorValuesAlertEmails();
@@ -1033,6 +1037,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           res.allValues.map((mv) => mv.split(".")[0]).toSet().toList();
     } catch (e) {
       logger.e("Failed to load alerts : $e");
+      Toasts.showErrorToastNotification(
+          context: context, message: strings.failedToLoadTags);
     }
   }
 
@@ -1277,7 +1283,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
         state.value = FutureState.error;
         Toasts.showErrorToast(
             context: context,
-            message: "Failed To delete alert with id: ${alert.id}");
+            message: strings.value.failedToDeleteAlertWithId(alert.id));
       });
     }));
     if (state.value != FutureState.error) {
