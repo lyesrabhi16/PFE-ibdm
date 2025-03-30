@@ -54,9 +54,9 @@ class Env:
     EMAIL_OF_SENDER = config("EMAIL_OF_SENDER")
 
     # email smtp configuration
-    EMAIL_HOST2 = config("EMAIL_HOST2")
-    EMAIL_USE_TLS2 = config("EMAIL_USE_TLS2")
-    EMAIL_PORT2 = config("EMAIL_PORT2")
-    EMAIL_HOST_USER2 = config("EMAIL_HOST_USER2")
-    EMAIL_HOST_PASSWORD2 = config("EMAIL_HOST_PASSWORD2")
-    EMAIL_OF_SENDER2 = config("EMAIL_OF_SENDER2")
+    EMAIL_HOST2 = config("EMAIL_HOST2", "None")
+    EMAIL_USE_TLS2 = config("EMAIL_USE_TLS2", "None")
+    EMAIL_PORT2 = config("EMAIL_PORT2", "None")
+    EMAIL_HOST_USER2 = config("EMAIL_HOST_USER2", "None")
+    EMAIL_HOST_PASSWORD2 = config("EMAIL_HOST_PASSWORD2", "None")
+    EMAIL_OF_SENDER2 = config("EMAIL_OF_SENDER2", "None")

@@ -1,5 +1,4 @@
-from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 
@@ -8,8 +7,9 @@ from logs.logging import logger as logging
 def get_value_at(model, date):
 
     print_log("VALUE", f'{model} ${date}')
-    # Get today at 00:01
-    next_second = deepcopy(date).replace(second=date.second+1)
+    
+
+    next_second = date + timedelta(seconds=1)
     print_log("VALUE", f'{date} ${next_second}')
     # Query for exactly midnight (00:00:xx)
     return model.objects.filter(
@@ -32,13 +32,7 @@ def get_midnight_value(model):
 
 def print_log(name="LOG", *args):
     logging.info("="*5+">"+name+"<"+"="*5)
-    logging.info("="*5+">"+name+"<"+"="*5)
-    logging.info("="*5+">"+name+"<"+"="*5)
-    logging.info("="*5+">"+name+"<"+"="*5)
-    logging.info(datetime.now(), args)
-    logging.info("="*5+">"+name+"<"+"="*5)
-    logging.info("="*5+">"+name+"<"+"="*5)
-    logging.info("="*5+">"+name+"<"+"="*5)
+    logging.info(f"{datetime.now()} {args}")
     logging.info("="*5+">"+name+"<"+"="*5)
 
 def get_or_none(class_model, get_function, args, **kwargs):

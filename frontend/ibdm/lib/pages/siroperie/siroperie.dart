@@ -22,7 +22,7 @@ import 'package:toastification/toastification.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class SiroperiePage extends StatefulWidget {
-  SiroperiePage({super.key});
+  const SiroperiePage({super.key});
   static WebSocketChannel? channel;
   static Stream? stream;
 
@@ -46,6 +46,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
     SiroperiePage.stream = null;
     super.deactivate();
   }
+
+  late FeedMetaData feedMetaDate;
 
   final Rx<bool> loaded = false.obs;
 
@@ -106,12 +108,13 @@ class _SiroperiePageState extends State<SiroperiePage> {
   BuildContext get getContext => _getContext!.call()!;
 
   _getSucreData() async {
+    final strings = getTranslations(context);
     final _state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
         context: getContext,
-        messageSuccess: "data found",
-        message: "getting data...",
-        messageError: "data not found",
+        messageSuccess: strings.dataFound,
+        message: strings.retrievingData,
+        messageError: strings.dataNotFound,
         state: _state);
 
     try {
@@ -126,6 +129,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
         second: second,
       );
       sucre = _sucre;
+
       refresh.value = true;
       _state.value = FutureState.success;
       loaded.value = true;
@@ -136,6 +140,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
       loaded.value = true;
       return null;
     } finally {
+      sucre_end_date.value = sucre.date;
+      refresh.value = !refresh.value;
       Future.delayed(Durations.long2, () {
         toastification.dismissById(toast.id);
       });
@@ -188,8 +194,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
                     decoration: BoxDecoration(
                         color: colorScheme.surfaceContainer,
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15),
+                          topLeft: Radius.circular(AppSizes.borderRadius),
+                          topRight: Radius.circular(AppSizes.borderRadius),
                         )),
                     child: _getTopActionsBar(),
                   ),
@@ -409,8 +415,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
                     decoration: BoxDecoration(
                         color: colorScheme.surfaceContainer,
                         borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(15),
-                          bottomRight: Radius.circular(15),
+                          bottomLeft: Radius.circular(AppSizes.borderRadius),
+                          bottomRight: Radius.circular(AppSizes.borderRadius),
                         )),
                     child: _getBottomDataBar(),
                   ),
@@ -424,6 +430,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
   }
 
   _load() async {
+    final strings = getTranslations(context);
     printMessage("siroperie page loading");
     loaded.value = false;
     if (SiroperiePage.stream == null) {
@@ -455,8 +462,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
         }
         Toasts.showErrorToastNotification(
             context: context,
-            message:
-                "Failed To Connect To Sucre Broadcast${retries > 0 ? ',retrying' : ''}");
+            message: strings.failedToConnectToSiroperieBroadcast(retries));
       }
     }
     loaded.value = true;
@@ -466,8 +472,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
     final strings = getTranslations(getContext).obs;
     return LiveDataTopActionBar(
       isLive: isLive,
-      startDate: sucre_start_date.value,
-      endDate: sucre_end_date.value,
+      startDate: feedMetaDate.startDate,
+      endDate: feedMetaDate.endDate,
       selectedDate: sucre_end_date.value,
       searchPressed: (dt) {
         year = dt.year;
@@ -495,7 +501,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(getContext).colorScheme.primary,
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: Padding(
               padding: EdgeInsets.all(AppSizes.sm),
@@ -762,10 +768,13 @@ class _SiroperiePageState extends State<SiroperiePage> {
                                         .surfaceContainer)
                                 : null,
                         header: [
-                          ShadTableCell.header(child: Text("Cuve")),
-                          ShadTableCell.header(child: Text("Niveau en L")),
-                          ShadTableCell.header(child: Text("Niveau en KG")),
-                          ShadTableCell.header(child: Text("Fill")),
+                          ShadTableCell.header(child: Text(strings.value.cuve)),
+                          ShadTableCell.header(
+                              child: Text(strings.value.levelInL)),
+                          ShadTableCell.header(
+                              child: Text(strings.value.levelInKG)),
+                          ShadTableCell.header(
+                              child: Text(strings.value.fillLevel)),
                         ],
                         children: [
                           for (var r in [

@@ -1231,7 +1231,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
             title: strings.value.newEmailSent,
             autoDismiss: false,
             message:
-                "TO: ${sentEmail.receptionist} ${sentEmail.alert != null ? strings.value.alert.toUpperCase() : strings.value.schedule.toUpperCase()} ${sentEmail.alert?.alertType.json ?? sentEmail.schedule?.rapport.json}",
+                "${strings.value.to}: ${sentEmail.receptionist} ${sentEmail.alert != null ? strings.value.alert.toUpperCase() : strings.value.schedule.toUpperCase()} ${sentEmail.alert?.alertType.json ?? sentEmail.schedule?.rapport.json}",
           );
           return;
         }
@@ -1251,7 +1251,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
           title: strings.value.newEmailSent,
           autoDismiss: false,
           message:
-              "TO: ${sentEmail.receptionist} ${sentEmail.alert != null ? strings.value.alert.toUpperCase() : strings.value.schedule.toUpperCase()} ${sentEmail.alert?.alertType.json ?? sentEmail.schedule?.rapport.json}",
+              "${strings.value.to}: ${sentEmail.receptionist} ${sentEmail.alert != null ? strings.value.alert.toUpperCase() : strings.value.schedule.toUpperCase()} ${sentEmail.alert?.alertType.json ?? sentEmail.schedule?.rapport.json}",
         );
         sentsMeta = sentsMetaFromApi;
         sents.clear();
