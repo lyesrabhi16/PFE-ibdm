@@ -1,0 +1,83 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'co2_ifruit_consommation.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Co2IfruitConsommation _$Co2IfruitConsommationFromJson(
+        Map<String, dynamic> json) =>
+    Co2IfruitConsommation(
+      date: DateTime.parse(json['date'] as String),
+      fromDate: DateTime.parse(json['from_date'] as String),
+      toDate: DateTime.parse(json['to_date'] as String),
+      fromValue: Co2Ifruit.fromJson(json['from_value'] as Map<String, dynamic>),
+      toValue: Co2Ifruit.fromJson(json['to_value'] as Map<String, dynamic>),
+      utCo2Vc1: (json['ut_co2_vc1'] as num?)?.toDouble(),
+      utCo2Vc2: (json['ut_co2_vc2'] as num?)?.toDouble(),
+      utCo2De: (json['ut_co2_de'] as num?)?.toDouble(),
+      utCo2Ve: (json['ut_co2_ve'] as num?)?.toDouble(),
+      utCo2Pc1: (json['ut_co2_pc1'] as num?)?.toDouble(),
+      utCo2Pc2: (json['ut_co2_pc2'] as num?)?.toDouble(),
+      utCo2Pn: (json['ut_co2_pn'] as num?)?.toDouble(),
+      utCo2D182: (json['ut_co2_d182'] as num?)?.toDouble(),
+      utCo2D1833: (json['ut_co2_d1833'] as num?)?.toDouble(),
+      utCo2Dcan35: (json['ut_co2_dcan35'] as num?)?.toDouble(),
+      utCo2Dkrv40: (json['ut_co2_dkrv40'] as num?)?.toDouble(),
+      utCo2Dcan2: (json['ut_co2_dcan2'] as num?)?.toDouble(),
+      utCo2Dcm16: (json['ut_co2_dcm16'] as num?)?.toDouble(),
+      utCo2V182: (json['ut_co2_v182'] as num?)?.toDouble(),
+      utCo2V1833: (json['ut_co2_v1833'] as num?)?.toDouble(),
+      utCo2Vcan35: (json['ut_co2_vcan35'] as num?)?.toDouble(),
+      utCo2Vkrv40: (json['ut_co2_vkrv40'] as num?)?.toDouble(),
+      utCo2Vcan2: (json['ut_co2_vcan2'] as num?)?.toDouble(),
+      utCo2Vcm16: (json['ut_co2_vcm16'] as num?)?.toDouble(),
+      utCo2P182: (json['ut_co2_p182'] as num?)?.toDouble(),
+      utCo2P1833: (json['ut_co2_p1833'] as num?)?.toDouble(),
+      utCo2Pcan35: (json['ut_co2_pcan35'] as num?)?.toDouble(),
+      utCo2Pkrv40: (json['ut_co2_pkrv40'] as num?)?.toDouble(),
+      utCo2Pcan2: (json['ut_co2_pcan2'] as num?)?.toDouble(),
+      utCo2Pcm16: (json['ut_co2_pcm16'] as num?)?.toDouble(),
+      utN2Vn2: (json['ut_n2_vn2'] as num?)?.toDouble(),
+      utN2Pn2: (json['ut_n2_pn2'] as num?)?.toDouble(),
+      utSoude: (json['ut_soude'] as num?)?.toDouble(),
+    );
+
+Map<String, dynamic> _$Co2IfruitConsommationToJson(
+        Co2IfruitConsommation instance) =>
+    <String, dynamic>{
+      'date': instance.date.toIso8601String(),
+      'from_date': instance.fromDate.toIso8601String(),
+      'to_date': instance.toDate.toIso8601String(),
+      'from_value': instance.fromValue,
+      'to_value': instance.toValue,
+      'ut_co2_vc1': instance.utCo2Vc1,
+      'ut_co2_vc2': instance.utCo2Vc2,
+      'ut_co2_de': instance.utCo2De,
+      'ut_co2_ve': instance.utCo2Ve,
+      'ut_co2_pc1': instance.utCo2Pc1,
+      'ut_co2_pc2': instance.utCo2Pc2,
+      'ut_co2_pn': instance.utCo2Pn,
+      'ut_co2_d182': instance.utCo2D182,
+      'ut_co2_d1833': instance.utCo2D1833,
+      'ut_co2_dcan35': instance.utCo2Dcan35,
+      'ut_co2_dkrv40': instance.utCo2Dkrv40,
+      'ut_co2_dcan2': instance.utCo2Dcan2,
+      'ut_co2_dcm16': instance.utCo2Dcm16,
+      'ut_co2_v182': instance.utCo2V182,
+      'ut_co2_v1833': instance.utCo2V1833,
+      'ut_co2_vcan35': instance.utCo2Vcan35,
+      'ut_co2_vkrv40': instance.utCo2Vkrv40,
+      'ut_co2_vcan2': instance.utCo2Vcan2,
+      'ut_co2_vcm16': instance.utCo2Vcm16,
+      'ut_co2_p182': instance.utCo2P182,
+      'ut_co2_p1833': instance.utCo2P1833,
+      'ut_co2_pcan35': instance.utCo2Pcan35,
+      'ut_co2_pkrv40': instance.utCo2Pkrv40,
+      'ut_co2_pcan2': instance.utCo2Pcan2,
+      'ut_co2_pcm16': instance.utCo2Pcm16,
+      'ut_n2_vn2': instance.utN2Vn2,
+      'ut_n2_pn2': instance.utN2Pn2,
+      'ut_soude': instance.utSoude,
+    };

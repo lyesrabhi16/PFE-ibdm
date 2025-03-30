@@ -10,6 +10,7 @@ export 'models/alert_email_request.dart';
 export 'models/alert_enum.dart';
 export 'models/alert_type_enum.dart';
 export 'models/co2_ifruit.dart';
+export 'models/co2_ifruit_consommation.dart';
 export 'models/code_enum.dart';
 export 'models/debit.dart';
 export 'models/email_schedule.dart';

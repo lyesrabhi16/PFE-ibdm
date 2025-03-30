@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
-from utilite.views import Co2IfruitViewset, UtiliteViewset, getCo2IfruitAtSpecificTime, getUtiliteAtSpecificTime, getUtiliteMetaData
+from utilite.views import Co2IfruitViewset, UtiliteViewset, getCo2IfruitAtSpecificTime, getUtiliteAtSpecificTime, getUtiliteMetaData, getCo2IfruitConsommation
 
 
 router = routers.DefaultRouter()
@@ -12,6 +12,7 @@ router.register(r'utilite', UtiliteViewset)
 urlpatterns = [
     path("", include(router.urls), name="Utilite Api Root"),
     path("co2_ifruit/specific", getCo2IfruitAtSpecificTime, name="getCo2IfruitAtSpecificTime"),
+    path("co2_ifruit/consommation", getCo2IfruitConsommation, name="getCo2IfruitConsommation"),
     path("utilite/specific", getUtiliteAtSpecificTime, name="getUtiliteAtSpecificTime"),
     path("metadata", getUtiliteMetaData, name="getUtiliteMetadata"),
 ]

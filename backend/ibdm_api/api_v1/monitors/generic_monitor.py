@@ -6,6 +6,7 @@ from emails.models import CUSTOM_MONITORED_VALUES, AlertEmail, SentAlertEmail, s
 from users.models import User
 from django.template.loader import render_to_string
 from logs.logging import logger as logging
+from tenacity import retry, stop_after_delay, wait_chain, wait_fixed
 
 
 def getValueForCustomExpression(action:str, attrs: list, obj: object) -> float:
@@ -61,6 +62,20 @@ def GenericMonitor(monitored_value_tag: str, monitored_object_value: object, nam
             logging.info(f"{name}# done.")
 
 
+def before_retry_log(*args):
+    logging.info(f"genericMonitor# retry-before: {args}")
+
+
+def after_retry_log(*args):
+    logging.info(f"genericMonitor# retry-after: {args}")
+
+
+@retry(
+    wait=wait_fixed(60*60), 
+    stop=stop_after_delay(60*60),
+    before=before_retry_log,
+    after=after_retry_log,
+)
 def sendWarningAlertEmail(name, alert, user, value):
     logging.info(f"{name}# {alert.monitored_value} Sending warning alert email to '{user.email}'")
     send_mail(
@@ -98,7 +113,12 @@ def sendWarningAlertEmail(name, alert, user, value):
     sentEmail.objects.create(temps_envoi=datetime.now(), alert=sent_alert, receptionist=user)
     logging.info(f"{name}# {alert.monitored_value} sent warning alert email to '{user.email}' at {datetime.now()}")
 
-
+@retry(
+    wait=wait_fixed(60*60), 
+    stop=stop_after_delay(60*60),
+    before=before_retry_log,
+    after=after_retry_log,
+)
 def sendDangerAlertEmail(alert, value, user, name):
     logging.info(f"{name}# {alert.monitored_value} Sending danger alert email to '{user.email}'")
     send_mail(

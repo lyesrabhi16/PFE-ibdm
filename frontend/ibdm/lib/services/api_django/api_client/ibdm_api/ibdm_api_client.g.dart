@@ -2372,6 +2372,48 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
+  Future<Co2IfruitConsommation> getCo2IfruitConsommation({
+    required int fromYear,
+    required int toYear,
+    int? fromDay,
+    int? fromMonth,
+    int? toDay,
+    int? toMonth,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'from_year': fromYear,
+      r'to_year': toYear,
+      r'from_day': fromDay,
+      r'from_month': fromMonth,
+      r'to_day': toDay,
+      r'to_month': toMonth,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Co2IfruitConsommation>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/utilite/co2_ifruit/consommation',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Co2IfruitConsommation _value;
+    try {
+      _value = Co2IfruitConsommation.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<Co2Ifruit> getCo2IfruitAtSpecificTime({
     required int year,
     int? day,

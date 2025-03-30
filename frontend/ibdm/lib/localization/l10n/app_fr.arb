@@ -720,5 +720,17 @@
 	"aProposIBDMDescription": "IBDM est un logiciel de gestion de données industrielles conçu pour faciliter le suivi et l'analyse des performances des équipements industriels.",
 	"contactezNous": "Contactez-nous",
 	"adresse": "Akbou, Bejaia, Algérie",
-	"createdBy": "Créé par : Lyes Rabhi (lyes.rabhi.020@gmail.com) & Kheloufi Mounir (mounirkheloufi2002@gmail.com)"
+	"createdBy": "Créé par : Lyes Rabhi (lyes.rabhi.020@gmail.com) & Kheloufi Mounir (mounirkheloufi2002@gmail.com)",
+	"failedToConnectToCO2Broadcast": "Échec de la connexion à CO2 Broadcast, {retries, plural, zero {aucune tentative restante} one {1 tentative restante} other {{retries} tentatives restantes}}",
+	"@failedToConnectToCO2Broadcast": {
+		"placeholders": {
+			"retries": {
+				"type": "int"
+			}
+		}
+	},
+	"co2Title": "CO2",
+	"consommation": "Consommation",
+	"failedToGetConsommationData": "Echec lors de la recuperation des Données de consommation",
+	"entree": "Entrée"
 }
