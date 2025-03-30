@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/common/controllers/permissions_controler.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
+import 'package:ibdm/pages/co2/co2.dart';
 import 'package:ibdm/pages/filtration.dart/filtration.dart';
 import 'package:ibdm/pages/no_permissions.dart';
 import 'package:ibdm/pages/not_found.dart';
@@ -23,7 +23,6 @@ import 'package:ibdm/pages/utilite/utilite.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
 import 'package:ibdm/utils/constants/route_permissions.dart';
-import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class Routes {
@@ -44,6 +43,7 @@ class Routes {
   static const String about = '/settings/about';
   static const String help = '/settings/help';
   static const String utilite = '/utilite';
+  static const String co2 = '/co2';
   static const String noPermissions = "/no-permissions";
   static const String notFound = "/404";
 
@@ -78,6 +78,12 @@ class Routes {
           route: Routes.utilite,
           page: routePages[Routes.utilite]!,
         ).withPermission(Permissions.viewUtilitePage),
+        Destination(
+          title: "CO2",
+          icon: LucideIcons.cloud,
+          route: Routes.co2,
+          page: routePages[Routes.co2]!,
+        ),
         Destination(
           title: "Settings",
           icon: Icons.settings,
@@ -127,8 +133,13 @@ class Routes {
     Routes.users: RoutePermissions(
       requiredPermissions: [Permissions.viewUsersPage],
     ),
+    Routes.notFound: RoutePermissions(),
     Routes.noPermissions: RoutePermissions(),
-    Routes.utilite: RoutePermissions(),
+    Routes.utilite: RoutePermissions(
+      requiredPermissions: [Permissions.viewUtilitePage],
+    ),
+    Routes.co2:
+        RoutePermissions(requiredPermissions: [Permissions.viewCo2Page]),
   };
   static final routePages = {
     Routes.home: GetPage(
@@ -222,6 +233,13 @@ class Routes {
       middlewares: [
         ProtectedRouteMiddleware(
             routePermissions: routePermissions[Routes.utilite])
+      ],
+    ),
+    Routes.co2: GetPage(
+      name: Routes.co2,
+      page: () => CO2Page(),
+      middlewares: [
+        ProtectedRouteMiddleware(routePermissions: routePermissions[Routes.co2])
       ],
     ),
     Routes.noPermissions: GetPage(

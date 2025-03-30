@@ -9,7 +9,7 @@ from api_v1.emails.rapports.inventaire_sucre import rapport_inventaire_sucre
 from api_v1.emails.rapports.utilite import rapport_utilite
 from api_v1.emails.rapports.filtration import rapport_filtration
 from users.models import User
-
+from tenacity import retry, stop_after_delay, wait_chain, wait_fixed
 def getHtmlMessage(email: EmailSchedule):
     match (email.rapport):
         case "inventaire-sucre":
@@ -20,8 +20,21 @@ def getHtmlMessage(email: EmailSchedule):
             return rapport_filtration(email)
         case _:
             raise ValueError(f"emailScheduler# rapport {email.rapport} not found")
-            
-def sendEmailWithFile(file, provider=None, **kwargs):
+
+def before_retry_log(*args):
+    logging.info(f"emailScheduler# retry-before: {args}")
+
+
+def after_retry_log(*args):
+    logging.info(f"emailScheduler# retry-after: {args}")
+# retry with a wait of 1 minute for 1 hour
+@retry(
+    wait=wait_fixed(60*60), 
+    stop=stop_after_delay(60*60),
+    before=before_retry_log,
+    after=after_retry_log,
+)
+def sendEmailWithFile(file, users, email, provider=None, **kwargs):
     email_message = EmailMessage(**kwargs)
     email_message.content_subtype = "html"
     if file is not None:
@@ -29,8 +42,10 @@ def sendEmailWithFile(file, provider=None, **kwargs):
     if provider:
         email_message.connection = provider
     email_message.send()
+    for user in users:
+        sentEmail.objects.create(temps_envoi=datetime.now(), receptionist=user, schedule=email)
     logging.info(f"emailScheduler#: email {email_message.subject} sent to '{email_message.to}'")
-
+    
 def sendEmail(email: EmailSchedule, schedule_next=True):
     logging.info(f"emailScheduler# send email: {email}")
     emails_in_process.add(email)
@@ -38,35 +53,36 @@ def sendEmail(email: EmailSchedule, schedule_next=True):
     users = set()
 
     for user in email.scheduled_users.all():
-        send_to.add(user.email)
+        send_to.add(user)
         users.add(user)
 
     for role in email.scheduled_roles.all():
         for user in User.objects.filter(role=role):
-            send_to.add(user.email)
+            send_to.add(user)
             users.add(user)
     logging.info(f"emailScheduler# send email to: {send_to}")
     message, file, subject = getHtmlMessage(email)
-    for email_str in send_to:
-        threading.Thread(
-            target=sendEmailWithFile,kwargs={
-            "file": file,
-            "subject":f"IBDM {subject}",
-            "body": message,
-            "from_email":settings.EMAIL_OF_SENDER,
-            "to":[email_str]
-        }).start()
-        threading.Thread(
-            target=sendEmailWithFile,kwargs={
-            "file": file,
-            "provider": settings.EMAIL_SECONDARY_PROVIDER,
-            "subject":f"IBDM {subject}",
-            "body": message,
-            "from_email":settings.EMAIL_OF_SENDER,
-            "to":[email_str]
-        }).start()
-    for user in users:
-        sentEmail.objects.create(temps_envoi=datetime.now(), receptionist=user, schedule=email)
+    threading.Thread(
+        target=sendEmailWithFile,kwargs={
+        "file": file,
+        "users": send_to,
+        "email": email,
+        "subject":f"IBDM {subject}",
+        "body": message,
+        "from_email":settings.EMAIL_OF_SENDER,
+        "to": send_to,
+    }).start()
+    threading.Thread(
+        target=sendEmailWithFile,kwargs={
+        "file": file,
+        "users": send_to,
+        "email": email,
+        "provider": settings.EMAIL_SECONDARY_PROVIDER,
+        "subject":f"IBDM {subject}",
+        "body": message,
+        "from_email":settings.EMAIL_OF_SENDER,
+        "to": send_to
+    }).start()
 
     if email.next_run_time is None:
         raise ValueError("emailScheduler# next_run_time is None, how did this happen?")

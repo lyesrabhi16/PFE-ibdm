@@ -11,6 +11,7 @@ import 'package:retrofit/retrofit.dart';
 import '../models/alert_email.dart';
 import '../models/alert_email_request.dart';
 import '../models/co2_ifruit.dart';
+import '../models/co2_ifruit_consommation.dart';
 import '../models/debit.dart';
 import '../models/email_schedule.dart';
 import '../models/email_schedule_request.dart';
@@ -729,6 +730,19 @@ abstract class IbdmApiClient {
   @GET('/api/v1/utilite/co2_ifruit/{date}/')
   Future<Co2Ifruit> getCo2Ifruit({
     @Path('date') required DateTime date,
+  });
+
+  /// get co2_ifruit consommation.
+  ///
+  /// getCo2IfruitConsommation.
+  @GET('/api/v1/utilite/co2_ifruit/consommation')
+  Future<Co2IfruitConsommation> getCo2IfruitConsommation({
+    @Query('from_year') required int fromYear,
+    @Query('to_year') required int toYear,
+    @Query('from_day') int? fromDay,
+    @Query('from_month') int? fromMonth,
+    @Query('to_day') int? toDay,
+    @Query('to_month') int? toMonth,
   });
 
   /// get Co2_Ifruit at specific time.

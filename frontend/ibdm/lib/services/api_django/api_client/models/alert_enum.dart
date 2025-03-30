@@ -125,8 +125,8 @@ import 'package:json_annotation/json_annotation.dart';
 /// * `utilite.ut_sid_pg` - utilite.ut_sid_pg.
 /// * `utilite.ut_sid_tt` - utilite.ut_sid_tt.
 /// * `utilite.ut_sid_tc` - utilite.ut_sid_tc.
-/// * `sucre.total.adue` - sucre.total.adue.
 /// * `sucre.total.tetra` - sucre.total.tetra.
+/// * `sucre.total.adue` - sucre.total.adue.
 /// * `sucre.total` - sucre.total.
 @JsonEnum()
 enum AlertEnum {
@@ -493,12 +493,12 @@ enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `utilite.ut_sid_tc`.
   @JsonValue('utilite.ut_sid_tc')
   undefined120('utilite.ut_sid_tc'),
-  /// Incorrect name has been replaced. Original name: `sucre.total.adue`.
-  @JsonValue('sucre.total.adue')
-  undefined121('sucre.total.adue'),
   /// Incorrect name has been replaced. Original name: `sucre.total.tetra`.
   @JsonValue('sucre.total.tetra')
-  undefined122('sucre.total.tetra'),
+  undefined121('sucre.total.tetra'),
+  /// Incorrect name has been replaced. Original name: `sucre.total.adue`.
+  @JsonValue('sucre.total.adue')
+  undefined122('sucre.total.adue'),
   /// Incorrect name has been replaced. Original name: `sucre.total`.
   @JsonValue('sucre.total')
   undefined123('sucre.total'),

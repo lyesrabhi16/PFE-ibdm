@@ -23,6 +23,7 @@ apscheduler = "*"
 openpyxl = "*"
 whitenoise = "*"
 django-cachalot = "*"
+tenacity = "*"
 
 [requires]
 python_version = "3.12.9"
