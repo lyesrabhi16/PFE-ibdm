@@ -9,6 +9,7 @@ import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
+import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 
@@ -61,6 +62,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           ? strings.value.lightmode
                           : strings.value.darkmode,
                       trailing: ThemeModeSwitchButton(),
+                      onTap: () =>
+                          Get.find<ThemeModeController>().toggleTheme(),
                     ),
                     SettingCard(
                       icon: Icons.language,
@@ -71,6 +74,14 @@ class _SettingsPageState extends State<SettingsPage> {
                         width: 60,
                         child: LanguageSwitchButton(),
                       ),
+                      onTap: () {
+                        final int nextIndex = (localecontroller.supportedLocales
+                                    .indexOf(localecontroller.locale.value) +
+                                1) %
+                            localecontroller.supportedLocales.length;
+                        localecontroller.setLocale(
+                            localecontroller.supportedLocales[nextIndex]);
+                      },
                     ),
                     SettingCard(
                       icon: Icons.help,

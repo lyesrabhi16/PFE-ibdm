@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:geekyants_flutter_gauges/geekyants_flutter_gauges.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
+import 'package:ibdm/common/widgets/radial_meter.dart';
+import 'package:ibdm/common/widgets/temp_gauge.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
@@ -31,6 +32,8 @@ class _UtilitePageState extends State<UtilitePage> {
   BuildContext get getContext => _getContext!.call()!;
   ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
 
+  late FeedMetaData feedMetaData;
+
   final Rx<DateTime> utiliteStartDate = DateTime.now().obs;
 
   final Rx<DateTime> utiliteEndDate = DateTime.now().obs;
@@ -46,7 +49,6 @@ class _UtilitePageState extends State<UtilitePage> {
   int? minute;
   int? second;
 
-  late Co2Ifruit co2_ifruit;
   late Utilite utilite;
 
   final RxBool loaded = false.obs;
@@ -99,6 +101,7 @@ class _UtilitePageState extends State<UtilitePage> {
   }
 
   Future<void> load() async {
+    final strings = getTranslations(context);
     printMessage("load...");
 
     loaded.value = false;
@@ -131,9 +134,9 @@ class _UtilitePageState extends State<UtilitePage> {
             retries = 3;
           }
           Toasts.showErrorToastNotification(
-              context: context,
-              message:
-                  "Failed To Connect To utilite Broadcast${retries > 0 ? ', retrying' : ''}");
+            context: context,
+            message: strings.failedToConnectToUtiliteBroadcast(retries),
+          );
         }
       } else {
         printMessage("Not Loading because Stream is not null");
@@ -206,7 +209,6 @@ class _UtilitePageState extends State<UtilitePage> {
                     );
                   }
                   if (isLive.value) {
-                    co2_ifruit = Co2Ifruit.fromJson(data["data"]["co2_ifruit"]);
                     utilite = Utilite.fromJson(data["data"]["utilite"]);
 
                     Future.delayed(Duration(microseconds: 100),
@@ -349,37 +351,24 @@ class _UtilitePageState extends State<UtilitePage> {
       final api = await ApiClientInstance.getApiClient();
       int done = 0;
       _setDone() {
-        done++;
-        if (done == 2) {
-          refresh.value = true;
-          _state.value = FutureState.success;
-          loaded.value = true;
-          Future.delayed(Durations.long2, () {
-            toastification.dismissById(toast.id);
-          });
-        }
+        refresh.value = true;
+        _state.value = FutureState.success;
+        loaded.value = true;
+        Future.delayed(Durations.long2, () {
+          toastification.dismissById(toast.id);
+        });
       }
 
-      api
-          .getCo2IfruitAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {co2_ifruit = v, _setDone()});
-      api
-          .getUtiliteAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {utilite = v, _setDone()});
+      final res = await api.getUtiliteAtSpecificTime(
+        year: year!,
+        month: month,
+        day: day,
+        hour: hour,
+        minute: minute,
+        second: second,
+      );
+      utilite = res;
+      _setDone();
     } catch (e) {
       logger.e("Failed to get Utilite data");
       _state.value = FutureState.error;
@@ -388,6 +377,9 @@ class _UtilitePageState extends State<UtilitePage> {
         toastification.dismissById(toast.id);
       });
       return null;
+    } finally {
+      utiliteEndDate.value = utilite.date;
+      refresh.value = !refresh.value;
     }
   }
 
@@ -395,8 +387,8 @@ class _UtilitePageState extends State<UtilitePage> {
     return Obx(() {
       return LiveDataTopActionBar(
         isLive: isLive,
-        startDate: utiliteStartDate.value,
-        endDate: utiliteEndDate.value,
+        startDate: feedMetaData.startDate,
+        endDate: feedMetaData.endDate,
         selectedDate: utiliteEndDate.value,
         searchPressed: (dt) {
           year = dt.year;
@@ -409,402 +401,5 @@ class _UtilitePageState extends State<UtilitePage> {
         },
       );
     });
-  }
-}
-
-class TempGauge extends StatelessWidget {
-  const TempGauge({
-    super.key,
-    this.start = 0,
-    this.end = 10,
-    this.value1 = 5,
-    this.value2 = 5,
-    this.title = "Title",
-    this.value1Label = "VALUE1",
-    this.value2Label = "VALUE2",
-    this.steps = 1,
-    this.dangerTempHigh = 8,
-    this.value1Suffix = "°C",
-    this.value2Suffix = "°C",
-    this.okValue1Color,
-    this.okValue2Color,
-    this.dangerValue1Color,
-    this.dangerValue2Color,
-  });
-  final double start;
-  final double end;
-  final double value1;
-  final double value2;
-  final double dangerTempHigh;
-  final String title;
-  final String value1Label;
-  final String value2Label;
-  final double steps;
-  final String value1Suffix;
-  final String value2Suffix;
-  final Color? okValue1Color;
-  final Color? okValue2Color;
-  final Color? dangerValue1Color;
-  final Color? dangerValue2Color;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color _okValue1Color = okValue1Color ?? Colors.blue;
-    final Color _okValue2Color = okValue2Color ?? Colors.orange;
-    final Color _dangerValue1Color = dangerValue1Color ?? errorColor;
-    final Color _dangerValue2Color = dangerValue2Color ?? errorColor;
-    final Color _value1Color =
-        value1 >= dangerTempHigh ? _dangerValue1Color : _okValue1Color;
-    final Color _value2Color =
-        value2 >= dangerTempHigh ? _dangerValue2Color : _okValue2Color;
-    final _value1 = value1 <= end ? value1 : end;
-    final _value2 = value2 <= end ? value2 : end;
-
-    return Column(children: [
-      SizedBox(
-        width: 300,
-        height: 250,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: SizedBox(
-                width: 150,
-                height: 250,
-                child: LinearGauge(
-                  enableGaugeAnimation: true,
-                  start: start,
-                  end: end,
-                  fillExtend: true,
-                  steps: steps,
-                  extendLinearGauge: 5,
-                  valueBar: [
-                    ValueBar(
-                      value: _value1,
-                      color: _value1Color,
-                      valueBarThickness: 25,
-                    ),
-                  ],
-                  gaugeOrientation: GaugeOrientation.vertical,
-                  linearGaugeBoxDecoration:
-                      LinearGaugeBoxDecoration(borderRadius: 20, thickness: 25),
-                  rulers: RulerStyle(
-                    rulerPosition: RulerPosition.right,
-                  ),
-                  pointers: [
-                    Pointer(
-                      shape: PointerShape.circle,
-                      color: _value1Color,
-                      value: 0,
-                      enableAnimation: false,
-                      showLabel: false,
-                      height: 30,
-                      width: 100,
-                      pointerAlignment: PointerAlignment.center,
-                      pointerPosition: PointerPosition.center,
-                    ),
-                    WidgetPointer(
-                        value: _value1,
-                        isInteractive: false,
-                        pointerPosition: PointerPosition.left,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "${value1.toStringAsFixed(2)} $value1Suffix",
-                              style: TextStyle(
-                                  color: _value1Color,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Icon(Icons.arrow_right, color: _value1Color),
-                          ],
-                        ))
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: SizedBox(
-                width: 150,
-                height: 250,
-                child: LinearGauge(
-                  enableGaugeAnimation: true,
-                  start: start,
-                  end: end,
-                  fillExtend: true,
-                  steps: steps,
-                  extendLinearGauge: 5,
-                  valueBar: [
-                    ValueBar(
-                      value: _value2,
-                      color: _value2Color,
-                      valueBarThickness: 25,
-                    ),
-                  ],
-                  gaugeOrientation: GaugeOrientation.vertical,
-                  linearGaugeBoxDecoration:
-                      LinearGaugeBoxDecoration(borderRadius: 20, thickness: 25),
-                  rulers: RulerStyle(
-                    rulerPosition: RulerPosition.right,
-                  ),
-                  pointers: [
-                    Pointer(
-                      shape: PointerShape.circle,
-                      color: _value2Color,
-                      value: 0,
-                      enableAnimation: false,
-                      showLabel: false,
-                      height: 30,
-                      width: 100,
-                      pointerAlignment: PointerAlignment.center,
-                      pointerPosition: PointerPosition.center,
-                    ),
-                    WidgetPointer(
-                        value: _value2,
-                        isInteractive: false,
-                        pointerPosition: PointerPosition.left,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "${value2.toStringAsFixed(2)} $value2Suffix",
-                              style: TextStyle(
-                                  color: _value2Color,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Icon(Icons.arrow_right, color: _value2Color),
-                          ],
-                        ))
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      Container(
-        width: 300,
-        color: Theme.of(context).colorScheme.surfaceContainerHigh,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSizes.sm),
-          child: Column(
-            children: [
-              Text(
-                title,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-              Wrap(
-                children: [
-                  Text(
-                    value1Label,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: _value1Color),
-                  ).marginSymmetric(horizontal: AppSizes.sm),
-                  Text(
-                    "${value1.toStringAsFixed(2)} $value1Suffix",
-                    textAlign: TextAlign.center,
-                    softWrap: false,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: _value1Color),
-                  ).marginSymmetric(horizontal: AppSizes.sm),
-                ],
-              ),
-              Wrap(
-                children: [
-                  Text(
-                    value2Label,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: _value2Color),
-                  ).marginSymmetric(horizontal: AppSizes.sm),
-                  Text(
-                    "${value2.toStringAsFixed(2)} $value2Suffix",
-                    textAlign: TextAlign.center,
-                    softWrap: false,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: _value2Color),
-                  ).marginSymmetric(horizontal: AppSizes.sm),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    ]);
-  }
-}
-
-class RadialMeter extends StatelessWidget {
-  const RadialMeter({
-    super.key,
-    this.value1 = 7,
-    this.value2 = 3,
-    this.zeroOffset = 0.005,
-    this.max = 10,
-    this.danger = 6,
-    this.title = "Title",
-    this.value1Label = "VALUE1",
-    this.value2Label = "VALUE2",
-    this.steps = 1,
-    this.value1Suffix = "",
-    this.value2Suffix = "",
-    this.okValue1Color,
-    this.okValue2Color,
-    this.dangerValue1Color,
-    this.dangerValue2Color,
-  });
-
-  final double value1;
-  final double value2;
-  final double zeroOffset;
-  final double max;
-  final double danger;
-  final String title;
-  final String value1Label;
-  final String value2Label;
-  final int steps;
-  final String value1Suffix;
-  final String value2Suffix;
-  final Color? okValue1Color;
-  final Color? okValue2Color;
-  final Color? dangerValue1Color;
-  final Color? dangerValue2Color;
-  @override
-  Widget build(BuildContext context) {
-    final Color _okValue1Color = okValue1Color ?? Colors.blue;
-    final Color _okValue2Color = okValue2Color ?? Colors.orange;
-    final Color _dangerValue1Color = dangerValue1Color ?? errorColor;
-    final Color _dangerValue2Color = dangerValue2Color ?? errorColor;
-
-    final Color _value1Color =
-        value1 <= danger ? _dangerValue1Color : _okValue1Color;
-    final Color _value2Color =
-        value2 <= danger ? _dangerValue2Color : _okValue2Color;
-
-    return SizedBox(
-      width: 250,
-      height: 250,
-      child: Center(
-        child: Stack(
-          children: [
-            Center(
-              child: SizedBox(
-                width: 150,
-                height: 150,
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      value1Label,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: _value1Color),
-                    ),
-                    Text(
-                      "${value1.toStringAsFixed(2)} $value1Suffix",
-                      textAlign: TextAlign.center,
-                      softWrap: false,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: _value1Color),
-                    ),
-                    Text(
-                      value2Label,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: _value2Color),
-                    ),
-                    Text(
-                      "${value2.toStringAsFixed(2)} $value2Suffix",
-                      textAlign: TextAlign.center,
-                      softWrap: false,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: _value2Color),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            RadialGauge(
-              track: RadialTrack(
-                  start: 0,
-                  end: max,
-                  steps: steps,
-                  hideTrack: true,
-                  trackStyle: TrackStyle(
-                    showPrimaryRulers: true,
-                    showSecondaryRulers: true,
-                    rulersOffset: 10,
-                    labelOffset: 50,
-                  )),
-              radiusFactor: 1,
-              valueBar: [
-                RadialValueBar(
-                  value: max,
-                  color: Colors.grey.withAlpha(80),
-                  radialOffset: 0,
-                ),
-                RadialValueBar(
-                  value: value1 > 0
-                      ? value1 > max
-                          ? max
-                          : value1
-                      : zeroOffset,
-                  color: _value1Color,
-                  radialOffset: 0,
-                ),
-                RadialValueBar(
-                  value: max,
-                  color: Colors.grey.withAlpha(80),
-                  radialOffset: 15,
-                ),
-                RadialValueBar(
-                  value: value2 > 0
-                      ? value2 > max
-                          ? max
-                          : value2
-                      : zeroOffset,
-                  color: _value2Color,
-                  radialOffset: 15,
-                ),
-              ],
-              widgetPointer: [],
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

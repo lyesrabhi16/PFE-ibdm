@@ -10,6 +10,7 @@ import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/models/debit.dart';
+import 'package:ibdm/services/api_django/api_client/models/feed_meta_data.dart';
 import 'package:ibdm/services/api_django/api_client/models/niveau.dart';
 import 'package:ibdm/services/api_django/api_client/models/pres_cond.dart';
 import 'package:ibdm/services/api_django/api_client/models/volume.dart';
@@ -57,6 +58,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
   BuildContext get getContext => _getContext!.call()!;
 
   ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
+
+  late FeedMetaData feedMetaData;
 
   late final strings = getTranslations(getContext).obs;
 
@@ -188,8 +191,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
           decoration: BoxDecoration(
               color: colorScheme.surfaceContainer,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
+                topLeft: Radius.circular(AppSizes.borderRadius),
+                topRight: Radius.circular(AppSizes.borderRadius),
               )),
           child: _getTopActionsBar(),
         ),
@@ -260,8 +263,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainer,
                     borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(15),
-                      bottomRight: Radius.circular(15),
+                      bottomLeft: Radius.circular(AppSizes.borderRadius),
+                      bottomRight: Radius.circular(AppSizes.borderRadius),
                     ),
                   ),
                   child: SingleChildScrollView(
@@ -279,7 +282,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: successColor,
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(AppSizes.sm),
@@ -371,7 +375,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Expanded(
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
+                                      borderRadius: BorderRadius.circular(
+                                          AppSizes.borderRadius),
                                       border: Border.all(
                                         width: 2,
                                         color: successColor,
@@ -394,7 +399,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: successColor,
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                   ),
                                   child: Padding(
                                       padding:
@@ -516,7 +522,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Expanded(
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
+                                      borderRadius: BorderRadius.circular(
+                                          AppSizes.borderRadius),
                                       border: Border.all(
                                         width: 2,
                                         color: colorScheme.primary,
@@ -541,7 +548,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: successColor,
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(AppSizes.sm),
@@ -642,7 +650,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 color: successColor,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                     border: Border.all(
                                       width: 2,
                                       color: successColor,
@@ -665,7 +674,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: successColor,
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(AppSizes.sm),
@@ -782,7 +792,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 color: colorScheme.primary,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.borderRadius),
                                     border: Border.all(
                                       width: 2,
                                       color: colorScheme.primary,
@@ -810,7 +821,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(
+                                      AppSizes.borderRadius),
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(AppSizes.sm),
@@ -1063,7 +1075,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                             child: Container(
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(
+                                    AppSizes.borderRadius),
                                 border: Border.all(
                                   width: 2,
                                   color: colorScheme.primaryContainer,
@@ -1085,87 +1098,88 @@ class _FiltrationPageState extends State<FiltrationPage> {
   }
 
   _getFiltrationData() async {
+    final strings = getTranslations(context);
     final _state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
         context: getContext,
-        messageSuccess: "data found",
-        message: "getting data...",
-        messageError: "data not found",
+        messageSuccess: strings.dataFound,
+        message: strings.retrievingData,
+        messageError: strings.dataNotFound,
         state: _state);
 
     try {
       logger
           .e("Getting filtration data $year $month $day $hour $minute $second");
       final api = await ApiClientInstance.getApiClient();
-      int done = 0;
       _setDone() {
-        done++;
-        if (done == 4) {
-          refresh.value = true;
-          _state.value = FutureState.success;
-          loaded.value = true;
-          Future.delayed(Durations.long2, () {
-            toastification.dismissById(toast.id);
-          });
-        }
+        refresh.value = true;
+        _state.value = FutureState.success;
+        loaded.value = true;
+        Future.delayed(Durations.long2, () {
+          toastification.dismissById(toast.id);
+        });
       }
 
-      api
-          .getNiveauAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {niveau = v, _setDone()});
-      api
-          .getDebitAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {debit = v, _setDone()});
-      api
-          .getVolumeAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {volume = v, _setDone()});
-      api
-          .getPresCondAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {presCond = v, _setDone()});
+      final List<dynamic> v = await Future.wait([
+        api.getNiveauAtSpecificTime(
+          year: year!,
+          month: month,
+          day: day,
+          hour: hour,
+          minute: minute,
+          second: second,
+        ),
+        api.getDebitAtSpecificTime(
+          year: year!,
+          month: month,
+          day: day,
+          hour: hour,
+          minute: minute,
+          second: second,
+        ),
+        api.getVolumeAtSpecificTime(
+          year: year!,
+          month: month,
+          day: day,
+          hour: hour,
+          minute: minute,
+          second: second,
+        ),
+        api.getPresCondAtSpecificTime(
+          year: year!,
+          month: month,
+          day: day,
+          hour: hour,
+          minute: minute,
+          second: second,
+        ),
+      ]);
+
+      niveau = v[0] as Niveau;
+      debit = v[1] as Debit;
+      volume = v[2] as Volume;
+      presCond = v[3] as PresCond;
+
+      _setDone();
     } catch (e) {
-      logger.e("Failed to get filtration data");
+      logger.e("Failed to get filtration data : $e");
       _state.value = FutureState.error;
       loaded.value = true;
       Future.delayed(Durations.long2, () {
         toastification.dismissById(toast.id);
       });
       return null;
+    } finally {
+      filtrationEndDate.value = niveau.date;
+      refresh.value = !refresh.value;
     }
   }
 
   _getTopActionsBar() {
     return LiveDataTopActionBar(
       isLive: isLive,
-      startDate: filtrationStartDate.value,
-      endDate: filtrationEndDate.value,
+      startDate: feedMetaData.startDate,
+      endDate: feedMetaData.endDate,
       selectedDate: filtrationEndDate.value,
       searchPressed: (dt) {
         year = dt.year;
@@ -1495,7 +1509,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: colorScheme.primaryContainer,
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(
+                                    AppSizes.borderRadius),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(AppSizes.sm),
@@ -1512,7 +1527,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                       ),
                                     ),
                                     Text(
-                                      "Not Found ${(0).toStringAsFixed(2)} M3/H", // TODO: fix this
+                                      "${(0).toStringAsFixed(2)} M3/H", // TODO: fix this
                                       style: Theme.of(getContext)
                                           .textTheme
                                           .titleMedium
@@ -1531,7 +1546,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                       ),
                                     ),
                                     Text(
-                                      "Not Found ${(0).toStringAsFixed(2)} M3", // TODO: fix this
+                                      "${(0).toStringAsFixed(2)} M3",
                                       style: Theme.of(getContext)
                                           .textTheme
                                           .titleMedium
@@ -1562,7 +1577,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.borderRadius),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(AppSizes.sm),
@@ -1579,7 +1595,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                   ),
                                 ),
                                 Text(
-                                  "Not Found ${(0).toStringAsFixed(2)} M3/H",
+                                  "${(0).toStringAsFixed(2)} M3/H",
                                   style: Theme.of(getContext)
                                       .textTheme
                                       .titleMedium
@@ -1598,7 +1614,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                   ),
                                 ),
                                 Text(
-                                  "Not Found ${(0).toStringAsFixed(2)} M3",
+                                  "${(0).toStringAsFixed(2)} M3",
                                   style: Theme.of(getContext)
                                       .textTheme
                                       .titleMedium
@@ -1661,7 +1677,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                             ),
                             child: Center(
                               child: Text(
-                                "USINE",
+                                strings.value.usine,
                                 style: Theme.of(getContext)
                                     .textTheme
                                     .bodyMedium
@@ -1825,7 +1841,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.borderRadius),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(AppSizes.sm),
@@ -1886,7 +1903,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                             ),
                             child: Center(
                               child: Text(
-                                "USINE",
+                                strings.value.usine,
                                 style: Theme.of(getContext)
                                     .textTheme
                                     .bodyMedium
@@ -1904,6 +1921,9 @@ class _FiltrationPageState extends State<FiltrationPage> {
             ),
             Cuve(
               title: "Concentrat",
+              okColor: colorScheme.primary,
+              niveau1: 0,
+              niveau2: 0,
               niveau1Trailing: "M3",
               niveau2Trailing: "%",
             ),
@@ -1923,6 +1943,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
   }
 
   Future<void> load() async {
+    final strings = getTranslations(context);
     printMessage("load...");
 
     loaded.value = false;
@@ -1957,8 +1978,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
           }
           Toasts.showErrorToastNotification(
               context: context,
-              message:
-                  "Failed To Connect To Filtration Broadcast${retries > 0 ? ',retrying' : ''}");
+              message: strings.failedToConnectToFiltrationBroadcast(retries));
         }
       } else {
         printMessage("Not Loading because Stream is not null");

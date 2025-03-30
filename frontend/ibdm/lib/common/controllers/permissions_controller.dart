@@ -18,6 +18,7 @@ class PermissionsController extends GetxController {
   bool? hasViewEmailAlertsPerm;
   bool? hasViewEmailsSentPerm;
   bool? hasViewUtilitePagePerm;
+  bool? hasViewCo2PagePerm;
 
   Future<void> loadPermissions() async {
     if (permissions_loading) {
@@ -26,7 +27,7 @@ class PermissionsController extends GetxController {
     permissions_loading = true;
     ready.value = false;
     int permissionsLoadedCount = 0;
-    int maxPermissionsLoadedCount = 8;
+    int maxPermissionsLoadedCount = 9;
     _done() {
       permissionsLoadedCount++;
       logger.e("loaded ${permissionsLoadedCount} permissions");
@@ -75,6 +76,10 @@ class PermissionsController extends GetxController {
           hasViewUtilitePagePerm = value;
           _done();
         }),
+        _hasPermRequest(Permissions.viewCo2Page).then((value) {
+          hasViewCo2PagePerm = value;
+          _done();
+        }),
       ]);
     } catch (e) {
       logger.e("Failed to get permissions: $e");
@@ -91,6 +96,7 @@ class PermissionsController extends GetxController {
     hasViewEmailAlertsPerm = null;
     hasViewEmailsSentPerm = null;
     hasViewUtilitePagePerm = null;
+    hasViewCo2PagePerm = null;
     ready.value = false;
     logger.e("end reset permissions");
   }
@@ -130,6 +136,8 @@ class PermissionsController extends GetxController {
           return hasViewEmailsSentPerm!;
         case Permissions.viewUtilitePage:
           return hasViewUtilitePagePerm!;
+        case Permissions.viewCo2Page:
+          return hasViewCo2PagePerm!;
         default:
           throw ("Permission not found");
       }

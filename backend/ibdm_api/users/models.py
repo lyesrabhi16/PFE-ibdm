@@ -136,5 +136,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             ("can_view_email_alerts", "Can view email alerts"),
             ("can_view_emails_sent", "Can view emails sent"),
             ("can_view_utilite_page", "Can view utilite page"),
+            ("can_view_co2_page", "Can view co2 page"),
+
         ]
     

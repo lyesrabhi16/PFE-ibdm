@@ -5,7 +5,6 @@ import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/validators/app_validators.dart';
 
 class PerPageInput extends StatelessWidget {
-  final GlobalKey<FormState> perPageFormKey = GlobalKey<FormState>();
   final TextEditingController _perPageController;
   final RxBool _expandPerPage;
   final Function? load;
@@ -18,6 +17,8 @@ class PerPageInput extends StatelessWidget {
     this.perPage = 10,
   })  : _expandPerPage = expandPerPage,
         _perPageController = perPageController;
+
+  final GlobalKey<FormState> perPageFormKey = GlobalKey<FormState>();
 
   void _executeChangePerPageIfPossible(GlobalKey<FormState> perPageFormKey) {
     if (perPageFormKey.currentState != null &&

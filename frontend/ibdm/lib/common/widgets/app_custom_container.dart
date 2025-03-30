@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ibdm/common/controllers/permissions_controler.dart';
+import 'package:ibdm/common/controllers/permissions_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/drawer_container.dart';
 import 'package:ibdm/common/widgets/responsive_appbar.dart';
@@ -8,6 +8,7 @@ import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/pages/loading_page.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:ibdm/common/controllers/loading_page_controller.dart';
 
@@ -37,6 +38,7 @@ class AppCustomContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = getTranslations(context).obs;
     final loadingPageController = Get.find<LoadingPageController>();
 
     return Obx(() {
@@ -83,7 +85,7 @@ class AppCustomContainer extends StatelessWidget {
       return SafeArea(
         child: Scaffold(
           appBar: ResponsiveAppBar(
-            userName: userController.user?.username ?? "No Name",
+            userName: userController.user?.username ?? strings.value.noName,
             userImage: (userController.user?.avatarUrl != null &&
                     userController.user!.avatarUrl!.isNotEmpty)
                 ? userController.user!.avatarUrl!
