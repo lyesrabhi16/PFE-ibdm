@@ -1,5 +1,5 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
+# self is an auto-generated Django model module.
+# You'll have to do the following manually to clean self up:
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
@@ -39,9 +39,13 @@ class Co2Ifruit(models.Model):
     ut_n2_pn2 = models.FloatField(db_column='UT_N2_PN2', blank=True, null=True)  # Field name made lowercase.
     ut_soude = models.FloatField(db_column='UT_Soude', blank=True, null=True)  # Field name made lowercase.
 
+    def __str__(self):
+        return f"Co2Ifruit({str(self.date)})"
+
     class Meta:
         managed = False
         db_table = 'Co2_Ifruit'
+    
 
 
 class Utilite(models.Model):
@@ -60,7 +64,9 @@ class Utilite(models.Model):
     ut_sid_pg = models.FloatField(db_column='UT_SID_PG', blank=True, null=True)  # Field name made lowercase.
     ut_sid_tt = models.FloatField(db_column='UT_SID_TT', blank=True, null=True)  # Field name made lowercase.
     ut_sid_tc = models.FloatField(db_column='UT_SID_TC', blank=True, null=True)  # Field name made lowercase.
-
+    
+    def __str__(self):
+        return f"Utilite({str(self.date)})"
     class Meta:
         managed = False
         db_table = 'Utilite'
