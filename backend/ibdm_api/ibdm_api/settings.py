@@ -427,17 +427,16 @@ LOGGING = {
         },
     },
     "root": {
-        "level": "CRITICAL",
+        "level": "DEBUG",
         "handlers": [
                         "console",
+                        'file_debug', 'file_info', "file_warning", "file_error", "file_critical",
                     ],
         "propagate": True,
     },
     'loggers': {
         'django': {
             'handlers': [
-                            "console", 
-                            'file_debug', 'file_info', "file_warning", "file_error", "file_critical",
                             "file_emails", "file_emails_broadcast", "file_utilite_broadcast", "file_filtration_broadcast", "file_sucre_broadcast",
                             "file_monitors"
                         ],
@@ -515,7 +514,7 @@ def require_level(record, level):
 def require_tags(record, tags):
     if (record.levelno == logging.DEBUG):
         return False
-    message_split = record.message.split("#")
+    message_split = record.getMessage().split("#")
     if len(message_split) == 1:
         return False
     tag = message_split[0]
