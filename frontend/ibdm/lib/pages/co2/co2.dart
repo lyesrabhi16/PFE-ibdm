@@ -302,6 +302,7 @@ class _CO2PageState extends State<CO2Page> {
                   final PRESSION_N2_VALUE = (co2_ifruit.utN2Vn2 ?? 0);
 
                   final PRESSION_SOUDE_VALUE = (co2_ifruit.utSoude ?? 0);
+                  final PRESSION_NOURISSE_VALUE = (co2_ifruit.utCo2Pn ?? 0);
 
                   return Container(
                       constraints: BoxConstraints(
@@ -412,18 +413,35 @@ class _CO2PageState extends State<CO2Page> {
                                           ),
                                         ],
                                       ),
-                                      CuveWithRadialMeter(
-                                        title: "SOUDE",
-                                        radialMeter: RadialMeter(
-                                          title: "SOUDE",
-                                          danger: 10,
-                                          max: 20,
-                                          value1Label: "",
-                                          value1: PRESSION_SOUDE_VALUE,
-                                          showTrack2: false,
-                                          steps: 2,
-                                          value1Suffix: "Bars",
-                                        ),
+                                      Wrap(
+                                        children: [
+                                          CuveWithRadialMeter(
+                                            title: "NOURISSE",
+                                            radialMeter: RadialMeter(
+                                              title: "NOURISSE",
+                                              danger: 10,
+                                              max: 20,
+                                              value1Label: "",
+                                              value1: PRESSION_NOURISSE_VALUE,
+                                              showTrack2: false,
+                                              steps: 2,
+                                              value1Suffix: "Bars",
+                                            ),
+                                          ),
+                                          CuveWithRadialMeter(
+                                            title: "SOUDE",
+                                            radialMeter: RadialMeter(
+                                              title: "SOUDE",
+                                              danger: 10,
+                                              max: 20,
+                                              value1Label: "",
+                                              value1: PRESSION_SOUDE_VALUE,
+                                              showTrack2: false,
+                                              steps: 2,
+                                              value1Suffix: "Bars",
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),

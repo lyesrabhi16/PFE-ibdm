@@ -47,7 +47,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
     super.deactivate();
   }
 
-  late FeedMetaData feedMetaDate;
+  late FeedMetaData feedMetaData;
 
   final Rx<bool> loaded = false.obs;
 
@@ -441,6 +441,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
         final res =
             await (await ApiClientInstance.getApiClient()).getSucreMetaData();
         printMessage("sucre broadcast connected");
+        feedMetaData = res;
         sucre_start_date.value = res.startDate;
         sucre_end_date.value = res.endDate;
         await SiroperiePage.channel!.ready;
@@ -472,8 +473,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
     final strings = getTranslations(getContext).obs;
     return LiveDataTopActionBar(
       isLive: isLive,
-      startDate: feedMetaDate.startDate,
-      endDate: feedMetaDate.endDate,
+      startDate: feedMetaData.startDate,
+      endDate: feedMetaData.endDate,
       selectedDate: sucre_end_date.value,
       searchPressed: (dt) {
         year = dt.year;

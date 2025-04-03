@@ -1957,6 +1957,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
           final res = await (await ApiClientInstance.getApiClient())
               .getFiltrationMetaData();
           printMessage("filtration broadcast connected");
+          feedMetaData = res;
           filtrationStartDate.value = res.startDate;
           filtrationEndDate.value = res.endDate;
           await FiltrationPage.channel!.ready;

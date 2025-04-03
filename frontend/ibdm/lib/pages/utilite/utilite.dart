@@ -115,6 +115,7 @@ class _UtilitePageState extends State<UtilitePage> {
           final res = await (await ApiClientInstance.getApiClient())
               .getFiltrationMetaData();
           printMessage("utilite broadcast connected");
+          feedMetaData = res;
           utiliteStartDate.value = res.startDate;
           utiliteEndDate.value = res.endDate;
           await UtilitePage.channel!.ready;
