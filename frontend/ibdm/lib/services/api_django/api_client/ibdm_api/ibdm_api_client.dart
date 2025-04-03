@@ -176,6 +176,7 @@ abstract class IbdmApiClient {
   /// [rapport] - * `inventaire-sucre` - inventaire-sucre.
   /// * `utilite` - utilite.
   /// * `filtration` - filtration.
+  /// * `co2_ifruit` - co2_ifruit.
   ///
   /// [search] - A search term.
   @GET('/api/v1/emails/schedules/')

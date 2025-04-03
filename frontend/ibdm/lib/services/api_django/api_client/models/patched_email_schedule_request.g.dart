@@ -40,6 +40,7 @@ const _$RapportEnumEnumMap = {
   RapportEnum.inventaireSucre: 'inventaire-sucre',
   RapportEnum.utilite: 'utilite',
   RapportEnum.filtration: 'filtration',
+  RapportEnum.co2Ifruit: 'co2_ifruit',
   RapportEnum.$unknown: r'$unknown',
 };
 
