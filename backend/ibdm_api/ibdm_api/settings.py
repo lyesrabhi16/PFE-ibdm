@@ -29,7 +29,9 @@ SECRET_KEY = Env.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = Env.DEBUG
 
-ALLOWED_HOSTS = ["*"]
+SECURE_SSL_REDIRECT = True
+
+ALLOWED_HOSTS = ["172.20.101.145"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = [
@@ -37,17 +39,16 @@ CORS_ALLOW_HEADERS = [
     "X-CSRFToken",
 ]
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8001"]
+CSRF_TRUSTED_ORIGINS = ["https://172.20.101.145:8443"]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SAMESITE = "Strict"
+SESSION_COOKIE_SAMESITE = "Strict"
 
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
 # Application definition
-NPM_BIN_PATH="C:\\Program Files\\nodejs\\npm.cmd"
 INSTALLED_APPS = [
     "jazzmin",
     "django.contrib.admin",
@@ -514,11 +515,15 @@ def require_level(record, level):
 def require_tags(record, tags):
     if (record.levelno == logging.DEBUG):
         return False
-    message_split = record.getMessage().split("#")
-    if len(message_split) == 1:
-        return False
-    tag = message_split[0]
-    if tag not in seen_tags:
-        print("new tag:", tag)
-        seen_tags.add(tag)
-    return tag in tags
+    try:
+        message_split = record.getMessage().split("#")
+        if len(message_split) == 1:
+            return False
+        tag = message_split[0]
+        if tag not in seen_tags:
+            print("new tag:", tag)
+            seen_tags.add(tag)
+        return tag in tags
+    except Exception as e:
+        logging.getLogger("django").error(f"logger# failed to log message({record.msg}) args({record.args}) with error {e}")
+    return False
