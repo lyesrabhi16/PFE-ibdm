@@ -712,7 +712,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               }
               if (monitorType != null) {
                 _saveAlertMonitorType =
-                    monitorType.isNotEmpty ? monitoredValue : null;
+                    monitorType.isNotEmpty ? monitorType : null;
               }
               _saveAlertRoles = roles;
               _saveAlertUsers = users;

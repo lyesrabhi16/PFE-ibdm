@@ -257,7 +257,7 @@ def rapport_filtration(email):
                 "danger": FILL_OS7 <= 50,
             },
             {
-                "type": "CONSOMMATION",
+                "type": "CONSOMMATION DE LA JOURNEE PRECEDANTE",
                 "nom": "",
                 "valeur": "",
                 "unite": "",

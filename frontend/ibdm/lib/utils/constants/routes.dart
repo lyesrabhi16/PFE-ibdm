@@ -83,7 +83,7 @@ class Routes {
           icon: LucideIcons.cloud,
           route: Routes.co2,
           page: routePages[Routes.co2]!,
-        ),
+        ).withPermission(Permissions.viewCo2Page),
         Destination(
           title: "Settings",
           icon: Icons.settings,
@@ -138,8 +138,9 @@ class Routes {
     Routes.utilite: RoutePermissions(
       requiredPermissions: [Permissions.viewUtilitePage],
     ),
-    Routes.co2:
-        RoutePermissions(requiredPermissions: [Permissions.viewCo2Page]),
+    Routes.co2: RoutePermissions(
+      requiredPermissions: [Permissions.viewCo2Page],
+    ),
   };
   static final routePages = {
     Routes.home: GetPage(
