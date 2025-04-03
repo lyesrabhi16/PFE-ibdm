@@ -1,26 +1,37 @@
 from datetime import datetime
+import json
+from typing import List
 from api_v1.excel_helpers import generateExcelReport
 from django.template.loader import render_to_string
 
 from filtration.models import Debit, Niveau, PresCond, Volume
 import threading
 
-from api_v1.utils import get_midnight_value, print_log
+from api_v1.utils import get_midnight_value, get_value_at, print_log
+
+
+volume_list : List[Volume] = []
 
 niveau : Niveau|None = None
 volume : Volume|None = None
 debit  : Debit|None= None
 pres_cond : PresCond|None = None
 
+dates = []
 
 def loadNiveau():
     global niveau
+
     niveau = get_midnight_value(Niveau)
 
-def loadVolume():
+def loadVolume(date=None):
     global volume
-    volume = get_midnight_value(Volume)
-
+    if date is None:
+        volume = get_midnight_value(Volume)
+    else:
+        v = get_value_at(Volume, date)
+        volume_list.append(v)
+        
 def loadDebit():
     global debit
     debit = get_midnight_value(Debit)
@@ -36,9 +47,19 @@ def rapport_filtration(email):
     global volume
     global debit
     global pres_cond
-    
+    global dates
+    global volume_list
+
+    volume_list = []
+    dates = []
     now = datetime.now()
-    
+    threads = []
+    for i in range(1, now.day):
+        date = datetime(now.year, now.month, i)
+        thread = threading.Thread(target=loadVolume, args=(date,))
+        threads.append(thread)
+        thread.start()
+
     thread_n = threading.Thread(target=loadNiveau)
     thread_v = threading.Thread(target=loadVolume)
     thread_d = threading.Thread(target=loadDebit)
@@ -49,6 +70,8 @@ def rapport_filtration(email):
     thread_d.start()
     thread_p.start()
     print_log("FILTRATION", "threads started")
+    for thread in threads:
+        thread.join()
     thread_n.join()
     thread_v.join()
     thread_d.join()
@@ -104,6 +127,23 @@ def rapport_filtration(email):
     volume_total_hytec = (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
     volume_total_osmotec = (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
     volume_total_osmosee = volume_total_hytec + volume_total_osmotec
+    cons_depuis_1er_forage = 0
+    cons_depuis_1er_volume_total_eau_brute = 0
+    cons_depuis_1er_volume_total_hytec = 0
+    cons_depuis_1er_volume_total_osmotec = 0
+    cons_depuis_1er_volume_total_osmosee = 0
+    volume_list.append(volume)
+    for volume in volume_list:
+        cons_depuis_1er_forage += volume.vol_for
+        cons_depuis_1er_volume_total_eau_brute += (volume.vol_uf1 or 0) + (volume.vol_uf2 or 0) + (volume.vol_uf3 or 0) + (volume.vol_uf4 or 0) + (volume.vol_uf5 or 0) + (volume.vol_uf6 or 0)
+        cons_depuis_1er_volume_total_hytec += (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
+        cons_depuis_1er_volume_total_osmotec += (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
+        
+        _volume_total_hytec = (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
+        _volume_total_osmotec = (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
+    
+        cons_depuis_1er_volume_total_osmosee += _volume_total_hytec + _volume_total_osmotec
+        
 
     data = {
         "date": niveau.date.strftime("%Y-%m-%d"),
@@ -260,6 +300,54 @@ def rapport_filtration(email):
                 "type": "",
                 "nom": "Osmosée",
                 "valeur": "{:.2f}".format(volume_total_osmosee),
+                "unite": "M3",
+                "fill": "",
+                "danger": False,
+            },
+            {
+                "type": "CONSOMMATION DEPUIS LE 1er",
+                "nom": "",
+                "valeur": "",
+                "unite": "",
+                "fill": "",
+                "danger": False,
+                "highlight": True,
+            },
+            {
+                "type": "",
+                "nom": "Forage",
+                "valeur": "{:.2f}".format(cons_depuis_1er_forage),
+                "unite": "M3",
+                "fill": "",
+                "danger": False,
+            },
+            {
+                "type": "",
+                "nom": "Eau Brute",
+                "valeur": "{:.2f}".format(cons_depuis_1er_volume_total_eau_brute),
+                "unite": "M3",
+                "fill": "",
+                "danger": False,
+            },
+            {
+                "type": "",
+                "nom": "Hytec",
+                "valeur": "{:.2f}".format(cons_depuis_1er_volume_total_hytec),
+                "unite": "M3",
+                "fill": "",
+                "danger": False,
+            },
+            {
+                "type": "",
+                "nom": "Osmotec",
+                "valeur": "{:.2f}".format(cons_depuis_1er_volume_total_osmotec),
+                "unite": "M3",
+                "danger": False,
+            },
+            {
+                "type": "",
+                "nom": "Osmosée",
+                "valeur": "{:.2f}".format(cons_depuis_1er_volume_total_osmosee),
                 "unite": "M3",
                 "fill": "",
                 "danger": False,

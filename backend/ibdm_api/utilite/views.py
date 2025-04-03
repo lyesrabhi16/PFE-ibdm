@@ -289,6 +289,14 @@ def getCo2IfruitConsommation(request):
         day=to_day,
     )
 
+    record = get_co2_consommation(from_date, to_date)
+    if (record):
+        return JsonResponse(Co2IfruitConsommationSerializer(record).data)
+    else:
+        return JsonResponse({}, status=404)
+
+
+def get_co2_consommation(from_date, to_date):
     from_record = Co2IfruitSerializer(get_value_at(Co2Ifruit, from_date)).data
     to_record = Co2IfruitSerializer(get_value_at(Co2Ifruit, to_date)).data
     record = {}
@@ -302,7 +310,4 @@ def getCo2IfruitConsommation(request):
     record["from_value"] = from_record
     record["to_value"] = to_record
     record["date"] = to_date
-    if (record):
-        return JsonResponse(Co2IfruitConsommationSerializer(record).data)
-    else:
-        return JsonResponse({}, status=404)
+    return record

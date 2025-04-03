@@ -174,6 +174,7 @@ RAPPORTS = (
     ("inventaire-sucre", "inventaire-sucre"),
     ("utilite", "utilite"),
     ("filtration", "filtration"),
+    ("co2_ifruit", "co2_ifruit"),
 )
 class EmailSchedule(models.Model):
     rapport = models.CharField(max_length=255, choices=RAPPORTS)
