@@ -57,6 +57,7 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
     if (!widget.editable) return;
     printMessage(
         "monitoredValueController.text ${monitoredValueController.text}");
+    printMessage("monitorTypeController.text ${monitorTypeController.text}");
     printMessage(
         "dangerAlertIntervalController.text ${dangerAlertIntervalController.text}");
     printMessage("dangerPointController.text ${dangerPointController.text}");
@@ -149,8 +150,8 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
           widget.alert!.warningReminderInterval.toString();
       warningPointController.text = widget.alert!.warningPoint.toString();
       enabled = widget.alert!.enabled!;
-      monitoredValueController.text = widget.alert!.monitoredValue.toString();
-      monitorTypeController.text = widget.alert!.monitorType.toString();
+      monitoredValueController.text = widget.alert!.monitoredValue.json!;
+      monitorTypeController.text = widget.alert!.monitorType!.json!;
       sendToRoles.addAll(
         userController.roles
             .where((role) => widget.alert!.sendToRoles.contains(role.roleId)),
@@ -494,7 +495,11 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
     final strings = getTranslations(getContext).obs;
     try {
       final res = await api!.getPossibleMonitorValuesAlertEmails();
-      _possibleMonitorValues = res.possibleValues;
+      _possibleMonitorValues = [
+        widget.alert?.monitoredValue.json,
+        ...res.possibleValues
+      ].nonNulls.toList();
+      _possibleMonitorValues.sort();
     } catch (e) {
       logger.e("Failed to load users : $e");
       Toasts.showErrorToast(

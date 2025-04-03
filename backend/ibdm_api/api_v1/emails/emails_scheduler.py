@@ -33,7 +33,6 @@ def after_retry_log(*args):
 # retry with a wait of 1 minute for 1 hour
 @retry(
     wait=wait_fixed(60),
-    wait=wait_fixed(60),
     stop=stop_after_delay(60*60),
     before=before_retry_log,
     after=after_retry_log,

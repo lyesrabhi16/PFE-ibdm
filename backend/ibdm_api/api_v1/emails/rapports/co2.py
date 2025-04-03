@@ -1,15 +1,49 @@
 
 from datetime import datetime, timedelta
+from typing import List
 from api_v1.excel_helpers import generateExcelReport
-from api_v1.utils import get_midnight_value
+from api_v1.utils import get_midnight_value, get_value_at
+import threading
 from utilite.models import Co2Ifruit
 from django.template.loader import render_to_string
 from utilite.views import get_co2_consommation
 
+co2_cons_list = []
+def loadCo2(date):
+    global co2_list
+    co2_cons = get_co2_consommation(from_date=date - timedelta(days=1), to_date=date) # TODO: optimize this
+    co2_cons_list.append(co2_cons)
+
+
 def rapport_co2(email):
+    global co2_cons_list
+
     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     co2 = get_midnight_value(Co2Ifruit)
     co2_cons = get_co2_consommation(from_date=today - timedelta(days=1), to_date=today)
+    co2_cons_list = []
+    threads = []
+    
+    for i in range(1, today.day):
+        thread = threading.Thread(target=loadCo2, args=(datetime(year=today.year, month=today.month, day=i),))
+        threads.append(thread)
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    cons_depuis_1er_v182 = 0
+    cons_depuis_1er_v1833 = 0
+    cons_depuis_1er_vcan35 = 0
+    cons_depuis_1er_vkrv40 = 0
+    cons_depuis_1er_ve = 0
+
+    for co2_cons in co2_cons_list:
+        cons_depuis_1er_v182 += co2_cons.get("ut_co2_v182", 0)
+        cons_depuis_1er_v1833 += co2_cons.get("ut_co2_v1833", 0)
+        cons_depuis_1er_vcan35 += co2_cons.get("ut_co2_vcan35", 0)
+        cons_depuis_1er_vkrv40 += co2_cons.get("ut_co2_vkrv40", 0)
+        cons_depuis_1er_ve += co2_cons.get("ut_co2_ve", 0)
+
 
     if (co2 is None):
         return "les données de co2 ne sont pas disponible pour le "+today.strftime("%Y-%m-%d")
@@ -101,7 +135,7 @@ def rapport_co2(email):
                 "danger": ((co2.ut_soude or 0) or 0) <= 10,
             },
             {
-                "zone": "CONSOMMATION",
+                "zone": "CONSOMMATION DE LA JOURNEE PRECEDANTE",
                 "nom": "",
                 "valuer": "",
                 "unite": "",
@@ -137,7 +171,47 @@ def rapport_co2(email):
                 "danger": False,
             },
             {
-                "zone": "ENTREE",
+                "type": "CONSOMMATION DEPUIS LE 1er",
+                "nom": "",
+                "valeur": "",
+                "unite": "",
+                "fill": "",
+                "danger": False,
+                "highlight": True,
+            },
+            {
+                "type": "",
+                "nom": "182",
+                "valeur": "{:.2f}".format(cons_depuis_1er_v182),
+                "unite": "KG",
+                "fill": "",
+                "danger": False,
+            },
+            {
+                "type": "",
+                "nom": "1833",
+                "valeur": "{:.2f}".format(cons_depuis_1er_v1833),
+                "unite": "KG",
+                "fill": "",
+                "danger": False,
+            },
+            {
+                "type": "",
+                "nom": "can35",
+                "valeur": "{:.2f}".format(cons_depuis_1er_vcan35),
+                "unite": "KG",
+                "fill": "",
+                "danger": False,
+            },
+            {
+                "type": "",
+                "nom": "krv40",
+                "valeur": "{:.2f}".format(cons_depuis_1er_vkrv40),
+                "unite": "KG",
+                "danger": False,
+            },
+            {
+                "zone": "ENTREE DE LA JOURNEE PRECEDANTE",
                 "nom": "",
                 "valuer": "",
                 "unite": "",
@@ -148,6 +222,21 @@ def rapport_co2(email):
                 "zone": "",
                 "nom": "VE",
                 "valuer": "{:.2f}".format(co2_cons.get("ut_co2_ve", 0)),
+                "unite": "KG",
+                "danger": False,
+            },
+            {
+                "zone": "ENTREE DEPUIS LE 1er",
+                "nom": "",
+                "valuer": "",
+                "unite": "",
+                "danger": False,
+                "highlight": True,
+            },
+            {
+                "zone": "",
+                "nom": "VE",
+                "valuer": "{:.2f}".format(cons_depuis_1er_ve),
                 "unite": "KG",
                 "danger": False,
             },

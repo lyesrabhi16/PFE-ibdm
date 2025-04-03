@@ -19,7 +19,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import include, path, re_path
-from .views import index, getCA
+from .views import index, getCA, getServerStatus
 
 
 def redirect_home(request):
@@ -35,6 +35,7 @@ handler404 = redirectTo404Page
 urlpatterns = [
     path('admin', admin.site.urls),
     path("ca", getCA),
+    path("status", getServerStatus),
     path('api/v1/', include('api_v1.urls')),
     path('drf/auth/', include('rest_framework.urls', namespace='rest_framework')),
 

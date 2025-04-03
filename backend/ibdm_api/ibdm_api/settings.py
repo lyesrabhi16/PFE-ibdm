@@ -19,6 +19,7 @@ from api_v1.smtp_backend import EmailBackend
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+VERSION="1.0.0"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -31,7 +32,7 @@ DEBUG = Env.DEBUG
 
 SECURE_SSL_REDIRECT = True
 
-ALLOWED_HOSTS = ["172.20.101.145"]
+ALLOWED_HOSTS = ["172.20.101.145"] + ["*"] if DEBUG else []
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = [
@@ -42,8 +43,8 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = ["https://172.20.101.145:8443"]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = "Strict"
-SESSION_COOKIE_SAMESITE = "Strict"
+CSRF_COOKIE_SAMESITE = "None" if DEBUG else "Strict"
+SESSION_COOKIE_SAMESITE = "None" if DEBUG else "Strict"
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -329,7 +330,7 @@ logging.addLevelName(13, "SIROPERIE")
 logging.addLevelName(14, "FILTRATION")
 logging.addLevelName(15, "UTILITE")
 
-LOGGING = {
+LOGGING = None if DEBUG else {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
