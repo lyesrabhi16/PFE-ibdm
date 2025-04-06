@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Group,
 from django.db import models
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from drf_spectacular.types import OpenApiTypes
+from django.core.exceptions import ValidationError
 # Create your models here.
 
 class UserManager(BaseUserManager):
@@ -88,6 +89,25 @@ class SubordinateAndSuperior(models.Model):
 
     def __str__(self):
         return f"{self.superior.email} {self.superior.role} is superior to {self.subordinate.email} {self.subordinate.role}"
+
+    def clean(self):
+
+        if self.superior == self.subordinate:
+            raise ValidationError("A user cannot be their own superior.")
+
+        # Check for circular hierarchy
+        current_superior = self.superior
+        while current_superior:
+            if current_superior == self.subordinate:
+                raise ValidationError("Circular hierarchy detected: A user cannot be their own superior indirectly.")
+            try:
+                current_superior = SubordinateAndSuperior.objects.get(subordinate=current_superior).superior
+            except SubordinateAndSuperior.DoesNotExist:
+                break
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
 class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=50, blank=True)

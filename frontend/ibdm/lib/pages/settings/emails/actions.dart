@@ -103,7 +103,7 @@ class EmailActions {
         state: state);
     try {
       final api = await ApiClientInstance.getApiClient();
-
+      logger.e("monitorType: $monitorType");
       await api.partialUpdateAlertEmail(
           id: alertId,
           body: PatchedAlertEmailRequest(

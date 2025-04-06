@@ -731,7 +731,10 @@
 	"co2Title": "CO2",
 	"consommation": "Consommation",
     "failedToGetConsommationData": "Failed to get consommation data",
-    "entree": "In"
+    "entree": "In",
+    "cannotBeASuperiorToYourself": "You cannot be a superior to yourself",
+    "cannotBeASuperiorForHimself": "You cannot be a superior for yourself",
+    "close": "Close"
 
     
 }

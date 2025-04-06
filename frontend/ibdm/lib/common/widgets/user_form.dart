@@ -64,7 +64,14 @@ class UserForm extends StatelessWidget {
   final TextEditingController addUserPasswordController;
   final TextEditingController addUserPhoneController;
   final RxList<ShadOption<User>> addUserSuperiorOptions;
-
+  List<ShadOption<User>> get _addUserSuperiorOptions => addUserSuperiorOptions
+      .where(
+        (o) =>
+            user != null &&
+            o.value.userId != user!.userId &&
+            !user!.subordinates.map((s) => s.userId).contains(o.value.userId),
+      )
+      .toList();
   bool get isEditing => user != null && editable == true;
 
   final Rx<bool> _loaded = false.obs;
@@ -438,13 +445,14 @@ class UserForm extends StatelessWidget {
                   label: Text(strings.value.superior),
                   validator: (value) =>
                       AppValidators.superiorSelectionValidator(
-                    "${value?.userId}",
-                    addUserSuperiorOptions.map((o) => o.value).toList(),
+                    user?.userId.toString(),
+                    value?.userId.toString(),
+                    _addUserSuperiorOptions.map((o) => o.value).toList(),
                   ),
                   allowDeselection: true,
                   options: _searchAddUserSuperior.value
                       ? _searchAddUserSuperiorOptions
-                      : addUserSuperiorOptions,
+                      : _addUserSuperiorOptions,
                   placeholder: Container(
                       constraints: BoxConstraints(
                         minWidth: context.width,
@@ -487,7 +495,7 @@ class UserForm extends StatelessWidget {
                           false; // turn it off to trigger update later
                       _searchAddUserSuperiorOptions.clear();
                       _searchAddUserSuperiorOptions
-                          .addAll(addUserSuperiorOptions.where((o) {
+                          .addAll(_addUserSuperiorOptions.where((o) {
                         if (o.value.username.contains(value)) {
                           return true;
                         }

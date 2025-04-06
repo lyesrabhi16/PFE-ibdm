@@ -14,3 +14,14 @@ String getUserName(User user, {bool orEmail = true}) {
     return strings.noUsername;
   }
 }
+
+bool searchUsers(User element, String value) {
+  return element.email.contains(value) ||
+      element.firstName.contains(value) ||
+      element.lastName.contains(value) ||
+      element.username.contains(value);
+}
+
+bool searchRoles(Role role, String value) {
+  return role.name.toLowerCase().contains(value.toLowerCase());
+}

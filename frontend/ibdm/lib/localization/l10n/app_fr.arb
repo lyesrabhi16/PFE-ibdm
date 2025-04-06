@@ -732,5 +732,8 @@
 	"co2Title": "CO2",
 	"consommation": "Consommation",
 	"failedToGetConsommationData": "Echec lors de la recuperation des Données de consommation",
-	"entree": "Entrée"
+	"entree": "Entrée",
+	"cannotBeASuperiorToYourself": "Vous ne pouvez pas être le supérieur de vous-même",
+	"cannotBeASuperiorForHimself": "Il ne peut pas être le supérieur de lui-même",
+	"close": "Fermer"
 }
