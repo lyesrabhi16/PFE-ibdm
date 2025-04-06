@@ -46,8 +46,18 @@ class AppValidators {
   }
 
   static String? superiorSelectionValidator(
-      String? id, List<User> superiorOptions) {
+      String? userId, String? superiorid, List<User> superiorOptions) {
     UserController userController = Get.find<UserController>();
+    final strings = getTranslations(Get.context!);
+    
+    if (userController.user?.userId.toString() == superiorid) {
+      return strings.cannotBeASuperiorToYourself;
+    }
+
+    if ( userId != null && superiorid != null &&  userId == superiorid) {
+      return strings.cannotBeASuperiorForHimself;
+    }
+
     if (userController.user?.role == "ADMIN_SYSTEM") {
       return null;
     }
@@ -57,7 +67,7 @@ class AppValidators {
           FormBuilderValidators.containsElement(
             superiorOptions.map((u) => "${u.userId}").toList(),
           ))
-    ])(id);
+    ])(superiorid);
   }
 
   static String? customPasswordValidator(

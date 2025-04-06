@@ -366,7 +366,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(strings.value.cancel),
+              child: Text(strings.value.close),
             ),
             ShadButton(
               onPressed: () {
@@ -446,7 +446,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           actions: [
             ShadButton(
               icon: Icon(Icons.close),
-              child: Text(strings.value.cancel),
+              child: Text(strings.value.close),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -507,7 +507,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                         ),
                       ShadButton(
                         icon: Icon(Icons.close),
-                        child: Text(strings.value.cancel),
+                        child: Text(strings.value.close),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -554,7 +554,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           actions: [
             ShadButton(
               icon: Icon(Icons.close),
-              child: Text(strings.value.cancel),
+              child: Text(strings.value.close),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -586,6 +586,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                               message: strings.value.pleaseFixErrorsInTheForm);
                           return;
                         }
+
                         EmailActions.saveAlert(
                           context,
                           alertId: alert.id,
@@ -651,6 +652,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                                   dangerPoint: _saveAlertDangerPoint,
                                   enabled: _saveAlertEnabled,
                                   monitoredValue: _saveAlertMonitoredValue,
+                                  monitorType: _saveAlertMonitorType,
                                   roles: _saveAlertRoles,
                                   users: _saveAlertUsers,
                                   warningAlertInterval:
@@ -667,7 +669,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                         ),
                       ShadButton(
                         icon: Icon(Icons.close),
-                        child: Text(strings.value.cancel),
+                        child: Text(strings.value.close),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -760,7 +762,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                     _showCheckboxColumn.value = false;
                     ShadToaster.of(context).hide();
                   },
-                  child: Text(strings.value.cancel),
+                  child: Text(strings.value.close),
                 )
               : Row(
                   children: [

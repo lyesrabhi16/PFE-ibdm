@@ -112,6 +112,13 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
   List<User> _users = [];
 
   List<String> _possibleMonitorValues = [];
+  final RxBool _searchInMonitorValues = false.obs;
+  final RxBool _searchInUsers = false.obs;
+  final RxBool _searchInRoles = false.obs;
+
+  final RxList<String> _searchResultsMonitorValues = <String>[].obs;
+  final RxList<User> _searchResultsUsers = <User>[].obs;
+  final RxList<Role> _searchResultsRoles = <Role>[].obs;
 
   RxBool loaded = false.obs;
 
@@ -197,16 +204,23 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                 constraints: BoxConstraints(
                   minWidth: context.width,
                 ),
-                child: ShadSelectFormField<String>(
+                child: ShadSelectFormField<String>.withSearch(
                   enabled: widget.editable,
                   validator: (v) => AppValidators.monitoredValueValidator(v),
                   label: Text(strings.value.monitoredValue),
-                  options: _possibleMonitorValues.map(
-                    (value) => ShadOption(
-                      value: value,
-                      child: Text(value),
-                    ),
-                  ),
+                  options: _searchInMonitorValues.value
+                      ? _searchResultsMonitorValues.map(
+                          (value) => ShadOption(
+                            value: value,
+                            child: Text(value),
+                          ),
+                        )
+                      : _possibleMonitorValues.map(
+                          (value) => ShadOption(
+                            value: value,
+                            child: Text(value),
+                          ),
+                        ),
                   selectedOptionBuilder: (context, value) => Container(
                       constraints: BoxConstraints(
                         minWidth: context.width,
@@ -222,6 +236,15 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                         minWidth: context.width,
                       ),
                       child: Text(strings.value.selectAValueToMonitor)),
+                  onSearchChanged: (String value) {
+                    _searchInMonitorValues.value = false;
+                    if (value.isNotEmpty) {
+                      _searchInMonitorValues.value = true;
+                      _searchResultsMonitorValues.value = _possibleMonitorValues
+                          .where((element) => element.contains(value))
+                          .toList();
+                    }
+                  },
                 ),
               ),
               SizedBox(height: AppSizes.sm),
@@ -334,7 +357,18 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                           children: [
                             Text(strings.value.sendThisAlertToRoles),
                             SizedBox(height: AppSizes.sm),
-                            ShadSelect<Role>.multiple(
+                            ShadSelect<Role>.multipleWithSearch(
+                              onSearchChanged: (value) {
+                                _searchInRoles.value = false;
+                                if (value.isNotEmpty) {
+                                  _searchInRoles.value = true;
+                                  _searchResultsRoles.value = userController
+                                      .roles
+                                      .where((element) =>
+                                          searchRoles(element, value))
+                                      .toList();
+                                }
+                              },
                               enabled: widget.editable,
                               closeOnSelect: false,
                               onChanged: (v) {
@@ -345,7 +379,10 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                               anchor: ShadAnchorAuto(
                                 preferBelow: false,
                               ),
-                              options: userController.roles.map(
+                              options: (_searchInMonitorValues.value
+                                      ? _searchResultsRoles
+                                      : userController.roles)
+                                  .map(
                                 (r) => ShadOption(
                                   value: r,
                                   child: Text(r.name,
@@ -399,7 +436,17 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                             children: [
                               Text(strings.value.sendThisAlertToUsers),
                               SizedBox(height: AppSizes.sm),
-                              ShadSelect<User>.multiple(
+                              ShadSelect<User>.multipleWithSearch(
+                                onSearchChanged: (value) {
+                                  _searchInUsers.value = false;
+                                  if (value.isNotEmpty) {
+                                    _searchInUsers.value = true;
+                                    _searchResultsUsers.value = _users
+                                        .where((element) =>
+                                            searchUsers(element, value))
+                                        .toList();
+                                  }
+                                },
                                 enabled: widget.editable,
                                 onChanged: (v) {
                                   sendToUsers.clear();
@@ -410,7 +457,10 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                                 anchor: ShadAnchorAuto(
                                   preferBelow: false,
                                 ),
-                                options: _users.map(
+                                options: (_searchInUsers.value
+                                        ? _searchResultsUsers
+                                        : _users)
+                                    .map(
                                   (user) => ShadOption(
                                     value: user,
                                     child: Text(getUserName(user),
