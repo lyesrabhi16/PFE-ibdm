@@ -38,19 +38,28 @@ def after_retry_log(*args):
     after=after_retry_log,
 )
 def sendEmailWithFile(file, users, email, provider=None, **kwargs):
-    provider_str = provider.host if provider else "DEFAULT PROVIDER" 
-    email_message = EmailMessage(**kwargs)
-    logging.info(f"emailScheduler# {provider_str}: sending email {email_message.subject} to '{email_message.to}'")
-    email_message.content_subtype = "html"
-    if file is not None:
-        email_message.attach_file(file)
-    if provider:
-        email_message.connection = provider
-    email_message.send()
-    for user in users:
-        sentEmail.objects.create(temps_envoi=datetime.now(), receptionist=user, schedule=email)
-    logging.info(f"emailScheduler# {provider_str}: email {email_message.subject} sent to '{email_message.to}'")
-    
+    try:
+        provider_str = provider.host if provider else "DEFAULT PROVIDER" 
+        email_message = EmailMessage(**kwargs)
+        # set priority to high
+        email_message.extra_headers["X-Priority"] = 2
+
+        logging.info(f"emailScheduler# {provider_str}: sending email {email_message.subject} to '{email_message.to}'")
+        email_message.content_subtype = "html"
+        if file is not None:
+            email_message.attach_file(file)
+        if provider:
+            email_message.connection = provider
+        email_message.send()
+        for user in users:
+            sentEmail.objects.create(temps_envoi=datetime.now(), receptionist=user, schedule=email)
+        logging.info(f"emailScheduler# {provider_str}: email {email_message.subject} sent to '{email_message.to}'")
+    except Exception as e:
+        if provider:
+            logging.error(f"emailScheduler# {provider_str}: error sending email {email_message.subject} to '{email_message.to}': {e}")
+        else:
+            logging.info("emailScheduler# trying using secondary provider")
+            sendEmailWithFile(file, users, email, provider=settings.EMAIL_SECONDARY_PROVIDER, **kwargs)
 def sendEmail(email: EmailSchedule, schedule_next=True):
     logging.info(f"emailScheduler# send email: {email}")
     emails_in_process.add(email)
@@ -77,18 +86,6 @@ def sendEmail(email: EmailSchedule, schedule_next=True):
         "from_email":settings.EMAIL_OF_SENDER,
         "to": send_to,
     }).start()
-    threading.Thread(
-        target=sendEmailWithFile,kwargs={
-        "file": file,
-        "users": send_to,
-        "email": email,
-        "provider": settings.EMAIL_SECONDARY_PROVIDER,
-        "subject":f"IBDM {subject}",
-        "body": message,
-        "from_email":settings.EMAIL_OF_SENDER,
-        "to": send_to
-    }).start()
-
     if email.next_run_time is None:
         raise ValueError("emailScheduler# next_run_time is None, how did this happen?")
     if schedule_next:
