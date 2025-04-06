@@ -24,6 +24,8 @@ openpyxl = "*"
 whitenoise = "*"
 django-cachalot = "*"
 tenacity = "*"
+psutils = "*"
+psutil = "*"
 
 [requires]
 python_version = "3.12.9"

@@ -148,6 +148,7 @@ class UserForm extends StatelessWidget {
         key: formKeyAddUser,
         onChanged: () {
           logger.e("form changed: $_addUserSuperior");
+          print("password before call: ${addUserPasswordController.text}");
           onAddUser?.call(
             addUserEmailController.text,
             addUserNameController.text,
@@ -304,6 +305,22 @@ class UserForm extends StatelessWidget {
               ShadInputFormField(
                 enabled: editable,
                 controller: addUserPasswordController,
+                onChanged: (v) {
+                  print(
+                      "passwordController: ${addUserPasswordController.text}");
+                  onAddUser?.call(
+                    addUserEmailController.text,
+                    addUserNameController.text,
+                    addUserPasswordController.text,
+                    addUserPhoneController.text,
+                    userRole.value!,
+                    _addUserSuperior,
+                    addFirstNameController.text,
+                    addLastNameController.text,
+                    _addUserAvatarBytes,
+                    _addUserAvatarFile,
+                  );
+                },
                 keyboardType: TextInputType.visiblePassword,
                 validator: (v) => AppValidators.customPasswordValidator(v,
                     optional: isEditing),
