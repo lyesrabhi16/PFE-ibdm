@@ -330,7 +330,8 @@ logging.addLevelName(13, "SIROPERIE")
 logging.addLevelName(14, "FILTRATION")
 logging.addLevelName(15, "UTILITE")
 
-LOGGING = None if DEBUG else {
+# sourcery skip: swap-if-expression
+LOGGING = None if not Env.LOG_TO_FILES else {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
@@ -427,6 +428,12 @@ LOGGING = None if DEBUG else {
             'formatter': 'verbose',
             'filters': ['monitors_filter'],
         },
+        "file_system_monitor":{
+            'class': "logging.FileHandler",
+            'filename': os.path.join(LOG_DIR, 'system_monitor.log'),
+            'formatter': 'verbose',
+            'filters': ['system_monitor_filter'],
+        },
     },
     "root": {
         "level": "DEBUG",
@@ -440,7 +447,7 @@ LOGGING = None if DEBUG else {
         'django': {
             'handlers': [
                             "file_emails", "file_emails_broadcast", "file_utilite_broadcast", "file_filtration_broadcast", "file_sucre_broadcast",
-                            "file_monitors"
+                            "file_monitors", "file_system_monitor"
                         ],
             'level': 'DEBUG',
             'propagate': True,
@@ -505,6 +512,10 @@ LOGGING = None if DEBUG else {
                     "genericMonitor","sucreMonitor","niveauMonitor","co2IfruitMonitor","utiliteMonitor", "volumeMonitor",
                     "Pres_CondMonitor", "debitMonitor"
                 ])
+        },
+        'system_monitor_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_tags(record, ["system_monitor"])
         },
     },
 }
