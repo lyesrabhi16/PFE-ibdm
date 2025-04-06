@@ -14,16 +14,8 @@ from django.db import connections
 from django.conf import settings
 from api_v1.env import Env
 from redis import Redis
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler("system_monitor.log"),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger("monitor")
+
+from logs.logging import logger
 
 # Path to store status data
 STATUS_FILE = os.path.join(settings.BASE_DIR, 'status_data.json')
@@ -120,7 +112,7 @@ def check_db_connections():
             timeout_wrapper(lambda: connections[db_name].cursor(), timeout=timeout)
             results[db_name]="CONNECTED"
         except Exception as e:
-            logger.error(f"Database connection error for {db_name}: {str(e)}")
+            logger.error(f"system_monitor# Database connection error for {db_name}: {str(e)}")
             results[db_name]="DISCONNECTED"
 
     def check_redis_connection(results, db_name="ibdm_redis"):
@@ -174,18 +166,18 @@ def system_monitor():
             "system_info": system_info,
             "databases": db_connections,
         }
-        
+
         status_data["elapsed_time"] = f"{(datetime.now() - start_time).total_seconds()}s"
         # Write to temporary file first to avoid partial writes
         temp_file = f"{STATUS_FILE}.tmp"
         with open(temp_file, 'w') as f:
             json.dump(status_data, f, indent=4, default=str)
-        
+
         # Atomic rename to avoid race conditions
         os.replace(temp_file, STATUS_FILE)
-        logger.info(f"Status data saved to {STATUS_FILE}")
-        logger.info("Monitoring cycle completed successfully")
+        logger.info(f"system_monitor# Status data saved to {STATUS_FILE}")
+        logger.info("system_monitor# Monitoring cycle completed successfully")
     except Exception as e:
-        logger.error(f"Error in monitoring cycle: {str(e)}")
-        logger.error(traceback.format_exc())
+        logger.error(f"system_monitor# Error in monitoring cycle: {str(e)}")
+        logger.error(f"system_monitor# {traceback.format_exc()}")
 

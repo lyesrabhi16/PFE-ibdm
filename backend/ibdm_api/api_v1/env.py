@@ -16,7 +16,7 @@ class Env:
     SYSTEM_MONITOR_DB_TIMEOUT = config("SYSTEM_MONITOR_DB_TIMEOUT", default=3, cast=int)
     ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=lambda v: [s.strip() for s in v.split(",")])
     CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="*", cast=lambda v: [s.strip() for s in v.split(",")])
-
+    LOG_TO_FILES = config("LOG_TO_FILES", default=True, cast=bool)
 
     # ibdm redis db
     DATABASE_IBDM_REDIS_HOST = config("DATABASE_IBDM_REDIS_HOST")
