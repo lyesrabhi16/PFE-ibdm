@@ -1165,7 +1165,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               onChanged: (v) {
                 EmailActions.changeAlertEnabledState(
                   context,
-                  alertId: e.id,
+                  alert: e,
                   enabled: v ?? false,
                   onSuccess: () {
                     _loadAlerts();

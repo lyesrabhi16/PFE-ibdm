@@ -1434,11 +1434,12 @@ class _UsersPageState extends State<UsersPage> {
                             icon: Icon(Icons.edit),
                             child: Text(strings.value.save),
                             onPressed: () {
+                              logger.d("saving pass: $password");
                               onSaveButtonPressed(
                                 context: context,
                                 user: newUser,
                                 password:
-                                    password != null && password.isNotEmpty
+                                    (password != null) && (password!.isNotEmpty)
                                         ? password
                                         : null,
                                 userAvatarBytes: editUserAvatarBytes,
@@ -1474,12 +1475,13 @@ class _UsersPageState extends State<UsersPage> {
               showPlaceHolders: false,
               role: role,
               user: user,
-              onAddUser: (email, username, password, phone, role, superior,
+              onAddUser: (email, username, fPassword, phone, role, superior,
                       firstName, lastName, avatarBytes, avatarFile) =>
                   {
                 editUserAvatarBytes = avatarBytes,
                 editUserAvatarFile = avatarFile,
-                password = password,
+                print("password in onAddUser Func: $password"),
+                password = fPassword,
                 logger.e("superior: $superior"),
                 UsersPage.addUserSuperior = superior,
                 newUser = User(
@@ -1762,6 +1764,7 @@ class _UsersPageState extends State<UsersPage> {
       logger.e(
           "${strings.value.avatar} : ${userAvatarBytes != null} ${UsersPage.addUserAvatarBytesFileName} ${userAvatarFile != null}");
       late final User res;
+      print("password in onSaveButtonPressed: $password");
       if (kIsWeb) {
         res = await api.partialUpdateUserOnWeb(
           id: user.userId,

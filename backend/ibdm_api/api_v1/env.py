@@ -12,6 +12,11 @@ class Env:
     SECRET_KEY = config("SECRET_KEY")
     ENV_MODE = config("ENV_MODE", default="development", cast=Choices(EnvModes.getValues()))
     DEBUG = config("DEBUG", default=True, cast=bool)
+    VERSION = config("VERSION", default="1.0.0")
+    SYSTEM_MONITOR_DB_TIMEOUT = config("SYSTEM_MONITOR_DB_TIMEOUT", default=3, cast=int)
+    ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=lambda v: [s.strip() for s in v.split(",")])
+    CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="*", cast=lambda v: [s.strip() for s in v.split(",")])
+
 
     # ibdm redis db
     DATABASE_IBDM_REDIS_HOST = config("DATABASE_IBDM_REDIS_HOST")

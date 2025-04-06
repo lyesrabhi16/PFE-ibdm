@@ -19,7 +19,7 @@ from api_v1.smtp_backend import EmailBackend
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-VERSION="1.0.0"
+VERSION=Env.VERSION
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -32,7 +32,7 @@ DEBUG = Env.DEBUG
 
 SECURE_SSL_REDIRECT = True
 
-ALLOWED_HOSTS = ["172.20.101.145"] + ["*"] if DEBUG else []
+ALLOWED_HOSTS = Env.ALLOWED_HOSTS
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = [
@@ -40,7 +40,7 @@ CORS_ALLOW_HEADERS = [
     "X-CSRFToken",
 ]
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = ["https://172.20.101.145:8443"]
+CSRF_TRUSTED_ORIGINS = Env.CSRF_TRUSTED_ORIGINS
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "None" if DEBUG else "Strict"

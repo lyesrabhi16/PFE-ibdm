@@ -144,7 +144,7 @@ class EmailActions {
 
   static Future<void> changeAlertEnabledState(
     BuildContext context, {
-    required int alertId,
+    required AlertEmail alert,
     required bool enabled,
     Function? onSuccess,
     Function? onFail,
@@ -167,8 +167,17 @@ class EmailActions {
       final api = await ApiClientInstance.getApiClient();
 
       await api.partialUpdateAlertEmail(
-          id: alertId,
+          id: alert.id,
           body: PatchedAlertEmailRequest(
+            customAlertMessage: alert.customAlertMessage,
+            dangerPoint: alert.dangerPoint,
+            dangerReminderInterval: alert.dangerReminderInterval,
+            warningPoint: alert.warningPoint,
+            warningReminderInterval: alert.warningReminderInterval,
+            monitoredValue: alert.monitoredValue,
+            monitorType: alert.monitorType,
+            sendToUsers: alert.sendToUsers,
+            sendToRoles: alert.sendToRoles,
             enabled: enabled,
           ));
       state.value = FutureState.success;
