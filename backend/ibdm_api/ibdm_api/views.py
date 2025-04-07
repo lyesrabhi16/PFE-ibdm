@@ -1,7 +1,5 @@
 import json
 import time
-import concurrent
-from django.db import connections
 from logs.logging import logger as logging
 import os
 from django.http import HttpResponse, JsonResponse
@@ -10,14 +8,12 @@ from django.shortcuts import render
 from ibdm_api.settings import BASE_DIR
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.types import OpenApiTypes
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework import permissions
 
 from django.conf import settings
-import platform
-import sys
-import psutil
 
-from channels.layers import get_channel_layer
+from api_v1.serializers import SystemStatusSerializer
 
 def index(request):
     return render(request, "web/index.html")
@@ -50,9 +46,12 @@ def getCA(request):
     summary="Get the server status",
     operation_id="getServerStatus",
     request=None,
-    responses=None,
+    responses={
+        200:SystemStatusSerializer
+    },
 )
 @api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
 def getServerStatus(request):
     # Path to status data file
     status_file = os.path.join(settings.BASE_DIR, 'status_data.json')
