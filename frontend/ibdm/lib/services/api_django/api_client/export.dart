@@ -62,6 +62,7 @@ export 'models/subordinate_and_superior_request.dart';
 export 'models/success_response.dart';
 export 'models/sucre.dart';
 export 'models/user.dart';
+export 'models/user_perms.dart';
 export 'models/user_serializer_with_subordinates.dart';
 export 'models/user_serializer_with_superiors.dart';
 export 'models/utilite.dart';

@@ -7,6 +7,7 @@ from users.models import SubordinateAndSuperior
 from .models import Role, User, UserManager
 
 
+
 class SuperiorsAndSubordinatesFieldsSerializerMixin():
     context = None
 
@@ -173,3 +174,7 @@ class GetSubordinateAndSuperiorIdResponseSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     class Meta:
         fields = ["id"]
+class UserPermsSerializer(serializers.Serializer):
+    perms = serializers.ListField(child=serializers.CharField(), allow_empty=True)
+    class Meta:
+        fields = ["perms"]

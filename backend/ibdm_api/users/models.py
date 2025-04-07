@@ -90,7 +90,7 @@ class SubordinateAndSuperior(models.Model):
     def __str__(self):
         return f"{self.superior.email} {self.superior.role} is superior to {self.subordinate.email} {self.subordinate.role}"
 
-    def clean(self):
+    def _check(self):
 
         if self.superior == self.subordinate:
             raise ValidationError("A user cannot be their own superior.")
@@ -104,9 +104,8 @@ class SubordinateAndSuperior(models.Model):
                 current_superior = SubordinateAndSuperior.objects.get(subordinate=current_superior).superior
             except SubordinateAndSuperior.DoesNotExist:
                 break
-
     def save(self, *args, **kwargs):
-        self.clean()
+        self._check()
         super().save(*args, **kwargs)
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -145,7 +144,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             return True
         
         return super().has_perm(perm, obj)
-
     class Meta:
         permissions = [
             ("can_view_users_page", "Can view users page"),
