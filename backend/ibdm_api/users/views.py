@@ -223,7 +223,6 @@ def getAllUserPerms(request: Request):
         user_perms = Permission.objects.filter(user=request.user).values_list("codename", flat=True)
         role_perms = Permission.objects.filter(group=request.user.role.group).values_list("codename", flat=True)
         perms = set().union(user_perms, role_perms)
-    print("perms", perms)
     return JsonResponse(UserPermsSerializer({
         "perms": perms
     }).data, status=200)
