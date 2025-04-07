@@ -1,12 +1,10 @@
 # monitor.py
-import concurrent
 import os
 import sys
 import json
 import platform
 import threading
 import psutil
-import logging
 import traceback
 from datetime import datetime
 
@@ -15,6 +13,7 @@ from django.conf import settings
 from api_v1.env import Env
 from redis import Redis
 
+from api_v1.sql import RAW_SQL
 from logs.logging import logger
 
 # Path to store status data
@@ -65,12 +64,6 @@ def get_system_info():
     system_info["boot_time"] = psutil.boot_time()
 
     # Network information
-    network_info = {}
-    for interface_name, interface_addresses in psutil.net_if_addrs().items():
-        for address in interface_addresses:
-            if str(address.family) == 'AddressFamily.AF_INET':
-                network_info[interface_name] = address.address
-    system_info["network_interfaces"] = network_info
     system_info["network_io_sent"] = psutil.net_io_counters().bytes_sent
     system_info["network_io_received"] = psutil.net_io_counters().bytes_recv
 
@@ -103,26 +96,66 @@ def check_db_connections():
     """Check all database connections"""
     start = datetime.now()
     db_cons_states = {}
-    timeout = 3  # Timeout in milliseconds
+    timeout = Env.SERVER_DB_CONNECTION_CHECK_TIMEOUT  # Timeout in seconds
     def check_db_connection(results, db_name):
         """Check a specific database connection with a timeout."""
-
+        status={}
         # Obtain a cursor using the modified options
         try:
             timeout_wrapper(lambda: connections[db_name].cursor(), timeout=timeout)
-            results[db_name]="CONNECTED"
+            status["state"]="CONNECTED"
         except Exception as e:
             logger.error(f"system_monitor# Database connection error for {db_name}: {str(e)}")
-            results[db_name]="DISCONNECTED"
+            status["state"]="DISCONNECTED"
+        if status["state"]=="CONNECTED":
+            try:
+                disk_usage_data = {}
+                def getDiskUsage(store_in):
+                    cursor = connections[db_name].cursor()
+                    cursor.execute(RAW_SQL.GET_DISK_USAGE)
+                    disk_usage_data = cursor.fetchall()
+                    for row in disk_usage_data:
+                        store_in[row[0]]={
+                            "used": row[1],
+                            "available": row[2],
+                            "total": row[2] + row[1],
+                            "percent": row[1] * 100 / row[2],
+                        }
+                    cursor.close()
 
+                timeout_wrapper(getDiskUsage, args=(disk_usage_data,), timeout=timeout)
+                
+                status["info"] = disk_usage_data
+                status["query"]="OK"
+            except Exception as e:
+                logger.error(f"system_monitor# Database query error for {db_name}: {str(e)}")
+                status["query"]="ERROR"
+        results[db_name] = status
     def check_redis_connection(results, db_name="ibdm_redis"):
         """Check Redis connection"""
+        status = {}
         try:
-            Redis(host=Env.DATABASE_IBDM_REDIS_HOST, port=Env.DATABASE_IBDM_REDIS_PORT, db=0, socket_connect_timeout=timeout).ping()
-            results[db_name]="CONNECTED"
+            redis_con = Redis(host=Env.DATABASE_IBDM_REDIS_HOST, port=Env.DATABASE_IBDM_REDIS_PORT, db=0, socket_connect_timeout=timeout)
+            redis_con.ping()
+            status["state"] ="CONNECTED"
+            memory_info = redis_con.info()
+            status["info"]= {
+                "ibdm_redis": {
+                    "used_memory": memory_info.get("used_memory", 0),
+                    "total_memory": memory_info.get("total_system_memory",0),
+                    "free_memory": memory_info.get("total_system_memory", 0)
+                    - memory_info.get("used_memory", 0),
+                    "percent": memory_info.get("used_memory", 0) * 100 / memory_info.get("total_system_memory", 1),
+                    "total_keys": memory_info.get("db0", {}).get("keys", 0),
+                    "uptime_in_seconds": memory_info.get("uptime_in_seconds", 0),
+                    "connected_clients": memory_info.get("connected_clients", 0),
+                }
+            }
+ 
         except Exception as e:
-            results[db_name]="DISCONNECTED"
-
+           status["state"] = "DISCONNECTED"
+        
+        results[db_name] = status
     # Create a dictionary to store the results
     results = {}
     # Check database connections

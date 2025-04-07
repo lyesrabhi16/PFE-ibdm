@@ -17,6 +17,7 @@ class Env:
     ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=lambda v: [s.strip() for s in v.split(",")])
     CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="https://localhost:8443", cast=lambda v: [s.strip() for s in v.split(",")])
     LOG_TO_FILES = config("LOG_TO_FILES", default=True, cast=bool)
+    SERVER_DB_CONNECTION_CHECK_TIMEOUT = config("SERVER_DB_CONNECTION_CHECK_TIMEOUT", default=3, cast=int) # IN SECONDS
 
     # ibdm redis db
     DATABASE_IBDM_REDIS_HOST = config("DATABASE_IBDM_REDIS_HOST")
