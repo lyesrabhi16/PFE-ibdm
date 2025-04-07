@@ -50,7 +50,7 @@ def getCA(request):
     summary="Get the server status",
     operation_id="getServerStatus",
     request=None,
-    responses={},
+    responses=None,
 )
 @api_view(["GET"])
 def getServerStatus(request):
