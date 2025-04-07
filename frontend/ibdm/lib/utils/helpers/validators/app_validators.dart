@@ -17,13 +17,9 @@ class AppValidators {
   }
 
   static String? roleSelectionValidator(String? v) {
-    return null; /* 
     return FormBuilderValidators.compose([
       FormBuilderValidators.required(),
-      FormBuilderValidators.containsElement(
-          Role.values.map((r) => r.name).toList(),
-          errorText: "Invalid Role")
-    ])(v); */
+    ])(v);
   }
 
   static String? perPageValidator(String? value, Rx<bool> expandPerPage) {
@@ -49,12 +45,12 @@ class AppValidators {
       String? userId, String? superiorid, List<User> superiorOptions) {
     UserController userController = Get.find<UserController>();
     final strings = getTranslations(Get.context!);
-    
-    if (userController.user?.userId.toString() == superiorid) {
+    if (userController.user?.userId.toString() == superiorid &&
+        userId == userController.user?.userId.toString()) {
       return strings.cannotBeASuperiorToYourself;
     }
 
-    if ( userId != null && superiorid != null &&  userId == superiorid) {
+    if (userId != null && superiorid != null && userId == superiorid) {
       return strings.cannotBeASuperiorForHimself;
     }
 

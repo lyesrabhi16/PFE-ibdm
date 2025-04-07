@@ -60,6 +60,7 @@ import '../models/subordinate_and_superior_request.dart';
 import '../models/success_response.dart';
 import '../models/sucre.dart';
 import '../models/user.dart';
+import '../models/user_perms.dart';
 import '../models/utilite.dart';
 import '../models/volume.dart';
 
@@ -621,6 +622,9 @@ abstract class IbdmApiClient {
     @Path('superior') required int superior,
   });
 
+  @GET('/api/v1/user-management/user/perms/')
+  Future<UserPerms> getAllUserPerms();
+
   /// API endpoint that allows users to be viewed or edited.
   ///
   /// [enablePagination] - Enable or disable pagination.
@@ -797,4 +801,8 @@ abstract class IbdmApiClient {
   /// Get the CA certificate
   @GET('/ca')
   Future<String> getCA();
+
+  /// Get the server status
+  @GET('/status')
+  Future<void> getServerStatus();
 }

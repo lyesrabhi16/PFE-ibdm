@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from users.views import GroupViewSet, PermissionViewSet, RoleViewSet, SubordinateAndSuperiorViewSet, UserViewSet, getSubordinateAndSuperiorId
+from users.views import GroupViewSet, PermissionViewSet, RoleViewSet, SubordinateAndSuperiorViewSet, UserViewSet, getAllUserPerms, getSubordinateAndSuperiorId
 
 
 router = routers.DefaultRouter(
@@ -17,5 +17,6 @@ router.register(r'subordinates_superiors', SubordinateAndSuperiorViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path("subordinates_superiors/<int:subordinate>/<int:superior>/", getSubordinateAndSuperiorId, name="Get Subordinate and Superior Id"),
+    path("user/perms/", getAllUserPerms, name="Get All User Permissions"),
     path('', include(router.urls), name="User Management Api Root"),
 ]
