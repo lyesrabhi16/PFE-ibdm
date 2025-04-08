@@ -293,21 +293,27 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                     ),
                     child: _isDataLoading.value
                         ? Center(child: CircularProgressIndicator())
-                        : DataTable2(
-                            columnSpacing: _getColumnSpacing(),
-                            onSelectAll: (selectedAll) => selectedAll == true
-                                ? _selectedSchedules.addAll(schedules)
-                                : _selectedSchedules.clear(),
-                            showCheckboxColumn: _showCheckboxColumn.value,
-                            sortColumnIndex: 0,
-                            dataRowColor: WidgetStateProperty.fromMap({
-                              WidgetState.hovered: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                              WidgetState.focused: colorScheme.primaryContainer,
-                            }),
-                            columns: _getCols(),
-                            rows: _getRows(),
+                        : ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: 300,
+                            ),
+                            child: DataTable2(
+                              columnSpacing: _getColumnSpacing(),
+                              onSelectAll: (selectedAll) => selectedAll == true
+                                  ? _selectedSchedules.addAll(schedules)
+                                  : _selectedSchedules.clear(),
+                              showCheckboxColumn: _showCheckboxColumn.value,
+                              sortColumnIndex: 0,
+                              dataRowColor: WidgetStateProperty.fromMap({
+                                WidgetState.hovered: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                WidgetState.focused:
+                                    colorScheme.primaryContainer,
+                              }),
+                              columns: _getCols(),
+                              rows: _getRows(),
+                            ),
                           ),
                   ),
                 ),

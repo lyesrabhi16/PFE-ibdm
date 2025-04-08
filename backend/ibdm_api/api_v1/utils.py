@@ -1,8 +1,32 @@
 from datetime import datetime, timedelta
+import os
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 
 from logs.logging import logger as logging
+from django.conf import settings
+import json
+import time
+
+
+def getServerStatusFromFile():
+    status_file = os.path.join(settings.BASE_DIR, 'status_data.json')  # noqa: F821
+    
+    if os.path.exists(status_file):
+            file_age = time.time() - os.path.getmtime(status_file)
+            
+            # Read status data from file
+            with open(status_file, 'r') as f:
+                status_data = json.load(f)
+            
+            # Add file age information
+            status_data['status_file_age_seconds'] = file_age
+            
+            # If file is too old, add a warning
+            if file_age > 300:  # 5 minutes
+                status_data['warning'] = "Status data is more than 5 minutes old"
+            return status_data
+    return None
 
 def get_value_at(model, date):
 

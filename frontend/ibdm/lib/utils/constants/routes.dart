@@ -7,6 +7,7 @@ import 'package:ibdm/pages/co2/co2.dart';
 import 'package:ibdm/pages/filtration.dart/filtration.dart';
 import 'package:ibdm/pages/no_permissions.dart';
 import 'package:ibdm/pages/not_found.dart';
+import 'package:ibdm/pages/server-status/server_status.dart';
 import 'package:ibdm/pages/settings/about_page.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
@@ -44,6 +45,7 @@ class Routes {
   static const String help = '/settings/help';
   static const String utilite = '/utilite';
   static const String co2 = '/co2';
+  static const String serverStatus = "/server-status";
   static const String noPermissions = "/no-permissions";
   static const String notFound = "/404";
 
@@ -83,6 +85,12 @@ class Routes {
           icon: LucideIcons.cloud,
           route: Routes.co2,
           page: routePages[Routes.co2]!,
+        ).withPermission(Permissions.viewCo2Page),
+        Destination(
+          title: "Server Status",
+          icon: LucideIcons.server,
+          route: Routes.serverStatus,
+          page: routePages[Routes.serverStatus]!,
         ).withPermission(Permissions.viewCo2Page),
         Destination(
           title: "Settings",
@@ -140,6 +148,9 @@ class Routes {
     ),
     Routes.co2: RoutePermissions(
       requiredPermissions: [Permissions.viewCo2Page],
+    ),
+    Routes.serverStatus: RoutePermissions(
+      requiredPermissions: [],
     ),
   };
   static final routePages = {
@@ -200,6 +211,15 @@ class Routes {
       middlewares: [
         ProtectedRouteMiddleware(
           routePermissions: routePermissions[Routes.siroperie],
+        )
+      ],
+    ),
+    Routes.serverStatus: GetPage(
+      name: Routes.serverStatus,
+      page: () => ServerStatusPage(),
+      middlewares: [
+        ProtectedRouteMiddleware(
+          routePermissions: routePermissions[Routes.serverStatus],
         )
       ],
     ),

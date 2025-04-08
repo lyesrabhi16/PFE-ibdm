@@ -1559,9 +1559,9 @@ class _UsersPageState extends State<UsersPage> {
               if (!loadedUserDetails.value ||
                   !loadedRoles.value ||
                   !_loadedAddUserSuperiorOptions.value) {
-                print("loadedUserDetails : ${loadedUserDetails.value}");
-                print("loadedRoles : ${loadedRoles.value}");
-                print(
+                printMessage("loadedUserDetails : ${loadedUserDetails.value}");
+                printMessage("loadedRoles : ${loadedRoles.value}");
+                printMessage(
                     "_loadedAddUserSuperiorOptions : ${_loadedAddUserSuperiorOptions.value}");
                 return Center(
                   child: CircularProgressIndicator(),
@@ -1861,7 +1861,6 @@ class _UsersPageState extends State<UsersPage> {
       logger.e(
           "${strings.value.avatar} : ${userAvatarBytes != null} ${UsersPage.addUserAvatarBytesFileName} ${userAvatarFile != null}");
       late final User res;
-      print("password in onSaveButtonPressed: $password");
       if (kIsWeb) {
         res = await api.partialUpdateUserOnWeb(
           id: user.userId,

@@ -59,6 +59,7 @@ import '../models/subordinate_and_superior.dart';
 import '../models/subordinate_and_superior_request.dart';
 import '../models/success_response.dart';
 import '../models/sucre.dart';
+import '../models/system_status.dart';
 import '../models/user.dart';
 import '../models/user_perms.dart';
 import '../models/utilite.dart';
@@ -804,5 +805,5 @@ abstract class IbdmApiClient {
 
   /// Get the server status
   @GET('/status')
-  Future<void> getServerStatus();
+  Future<SystemStatus> getServerStatus();
 }
