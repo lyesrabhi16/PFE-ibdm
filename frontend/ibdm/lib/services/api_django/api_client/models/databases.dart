@@ -2,7 +2,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, unused_import
 
-import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'redis_database.dart';
