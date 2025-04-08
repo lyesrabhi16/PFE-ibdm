@@ -37,7 +37,6 @@ def get_system_info():
     system_info["cpu_architecture"] = platform.architecture()[0]
     system_info["cpu_model"] = platform.processor()
     system_info["cpu_frequency"] = psutil.cpu_freq().current if psutil.cpu_freq() else None
-    system_info["uptime"] = (datetime.now() - datetime.fromtimestamp(psutil.boot_time())).total_seconds()
     # Memory information
     system_info["total_memory"] = psutil.virtual_memory().total
     system_info["available_memory"] = psutil.virtual_memory().available
@@ -61,12 +60,16 @@ def get_system_info():
 
 
     # System uptime
-    system_info["boot_time"] = psutil.boot_time()
+    system_info["uptime"] = (datetime.now() - datetime.fromtimestamp(psutil.boot_time())).total_seconds()
+    system_info["boot_time"] = datetime.fromtimestamp(psutil.boot_time()).strftime('%Y-%m-%d %H:%M:%S')
+    system_info["system_time"] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     # Network information
     system_info["network_io_sent"] = psutil.net_io_counters().bytes_sent
     system_info["network_io_received"] = psutil.net_io_counters().bytes_recv
-
+    system_info["ip_addresses"] = {
+        name: address[1][1] for name, address in psutil.net_if_addrs().items()
+    }
     return (datetime.now() - start).total_seconds(), system_info
 
 

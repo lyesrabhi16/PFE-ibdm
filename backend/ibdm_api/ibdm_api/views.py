@@ -1,5 +1,4 @@
-import json
-import time
+from api_v1.utils import getServerStatusFromFile
 from logs.logging import logger as logging
 import os
 from django.http import HttpResponse, JsonResponse
@@ -52,26 +51,10 @@ def getCA(request):
 )
 @api_view(["GET"])
 @permission_classes([permissions.IsAuthenticated])
-def getServerStatus(request):
-    # Path to status data file
-    status_file = os.path.join(settings.BASE_DIR, 'status_data.json')
-    
+def getServerStatus(request):    
     try:
-        # Check if status file exists and is recent
-        if os.path.exists(status_file):
-            file_age = time.time() - os.path.getmtime(status_file)
-            
-            # Read status data from file
-            with open(status_file, 'r') as f:
-                status_data = json.load(f)
-            
-            # Add file age information
-            status_data['status_file_age_seconds'] = file_age
-            
-            # If file is too old, add a warning
-            if file_age > 300:  # 5 minutes
-                status_data['warning'] = "Status data is more than 5 minutes old"
-            
+        status_data = getServerStatusFromFile()
+        if status_data is not None:
             return JsonResponse(status_data, status=200)
         else:
             # If status file doesn't exist, return basic information
@@ -95,5 +78,6 @@ def getServerStatus(request):
             "description": "Server is running, but detailed status is unavailable",
             "error": str(e)
         }, status=200)
+
 
 

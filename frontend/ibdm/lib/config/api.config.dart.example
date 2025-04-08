@@ -12,4 +12,6 @@ class ApiConfig {
       'wss://${address_or_domain}/ws/emails/sent';
   static String utilite_broadcast_websocket_url =
       'wss://${address_or_domain}/ws/utilite';
+  static String status_broadcast_websocket_url =
+      'wss://${address_or_domain}/ws/status';
 }

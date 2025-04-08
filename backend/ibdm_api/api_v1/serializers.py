@@ -28,7 +28,6 @@ class SystemInfoSerializer(serializers.Serializer):
     cpu_architecture = serializers.CharField()
     cpu_model = serializers.CharField()
     cpu_frequency = serializers.FloatField()
-    uptime = serializers.FloatField()
     total_memory = serializers.IntegerField()
     available_memory = serializers.IntegerField()
     memory_percent_used = serializers.FloatField()
@@ -43,9 +42,12 @@ class SystemInfoSerializer(serializers.Serializer):
     disk_io_write_count = serializers.IntegerField()
     disk_io_read_bytes = serializers.IntegerField()
     disk_io_write_bytes = serializers.IntegerField()
-    boot_time = serializers.FloatField()
+    uptime = serializers.FloatField()
+    boot_time = serializers.CharField()
+    system_time = serializers.CharField()
     network_io_sent = serializers.IntegerField()
     network_io_received = serializers.IntegerField()
+    ip_addresses = serializers.DictField(child=serializers.CharField())
 
 
 class DatabaseStorageInfoSerializer(serializers.Serializer):
@@ -67,7 +69,7 @@ class RedisInfoSerializer(serializers.Serializer):
 
 class StandardDatabaseSerializer(serializers.Serializer):
     state = serializers.CharField()
-    info = serializers.DictField(child=serializers.DictField(child=DatabaseStorageInfoSerializer()))
+    info = serializers.DictField(child=DatabaseStorageInfoSerializer())
     query = serializers.CharField()
 
 

@@ -10,6 +10,7 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/initial_binding.dart';
 import 'package:ibdm/pages/co2/co2.dart';
 import 'package:ibdm/pages/filtration.dart/filtration.dart';
+import 'package:ibdm/pages/server-status/server_status.dart';
 import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
 import 'package:ibdm/pages/utilite/utilite.dart';
@@ -102,6 +103,13 @@ class MyApp extends StatelessWidget {
                 logger.e("closing co2 channel");
                 CO2Page.channel?.sink.close();
                 CO2Page.stream = null;
+              }
+
+              if ((routing?.current != Routes.serverStatus) &&
+                  (ServerStatusPage.stream != null)) {
+                logger.e("closing status channel");
+                ServerStatusPage.channel?.sink.close();
+                ServerStatusPage.stream = null;
               }
 
               logger.d("Route ${routing?.current}");
