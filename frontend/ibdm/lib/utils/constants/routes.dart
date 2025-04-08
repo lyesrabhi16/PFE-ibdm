@@ -91,7 +91,7 @@ class Routes {
           icon: LucideIcons.server,
           route: Routes.serverStatus,
           page: routePages[Routes.serverStatus]!,
-        ).withPermission(Permissions.viewCo2Page),
+        ).withPermission(Permissions.viewServerStatusPage),
         Destination(
           title: "Settings",
           icon: Icons.settings,
@@ -150,7 +150,7 @@ class Routes {
       requiredPermissions: [Permissions.viewCo2Page],
     ),
     Routes.serverStatus: RoutePermissions(
-      requiredPermissions: [],
+      requiredPermissions: [Permissions.viewServerStatusPage],
     ),
   };
   static final routePages = {

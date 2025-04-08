@@ -230,6 +230,11 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
                 child: FutureBuilder(
                     future: Future.wait([load()]),
                     builder: (context, _) {
+                      if (!loaded.value) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
                       return StreamBuilder(
                         stream: ServerStatusPage.stream,
                         builder: (context, snapshot) {
