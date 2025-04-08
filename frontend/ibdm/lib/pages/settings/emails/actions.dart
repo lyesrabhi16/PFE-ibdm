@@ -45,8 +45,9 @@ class EmailActions {
           monitorType: monitorType != null
               ? MonitorTypeEnum.fromJson(monitorType)
               : null,
-          dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
-          warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
+          dangerPoint: dangerPoint != null ? double.parse(dangerPoint) : null,
+          warningPoint:
+              warningPoint != null ? double.parse(warningPoint) : null,
           dangerReminderInterval: dangerAlertInterval != null
               ? int.parse(dangerAlertInterval)
               : null,
@@ -113,8 +114,9 @@ class EmailActions {
             monitorType: monitorType != null
                 ? MonitorTypeEnum.fromJson(monitorType)
                 : null,
-            dangerPoint: dangerPoint != null ? int.parse(dangerPoint) : null,
-            warningPoint: warningPoint != null ? int.parse(warningPoint) : null,
+            dangerPoint: dangerPoint != null ? double.parse(dangerPoint) : null,
+            warningPoint:
+                warningPoint != null ? double.parse(warningPoint) : null,
             dangerReminderInterval: dangerAlertInterval != null
                 ? int.parse(dangerAlertInterval)
                 : null,
