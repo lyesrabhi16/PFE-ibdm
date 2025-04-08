@@ -400,6 +400,12 @@ LOGGING = None if not Env.LOG_TO_FILES else {
             'formatter': 'verbose',
             'filters': ['broadcast_sucre_filter'],
         },
+        'file_status_broadcast': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'status_broadcast.log'),
+            'formatter': 'verbose',
+            'filters': ['broadcast_status_filter'],
+        },
         'file_filtration_broadcast': {
             'class': 'logging.FileHandler',
             'filename': os.path.join(LOG_DIR, 'filtration_broadcast.log'),
@@ -446,7 +452,7 @@ LOGGING = None if not Env.LOG_TO_FILES else {
     'loggers': {
         'django': {
             'handlers': [
-                            "file_emails", "file_emails_broadcast", "file_utilite_broadcast", "file_filtration_broadcast", "file_sucre_broadcast",
+                            "file_emails", "file_emails_broadcast", "file_status_broadcast", "file_utilite_broadcast", "file_filtration_broadcast", "file_sucre_broadcast",
                             "file_monitors", "file_system_monitor"
                         ],
             'level': 'DEBUG',
@@ -497,6 +503,10 @@ LOGGING = None if not Env.LOG_TO_FILES else {
         'broadcast_sucre_filter': {
             '()': 'django.utils.log.CallbackFilter',
             'callback': lambda record: require_tags(record, ["broadcast_sucre"])
+        },
+        'broadcast_status_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_tags(record, ["broadcast_status"])
         },
         'broadcast_filtration_filter': {
             '()': 'django.utils.log.CallbackFilter',

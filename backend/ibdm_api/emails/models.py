@@ -210,8 +210,8 @@ class sentEmail(models.Model):
 class AlertEmail(models.Model):
     monitored_value = models.CharField(max_length=255,choices=ALL_MONITORED_VALUES, unique=True)
     monitor_type = models.CharField(max_length=255, choices=[('ASC', 'ASC'), ('DESC','DESC')], default='DESC')
-    danger_point = models.IntegerField(default=10)
-    warning_point = models.IntegerField(default=25)
+    danger_point = models.FloatField(default=10)
+    warning_point = models.FloatField(default=25)
     
     danger_reminder_interval = models.IntegerField(default=1)
     warning_reminder_interval = models.IntegerField(default=7)

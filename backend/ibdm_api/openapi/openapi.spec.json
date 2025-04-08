@@ -3906,12 +3906,18 @@
                 "security": [
                     {
                         "MySessionAuthentication": []
-                    },
-                    {}
+                    }
                 ],
                 "responses": {
                     "200": {
-                        "description": "No response body"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SystemStatus"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -3942,15 +3948,13 @@
                         ]
                     },
                     "danger_point": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": -2147483648,
+                        "type": "number",
+                        "format": "double",
                         "nullable": true
                     },
                     "warning_point": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": -2147483648,
+                        "type": "number",
+                        "format": "double",
                         "nullable": true
                     },
                     "danger_reminder_interval": {
@@ -4012,15 +4016,13 @@
                         ]
                     },
                     "danger_point": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": -2147483648,
+                        "type": "number",
+                        "format": "double",
                         "nullable": true
                     },
                     "warning_point": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": -2147483648,
+                        "type": "number",
+                        "format": "double",
                         "nullable": true
                     },
                     "danger_reminder_interval": {
@@ -4186,12 +4188,12 @@
                     "utilite.ut_sid_pg",
                     "utilite.ut_sid_tt",
                     "utilite.ut_sid_tc",
+                    "sucre.total.adue",
                     "sucre.total.tetra",
-                    "sucre.total",
-                    "sucre.total.adue"
+                    "sucre.total"
                 ],
                 "type": "string",
-                "description": "* `sucre.t_s21` - sucre.t_s21\n* `sucre.t_s22` - sucre.t_s22\n* `sucre.t_s23` - sucre.t_s23\n* `sucre.t_s24` - sucre.t_s24\n* `sucre.t_s25` - sucre.t_s25\n* `sucre.a_t02` - sucre.a_t02\n* `sucre.a_t03` - sucre.a_t03\n* `sucre.a_t04` - sucre.a_t04\n* `sucre.a_t05` - sucre.a_t05\n* `sucre.a_t06` - sucre.a_t06\n* `niveau.niv_f1` - niveau.niv_f2\n* `niveau.niv_uf1` - niveau.niv_uf1\n* `niveau.niv_uf2` - niveau.niv_uf2\n* `niveau.niv_os1` - niveau.niv_os1\n* `niveau.niv_os2` - niveau.niv_os2\n* `niveau.niv_os3` - niveau.niv_os3\n* `niveau.niv_os4` - niveau.niv_os4\n* `niveau.niv_os5` - niveau.niv_os5\n* `niveau.niv_os6` - niveau.niv_os6\n* `niveau.niv_os7` - niveau.niv_os7\n* `debit.d_F1` - debit.d_F1\n* `debit.d_uf1` - debit.d_uf1\n* `debit.d_uf2` - debit.d_uf2\n* `debit.d_uf3` - debit.d_uf3\n* `debit.d_uf4` - debit.d_uf4\n* `debit.d_uf5` - debit.d_uf5\n* `debit.d_uf6` - debit.d_uf6\n* `debit.d_os1` - debit.d_os1\n* `debit.d_os2` - debit.d_os2\n* `debit.d_os3` - debit.d_os3\n* `debit.d_os4` - debit.d_os4\n* `debit.d_os5` - debit.d_os5\n* `debit.d_os6` - debit.d_os6\n* `debit.d_os7` - debit.d_os7\n* `debit.d_os8` - debit.d_os8\n* `debit.d_os9` - debit.d_os9\n* `Pres_Cond.p_uf` - Pres_Cond.p_uf\n* `Pres_Cond.p_uf4` - Pres_Cond.p_uf4\n* `Pres_Cond.p_uf6` - Pres_Cond.p_uf6\n* `Pres_Cond.p_os1` - Pres_Cond.p_os1\n* `Pres_Cond.p_os2` - Pres_Cond.p_os2\n* `Pres_Cond.p_os3` - Pres_Cond.p_os3\n* `Pres_Cond.p_os4` - Pres_Cond.p_os4\n* `Pres_Cond.p_os5` - Pres_Cond.p_os5\n* `Pres_Cond.p_os6` - Pres_Cond.p_os6\n* `Pres_Cond.p_os7` - Pres_Cond.p_os7\n* `Pres_Cond.p_os71` - Pres_Cond.p_os71\n* `Pres_Cond.p_os8` - Pres_Cond.p_os8\n* `Pres_Cond.p_os9` - Pres_Cond.p_os9\n* `Pres_Cond.p_ose1` - Pres_Cond.p_ose1\n* `Pres_Cond.p_ose2` - Pres_Cond.p_ose2\n* `Pres_Cond.p_conc` - Pres_Cond.p_conc\n* `Pres_Cond.c_uf` - Pres_Cond.c_uf\n* `Pres_Cond.c_os1` - Pres_Cond.c_os1\n* `Pres_Cond.c_os2` - Pres_Cond.c_os2\n* `Pres_Cond.c_os3` - Pres_Cond.c_os3\n* `Pres_Cond.c_os4` - Pres_Cond.c_os4\n* `Pres_Cond.c_os5` - Pres_Cond.c_os5\n* `Pres_Cond.c_os6` - Pres_Cond.c_os6\n* `Pres_Cond.c_os7` - Pres_Cond.c_os7\n* `Pres_Cond.c_os8` - Pres_Cond.c_os8\n* `Pres_Cond.c_os9` - Pres_Cond.c_os9\n* `Pres_Cond.c_ose` - Pres_Cond.c_ose\n* `volume.vol_for` - volume.vol_for\n* `volume.vol_uf1` - volume.vol_uf1\n* `volume.vol_uf2` - volume.vol_uf2\n* `volume.vol_uf3` - volume.vol_uf3\n* `volume.vol_uf4` - volume.vol_uf4\n* `volume.vol_uf5` - volume.vol_uf5\n* `volume.vol_uf6` - volume.vol_uf6\n* `volume.vol_os1` - volume.vol_os1\n* `volume.vol_os2` - volume.vol_os2\n* `volume.vol_os3` - volume.vol_os3\n* `volume.vol_os4` - volume.vol_os4\n* `volume.vol_os5` - volume.vol_os5\n* `volume.vol_os6` - volume.vol_os6\n* `volume.vol_os7` - volume.vol_os7\n* `volume.vol_os8` - volume.vol_os8\n* `volume.vol_os9` - volume.vol_os9\n* `co2_ifruit.ut_co2_vc1` - co2_ifruit.ut_co2_vc1\n* `co2_ifruit.ut_co2_vc2` - co2_ifruit.ut_co2_vc2\n* `co2_ifruit.ut_co2_de` - co2_ifruit.ut_co2_de\n* `co2_ifruit.ut_co2_ve` - co2_ifruit.ut_co2_ve\n* `co2_ifruit.ut_co2_pc1` - co2_ifruit.ut_co2_pc1\n* `co2_ifruit.ut_co2_pc2` - co2_ifruit.ut_co2_pc2\n* `co2_ifruit.ut_co2_pn` - co2_ifruit.ut_co2_pn\n* `co2_ifruit.ut_co2_d182` - co2_ifruit.ut_co2_d182\n* `co2_ifruit.ut_co2_d1833` - co2_ifruit.ut_co2_d1833\n* `co2_ifruit.ut_co2_dcan35` - co2_ifruit.ut_co2_dcan35\n* `co2_ifruit.ut_co2_dkrv40` - co2_ifruit.ut_co2_dkrv40\n* `co2_ifruit.ut_co2_dcan2` - co2_ifruit.ut_co2_dcan2\n* `co2_ifruit.ut_co2_dcm16` - co2_ifruit.ut_co2_dcm16\n* `co2_ifruit.ut_co2_v182` - co2_ifruit.ut_co2_v182\n* `co2_ifruit.ut_co2_v1833` - co2_ifruit.ut_co2_v1833\n* `co2_ifruit.ut_co2_vcan35` - co2_ifruit.ut_co2_vcan35\n* `co2_ifruit.ut_co2_vkrv40` - co2_ifruit.ut_co2_vkrv40\n* `co2_ifruit.ut_co2_vcan2` - co2_ifruit.ut_co2_vcan2\n* `co2_ifruit.ut_co2_vcm16` - co2_ifruit.ut_co2_vcm16\n* `co2_ifruit.ut_co2_p182` - co2_ifruit.ut_co2_p182\n* `co2_ifruit.ut_co2_p1833` - co2_ifruit.ut_co2_p1833\n* `co2_ifruit.ut_co2_pcan35` - co2_ifruit.ut_co2_pcan35\n* `co2_ifruit.ut_co2_pkrv40` - co2_ifruit.ut_co2_pkrv40\n* `co2_ifruit.ut_co2_pcan2` - co2_ifruit.ut_co2_pcan2\n* `co2_ifruit.ut_co2_pcm16` - co2_ifruit.ut_co2_pcm16\n* `co2_ifruit.ut_n2_vn2` - co2_ifruit.ut_n2_vn2\n* `co2_ifruit.ut_n2_pn2` - co2_ifruit.ut_n2_pn2\n* `co2_ifruit.ut_soude` - co2_ifruit.ut_soude\n* `utilite.ut_kr_p7` - utilite.ut_kr_p7\n* `utilite.ut_kr_pn2` - utilite.ut_kr_pn2\n* `utilite.ut_kr_p40` - utilite.ut_kr_p40\n* `utilite.ut_kr_pv` - utilite.ut_kr_pv\n* `utilite.ut_kr_pg` - utilite.ut_kr_pg\n* `utilite.ut_kr_tt` - utilite.ut_kr_tt\n* `utilite.ut_kr_tc` - utilite.ut_kr_tc\n* `utilite.ut_sid_p7` - utilite.ut_sid_p7\n* `utilite.ut_sid_pn2` - utilite.ut_sid_pn2\n* `utilite.ut_sid_p40` - utilite.ut_sid_p40\n* `utilite.ut_sid_pv` - utilite.ut_sid_pv\n* `utilite.ut_sid_pg` - utilite.ut_sid_pg\n* `utilite.ut_sid_tt` - utilite.ut_sid_tt\n* `utilite.ut_sid_tc` - utilite.ut_sid_tc\n* `sucre.total.tetra` - sucre.total.tetra\n* `sucre.total` - sucre.total\n* `sucre.total.adue` - sucre.total.adue"
+                "description": "* `sucre.t_s21` - sucre.t_s21\n* `sucre.t_s22` - sucre.t_s22\n* `sucre.t_s23` - sucre.t_s23\n* `sucre.t_s24` - sucre.t_s24\n* `sucre.t_s25` - sucre.t_s25\n* `sucre.a_t02` - sucre.a_t02\n* `sucre.a_t03` - sucre.a_t03\n* `sucre.a_t04` - sucre.a_t04\n* `sucre.a_t05` - sucre.a_t05\n* `sucre.a_t06` - sucre.a_t06\n* `niveau.niv_f1` - niveau.niv_f2\n* `niveau.niv_uf1` - niveau.niv_uf1\n* `niveau.niv_uf2` - niveau.niv_uf2\n* `niveau.niv_os1` - niveau.niv_os1\n* `niveau.niv_os2` - niveau.niv_os2\n* `niveau.niv_os3` - niveau.niv_os3\n* `niveau.niv_os4` - niveau.niv_os4\n* `niveau.niv_os5` - niveau.niv_os5\n* `niveau.niv_os6` - niveau.niv_os6\n* `niveau.niv_os7` - niveau.niv_os7\n* `debit.d_F1` - debit.d_F1\n* `debit.d_uf1` - debit.d_uf1\n* `debit.d_uf2` - debit.d_uf2\n* `debit.d_uf3` - debit.d_uf3\n* `debit.d_uf4` - debit.d_uf4\n* `debit.d_uf5` - debit.d_uf5\n* `debit.d_uf6` - debit.d_uf6\n* `debit.d_os1` - debit.d_os1\n* `debit.d_os2` - debit.d_os2\n* `debit.d_os3` - debit.d_os3\n* `debit.d_os4` - debit.d_os4\n* `debit.d_os5` - debit.d_os5\n* `debit.d_os6` - debit.d_os6\n* `debit.d_os7` - debit.d_os7\n* `debit.d_os8` - debit.d_os8\n* `debit.d_os9` - debit.d_os9\n* `Pres_Cond.p_uf` - Pres_Cond.p_uf\n* `Pres_Cond.p_uf4` - Pres_Cond.p_uf4\n* `Pres_Cond.p_uf6` - Pres_Cond.p_uf6\n* `Pres_Cond.p_os1` - Pres_Cond.p_os1\n* `Pres_Cond.p_os2` - Pres_Cond.p_os2\n* `Pres_Cond.p_os3` - Pres_Cond.p_os3\n* `Pres_Cond.p_os4` - Pres_Cond.p_os4\n* `Pres_Cond.p_os5` - Pres_Cond.p_os5\n* `Pres_Cond.p_os6` - Pres_Cond.p_os6\n* `Pres_Cond.p_os7` - Pres_Cond.p_os7\n* `Pres_Cond.p_os71` - Pres_Cond.p_os71\n* `Pres_Cond.p_os8` - Pres_Cond.p_os8\n* `Pres_Cond.p_os9` - Pres_Cond.p_os9\n* `Pres_Cond.p_ose1` - Pres_Cond.p_ose1\n* `Pres_Cond.p_ose2` - Pres_Cond.p_ose2\n* `Pres_Cond.p_conc` - Pres_Cond.p_conc\n* `Pres_Cond.c_uf` - Pres_Cond.c_uf\n* `Pres_Cond.c_os1` - Pres_Cond.c_os1\n* `Pres_Cond.c_os2` - Pres_Cond.c_os2\n* `Pres_Cond.c_os3` - Pres_Cond.c_os3\n* `Pres_Cond.c_os4` - Pres_Cond.c_os4\n* `Pres_Cond.c_os5` - Pres_Cond.c_os5\n* `Pres_Cond.c_os6` - Pres_Cond.c_os6\n* `Pres_Cond.c_os7` - Pres_Cond.c_os7\n* `Pres_Cond.c_os8` - Pres_Cond.c_os8\n* `Pres_Cond.c_os9` - Pres_Cond.c_os9\n* `Pres_Cond.c_ose` - Pres_Cond.c_ose\n* `volume.vol_for` - volume.vol_for\n* `volume.vol_uf1` - volume.vol_uf1\n* `volume.vol_uf2` - volume.vol_uf2\n* `volume.vol_uf3` - volume.vol_uf3\n* `volume.vol_uf4` - volume.vol_uf4\n* `volume.vol_uf5` - volume.vol_uf5\n* `volume.vol_uf6` - volume.vol_uf6\n* `volume.vol_os1` - volume.vol_os1\n* `volume.vol_os2` - volume.vol_os2\n* `volume.vol_os3` - volume.vol_os3\n* `volume.vol_os4` - volume.vol_os4\n* `volume.vol_os5` - volume.vol_os5\n* `volume.vol_os6` - volume.vol_os6\n* `volume.vol_os7` - volume.vol_os7\n* `volume.vol_os8` - volume.vol_os8\n* `volume.vol_os9` - volume.vol_os9\n* `co2_ifruit.ut_co2_vc1` - co2_ifruit.ut_co2_vc1\n* `co2_ifruit.ut_co2_vc2` - co2_ifruit.ut_co2_vc2\n* `co2_ifruit.ut_co2_de` - co2_ifruit.ut_co2_de\n* `co2_ifruit.ut_co2_ve` - co2_ifruit.ut_co2_ve\n* `co2_ifruit.ut_co2_pc1` - co2_ifruit.ut_co2_pc1\n* `co2_ifruit.ut_co2_pc2` - co2_ifruit.ut_co2_pc2\n* `co2_ifruit.ut_co2_pn` - co2_ifruit.ut_co2_pn\n* `co2_ifruit.ut_co2_d182` - co2_ifruit.ut_co2_d182\n* `co2_ifruit.ut_co2_d1833` - co2_ifruit.ut_co2_d1833\n* `co2_ifruit.ut_co2_dcan35` - co2_ifruit.ut_co2_dcan35\n* `co2_ifruit.ut_co2_dkrv40` - co2_ifruit.ut_co2_dkrv40\n* `co2_ifruit.ut_co2_dcan2` - co2_ifruit.ut_co2_dcan2\n* `co2_ifruit.ut_co2_dcm16` - co2_ifruit.ut_co2_dcm16\n* `co2_ifruit.ut_co2_v182` - co2_ifruit.ut_co2_v182\n* `co2_ifruit.ut_co2_v1833` - co2_ifruit.ut_co2_v1833\n* `co2_ifruit.ut_co2_vcan35` - co2_ifruit.ut_co2_vcan35\n* `co2_ifruit.ut_co2_vkrv40` - co2_ifruit.ut_co2_vkrv40\n* `co2_ifruit.ut_co2_vcan2` - co2_ifruit.ut_co2_vcan2\n* `co2_ifruit.ut_co2_vcm16` - co2_ifruit.ut_co2_vcm16\n* `co2_ifruit.ut_co2_p182` - co2_ifruit.ut_co2_p182\n* `co2_ifruit.ut_co2_p1833` - co2_ifruit.ut_co2_p1833\n* `co2_ifruit.ut_co2_pcan35` - co2_ifruit.ut_co2_pcan35\n* `co2_ifruit.ut_co2_pkrv40` - co2_ifruit.ut_co2_pkrv40\n* `co2_ifruit.ut_co2_pcan2` - co2_ifruit.ut_co2_pcan2\n* `co2_ifruit.ut_co2_pcm16` - co2_ifruit.ut_co2_pcm16\n* `co2_ifruit.ut_n2_vn2` - co2_ifruit.ut_n2_vn2\n* `co2_ifruit.ut_n2_pn2` - co2_ifruit.ut_n2_pn2\n* `co2_ifruit.ut_soude` - co2_ifruit.ut_soude\n* `utilite.ut_kr_p7` - utilite.ut_kr_p7\n* `utilite.ut_kr_pn2` - utilite.ut_kr_pn2\n* `utilite.ut_kr_p40` - utilite.ut_kr_p40\n* `utilite.ut_kr_pv` - utilite.ut_kr_pv\n* `utilite.ut_kr_pg` - utilite.ut_kr_pg\n* `utilite.ut_kr_tt` - utilite.ut_kr_tt\n* `utilite.ut_kr_tc` - utilite.ut_kr_tc\n* `utilite.ut_sid_p7` - utilite.ut_sid_p7\n* `utilite.ut_sid_pn2` - utilite.ut_sid_pn2\n* `utilite.ut_sid_p40` - utilite.ut_sid_p40\n* `utilite.ut_sid_pv` - utilite.ut_sid_pv\n* `utilite.ut_sid_pg` - utilite.ut_sid_pg\n* `utilite.ut_sid_tt` - utilite.ut_sid_tt\n* `utilite.ut_sid_tc` - utilite.ut_sid_tc\n* `sucre.total.adue` - sucre.total.adue\n* `sucre.total.tetra` - sucre.total.tetra\n* `sucre.total` - sucre.total"
             },
             "AlertTypeEnum": {
                 "enum": [
@@ -4528,6 +4530,57 @@
                 ],
                 "type": "string",
                 "description": "* `invalid_input` - invalid_input\n* `invalid_credentials` - invalid_credentials\n* `not_found` - not_found\n* `server_error` - server_error"
+            },
+            "DatabaseStorageInfo": {
+                "type": "object",
+                "properties": {
+                    "used": {
+                        "type": "integer"
+                    },
+                    "available": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    },
+                    "percent": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                },
+                "required": [
+                    "available",
+                    "percent",
+                    "total",
+                    "used"
+                ]
+            },
+            "Databases": {
+                "type": "object",
+                "properties": {
+                    "ibdm": {
+                        "$ref": "#/components/schemas/StandardDatabase"
+                    },
+                    "siroperie": {
+                        "$ref": "#/components/schemas/StandardDatabase"
+                    },
+                    "filtration": {
+                        "$ref": "#/components/schemas/StandardDatabase"
+                    },
+                    "utilite": {
+                        "$ref": "#/components/schemas/StandardDatabase"
+                    },
+                    "ibdm_redis": {
+                        "$ref": "#/components/schemas/RedisDatabase"
+                    }
+                },
+                "required": [
+                    "filtration",
+                    "ibdm",
+                    "ibdm_redis",
+                    "siroperie",
+                    "utilite"
+                ]
             },
             "Debit": {
                 "type": "object",
@@ -5540,15 +5593,13 @@
                         ]
                     },
                     "danger_point": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": -2147483648,
+                        "type": "number",
+                        "format": "double",
                         "nullable": true
                     },
                     "warning_point": {
-                        "type": "integer",
-                        "maximum": 2147483647,
-                        "minimum": -2147483648,
+                        "type": "number",
+                        "format": "double",
                         "nullable": true
                     },
                     "danger_reminder_interval": {
@@ -5968,6 +6019,60 @@
                 "type": "string",
                 "description": "* `inventaire-sucre` - inventaire-sucre\n* `utilite` - utilite\n* `filtration` - filtration\n* `co2_ifruit` - co2_ifruit"
             },
+            "RedisDatabase": {
+                "type": "object",
+                "properties": {
+                    "state": {
+                        "type": "string"
+                    },
+                    "info": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/RedisInfo"
+                        }
+                    }
+                },
+                "required": [
+                    "info",
+                    "state"
+                ]
+            },
+            "RedisInfo": {
+                "type": "object",
+                "properties": {
+                    "used_memory": {
+                        "type": "integer"
+                    },
+                    "total_memory": {
+                        "type": "integer"
+                    },
+                    "free_memory": {
+                        "type": "integer"
+                    },
+                    "percent": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "total_keys": {
+                        "type": "integer"
+                    },
+                    "uptime_in_seconds": {
+                        "type": "integer"
+                    },
+                    "connected_clients": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "connected_clients",
+                    "free_memory",
+                    "percent",
+                    "total_keys",
+                    "total_memory",
+                    "uptime_in_seconds",
+                    "used_memory"
+                ]
+            },
             "Role": {
                 "type": "object",
                 "properties": {
@@ -6113,6 +6218,28 @@
                     "temps_envoi"
                 ]
             },
+            "StandardDatabase": {
+                "type": "object",
+                "properties": {
+                    "state": {
+                        "type": "string"
+                    },
+                    "info": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/DatabaseStorageInfo"
+                        }
+                    },
+                    "query": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "info",
+                    "query",
+                    "state"
+                ]
+            },
             "SubordinateAndSuperior": {
                 "type": "object",
                 "properties": {
@@ -6216,6 +6343,189 @@
                         "nullable": true
                     }
                 }
+            },
+            "SystemInfo": {
+                "type": "object",
+                "properties": {
+                    "os": {
+                        "type": "string"
+                    },
+                    "python_version": {
+                        "type": "string"
+                    },
+                    "django_version": {
+                        "type": "string"
+                    },
+                    "env_mode": {
+                        "type": "string"
+                    },
+                    "debug": {
+                        "type": "boolean"
+                    },
+                    "hostname": {
+                        "type": "string"
+                    },
+                    "cpu_architecture": {
+                        "type": "string"
+                    },
+                    "cpu_model": {
+                        "type": "string"
+                    },
+                    "cpu_frequency": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "total_memory": {
+                        "type": "integer"
+                    },
+                    "available_memory": {
+                        "type": "integer"
+                    },
+                    "memory_percent_used": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "cpu_count": {
+                        "type": "integer"
+                    },
+                    "cpu_physical_count": {
+                        "type": "integer"
+                    },
+                    "cpu_percent": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "total_storage": {
+                        "type": "integer"
+                    },
+                    "used_storage": {
+                        "type": "integer"
+                    },
+                    "free_storage": {
+                        "type": "integer"
+                    },
+                    "disk_percent_used": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "disk_io_read_count": {
+                        "type": "integer"
+                    },
+                    "disk_io_write_count": {
+                        "type": "integer"
+                    },
+                    "disk_io_read_bytes": {
+                        "type": "integer"
+                    },
+                    "disk_io_write_bytes": {
+                        "type": "integer"
+                    },
+                    "uptime": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "boot_time": {
+                        "type": "string"
+                    },
+                    "system_time": {
+                        "type": "string"
+                    },
+                    "network_io_sent": {
+                        "type": "integer"
+                    },
+                    "network_io_received": {
+                        "type": "integer"
+                    },
+                    "ip_addresses": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "available_memory",
+                    "boot_time",
+                    "cpu_architecture",
+                    "cpu_count",
+                    "cpu_frequency",
+                    "cpu_model",
+                    "cpu_percent",
+                    "cpu_physical_count",
+                    "debug",
+                    "disk_io_read_bytes",
+                    "disk_io_read_count",
+                    "disk_io_write_bytes",
+                    "disk_io_write_count",
+                    "disk_percent_used",
+                    "django_version",
+                    "env_mode",
+                    "free_storage",
+                    "hostname",
+                    "ip_addresses",
+                    "memory_percent_used",
+                    "network_io_received",
+                    "network_io_sent",
+                    "os",
+                    "python_version",
+                    "system_time",
+                    "total_memory",
+                    "total_storage",
+                    "uptime",
+                    "used_storage"
+                ]
+            },
+            "SystemStatus": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "env": {
+                        "type": "string"
+                    },
+                    "debug": {
+                        "type": "boolean"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "last_updated": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "elapsed_time": {
+                        "type": "string"
+                    },
+                    "system_info_elapsed_time": {
+                        "type": "string"
+                    },
+                    "databases_elapsed_time": {
+                        "type": "string"
+                    },
+                    "system_info": {
+                        "$ref": "#/components/schemas/SystemInfo"
+                    },
+                    "databases": {
+                        "$ref": "#/components/schemas/Databases"
+                    }
+                },
+                "required": [
+                    "databases",
+                    "databases_elapsed_time",
+                    "debug",
+                    "description",
+                    "elapsed_time",
+                    "env",
+                    "last_updated",
+                    "status",
+                    "system_info",
+                    "system_info_elapsed_time",
+                    "version"
+                ]
             },
             "User": {
                 "type": "object",

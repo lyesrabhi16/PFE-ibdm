@@ -169,7 +169,7 @@ class UserForm extends StatelessWidget {
             logger.e("role is null in user form on changed");
             return;
           }
-          print("_addUserSuperior: $_addUserSuperior");
+          printMessage("_addUserSuperior: $_addUserSuperior");
           onAddUser?.call(
             addUserEmailController.text,
             addUserNameController.text,

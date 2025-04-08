@@ -27,6 +27,8 @@ class PermissionsController extends GetxController {
       permissions_loading = false;
     } catch (e) {
       logger.e("Failed to get permissions: $e");
+      ready.value = false;
+      permissions_loading = false;
     }
   }
 
