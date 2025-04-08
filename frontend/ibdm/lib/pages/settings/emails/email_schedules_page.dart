@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:data_table_2/data_table_2.dart';
@@ -109,231 +110,252 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
     final strings = getTranslations(context).obs;
     return AppCustomContainer(
         backButton: true,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSizes.sm),
-          child: Obx(() {
-            if (!loaded.value) {
-              load();
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            _showCheckboxColumn.value = _selectedSchedules.isNotEmpty;
-
-            return Column(
-              children: [
-                Obx(() {
-                  return Text(
-                    strings.value.emailSchedules,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: max(context.height, 600),
+              maxHeight: max(context.height, 600),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSizes.sm),
+              child: Obx(() {
+                if (!loaded.value) {
+                  load();
+                  return Center(
+                    child: CircularProgressIndicator(),
                   );
-                }),
-                SizedBox(height: AppSizes.xl),
-                Container(
-                  constraints: BoxConstraints(
-                    minWidth: context.width,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(AppSizes.sm),
-                    child: Wrap(
-                      alignment: isAtMostSmallScreen(context)
-                          ? WrapAlignment.center
-                          : WrapAlignment.spaceBetween,
-                      runAlignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      direction: Axis.horizontal,
-                      runSpacing: AppSizes.sm,
-                      verticalDirection: VerticalDirection.down,
-                      children: [
-                        SearchBar(
-                          controller: _searchController,
-                          onSubmitted: (_) =>
-                              _searchController.text != lastSearch
-                                  ? _loadSchedules()
-                                  : null,
-                          onTapOutside: (_) =>
-                              _searchController.text != lastSearch
-                                  ? _loadSchedules()
-                                  : null,
-                          constraints: BoxConstraints(
-                            maxWidth: AppSizes.lg * 8,
-                            minHeight: AppSizes.lg * 1.5,
-                            maxHeight: AppSizes.lg * 1.5,
-                          ),
-                          backgroundColor: WidgetStatePropertyAll(
-                              Theme.of(context).colorScheme.surfaceContainer),
-                          elevation: WidgetStatePropertyAll(0),
-                          leading: Icon(Icons.search),
-                          hintText: strings.value.search,
-                        ),
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          children: [
-                            ShadButton(
-                                backgroundColor:
-                                    colorScheme.surfaceContainerLow,
-                                hoverBackgroundColor:
-                                    colorScheme.surfaceContainerHighest,
-                                foregroundColor: colorScheme.onSurface,
-                                onPressed: () {
-                                  _showAddScheduleEmailDialog();
-                                },
-                                child: Text(strings.value.addScheduleEmail)),
-                            ShadButton.destructive(
-                                onPressed: _onDeleteButtonClick,
-                                child: Text(strings.value.delete)),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: SizedBox(
-                                width: AppSizes.xl * 4,
-                                child: IconWithLabelButton(
-                                  icon: Icons.settings,
-                                  text: strings.value.options,
-                                  onTap: () {
-                                    showShadSheet(
-                                        context: context,
-                                        side: ShadSheetSide.right,
-                                        isDismissible: true,
-                                        builder: (context) {
-                                          return ShadSheet(
-                                              scrollable: false,
-                                              child: ScrollConfiguration(
-                                                behavior:
-                                                    ScrollConfiguration.of(
-                                                            context)
-                                                        .copyWith(
-                                                  dragDevices: {
-                                                    PointerDeviceKind.touch,
-                                                    PointerDeviceKind.mouse,
-                                                    PointerDeviceKind.stylus,
-                                                    PointerDeviceKind
-                                                        .invertedStylus,
-                                                    PointerDeviceKind.trackpad,
-                                                    PointerDeviceKind.unknown,
-                                                  },
-                                                  scrollbars: true,
-                                                ),
-                                                child: SingleChildScrollView(
-                                                  physics:
-                                                      BouncingScrollPhysics(),
-                                                  child: Container(
-                                                    constraints: BoxConstraints(
-                                                      minWidth:
-                                                          context.width / 2,
-                                                      maxWidth: context.width,
-                                                      minHeight: context.height,
-                                                      maxHeight: context.height,
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              AppSizes.sm),
-                                                      child: Scaffold(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        body:
-                                                            _topPageActionsSmallScreen(),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ));
-                                        });
-                                  },
-                                ),
-                              ),
-                            ).removeWhen(isAtLeastMediumScreen(context)),
-                          ].nonNulls.toList(),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                      width: context.width,
+                }
+
+                _showCheckboxColumn.value = _selectedSchedules.isNotEmpty;
+
+                return Column(
+                  children: [
+                    Obx(() {
+                      return Text(
+                        strings.value.emailSchedules,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      );
+                    }),
+                    SizedBox(height: AppSizes.xl),
+                    Container(
+                      constraints: BoxConstraints(
+                        minWidth: context.width,
+                      ),
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainer,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius:
                             BorderRadius.circular(AppSizes.borderRadius),
                       ),
-                      child: _topPageActions(
-                        alignment: WrapAlignment.spaceBetween,
-                        expandPerPage: _expandPerPage.value,
-                        filtersPopoverController: _filtersPopoverController,
-                        filtersActive: _filtersActive,
-                        perPageFormKey: _perPageFormKey,
-                        tagFilterController: _tagFilterController,
-                        activationStateFilterController:
-                            _activationStateFilterController,
-                        sortPopoverController: _sortPopoverController,
-                        sortASC: _sortASC,
-                        sortActive: _sortActive,
+                      child: Padding(
+                        padding: EdgeInsets.all(AppSizes.sm),
+                        child: Wrap(
+                          alignment: isAtMostSmallScreen(context)
+                              ? WrapAlignment.center
+                              : WrapAlignment.spaceBetween,
+                          runAlignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          direction: Axis.horizontal,
+                          runSpacing: AppSizes.sm,
+                          verticalDirection: VerticalDirection.down,
+                          children: [
+                            SearchBar(
+                              controller: _searchController,
+                              onSubmitted: (_) =>
+                                  _searchController.text != lastSearch
+                                      ? _loadSchedules()
+                                      : null,
+                              onTapOutside: (_) =>
+                                  _searchController.text != lastSearch
+                                      ? _loadSchedules()
+                                      : null,
+                              constraints: BoxConstraints(
+                                maxWidth: AppSizes.lg * 8,
+                                minHeight: AppSizes.lg * 1.5,
+                                maxHeight: AppSizes.lg * 1.5,
+                              ),
+                              backgroundColor: WidgetStatePropertyAll(
+                                  Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainer),
+                              elevation: WidgetStatePropertyAll(0),
+                              leading: Icon(Icons.search),
+                              hintText: strings.value.search,
+                            ),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              children: [
+                                ShadButton(
+                                    backgroundColor:
+                                        colorScheme.surfaceContainerLow,
+                                    hoverBackgroundColor:
+                                        colorScheme.surfaceContainerHighest,
+                                    foregroundColor: colorScheme.onSurface,
+                                    onPressed: () {
+                                      _showAddScheduleEmailDialog();
+                                    },
+                                    child:
+                                        Text(strings.value.addScheduleEmail)),
+                                ShadButton.destructive(
+                                    onPressed: _onDeleteButtonClick,
+                                    child: Text(strings.value.delete)),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: SizedBox(
+                                    width: AppSizes.xl * 4,
+                                    child: IconWithLabelButton(
+                                      icon: Icons.settings,
+                                      text: strings.value.options,
+                                      onTap: () {
+                                        showShadSheet(
+                                            context: context,
+                                            side: ShadSheetSide.right,
+                                            isDismissible: true,
+                                            builder: (context) {
+                                              return ShadSheet(
+                                                  scrollable: false,
+                                                  child: ScrollConfiguration(
+                                                    behavior:
+                                                        ScrollConfiguration.of(
+                                                                context)
+                                                            .copyWith(
+                                                      dragDevices: {
+                                                        PointerDeviceKind.touch,
+                                                        PointerDeviceKind.mouse,
+                                                        PointerDeviceKind
+                                                            .stylus,
+                                                        PointerDeviceKind
+                                                            .invertedStylus,
+                                                        PointerDeviceKind
+                                                            .trackpad,
+                                                        PointerDeviceKind
+                                                            .unknown,
+                                                      },
+                                                      scrollbars: true,
+                                                    ),
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      physics:
+                                                          BouncingScrollPhysics(),
+                                                      child: Container(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                          minWidth:
+                                                              context.width / 2,
+                                                          maxWidth:
+                                                              context.width,
+                                                          minHeight:
+                                                              context.height,
+                                                          maxHeight:
+                                                              context.height,
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(
+                                                                  AppSizes.sm),
+                                                          child: Scaffold(
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .transparent,
+                                                            body:
+                                                                _topPageActionsSmallScreen(),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ));
+                                            });
+                                      },
+                                    ),
+                                  ),
+                                ).removeWhen(isAtLeastMediumScreen(context)),
+                              ].nonNulls.toList(),
+                            )
+                          ],
+                        ),
                       ),
-                    ).removeWhen(isAtMostSmallScreen(context)) ??
-                    SizedBox.shrink(),
-                SizedBox(
-                  height: AppSizes.sm,
-                ),
-                Expanded(
-                  child: Container(
-                    constraints: BoxConstraints(
-                      minWidth: context.width,
                     ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainer,
-                      borderRadius:
-                          BorderRadius.circular(AppSizes.borderRadius),
-                    ),
-                    child: _isDataLoading.value
-                        ? Center(child: CircularProgressIndicator())
-                        : ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: 300,
-                            ),
-                            child: DataTable2(
-                              columnSpacing: _getColumnSpacing(),
-                              onSelectAll: (selectedAll) => selectedAll == true
-                                  ? _selectedSchedules.addAll(schedules)
-                                  : _selectedSchedules.clear(),
-                              showCheckboxColumn: _showCheckboxColumn.value,
-                              sortColumnIndex: 0,
-                              dataRowColor: WidgetStateProperty.fromMap({
-                                WidgetState.hovered: Theme.of(context)
-                                    .colorScheme
-                                    .primaryContainer,
-                                WidgetState.focused:
-                                    colorScheme.primaryContainer,
-                              }),
-                              columns: _getCols(),
-                              rows: _getRows(),
-                            ),
+                    Container(
+                          width: context.width,
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainer,
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.borderRadius),
                           ),
-                  ),
-                ),
-                SizedBox(
-                  height: AppSizes.sm,
-                ),
-                _bottomPageActions(
-                  currentPage: schedulesMeta.currentPage,
-                  nbrTotalPages: schedulesMeta.totalPages,
-                  nbrShown: schedulesMeta.data.length,
-                  nbrTotal: schedulesMeta.totalResults,
-                  onPrevPress: (p) => {page = p, _loadSchedules()},
-                  onNextPress: (p) => {page = p, _loadSchedules()},
-                  onPagePress: (p) => {page = p, _loadSchedules()},
-                  data: schedules,
-                  label: strings.value.schedules,
-                )
-              ],
-            );
-          }),
+                          child: _topPageActions(
+                            alignment: WrapAlignment.spaceBetween,
+                            expandPerPage: _expandPerPage.value,
+                            filtersPopoverController: _filtersPopoverController,
+                            filtersActive: _filtersActive,
+                            perPageFormKey: _perPageFormKey,
+                            tagFilterController: _tagFilterController,
+                            activationStateFilterController:
+                                _activationStateFilterController,
+                            sortPopoverController: _sortPopoverController,
+                            sortASC: _sortASC,
+                            sortActive: _sortActive,
+                          ),
+                        ).removeWhen(isAtMostSmallScreen(context)) ??
+                        SizedBox.shrink(),
+                    SizedBox(
+                      height: AppSizes.sm,
+                    ),
+                    Expanded(
+                      child: Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surfaceContainer,
+                          borderRadius:
+                              BorderRadius.circular(AppSizes.borderRadius),
+                        ),
+                        child: _isDataLoading.value
+                            ? Center(child: CircularProgressIndicator())
+                            : DataTable2(
+                                columnSpacing: _getColumnSpacing(),
+                                onSelectAll: (selectedAll) =>
+                                    selectedAll == true
+                                        ? _selectedSchedules.addAll(schedules)
+                                        : _selectedSchedules.clear(),
+                                showCheckboxColumn: _showCheckboxColumn.value,
+                                sortColumnIndex: 0,
+                                dataRowColor: WidgetStateProperty.fromMap({
+                                  WidgetState.hovered: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                  WidgetState.focused:
+                                      colorScheme.primaryContainer,
+                                }),
+                                columns: _getCols(),
+                                rows: _getRows(),
+                              ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: AppSizes.sm,
+                    ),
+                    _bottomPageActions(
+                      currentPage: schedulesMeta.currentPage,
+                      nbrTotalPages: schedulesMeta.totalPages,
+                      nbrShown: schedulesMeta.data.length,
+                      nbrTotal: schedulesMeta.totalResults,
+                      onPrevPress: (p) => {page = p, _loadSchedules()},
+                      onNextPress: (p) => {page = p, _loadSchedules()},
+                      onPagePress: (p) => {page = p, _loadSchedules()},
+                      data: schedules,
+                      label: strings.value.schedules,
+                    )
+                  ],
+                );
+              }),
+            ),
+          ),
         ));
   }
 
