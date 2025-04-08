@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:data_table_2/data_table_2.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
@@ -379,55 +381,38 @@ class _UsersPageState extends State<UsersPage> {
         return AppCustomContainer(
           child: Center(
             child: _loaded.value
-                ? Padding(
-                    padding: EdgeInsets.all(AppSizes.sm),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Center(
-                          child: Text(strings.value.userManagement,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleLarge),
-                        ),
-                        SizedBox(height: AppSizes.xl),
-                        Container(
-                          constraints: BoxConstraints(
-                            minWidth: context.width,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.borderRadius),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(AppSizes.sm),
-                            child: Wrap(
-                              alignment: WrapAlignment.spaceEvenly,
-                              runAlignment: WrapAlignment.center,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              direction: Axis.horizontal,
-                              runSpacing: AppSizes.sm,
-                              verticalDirection: VerticalDirection.down,
-                              children: [
-                                SearchBar(
-                                  controller: UsersPage.searchController,
-                                  onSubmitted: (_) => _loadUsers(context),
-                                  onTapOutside: (_) => _loadUsers(context),
-                                  constraints: BoxConstraints(
-                                    maxWidth: AppSizes.lg * 8,
-                                    minHeight: AppSizes.lg * 1.5,
-                                    maxHeight: AppSizes.lg * 1.5,
-                                  ),
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainer),
-                                  elevation: WidgetStatePropertyAll(0),
-                                  leading: Icon(Icons.search),
-                                  hintText: strings.value.search,
-                                ),
-                                Wrap(
+                ? SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: max(context.height, 600),
+                        maxHeight: max(context.height, 600),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(AppSizes.sm),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Center(
+                              child: Text(strings.value.userManagement,
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      Theme.of(context).textTheme.titleLarge),
+                            ),
+                            SizedBox(height: AppSizes.xl),
+                            Container(
+                              constraints: BoxConstraints(
+                                minWidth: context.width,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(
+                                    AppSizes.borderRadius),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(AppSizes.sm),
+                                child: Wrap(
                                   alignment: WrapAlignment.spaceEvenly,
                                   runAlignment: WrapAlignment.center,
                                   crossAxisAlignment: WrapCrossAlignment.center,
@@ -435,192 +420,231 @@ class _UsersPageState extends State<UsersPage> {
                                   runSpacing: AppSizes.sm,
                                   verticalDirection: VerticalDirection.down,
                                   children: [
-                                    ShadButton(
-                                        backgroundColor:
-                                            colorScheme.surfaceContainerLow,
-                                        hoverBackgroundColor:
-                                            colorScheme.surfaceContainerHighest,
-                                        foregroundColor: colorScheme.onSurface,
-                                        onPressed: () {
-                                          _showAddUserDialog(context);
-                                        },
-                                        child: Text(strings.value.addUser)),
-                                    ShadButton.destructive(
-                                        onPressed: () =>
-                                            _onDeleteButtonClick(context),
-                                        enabled:
-                                            !UsersPage.showCheckboxColumn.value,
-                                        child: Text(strings.value.delete)),
-                                    SizedBox(
-                                      width: AppSizes.xl * 4,
-                                      child: ShadPopover(
-                                        closeOnTapOutside: false,
-                                        decoration: ShadDecoration(
-                                          border: ShadBorder.all(
-                                              width: 0,
-                                              radius: BorderRadius.circular(
-                                                  AppSizes.borderRadius)),
-                                          color: Theme.of(context)
+                                    SearchBar(
+                                      controller: UsersPage.searchController,
+                                      onSubmitted: (_) => _loadUsers(context),
+                                      onTapOutside: (_) => _loadUsers(context),
+                                      constraints: BoxConstraints(
+                                        maxWidth: AppSizes.lg * 8,
+                                        minHeight: AppSizes.lg * 1.5,
+                                        maxHeight: AppSizes.lg * 1.5,
+                                      ),
+                                      backgroundColor: WidgetStatePropertyAll(
+                                          Theme.of(context)
                                               .colorScheme
-                                              .surfaceContainer,
+                                              .surfaceContainer),
+                                      elevation: WidgetStatePropertyAll(0),
+                                      leading: Icon(Icons.search),
+                                      hintText: strings.value.search,
+                                    ),
+                                    Wrap(
+                                      alignment: WrapAlignment.spaceEvenly,
+                                      runAlignment: WrapAlignment.center,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      direction: Axis.horizontal,
+                                      runSpacing: AppSizes.sm,
+                                      verticalDirection: VerticalDirection.down,
+                                      children: [
+                                        ShadButton(
+                                            backgroundColor:
+                                                colorScheme.surfaceContainerLow,
+                                            hoverBackgroundColor: colorScheme
+                                                .surfaceContainerHighest,
+                                            foregroundColor:
+                                                colorScheme.onSurface,
+                                            onPressed: () {
+                                              _showAddUserDialog(context);
+                                            },
+                                            child: Text(strings.value.addUser)),
+                                        ShadButton.destructive(
+                                            onPressed: () =>
+                                                _onDeleteButtonClick(context),
+                                            enabled: !UsersPage
+                                                .showCheckboxColumn.value,
+                                            child: Text(strings.value.delete)),
+                                        SizedBox(
+                                          width: AppSizes.xl * 4,
+                                          child: ShadPopover(
+                                            closeOnTapOutside: false,
+                                            decoration: ShadDecoration(
+                                              border: ShadBorder.all(
+                                                  width: 0,
+                                                  radius: BorderRadius.circular(
+                                                      AppSizes.borderRadius)),
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surfaceContainer,
+                                            ),
+                                            popover: (context) =>
+                                                ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                maxWidth: 300,
+                                              ),
+                                              child: _getTopActionBar(
+                                                context,
+                                                colorScheme,
+                                                alignment: WrapAlignment.center,
+                                                expandPerPage: true,
+                                                customExpandPerPage:
+                                                    context.width,
+                                              ),
+                                            ),
+                                            controller: UsersPage
+                                                .optionsPopoverController,
+                                            child: IconWithLabelButton(
+                                              icon: Icons.settings,
+                                              text: strings.value.options,
+                                              onTap: () {
+                                                UsersPage.optionsActive.value =
+                                                    !UsersPage
+                                                        .optionsActive.value;
+                                                UsersPage
+                                                    .optionsPopoverController
+                                                    .toggle();
+                                              },
+                                              active:
+                                                  UsersPage.optionsActive.value,
+                                            ),
+                                          ).removeWhen(
+                                              isAtLeastMediumScreen(context)),
                                         ),
-                                        popover: (context) => ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                            maxWidth: 300,
-                                          ),
-                                          child: _getTopActionBar(
-                                            context,
-                                            colorScheme,
-                                            alignment: WrapAlignment.center,
-                                            expandPerPage: true,
-                                            customExpandPerPage: context.width,
-                                          ),
-                                        ),
-                                        controller:
-                                            UsersPage.optionsPopoverController,
-                                        child: IconWithLabelButton(
-                                          icon: Icons.settings,
-                                          text: strings.value.options,
-                                          onTap: () {
-                                            UsersPage.optionsActive.value =
-                                                !UsersPage.optionsActive.value;
-                                            UsersPage.optionsPopoverController
-                                                .toggle();
-                                          },
-                                          active: UsersPage.optionsActive.value,
-                                        ),
-                                      ).removeWhen(
-                                          isAtLeastMediumScreen(context)),
+                                      ].nonNulls.toList(),
                                     ),
                                   ].nonNulls.toList(),
                                 ),
-                              ].nonNulls.toList(),
+                              ),
                             ),
-                          ),
-                        ),
 
-                        SizedBox(height: AppSizes.sm),
-                        // top actions
-                        Container(
-                                    width: context.width,
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.surfaceContainer,
-                                      borderRadius: BorderRadius.circular(
-                                          AppSizes.borderRadius),
-                                    ),
-                                    child: _getTopActionBar(
-                                        context, colorScheme,
-                                        expandPerPage:
-                                            UsersPage.expandPerPage.value))
-                                .removeWhen(isAtMostSmallScreen(context)) ??
-                            SizedBox.shrink(),
+                            SizedBox(height: AppSizes.sm),
+                            // top actions
+                            Container(
+                                        width: context.width,
+                                        decoration: BoxDecoration(
+                                          color: colorScheme.surfaceContainer,
+                                          borderRadius: BorderRadius.circular(
+                                              AppSizes.borderRadius),
+                                        ),
+                                        child: _getTopActionBar(
+                                            context, colorScheme,
+                                            expandPerPage:
+                                                UsersPage.expandPerPage.value))
+                                    .removeWhen(isAtMostSmallScreen(context)) ??
+                                SizedBox.shrink(),
 
-                        SizedBox(
-                          height: AppSizes.sm,
-                        ),
-
-                        // data table
-                        Expanded(
-                          child: Container(
-                            constraints: BoxConstraints(
-                              minWidth: context.width,
+                            SizedBox(
+                              height: AppSizes.sm,
                             ),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainer,
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.borderRadius),
-                            ),
-                            child: DataTable2(
-                              sortAscending: true,
-                              columnSpacing: _getColumnSpacing(context),
-                              onSelectAll: (selectedAll) => selectedAll == true
-                                  ? UsersPage.selectedUsers.addAll(usersData)
-                                  : UsersPage.selectedUsers.clear(),
-                              showCheckboxColumn:
-                                  UsersPage.showCheckboxColumn.value,
-                              sortColumnIndex: 0,
-                              dataRowColor: WidgetStateProperty.fromMap({
-                                WidgetState.hovered: Theme.of(context)
-                                    .colorScheme
-                                    .primaryContainer,
-                                WidgetState.focused:
-                                    colorScheme.primaryContainer,
-                              }),
-                              columns: _getCols(context),
-                              rows: _getRows(context),
-                            ),
-                          ),
-                        ),
 
-                        SizedBox(height: AppSizes.sm),
-                        // page actions
-                        Container(
-                          width: context.width,
-                          decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainer,
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.borderRadius)),
-                          child: Padding(
-                            padding: EdgeInsets.all(AppSizes.sm),
-                            child: Wrap(
-                              alignment: WrapAlignment.spaceBetween,
-                              direction: Axis.horizontal,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              runAlignment: WrapAlignment.center,
-                              verticalDirection: VerticalDirection.down,
-                              children: [
-                                if (isAtLeastMediumScreen(context) &&
-                                    !SideMenuContainer.open)
-                                  Text(
-                                    "${strings.value.page} : $currentPage", // if it is at least a small screen show it in this position
-                                  ),
-                                Row(
-                                  mainAxisSize:
-                                      isAtLeastMediumScreen(context) &&
-                                              !SideMenuContainer.open
-                                          ? MainAxisSize.min
-                                          : MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                            // data table
+                            Expanded(
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  minWidth: context.width,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainer,
+                                  borderRadius: BorderRadius.circular(
+                                      AppSizes.borderRadius),
+                                ),
+                                child: DataTable2(
+                                  sortAscending: true,
+                                  columnSpacing: _getColumnSpacing(context),
+                                  onSelectAll: (selectedAll) =>
+                                      selectedAll == true
+                                          ? UsersPage.selectedUsers
+                                              .addAll(usersData)
+                                          : UsersPage.selectedUsers.clear(),
+                                  showCheckboxColumn:
+                                      UsersPage.showCheckboxColumn.value,
+                                  sortColumnIndex: 0,
+                                  dataRowColor: WidgetStateProperty.fromMap({
+                                    WidgetState.hovered: Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer,
+                                    WidgetState.focused:
+                                        colorScheme.primaryContainer,
+                                  }),
+                                  columns: _getCols(context),
+                                  rows: _getRows(context),
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: AppSizes.sm),
+                            // page actions
+                            Container(
+                              width: context.width,
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainer,
+                                  borderRadius: BorderRadius.circular(
+                                      AppSizes.borderRadius)),
+                              child: Padding(
+                                padding: EdgeInsets.all(AppSizes.sm),
+                                child: Wrap(
+                                  alignment: WrapAlignment.spaceBetween,
+                                  direction: Axis.horizontal,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  runAlignment: WrapAlignment.center,
+                                  verticalDirection: VerticalDirection.down,
                                   children: [
-                                    ShadButton(
-                                      backgroundColor: colorScheme.surface,
-                                      foregroundColor: colorScheme.onSurface,
-                                      enabled: currentPage != null
-                                          ? currentPage! > 1
-                                          : false,
-                                      onPressed: () => _loadUsers(context,
-                                          page: currentPage! - 1),
-                                      child: Text(strings.value.prevPage),
+                                    if (isAtLeastMediumScreen(context) &&
+                                        !SideMenuContainer.open)
+                                      Text(
+                                        "${strings.value.page} : $currentPage", // if it is at least a small screen show it in this position
+                                      ),
+                                    Row(
+                                      mainAxisSize:
+                                          isAtLeastMediumScreen(context) &&
+                                                  !SideMenuContainer.open
+                                              ? MainAxisSize.min
+                                              : MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        ShadButton(
+                                          backgroundColor: colorScheme.surface,
+                                          foregroundColor:
+                                              colorScheme.onSurface,
+                                          enabled: currentPage != null
+                                              ? currentPage! > 1
+                                              : false,
+                                          onPressed: () => _loadUsers(context,
+                                              page: currentPage! - 1),
+                                          child: Text(strings.value.prevPage),
+                                        ),
+                                        ...pageIndexesButtons,
+                                        ShadButton(
+                                          backgroundColor: colorScheme.surface,
+                                          foregroundColor:
+                                              colorScheme.onSurface,
+                                          enabled: currentPage != null &&
+                                                  nbrTotalPages != null
+                                              ? currentPage! < nbrTotalPages!
+                                              : false,
+                                          onPressed: () => _loadUsers(context,
+                                              page: currentPage! + 1),
+                                          child: Text(strings.value.nextPage),
+                                        ),
+                                      ],
                                     ),
-                                    ...pageIndexesButtons,
-                                    ShadButton(
-                                      backgroundColor: colorScheme.surface,
-                                      foregroundColor: colorScheme.onSurface,
-                                      enabled: currentPage != null &&
-                                              nbrTotalPages != null
-                                          ? currentPage! < nbrTotalPages!
-                                          : false,
-                                      onPressed: () => _loadUsers(context,
-                                          page: currentPage! + 1),
-                                      child: Text(strings.value.nextPage),
-                                    ),
+                                    if (isAtMostSmallScreen(context) ||
+                                        SideMenuContainer.open)
+                                      Text(
+                                          "${strings.value.page}: $currentPage"), // if it is at most a small screen show it in this position
+                                    Text(
+                                        "${strings.value.users}: $nbrUsersShown/$nbrTotalUsers")
                                   ],
                                 ),
-                                if (isAtMostSmallScreen(context) ||
-                                    SideMenuContainer.open)
-                                  Text(
-                                      "${strings.value.page}: $currentPage"), // if it is at most a small screen show it in this position
-                                Text(
-                                    "${strings.value.users}: $nbrUsersShown/$nbrTotalUsers")
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   )
                 : Center(child: CircularProgressIndicator()),
@@ -1559,9 +1583,9 @@ class _UsersPageState extends State<UsersPage> {
               if (!loadedUserDetails.value ||
                   !loadedRoles.value ||
                   !_loadedAddUserSuperiorOptions.value) {
-                print("loadedUserDetails : ${loadedUserDetails.value}");
-                print("loadedRoles : ${loadedRoles.value}");
-                print(
+                printMessage("loadedUserDetails : ${loadedUserDetails.value}");
+                printMessage("loadedRoles : ${loadedRoles.value}");
+                printMessage(
                     "_loadedAddUserSuperiorOptions : ${_loadedAddUserSuperiorOptions.value}");
                 return Center(
                   child: CircularProgressIndicator(),
@@ -1861,7 +1885,6 @@ class _UsersPageState extends State<UsersPage> {
       logger.e(
           "${strings.value.avatar} : ${userAvatarBytes != null} ${UsersPage.addUserAvatarBytesFileName} ${userAvatarFile != null}");
       late final User res;
-      print("password in onSaveButtonPressed: $password");
       if (kIsWeb) {
         res = await api.partialUpdateUserOnWeb(
           id: user.userId,
