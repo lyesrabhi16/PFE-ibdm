@@ -4,9 +4,11 @@ import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/side_menu_state_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/actions_row.dart';
+import 'package:ibdm/common/widgets/icon_with_label_button.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
@@ -35,27 +37,43 @@ class SideMenuContainer extends StatelessWidget {
     }
     final strings = getTranslations(context).obs;
 
-    // activate current page
-    int startIndexOffset = 1; // actual index of the first page in items list
-    controller.changePage(Destination.getDestinationsMap(
-          context,
-          startIndexOffset: startIndexOffset,
-        )[Get.currentRoute]
-            ?.index ??
-        0);
-
     List<SideMenuItem> items = [];
     for (Destination dest in Destination.getDestinations(context)) {
-      items.add(SideMenuItem(
-        icon: Icon(dest.icon),
-        title: dest.title,
-        onTap: (index, controller) {
-          controller.changePage(index);
-          Get.toNamed(dest.route);
-        },
-      ));
+      items.add(SideMenuItem(builder: (context, displayMode) {
+        final key = GlobalObjectKey(dest.route);
+        logger.e(
+            "dest key: ${key.toString()} dest: ${dest.route} displayMode: $displayMode");
+        if (dest.route == Get.currentRoute ||
+            dest.route == Routes.customRoutes[Get.currentRoute]) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            // scroll to current page
+            Scrollable.ensureVisible(key.currentContext!,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut);
+          });
+        }
+        return Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: AppSizes.sm / 2,
+            horizontal:
+                displayMode == SideMenuDisplayMode.open ? AppSizes.sm / 2 : 0,
+          ),
+          key: key,
+          child: Center(
+              child: IconWithLabelButton(
+            icon: dest.icon,
+            text: displayMode == SideMenuDisplayMode.open ? dest.title : null,
+            active: dest.route == Get.currentRoute ||
+                dest.route == Routes.customRoutes[Get.currentRoute],
+            onTap: () {
+              if (dest.route != Get.currentRoute) {
+                Get.toNamed(dest.route);
+              }
+            },
+          )),
+        );
+      }));
     }
-
     return Obx(
       () {
         return SafeArea(

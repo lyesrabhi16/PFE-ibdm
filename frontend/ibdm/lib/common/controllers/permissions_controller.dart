@@ -3,32 +3,38 @@ import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 
 class PermissionsController extends GetxController {
-  PermissionsController() {
-    loadPermissions();
-  }
-
   bool permissions_loading = false;
   Rx<bool> ready = false.obs;
   List<String> perms = [];
 
   Future<void> loadPermissions() async {
     if (permissions_loading) {
+      logger.e("REFUSED TO LOAD: loading permissions is already in progress");
       return;
     }
     permissions_loading = true;
-    ready.value = false;
+    await Future.delayed(Duration(microseconds: 100), () {
+      ready.value = false;
+    });
 
     try {
       logger.e("await permissions");
       final api = await ApiClientInstance.getApiClient();
       final res = await api.getAllUserPerms();
       perms = res.perms;
-      ready.value = true;
-      permissions_loading = false;
+      logger.e("permissions set");
+      return Future.delayed(Duration(microseconds: 100), () {
+        permissions_loading = false;
+        ready.value = true;
+        logger.e("permissions ready");
+      });
     } catch (e) {
+      perms = [];
       logger.e("Failed to get permissions: $e");
-      ready.value = false;
-      permissions_loading = false;
+      return Future.delayed(Duration(microseconds: 100), () {
+        permissions_loading = false;
+        ready.value = true;
+      });
     }
   }
 

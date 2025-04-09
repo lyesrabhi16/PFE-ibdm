@@ -6,7 +6,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/per_page_input.dart';
+import 'package:ibdm/common/widgets/scrollable_shad_sheet_container.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
@@ -110,16 +112,16 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: max(context.height, 600),
-              maxHeight: max(context.height, 600),
+              minHeight: max(context.height - AppSizes.heightOffset * 2, 600),
+              maxHeight: max(context.height - AppSizes.heightOffset * 2, 600),
             ),
             child: Padding(
               padding: const EdgeInsets.all(AppSizes.sm),
               child: Obx(() {
                 if (!loaded.value) {
                   load();
-                  return Center(
-                    child: CircularProgressIndicator(),
+                  return CircularProgressIndicatorWithText(
+                    text: strings.value.loading,
                   );
                 }
 
@@ -192,59 +194,10 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                                             side: ShadSheetSide.right,
                                             isDismissible: true,
                                             builder: (context) {
-                                              return ShadSheet(
-                                                  scrollable: false,
-                                                  child: ScrollConfiguration(
-                                                    behavior:
-                                                        ScrollConfiguration.of(
-                                                                context)
-                                                            .copyWith(
-                                                      dragDevices: {
-                                                        PointerDeviceKind.touch,
-                                                        PointerDeviceKind.mouse,
-                                                        PointerDeviceKind
-                                                            .stylus,
-                                                        PointerDeviceKind
-                                                            .invertedStylus,
-                                                        PointerDeviceKind
-                                                            .trackpad,
-                                                        PointerDeviceKind
-                                                            .unknown,
-                                                      },
-                                                      scrollbars: true,
-                                                    ),
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      physics:
-                                                          BouncingScrollPhysics(),
-                                                      child: Container(
-                                                        constraints:
-                                                            BoxConstraints(
-                                                          minWidth:
-                                                              context.width / 2,
-                                                          maxWidth:
-                                                              context.width,
-                                                          minHeight:
-                                                              context.height,
-                                                          maxHeight:
-                                                              context.height,
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(
-                                                                  AppSizes.sm),
-                                                          child: Scaffold(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            body:
-                                                                _topPageActionsSmallScreen(),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ));
+                                              return ScrollableShadSheetContainer(
+                                                child:
+                                                    _topPageActionsSmallScreen(),
+                                              );
                                             });
                                       },
                                     ),
@@ -292,7 +245,9 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                               BorderRadius.circular(AppSizes.borderRadius),
                         ),
                         child: _loadingSentEmails.value
-                            ? Center(child: CircularProgressIndicator())
+                            ? CircularProgressIndicatorWithText(
+                                text: strings.value.loadingSents,
+                              )
                             : DataTable2(
                                 columnSpacing: _getColumnSpacing(),
                                 showCheckboxColumn: _showCheckboxColumn.value,
@@ -584,9 +539,14 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                   closeOnTapOutside: false,
                   popover: (context) => Container(
                     constraints: BoxConstraints(
-                        minWidth: AppSizes.xl * 6, maxWidth: AppSizes.xl * 8),
-                    child: filterContent(context, tagFilterController,
-                        emailTypeFilterController),
+                      minWidth: AppSizes.xl * 6,
+                      maxWidth: AppSizes.xl * 8,
+                      maxHeight: context.height * 0.4,
+                    ),
+                    child: SingleChildScrollView(
+                      child: filterContent(context, tagFilterController,
+                          emailTypeFilterController),
+                    ),
                   ),
                   child: IconWithLabelButton(
                     icon: Icons.filter_alt,
@@ -609,11 +569,17 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                     color: Theme.of(context).colorScheme.surfaceContainer,
                   ),
                   closeOnTapOutside: false,
-                  popover: (context) => SizedBox(
-                    width: AppSizes.xl * 6,
-                    child: sortContent(
-                      context: context,
-                      sortASC: sortASC,
+                  popover: (context) => ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: AppSizes.xl * 6,
+                      maxWidth: AppSizes.xl * 8,
+                      maxHeight: context.height * 0.4,
+                    ),
+                    child: SingleChildScrollView(
+                      child: sortContent(
+                        context: context,
+                        sortASC: sortASC,
+                      ),
                     ),
                   ),
                   child: IconWithLabelButton(

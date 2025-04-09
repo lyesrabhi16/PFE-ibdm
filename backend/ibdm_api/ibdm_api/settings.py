@@ -21,6 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 VERSION=Env.VERSION
 
+
+# Path to store status data
+STATUS_FILE_PATH = os.path.join(BASE_DIR, "data",'status_data.json')
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 

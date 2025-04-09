@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/cuve.dart';
 import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
 import 'package:ibdm/config/api.config.dart';
@@ -166,8 +167,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
             printMessage("loading because of loaded value");
             _load();
             logger.e("loading because of loaded value");
-            return Center(
-              child: CircularProgressIndicator(),
+            return CircularProgressIndicatorWithText(
+              text: strings.value.loading,
             );
           }
           if (refresh.value) {
@@ -224,8 +225,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
                             _load();
                           }
                           logger.e("loading inside of stream builder");
-                          return Center(
-                            child: CircularProgressIndicator(),
+                          return CircularProgressIndicatorWithText(
+                            text: strings.value.loading,
                           );
                         }
                         if (isLive.value) {
@@ -711,11 +712,10 @@ class _SiroperiePageState extends State<SiroperiePage> {
               if (!_dataLoaded.value) {
                 _getSucreData();
                 return SizedBox(
-                  height: 600,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
+                    height: 600,
+                    child: CircularProgressIndicatorWithText(
+                      text: strings.value.loading,
+                    ));
               }
               if (_failed.value) {
                 return Text(strings.value.failedToGetInventory);
