@@ -10,8 +10,11 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/avatar.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
+import 'package:ibdm/common/widgets/divider_with_text.dart';
 import 'package:ibdm/common/widgets/icon_with_label_button.dart';
 import 'package:ibdm/common/widgets/per_page_input.dart';
+import 'package:ibdm/common/widgets/scrollable_shad_sheet_container.dart';
 import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/common/widgets/user_form.dart';
 import 'package:ibdm/services/api/api_client.dart';
@@ -88,6 +91,7 @@ class UsersPage extends StatefulWidget {
 
 class _UsersPageState extends State<UsersPage> {
   final Rx<bool> _loaded = false.obs;
+  final Rx<bool> _loadedUsers = false.obs;
 
   final Rx<bool> _loadedAddUserSuperiorOptions = false.obs;
 
@@ -122,14 +126,18 @@ class _UsersPageState extends State<UsersPage> {
 
   List<User> usersData = [];
 
+  String? prevSearch;
+  int? prevPerPage;
+
   Future<void> _loadUsers(
     BuildContext context, {
     int page = 1,
   }) async {
     final strings = getTranslations(context);
     try {
-      _loaded.value = false;
+      _loadedUsers.value = false;
       final apiClient = await ApiClientInstance.getApiClient();
+
       // use stored perPage if it exists
       int? perPageInStorage = await LocalStorage.getPerPage();
       if (perPageInStorage != null &&
@@ -137,9 +145,11 @@ class _UsersPageState extends State<UsersPage> {
         UsersPage.perPage?.value = perPageInStorage;
       }
       logger.d("perPage?.value: ${UsersPage.perPage?.value}");
+      prevSearch = UsersPage.searchController.text;
+      prevPerPage = int.tryParse(UsersPage._perPageController.text);
       // get data from api
       PaginatedUserList res = await apiClient.getUsers(
-          perPage: UsersPage.perPage?.value,
+          perPage: prevPerPage ?? perPageInStorage ?? 10,
           page: page,
           role: UsersPage.roleFilterSelected.value
               ? UsersPage.roleFilter!.roleId
@@ -188,7 +198,7 @@ class _UsersPageState extends State<UsersPage> {
         );
       }
     } finally {
-      _loaded.value = true;
+      _loadedUsers.value = true;
     }
   }
 
@@ -384,8 +394,10 @@ class _UsersPageState extends State<UsersPage> {
                 ? SingleChildScrollView(
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        minHeight: max(context.height, 600),
-                        maxHeight: max(context.height, 600),
+                        minHeight:
+                            max(context.height - AppSizes.heightOffset, 600),
+                        maxHeight:
+                            max(context.height - AppSizes.heightOffset, 600),
                       ),
                       child: Padding(
                         padding: EdgeInsets.all(AppSizes.sm),
@@ -422,8 +434,16 @@ class _UsersPageState extends State<UsersPage> {
                                   children: [
                                     SearchBar(
                                       controller: UsersPage.searchController,
-                                      onSubmitted: (_) => _loadUsers(context),
-                                      onTapOutside: (_) => _loadUsers(context),
+                                      onSubmitted: (_) =>
+                                          UsersPage.searchController.text !=
+                                                  prevSearch
+                                              ? _loadUsers(context)
+                                              : {},
+                                      onTapOutside: (_) =>
+                                          UsersPage.searchController.text !=
+                                                  prevSearch
+                                              ? _loadUsers(context)
+                                              : {},
                                       constraints: BoxConstraints(
                                         maxWidth: AppSizes.lg * 8,
                                         minHeight: AppSizes.lg * 1.5,
@@ -496,12 +516,16 @@ class _UsersPageState extends State<UsersPage> {
                                               icon: Icons.settings,
                                               text: strings.value.options,
                                               onTap: () {
-                                                UsersPage.optionsActive.value =
-                                                    !UsersPage
-                                                        .optionsActive.value;
-                                                UsersPage
-                                                    .optionsPopoverController
-                                                    .toggle();
+                                                showShadSheet(
+                                                    context: context,
+                                                    side: ShadSheetSide.right,
+                                                    isDismissible: true,
+                                                    builder: (context) {
+                                                      return ScrollableShadSheetContainer(
+                                                        child:
+                                                            _topPageActionsSmallScreen(),
+                                                      );
+                                                    });
                                               },
                                               active:
                                                   UsersPage.optionsActive.value,
@@ -549,27 +573,34 @@ class _UsersPageState extends State<UsersPage> {
                                   borderRadius: BorderRadius.circular(
                                       AppSizes.borderRadius),
                                 ),
-                                child: DataTable2(
-                                  sortAscending: true,
-                                  columnSpacing: _getColumnSpacing(context),
-                                  onSelectAll: (selectedAll) =>
-                                      selectedAll == true
-                                          ? UsersPage.selectedUsers
-                                              .addAll(usersData)
-                                          : UsersPage.selectedUsers.clear(),
-                                  showCheckboxColumn:
-                                      UsersPage.showCheckboxColumn.value,
-                                  sortColumnIndex: 0,
-                                  dataRowColor: WidgetStateProperty.fromMap({
-                                    WidgetState.hovered: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer,
-                                    WidgetState.focused:
-                                        colorScheme.primaryContainer,
-                                  }),
-                                  columns: _getCols(context),
-                                  rows: _getRows(context),
-                                ),
+                                child: !_loadedUsers.value
+                                    ? CircularProgressIndicatorWithText(
+                                        text: strings.value.loadingUsers,
+                                      )
+                                    : DataTable2(
+                                        sortAscending: true,
+                                        columnSpacing:
+                                            _getColumnSpacing(context),
+                                        onSelectAll: (selectedAll) =>
+                                            selectedAll == true
+                                                ? UsersPage.selectedUsers
+                                                    .addAll(usersData)
+                                                : UsersPage.selectedUsers
+                                                    .clear(),
+                                        showCheckboxColumn:
+                                            UsersPage.showCheckboxColumn.value,
+                                        sortColumnIndex: 0,
+                                        dataRowColor:
+                                            WidgetStateProperty.fromMap({
+                                          WidgetState.hovered: Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer,
+                                          WidgetState.focused:
+                                              colorScheme.primaryContainer,
+                                        }),
+                                        columns: _getCols(context),
+                                        rows: _getRows(context),
+                                      ),
                               ),
                             ),
 
@@ -647,7 +678,9 @@ class _UsersPageState extends State<UsersPage> {
                       ),
                     ),
                   )
-                : Center(child: CircularProgressIndicator()),
+                : CircularProgressIndicatorWithText(
+                    text: strings.value.loading,
+                  ),
           ),
         );
       },
@@ -697,83 +730,12 @@ class _UsersPageState extends State<UsersPage> {
                   closeOnTapOutside: false,
                   popover: (context) => Container(
                     constraints: BoxConstraints(
-                        minWidth: AppSizes.xl * 4, maxWidth: AppSizes.xl * 6),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(strings.value.filters,
-                            style: Theme.of(context).textTheme.headlineMedium),
-                        SizedBox(
-                          height: AppSizes.sm,
-                        ),
-                        Text(strings.value.filterUser,
-                            style: Theme.of(context).textTheme.bodyLarge),
-                        SizedBox(
-                          height: AppSizes.sm,
-                        ),
-                        Divider(),
-                        SizedBox(
-                          height: AppSizes.md,
-                        ),
-                        Text(strings.value.filterByRole,
-                            style: Theme.of(context).textTheme.bodyMedium),
-                        SizedBox(
-                          height: AppSizes.sm,
-                        ),
-                        DropdownMenu<Role>(
-                          hintText: strings.value.role,
-                          label: Text(strings.value.role),
-                          controller: UsersPage.roleFilterController,
-                          enableFilter: false,
-                          enableSearch: false,
-                          requestFocusOnTap: false,
-                          inputDecorationTheme:
-                              Theme.of(context).inputDecorationTheme.copyWith(
-                                    filled: true,
-                                    fillColor:
-                                        Theme.of(context).colorScheme.surface,
-                                  ),
-                          initialSelection: UsersPage.roleFilterSelected.value
-                              ? UsersPage.roleFilter!
-                              : null,
-                          textStyle: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                                  color: AppColors.getRoleColorWithRoleValue(
-                                      UsersPage.roleFilter?.name ?? "")),
-                          onSelected: (value) {
-                            UsersPage.roleFilterSelected.value = false;
-                            if (value == UsersPage.roleFilter) {
-                              UsersPage.roleFilter = null;
-                              UsersPage.roleFilterController.clear();
-                              _loadUsers(context);
-                              return;
-                            }
-                            logger.e(
-                                "${strings.value.role} :${UsersPage.roleFilter?.name} $value");
-                            if (value != null) {
-                              UsersPage.roleFilter = value;
-                              UsersPage.roleFilterSelected.value = true;
-                              _loadUsers(context);
-                            }
-                            logger.e(
-                                "${strings.value.role} :${UsersPage.roleFilter?.name} $value");
-                          },
-                          dropdownMenuEntries: [
-                            for (var role in UsersPage.roles)
-                              DropdownMenuEntry(
-                                  value: role,
-                                  label: role.name,
-                                  style: ButtonStyle(
-                                    foregroundColor: WidgetStatePropertyAll(
-                                        AppColors.getRoleColorWithRoleValue(
-                                            role.name)),
-                                  )),
-                          ],
-                        )
-                      ],
+                      minWidth: AppSizes.xl * 6,
+                      maxWidth: AppSizes.xl * 8,
+                      maxHeight: context.height * 0.4,
+                    ),
+                    child: SingleChildScrollView(
+                      child: filterContent(context),
                     ),
                   ),
                   child: IconWithLabelButton(
@@ -798,127 +760,14 @@ class _UsersPageState extends State<UsersPage> {
                     color: Theme.of(context).colorScheme.surfaceContainer,
                   ),
                   closeOnTapOutside: false,
-                  popover: (context) => SizedBox(
-                    width: AppSizes.xl * 4,
-                    child: Obx(
-                      () => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(strings.value.sort,
-                              style:
-                                  Theme.of(context).textTheme.headlineMedium),
-                          SizedBox(
-                            height: AppSizes.sm,
-                          ),
-                          Text(strings.value.sortUser,
-                              style: Theme.of(context).textTheme.bodyLarge),
-                          SizedBox(
-                            height: AppSizes.sm,
-                          ),
-                          Divider(),
-                          SizedBox(
-                            height: AppSizes.md,
-                          ),
-                          Text("${strings.value.order} :",
-                              style: Theme.of(context).textTheme.bodyMedium),
-                          ShadSelect(
-                            initialValue: _sortASC.value
-                                ? strings.value.asc
-                                : strings.value.desc,
-                            options: [
-                              ShadOption(
-                                  value: strings.value.asc,
-                                  child: Text(strings.value.asc.toUpperCase())),
-                              ShadOption(
-                                  value: strings.value.desc,
-                                  child:
-                                      Text(strings.value.desc.toUpperCase())),
-                            ],
-                            selectedOptionBuilder: (context, value) => Text(
-                              value,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            onChanged: (value) {
-                              _sortASC.value = value == strings.value.asc;
-                              _loadUsers(context);
-                            },
-                          ),
-                          SizedBox(
-                            height: AppSizes.sm,
-                          ),
-                          Text("${strings.value.sortBy} :",
-                              style: Theme.of(context).textTheme.bodyMedium),
-                          SizedBox(
-                            height: AppSizes.sm,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ShadSwitch(
-                                uncheckedTrackColor:
-                                    Theme.of(context).colorScheme.surfaceDim,
-                                checkedTrackColor:
-                                    Theme.of(context).colorScheme.primary,
-                                value: (_sortASC.value
-                                    ? _sortersASC["id"]!.isSelected
-                                    : _sortersDESC["id"]!.isSelected),
-                                label: Text(
-                                  strings.value.id,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                onChanged: (value) =>
-                                    setSorter(context, "id", value),
-                              ),
-                              ShadSwitch(
-                                uncheckedTrackColor:
-                                    Theme.of(context).colorScheme.surfaceDim,
-                                checkedTrackColor:
-                                    Theme.of(context).colorScheme.primary,
-                                value: (_sortASC.value
-                                    ? _sortersASC["email"]!.isSelected
-                                    : _sortersDESC["email"]!.isSelected),
-                                label: Text(
-                                  strings.value.email,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                onChanged: (value) =>
-                                    setSorter(context, "email", value),
-                              ),
-                              ShadSwitch(
-                                uncheckedTrackColor:
-                                    Theme.of(context).colorScheme.surfaceDim,
-                                checkedTrackColor:
-                                    Theme.of(context).colorScheme.primary,
-                                value: (_sortASC.value
-                                    ? _sortersASC["name"]!.isSelected
-                                    : _sortersDESC["name"]!.isSelected),
-                                label: Text(
-                                  strings.value.name,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                onChanged: (value) =>
-                                    setSorter(context, "name", value),
-                              ),
-                              ShadSwitch(
-                                uncheckedTrackColor:
-                                    Theme.of(context).colorScheme.surfaceDim,
-                                checkedTrackColor:
-                                    Theme.of(context).colorScheme.primary,
-                                value: (_sortASC.value
-                                    ? _sortersASC["role"]!.isSelected
-                                    : _sortersDESC["role"]!.isSelected),
-                                label: Text(
-                                  strings.value.role,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                onChanged: (value) =>
-                                    setSorter(context, "role", value),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                  popover: (context) => ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: AppSizes.xl * 6,
+                      maxWidth: AppSizes.xl * 8,
+                      maxHeight: context.height * 0.4,
+                    ),
+                    child: SingleChildScrollView(
+                      child: sortContent(context),
                     ),
                   ),
                   child: IconWithLabelButton(
@@ -942,7 +791,10 @@ class _UsersPageState extends State<UsersPage> {
                     expandPerPage: UsersPage.expandPerPage as RxBool,
                     perPageController: UsersPage._perPageController,
                     perPage: UsersPage.perPage?.value ?? 10,
-                    load: () => _loadUsers(context),
+                    load: () => UsersPage._perPageController.text !=
+                            prevPerPage.toString()
+                        ? _loadUsers(context)
+                        : {},
                   )),
             ],
           ),
@@ -957,6 +809,189 @@ class _UsersPageState extends State<UsersPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Obx sortContent(BuildContext context) {
+    final strings = getTranslations(context).obs;
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(strings.value.sort,
+              style: Theme.of(context).textTheme.headlineMedium),
+          SizedBox(
+            height: AppSizes.sm,
+          ),
+          Text(strings.value.sortUser,
+              style: Theme.of(context).textTheme.bodyLarge),
+          SizedBox(
+            height: AppSizes.sm,
+          ),
+          Divider(),
+          SizedBox(
+            height: AppSizes.md,
+          ),
+          Text("${strings.value.order} :",
+              style: Theme.of(context).textTheme.bodyMedium),
+          ShadSelect(
+            initialValue:
+                _sortASC.value ? strings.value.asc : strings.value.desc,
+            options: [
+              ShadOption(
+                  value: strings.value.asc,
+                  child: Text(strings.value.asc.toUpperCase())),
+              ShadOption(
+                  value: strings.value.desc,
+                  child: Text(strings.value.desc.toUpperCase())),
+            ],
+            selectedOptionBuilder: (context, value) => Text(
+              value,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            onChanged: (value) {
+              _sortASC.value = value == strings.value.asc;
+              _loadUsers(context);
+            },
+          ),
+          SizedBox(
+            height: AppSizes.sm,
+          ),
+          Text("${strings.value.sortBy} :",
+              style: Theme.of(context).textTheme.bodyMedium),
+          SizedBox(
+            height: AppSizes.sm,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ShadSwitch(
+                uncheckedTrackColor: Theme.of(context).colorScheme.surfaceDim,
+                checkedTrackColor: Theme.of(context).colorScheme.primary,
+                value: (_sortASC.value
+                    ? _sortersASC["id"]!.isSelected
+                    : _sortersDESC["id"]!.isSelected),
+                label: Text(
+                  strings.value.id,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                onChanged: (value) => setSorter(context, "id", value),
+              ),
+              ShadSwitch(
+                uncheckedTrackColor: Theme.of(context).colorScheme.surfaceDim,
+                checkedTrackColor: Theme.of(context).colorScheme.primary,
+                value: (_sortASC.value
+                    ? _sortersASC["email"]!.isSelected
+                    : _sortersDESC["email"]!.isSelected),
+                label: Text(
+                  strings.value.email,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                onChanged: (value) => setSorter(context, "email", value),
+              ),
+              ShadSwitch(
+                uncheckedTrackColor: Theme.of(context).colorScheme.surfaceDim,
+                checkedTrackColor: Theme.of(context).colorScheme.primary,
+                value: (_sortASC.value
+                    ? _sortersASC["name"]!.isSelected
+                    : _sortersDESC["name"]!.isSelected),
+                label: Text(
+                  strings.value.name,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                onChanged: (value) => setSorter(context, "name", value),
+              ),
+              ShadSwitch(
+                uncheckedTrackColor: Theme.of(context).colorScheme.surfaceDim,
+                checkedTrackColor: Theme.of(context).colorScheme.primary,
+                value: (_sortASC.value
+                    ? _sortersASC["role"]!.isSelected
+                    : _sortersDESC["role"]!.isSelected),
+                label: Text(
+                  strings.value.role,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                onChanged: (value) => setSorter(context, "role", value),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Column filterContent(BuildContext context) {
+    final strings = getTranslations(context).obs;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(strings.value.filters,
+            style: Theme.of(context).textTheme.headlineMedium),
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        Text(strings.value.filterUser,
+            style: Theme.of(context).textTheme.bodyLarge),
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        Divider(),
+        SizedBox(
+          height: AppSizes.md,
+        ),
+        Text(strings.value.filterByRole,
+            style: Theme.of(context).textTheme.bodyMedium),
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        DropdownMenu<Role>(
+          hintText: strings.value.role,
+          label: Text(strings.value.role),
+          controller: UsersPage.roleFilterController,
+          enableFilter: false,
+          enableSearch: false,
+          requestFocusOnTap: false,
+          inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
+              ),
+          initialSelection:
+              UsersPage.roleFilterSelected.value ? UsersPage.roleFilter! : null,
+          textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: AppColors.getRoleColorWithRoleValue(
+                  UsersPage.roleFilter?.name ?? "")),
+          onSelected: (value) {
+            UsersPage.roleFilterSelected.value = false;
+            if (value == UsersPage.roleFilter) {
+              UsersPage.roleFilter = null;
+              UsersPage.roleFilterController.clear();
+              _loadUsers(context);
+              return;
+            }
+            logger.e(
+                "${strings.value.role} :${UsersPage.roleFilter?.name} $value");
+            if (value != null) {
+              UsersPage.roleFilter = value;
+              UsersPage.roleFilterSelected.value = true;
+              _loadUsers(context);
+            }
+            logger.e(
+                "${strings.value.role} :${UsersPage.roleFilter?.name} $value");
+          },
+          dropdownMenuEntries: [
+            for (var role in UsersPage.roles)
+              DropdownMenuEntry(
+                  value: role,
+                  label: role.name,
+                  style: ButtonStyle(
+                    foregroundColor: WidgetStatePropertyAll(
+                        AppColors.getRoleColorWithRoleValue(role.name)),
+                  )),
+          ],
+        )
+      ],
     );
   }
 
@@ -1032,70 +1067,109 @@ class _UsersPageState extends State<UsersPage> {
     ].nonNulls.toList();
   }
 
+  _topPageActionsSmallScreen() {
+    final strings = getTranslations(context).obs;
+
+    return Column(
+      children: [
+        //right refresh button
+        IconWithLabelButton(
+          icon: Icons.refresh_rounded,
+          onTap: () => _loadUsers(context, page: currentPage ?? 1),
+          text: strings.value.refresh,
+        ),
+
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        PerPageInput(
+          expandPerPage: UsersPage.expandPerPage as RxBool,
+          perPageController: UsersPage._perPageController,
+          load: () =>
+              UsersPage._perPageController.text != prevPerPage.toString()
+                  ? _loadUsers(context,
+                      page: int.parse(UsersPage._perPageController.text))
+                  : null,
+        ),
+        SizedBox(
+          height: AppSizes.lg,
+        ),
+        DividerWithText(text: strings.value.filter),
+        filterContent(context),
+        SizedBox(
+          height: AppSizes.xl,
+        ),
+        DividerWithText(text: strings.value.sort),
+        sortContent(context),
+      ],
+    );
+  }
+
   void _onDeleteButtonClick(BuildContext context,
       {Function()? onDeleteConfirmed}) {
     UsersPage.showCheckboxColumn.value = !UsersPage.showCheckboxColumn.value;
     final strings = getTranslations(context).obs;
-
-    ShadToaster.of(context).show(
-      ShadToast.destructive(
-        closeIcon: SizedBox(),
-        duration: Duration(days: 365),
-        title: Text(strings.value.deleteUser),
-        description: Obx(
-          () {
-            return UsersPage.selectedUsers.isEmpty
-                ? Text(strings.value.selectUserDelete)
-                : Text(strings.value
-                    .confirmUsersDeletion(UsersPage.selectedUsers.length));
-          },
-        ),
-        action: Obx(
-          () => UsersPage.selectedUsers.isEmpty
-              ? ShadButton(
-                  onPressed: () {
-                    UsersPage.selectedUsers.clear();
-                    UsersPage.showCheckboxColumn.value = false;
-                    ShadToaster.of(context).hide();
-                  },
-                  child: Text(strings.value.cancel),
-                )
-              : Row(
-                  children: [
-                    ShadButton(
-                      onPressed: () async {
-                        await _deleteUsers(context);
-                        _loadUsers(context);
-                        onDeleteConfirmed?.call();
-                      },
-                      child: Text(strings.value.yes),
-                    ),
-                    ShadButton(
-                      onPressed: () {
-                        UsersPage.selectedUsers.clear();
-                        UsersPage.showCheckboxColumn.value = false;
-                        ShadToaster.of(context).hide();
-                      },
-                      child: Text(strings.value.no),
-                    ),
-                  ],
-                ),
-        ),
+    final toast = ShadToast.destructive(
+      closeIcon: SizedBox(),
+      duration: Duration(days: 365),
+      title: Text(strings.value.deleteUser),
+      description: Obx(
+        () {
+          return UsersPage.selectedUsers.isEmpty
+              ? Text(strings.value.selectUserDelete)
+              : Text(strings.value
+                  .confirmUsersDeletion(UsersPage.selectedUsers.length));
+        },
+      ),
+      action: Obx(
+        () => UsersPage.selectedUsers.isEmpty
+            ? ShadButton(
+                onPressed: () {
+                  UsersPage.selectedUsers.clear();
+                  UsersPage.showCheckboxColumn.value = false;
+                  ShadToaster.of(context).hide();
+                },
+                child: Text(strings.value.cancel),
+              )
+            : Row(
+                children: [
+                  ShadButton(
+                    onPressed: () async {
+                      await _deleteUsers(context);
+                      _loadUsers(Get.context!);
+                      onDeleteConfirmed?.call();
+                      ShadToaster.of(Get.context!).hide();
+                    },
+                    child: Text(strings.value.yes),
+                  ),
+                  ShadButton(
+                    onPressed: () {
+                      UsersPage.selectedUsers.clear();
+                      UsersPage.showCheckboxColumn.value = false;
+                      ShadToaster.of(context).hide();
+                    },
+                    child: Text(strings.value.no),
+                  ),
+                ],
+              ),
       ),
     );
+    ShadToaster.of(context).show(toast);
   }
 
   Future<void> _deleteUsers(BuildContext context) async {
     final api = await ApiClientInstance.getApiClient();
-    for (User user in UsersPage.selectedUsers) {
-      api.removeUser(
-        id: user.userId,
-      );
-    }
+
+    await Future.wait(
+      UsersPage.selectedUsers.map((user) async {
+        await api.removeUser(id: user.userId);
+        usersData.removeWhere((u) => u.userId == user.userId);
+      }),
+    );
 
     UsersPage.selectedUsers.clear();
     UsersPage.showCheckboxColumn.value = false;
-    ShadToaster.of(context).hide();
+    ShadToaster.of(Get.context!).hide();
   }
 
   Future<dynamic> _showAddUserDialog(BuildContext context) {
@@ -1116,8 +1190,8 @@ class _UsersPageState extends State<UsersPage> {
         child: Obx(
           () {
             if (!_loadedAddUserSuperiorOptions.value) {
-              return Center(
-                child: CircularProgressIndicator(),
+              return CircularProgressIndicatorWithText(
+                text: strings.value.loadingSuperiors,
               );
             }
             logger.e("superior options: $_addUserSuperiorOptions");
@@ -1285,6 +1359,16 @@ class _UsersPageState extends State<UsersPage> {
                           IconWithLabelButton(
                             icon: Icons.delete,
                             text: strings.value.delete,
+                            onTap: () {
+                              UsersPage.selectedUsers.add(user);
+                              _onDeleteButtonClick(
+                                context,
+                                onDeleteConfirmed: () {
+                                  actionsController.toggle();
+                                  ShadToaster.of(context).hide();
+                                },
+                              );
+                            },
                             activeColor: errorColor,
                           ),
                         ].nonNulls.toList(),
@@ -1587,8 +1671,8 @@ class _UsersPageState extends State<UsersPage> {
                 printMessage("loadedRoles : ${loadedRoles.value}");
                 printMessage(
                     "_loadedAddUserSuperiorOptions : ${_loadedAddUserSuperiorOptions.value}");
-                return Center(
-                  child: CircularProgressIndicator(),
+                return CircularProgressIndicatorWithText(
+                  text: strings.value.loadingUserDetails,
                 );
               }
               final role = roles.firstWhereOrNull((r) => r.name == user.role);
@@ -1753,9 +1837,8 @@ class _UsersPageState extends State<UsersPage> {
           child: Obx(
             () {
               if (!loadedUserDetails.value) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
+                return CircularProgressIndicatorWithText(
+                    text: strings.value.loadingUserDetails);
               }
               final role = roles.firstWhereOrNull((r) => r.name == user.role);
               return UserForm(

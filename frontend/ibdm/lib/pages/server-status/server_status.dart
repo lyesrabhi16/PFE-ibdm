@@ -4,6 +4,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/services/api/api_client.dart';
@@ -216,58 +217,77 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
   @override
   Widget build(BuildContext context) {
     _getContext = () => context;
+    final strings = getTranslations(context).obs;
     return AppCustomContainer(
-        child: Padding(
-            padding: const EdgeInsets.all(AppSizes.sm),
-            child: SingleChildScrollView(
-              child: Container(
-                constraints: BoxConstraints(
-                  minWidth: context.width,
-                  maxWidth: context.width,
-                  minHeight: context.height,
-                  maxHeight: double.infinity,
-                ),
-                child: FutureBuilder(
-                    future: Future.wait([load()]),
-                    builder: (context, _) {
-                      if (!loaded.value) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      return StreamBuilder(
-                        stream: ServerStatusPage.stream,
-                        builder: (context, snapshot) {
-                          printMessage("snapshot: $snapshot");
-                          if (snapshot.hasData) {
-                            final data = JsonCodec().decode(snapshot.data);
-                            if (data != null &&
-                                data.containsKey("data") &&
-                                data["data"] != null) {
-                              try {
-                                final decoded = data["data"];
-                                status = SystemStatus.fromJson(decoded);
-                              } catch (e) {
-                                logger.e("Error parsing data: $e");
-                                return const Center(
-                                  child: Text("Error parsing data"),
-                                );
-                              }
-                            }
-                          } else if (snapshot.hasError) {
-                            logger.e("Error: ${snapshot.error}");
-                          } else if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
+      child: Padding(
+        padding: const EdgeInsets.all(AppSizes.sm),
+        child: SingleChildScrollView(
+          child: Container(
+            constraints: BoxConstraints(
+              minWidth: context.width,
+              maxWidth: context.width,
+              minHeight: context.height,
+              maxHeight: double.infinity,
+            ),
+            child: FutureBuilder(
+              future: Future.wait([load()]),
+              builder: (context, _) {
+                if (!loaded.value) {
+                  return Obx(() {
+                    return CircularProgressIndicatorWithText(
+                      text: strings.value.loading,
+                    );
+                  });
+                }
+                try {
+                  return StreamBuilder(
+                    stream: ServerStatusPage.stream,
+                    builder: (context, snapshot) {
+                      printMessage("snapshot: $snapshot");
+                      if (snapshot.hasData) {
+                        final data = JsonCodec().decode(snapshot.data);
+                        if (data != null &&
+                            data.containsKey("data") &&
+                            data["data"] != null) {
+                          try {
+                            final decoded = data["data"];
+                            status = SystemStatus.fromJson(decoded);
+                          } catch (e) {
+                            logger.e("Error parsing data: $e");
                             return const Center(
-                              child: CircularProgressIndicator(),
+                              child: Text("Error parsing data"),
                             );
                           }
-                          return _build();
-                        },
-                      );
-                    }),
-              ),
-            )));
+                        }
+                      } else if (snapshot.hasError) {
+                        logger.e("Error: ${snapshot.error}");
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return CircularProgressIndicatorWithText(
+                          text: strings.value.waitingForConnection,
+                        );
+                      }
+                      return _build();
+                    },
+                  );
+                } catch (e) {
+                  logger.e("Error in Future Builder: $e");
+                  load();
+                  return Center(
+                    child: Text(
+                      "Error loading data: $e",
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.error,
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   _build() {
@@ -275,8 +295,8 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
     return Obx(
       () {
         if (!loaded.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return CircularProgressIndicatorWithText(
+            text: strings.value.loading,
           );
         }
         return Column(
@@ -705,19 +725,15 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
     final strings = getTranslations(context);
     _loadedStatus.value = false;
     try {
-      if (ServerStatusPage.channel == null ||
-          ServerStatusPage.stream == null ||
-          ServerStatusPage.channel?.closeCode != null) {
-        logger.e("closing status channel");
-        ServerStatusPage.channel?.sink.close();
-        ServerStatusPage.stream = null;
-        logger.e("reopening status channel");
-        ServerStatusPage.channel = WebSocketChannel.connect(
-          Uri.parse(ApiConfig.status_broadcast_websocket_url),
-        );
-      }
-      await ServerStatusPage.channel?.ready;
-      ServerStatusPage.stream ??= ServerStatusPage.channel?.stream;
+      logger.e("closing status channel");
+      ServerStatusPage.channel?.sink.close();
+      ServerStatusPage.stream = null;
+      logger.e("reopening status channel");
+      ServerStatusPage.channel = WebSocketChannel.connect(
+        Uri.parse(ApiConfig.status_broadcast_websocket_url),
+      );
+      await ServerStatusPage.channel!.ready;
+      ServerStatusPage.stream ??= ServerStatusPage.channel!.stream;
     } catch (e) {
       logger.e("failed to load server status: $e");
       if (context.mounted) {

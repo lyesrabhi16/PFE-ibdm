@@ -765,5 +765,20 @@
     "totalStorage": "Total Storage",
     "usedStorage": "Used Storage",
     "availableStorage": "Available Storage",
-    "storageUsage": "Storage Usage"
+    "storageUsage": "Storage Usage",
+    "loadingUsers": "Loading Users...",
+    "loading": "Loading...",
+	"loadingUserDetails": "Loading User Details...",
+    "loadingUser": "Loading User...",
+    "loadingSents": "Loading Sents...",
+    "loadingAlerts": "Loading Alerts...",
+    "loadingSchedules": "Loading Schedules...",
+    "loadingTags": "Loading Tags...",
+    "loadingRoles": "Loading Roles...",
+	"loadingSuperiors": "Loading Superiors...",
+    "waitingForConnection": "Waiting for connection...",
+    "waitingForValidData": "Waiting for valid data...",
+    "reconnecting": "Reconnecting...",
+    "notLoading": "Not loading",
+    "waiting": "Waiting..."
 }
