@@ -7,7 +7,7 @@ class IconWithLabelButton extends StatelessWidget {
   IconWithLabelButton({
     super.key,
     required this.icon,
-    required this.text,
+    this.text,
     this.onTap,
     this.active = false,
     this.activeColor,
@@ -15,7 +15,7 @@ class IconWithLabelButton extends StatelessWidget {
 
   final Function? onTap;
   final IconData icon;
-  final String text;
+  final String? text;
   final Rx<bool> _hover = false.obs;
   final bool active;
   final Color? activeColor;
@@ -52,8 +52,10 @@ class IconWithLabelButton extends StatelessWidget {
                     ? Theme.of(context).colorScheme.onPrimary
                     : Theme.of(context).colorScheme.onSurface),
           ),
-          SizedBox(width: AppSizes.sm),
-          Text(text, overflow: TextOverflow.ellipsis),
+          if (text != null) ...[
+            SizedBox(width: AppSizes.sm),
+            Text(text!, overflow: TextOverflow.ellipsis),
+          ],
         ],
       ),
     );

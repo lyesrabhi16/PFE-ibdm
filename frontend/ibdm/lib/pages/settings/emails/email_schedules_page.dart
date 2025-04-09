@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/divider_with_text.dart';
 import 'package:ibdm/common/widgets/email_schedule_form.dart';
 import 'package:ibdm/common/widgets/icon_with_label_button.dart';
 import 'package:ibdm/common/widgets/per_page_input.dart';
+import 'package:ibdm/common/widgets/scrollable_shad_sheet_container.dart';
 import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/pages/settings/emails/actions.dart';
 import 'package:ibdm/pages/users.dart';
@@ -113,21 +115,20 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: max(context.height, 600),
-              maxHeight: max(context.height, 600),
+              minHeight: max(context.height - AppSizes.heightOffset * 2, 600),
+              maxHeight: max(context.height - AppSizes.heightOffset * 2, 600),
             ),
             child: Padding(
               padding: const EdgeInsets.all(AppSizes.sm),
               child: Obx(() {
                 if (!loaded.value) {
                   load();
-                  return Center(
-                    child: CircularProgressIndicator(),
+                  return CircularProgressIndicatorWithText(
+                    text: strings.value.loading,
                   );
                 }
 
                 _showCheckboxColumn.value = _selectedSchedules.isNotEmpty;
-
                 return Column(
                   children: [
                     Obx(() {
@@ -216,59 +217,10 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                                             side: ShadSheetSide.right,
                                             isDismissible: true,
                                             builder: (context) {
-                                              return ShadSheet(
-                                                  scrollable: false,
-                                                  child: ScrollConfiguration(
-                                                    behavior:
-                                                        ScrollConfiguration.of(
-                                                                context)
-                                                            .copyWith(
-                                                      dragDevices: {
-                                                        PointerDeviceKind.touch,
-                                                        PointerDeviceKind.mouse,
-                                                        PointerDeviceKind
-                                                            .stylus,
-                                                        PointerDeviceKind
-                                                            .invertedStylus,
-                                                        PointerDeviceKind
-                                                            .trackpad,
-                                                        PointerDeviceKind
-                                                            .unknown,
-                                                      },
-                                                      scrollbars: true,
-                                                    ),
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      physics:
-                                                          BouncingScrollPhysics(),
-                                                      child: Container(
-                                                        constraints:
-                                                            BoxConstraints(
-                                                          minWidth:
-                                                              context.width / 2,
-                                                          maxWidth:
-                                                              context.width,
-                                                          minHeight:
-                                                              context.height,
-                                                          maxHeight:
-                                                              context.height,
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(
-                                                                  AppSizes.sm),
-                                                          child: Scaffold(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            body:
-                                                                _topPageActionsSmallScreen(),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ));
+                                              return ScrollableShadSheetContainer(
+                                                child:
+                                                    _topPageActionsSmallScreen(),
+                                              );
                                             });
                                       },
                                     ),
@@ -316,7 +268,9 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                               BorderRadius.circular(AppSizes.borderRadius),
                         ),
                         child: _isDataLoading.value
-                            ? Center(child: CircularProgressIndicator())
+                            ? CircularProgressIndicatorWithText(
+                                text: strings.value.loadingSchedules,
+                              )
                             : DataTable2(
                                 columnSpacing: _getColumnSpacing(),
                                 onSelectAll: (selectedAll) =>
@@ -1195,6 +1149,13 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                           IconWithLabelButton(
                             icon: Icons.delete,
                             text: strings.value.delete,
+                            onTap: () {
+                              _selectedSchedules.add(e);
+                              _onDeleteButtonClick(
+                                onDeleteConfirmed: () =>
+                                    actionsController.toggle(),
+                              );
+                            },
                             activeColor: errorColor,
                           ),
                         ].nonNulls.toList(),
@@ -1330,9 +1291,14 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                   closeOnTapOutside: false,
                   popover: (context) => Container(
                     constraints: BoxConstraints(
-                        minWidth: AppSizes.xl * 6, maxWidth: AppSizes.xl * 8),
-                    child: filterContent(context, tagFilterController,
-                        activationStateFilterController),
+                      minWidth: AppSizes.xl * 6,
+                      maxWidth: AppSizes.xl * 8,
+                      maxHeight: context.height * 0.4,
+                    ),
+                    child: SingleChildScrollView(
+                      child: filterContent(context, tagFilterController,
+                          activationStateFilterController),
+                    ),
                   ),
                   child: IconWithLabelButton(
                     icon: Icons.filter_alt,
@@ -1355,11 +1321,17 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                     color: Theme.of(context).colorScheme.surfaceContainer,
                   ),
                   closeOnTapOutside: false,
-                  popover: (context) => SizedBox(
-                    width: AppSizes.xl * 6,
-                    child: sortContent(
-                      context: context,
-                      sortASC: sortASC,
+                  popover: (context) => ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: AppSizes.xl * 6,
+                      maxWidth: AppSizes.xl * 8,
+                      maxHeight: context.height * 0.4,
+                    ),
+                    child: SingleChildScrollView(
+                      child: sortContent(
+                        context: context,
+                        sortASC: sortASC,
+                      ),
                     ),
                   ),
                   child: IconWithLabelButton(

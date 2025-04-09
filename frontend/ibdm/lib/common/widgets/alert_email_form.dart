@@ -185,7 +185,7 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
           ),
         );
       }
-
+      _valuesChanged();
       return ShadForm(
           onChanged: _valuesChanged,
           key: widget.formKey,

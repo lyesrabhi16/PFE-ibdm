@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
 import 'package:ibdm/common/widgets/radial_meter.dart';
 import 'package:ibdm/common/widgets/temp_gauge.dart';
@@ -75,8 +76,8 @@ class _UtilitePageState extends State<UtilitePage> {
               printMessage("loading because of loaded value");
               load();
               logger.e("loading because of loaded value");
-              return Center(
-                child: CircularProgressIndicator(),
+              return CircularProgressIndicatorWithText(
+                text: strings.value.loading,
               );
             }
 
@@ -90,8 +91,8 @@ class _UtilitePageState extends State<UtilitePage> {
               UtilitePage.channel?.sink.close();
               UtilitePage.stream = null;
               load();
-              return Center(
-                child: CircularProgressIndicator(),
+              return CircularProgressIndicatorWithText(
+                text: strings.value.loading,
               );
             }
           },
@@ -181,8 +182,8 @@ class _UtilitePageState extends State<UtilitePage> {
                   //printMessage("snapshot: $snapshot");
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     printMessage("waiting for connection");
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return CircularProgressIndicatorWithText(
+                      text: strings.value.waitingForConnection,
                     );
                   }
                   if (!snapshot.hasData ||
@@ -198,15 +199,15 @@ class _UtilitePageState extends State<UtilitePage> {
                       logger.e("reopening channel...");
                       Future.delayed(Duration(seconds: 1), load);
                     }
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return CircularProgressIndicatorWithText(
+                      text: strings.value.reconnecting,
                     );
                   }
                   final data = JsonCodec().decode(snapshot.data);
                   if (data["data"] == null || data["data"].isEmpty) {
                     logger.e("data is null");
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return CircularProgressIndicatorWithText(
+                      text: strings.value.waitingForValidData,
                     );
                   }
                   if (isLive.value) {
