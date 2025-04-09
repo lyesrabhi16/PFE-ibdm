@@ -766,5 +766,20 @@
 	"totalStorage": "Stockage Total",
 	"usedStorage": "Stockage Utilisé",
 	"availableStorage": "Stockage Disponible",
-	"storageUsage": "Utilisation du Stockage"
+	"storageUsage": "Utilisation du Stockage",
+	"loadingUsers": "Chargement des Utilisateurs...",
+	"loading": "Chargement...",
+	"loadingUserDetails": "Chargement des Détails de l'Utilisateur...",
+	"loadingSuperiors": "Chargement des Supérieurs...",
+	"loadingUser": "Chargement de l'utilisateur...",
+	"loadingSents": "Chargement des emails envoyés...",
+	"loadingAlerts": "Chargement des alertes...",
+	"loadingSchedules": "Chargement des emails cycliques...",
+	"loadingTags": "Chargement des tags...",
+	"loadingRoles": "Chargement des rôles...",
+	"waitingForConnection": "En attente de connexion...",
+	"waitingForValidData": "En attente de données valides...",
+	"reconnecting": "reconnexion...",
+	"notLoading": "Pas De Chargement",
+	"waiting": "En Attente..."
 }

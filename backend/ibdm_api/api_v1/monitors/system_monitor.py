@@ -6,6 +6,7 @@ import platform
 import threading
 import psutil
 import traceback
+import uuid
 from datetime import datetime
 
 from django.db import connections
@@ -17,7 +18,7 @@ from api_v1.sql import RAW_SQL
 from logs.logging import logger
 
 # Path to store status data
-STATUS_FILE = os.path.join(settings.BASE_DIR, 'status_data.json')
+STATUS_FILE = settings.STATUS_FILE_PATH
 
 # Flag to control the monitoring loop
 running = True
@@ -187,6 +188,9 @@ def system_monitor():
     start_time = datetime.now()
     db_elapased_time, db_connections = check_db_connections()
     system_elapsed_time, system_info = get_system_info()
+    # Write to temporary file first to avoid partial writes
+    temp_file = os.path.join(settings.BASE_DIR, f"status_data.{uuid.uuid4()}.json.tmp")
+        
     try:
         # Collect all monitoring data
         status_data = {
@@ -204,16 +208,19 @@ def system_monitor():
         }
 
         status_data["elapsed_time"] = f"{(datetime.now() - start_time).total_seconds()}s"
-        # Write to temporary file first to avoid partial writes
-        temp_file = f"{STATUS_FILE}.tmp"
         with open(temp_file, 'w') as f:
             json.dump(status_data, f, indent=4, default=str)
 
         # Atomic rename to avoid race conditions
         os.replace(temp_file, STATUS_FILE)
+        
         logger.info(f"system_monitor# Status data saved to {STATUS_FILE}")
         logger.info("system_monitor# Monitoring cycle completed successfully")
     except Exception as e:
         logger.error(f"system_monitor# Error in monitoring cycle: {str(e)}")
         logger.error(f"system_monitor# {traceback.format_exc()}")
+    finally:
+        # remove temp file
+        if os.path.exists(temp_file):
+            os.remove(temp_file)
 

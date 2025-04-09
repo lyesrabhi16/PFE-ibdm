@@ -10,12 +10,12 @@ import time
 
 
 def getServerStatusFromFile():
-    status_file = os.path.join(settings.BASE_DIR, 'status_data.json')  # noqa: F821
+    status_file = settings.STATUS_FILE_PATH
     
     if os.path.exists(status_file):
             file_age = time.time() - os.path.getmtime(status_file)
             
-            # Read status data from file
+                # Read status data from file
             with open(status_file, 'r') as f:
                 status_data = json.load(f)
             

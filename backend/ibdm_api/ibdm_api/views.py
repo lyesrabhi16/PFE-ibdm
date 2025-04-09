@@ -79,5 +79,22 @@ def getServerStatus(request):
             "error": str(e)
         }, status=200)
 
+@extend_schema(
+    tags=["api"],
+    summary="restart the server",
+    operation_id="restartServer",
+    request=None,
+    responses=None,
+)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def restartServer(request):
+    os.system("echo 'Restarting server...'")
+    os.system("'..\ibdm_service.exe' restart")
+    return JsonResponse(
+        {
+            "message": "OK"
+        }
+    )
 
 

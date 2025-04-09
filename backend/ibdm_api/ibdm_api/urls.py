@@ -19,7 +19,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import include, path, re_path
-from .views import index, getCA, getServerStatus
+from .views import index, getCA, getServerStatus, restartServer
 
 
 def redirect_home(request):
@@ -36,6 +36,7 @@ urlpatterns = [
     path('admin', admin.site.urls),
     path("ca", getCA),
     path("status", getServerStatus),
+    path("restart", restartServer),
     path('api/v1/', include('api_v1.urls')),
     path('drf/auth/', include('rest_framework.urls', namespace='rest_framework')),
 
@@ -45,6 +46,8 @@ urlpatterns = [
     re_path(r"^app/filtration.*$", redirect_home),
     re_path(r"^app/settings.*$", redirect_home),
     re_path(r"^app/utilite.*$", redirect_home),
+    re_path(r"^app/server-status.*$", redirect_home),
+
 
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
