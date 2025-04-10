@@ -137,7 +137,7 @@ keyfile.*
 
 .vscode
 data
-
+*.zip
 # certificates
 *.crt
 *.key
