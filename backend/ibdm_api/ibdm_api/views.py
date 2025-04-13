@@ -1,4 +1,6 @@
+import json
 from api_v1.utils import getServerStatusFromFile
+from api_v1.constants import ErrorCodes
 from logs.logging import logger as logging
 import os
 from django.http import HttpResponse, JsonResponse
@@ -12,7 +14,8 @@ from rest_framework import permissions
 
 from django.conf import settings
 
-from api_v1.serializers import SystemStatusSerializer
+from api_v1.serializers import ErrorResponseSerializer, SuccessResponseSerializer, SystemStatusSerializer
+from api_v1.serializers import ServerConfigSerializer
 
 def index(request):
     return render(request, "web/index.html")
@@ -90,11 +93,90 @@ def getServerStatus(request):
 @permission_classes([permissions.IsAuthenticated])
 def restartServer(request):
     os.system("echo 'Restarting server...'")
-    os.system("'..\ibdm_service.exe' restart")
+    os.system("'..\\ibdm_service.exe' restart")
     return JsonResponse(
         {
             "message": "OK"
         }
     )
 
+
+@extend_schema(
+    tags=["api"],
+    summary="set the server settings",
+    operation_id="setServerConfig",
+    request=ServerConfigSerializer,
+    responses={
+        200: SuccessResponseSerializer,
+        500: ErrorResponseSerializer
+    },
+)
+@api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
+def setServerConfig(request):
+    try:
+        data = ServerConfigSerializer(request.data).data
+        with open(settings.SETTINGS_JSON_FILE_PATH, "r") as f:
+            existing_data = json.load(f)
+            for key in data:
+                if data.get(key) is not None:
+                    existing_data[key] = data.get(key)
+        with open(settings.SETTINGS_JSON_FILE_PATH, "w") as f:
+            f.write(
+                json.dumps(
+                    existing_data,
+                    indent=4,
+                    default=str,
+                )
+            )
+            return JsonResponse(
+                SuccessResponseSerializer({
+                    "status": "success",
+                    "message": "server configuration has been set"
+                }).data,
+                status = 200,
+            )
+    except Exception as e:
+        print(e)
+        return JsonResponse(
+            ErrorResponseSerializer(
+                {
+                    "status": "error",
+                    "code": ErrorCodes.SERVER_ERROR.code,
+                }
+            ).data, status=ErrorCodes.SERVER_ERROR.status_code
+        )
+
+
+
+@extend_schema(
+    tags=["api"],
+    summary="get the server settings",
+    operation_id="getServerConfig",
+    request=None,
+    responses={
+        200: ServerConfigSerializer,
+        500: ErrorResponseSerializer
+    }
+)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def getServerConfig(request):
+    try:
+        with open(settings.SETTINGS_JSON_FILE_PATH, "r") as f:
+            json_data = json.load(f)
+            data = ServerConfigSerializer(json_data).data
+        return JsonResponse(data,
+            status = 200,
+        )
+    except Exception as e:
+        print(e)
+        return JsonResponse(
+            ErrorResponseSerializer(
+                {
+                    "status": "error",
+                    "code": ErrorCodes.SERVER_ERROR.code,
+                }
+            ).data, status=ErrorCodes.SERVER_ERROR.status_code
+        )
 

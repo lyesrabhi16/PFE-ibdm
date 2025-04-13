@@ -1,0 +1,9 @@
+{
+    "exclude": [
+        "frontend",
+        "backend/config",
+        "backend/ibdm_api/data",
+        ".venv",
+        "node_modules",
+    ]
+}

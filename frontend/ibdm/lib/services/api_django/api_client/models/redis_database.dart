@@ -18,7 +18,7 @@ class RedisDatabase {
   factory RedisDatabase.fromJson(Map<String, Object?> json) => _$RedisDatabaseFromJson(json);
   
   final String state;
-  final Map<String, RedisInfo> info;
+  final Map<String, RedisInfo>? info;
 
   Map<String, Object?> toJson() => _$RedisDatabaseToJson(this);
 }

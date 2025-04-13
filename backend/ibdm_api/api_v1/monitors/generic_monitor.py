@@ -7,7 +7,7 @@ from users.models import User
 from django.template.loader import render_to_string
 from logs.logging import logger as logging
 from tenacity import retry, stop_after_delay, wait_chain, wait_fixed
-
+from api_v1.env import Env
 
 def getValueForCustomExpression(action:str, attrs: list, obj: object) -> float:
     if action == "total":
@@ -32,7 +32,7 @@ def GenericMonitor(monitored_value_tag: str, monitored_object_value: object, nam
         for alert in alerts:
             monitored_value_expression = alert.monitored_value.split(".")
             monitored_value = monitored_value_expression[-1]
-            value : int = 0
+            value : float = 0
             if alert.monitored_value in CUSTOM_MONITORED_VALUES:
                 action = monitored_value_expression[1]
                 attrs : set = CUSTOM_MONITORED_VALUES[alert.monitored_value]
@@ -80,45 +80,45 @@ def after_retry_log(*args):
     after=after_retry_log,
 )
 def sendWarningAlertEmail(name, alert, user, value):
-    logging.info(f"{name}# {alert.monitored_value} Sending warning alert email to '{user.email}'")
     try:
-        send_mail(
-            subject= f"IBDM Alert D'Avertissement: {alert.monitored_value}",
-            message="",
-            html_message= render_to_string(
-                template_name="emails/alert.html",
-                context={
-                    'alert': alert.monitored_value,
-                    'type': 'Avertissement',
-                    'valeur_actual': value,
-                    'message': alert.custom_alert_message
-                }
-            ),
-            from_email=settings.EMAIL_OF_SENDER,
-            recipient_list=[user.email]
-        )
-    except Exception as e:
-        logging.info("genericMonitor# error sending email, trying with secondary provider, error is: {e}")
-        send_mail(
-            subject= f"IBDM Alert D'Avertissement: {alert.monitored_value}",
-            message="",
-            html_message= render_to_string(
-                template_name="emails/alert.html",
-                context={
-                    'alert': alert.monitored_value,
-                    'type': 'Avertissement',
-                    'valeur_actual': value,
-                    'message': alert.custom_alert_message
-                }
-            ),
-            from_email=settings.EMAIL_OF_SENDER2,
-            connection=settings.EMAIL_SECONDARY_PROVIDER,
-            recipient_list=[user.email]
-        )
-    sent_alert = SentAlertEmail.objects.create(alert=alert, at_value=value, alert_type="warning")
-    sentEmail.objects.create(temps_envoi=datetime.now(), alert=sent_alert, receptionist=user)
-    logging.info(f"{name}# {alert.monitored_value} sent warning alert email to '{user.email}' at {datetime.now()}")
+        p_n = 1
+        for provider in settings.EMAIL_PROVIDERS:
+            try:
+                logging.info(f"{name}# {provider.host} {alert.monitored_value} Sending warning alert email to '{user.email}'")
+                logging.info(f"emailScheduler#  {provider.host} sending warning alert email {alert} to '{user.email}'")
+                send_mail(
+                    subject= f"IBDM Alert D'Avertissement: {alert.monitored_value}",
+                    message="",
+                    html_message= render_to_string(
+                        template_name="emails/alert.html",
+                        context={
+                            'alert': alert.monitored_value,
+                            'type': 'Avertissement',
+                            'valeur_actual': value,
+                            'message': alert.custom_alert_message
+                        }
+                    ),
+                    from_email=Env.EMAIL_PROVIDERS[provider.host].get("EMAIL_OF_SENDER"),
+                    recipient_list=[user.email],
+                    connection=provider,
+                )
+                break
+            except Exception as e:
+                if p_n == len(settings.EMAIL_PROVIDERS):
+                    raise e
+                else:
+                    logging.error(f"emailScheduler# {provider.host}: error sending warning alert email {alert} to '{user.email}': {e}")
+                    logging.error(f"{name}# {provider.host}: error sending warning alert email {alert} to '{user.email}': {e}")
+                    logging.info(f"{name}# trying using next provider")
+                    logging.info(f"emailScheduler# trying using next provider")
+                    p_n+=1
+        sent_alert = SentAlertEmail.objects.create(alert=alert, at_value=value, alert_type="warning")
+        sentEmail.objects.create(temps_envoi=datetime.now(), alert=sent_alert, receptionist=user)
+        logging.info(f"{name}# {alert.monitored_value} sent warning alert email to '{user.email}' at {datetime.now()}")
 
+    except Exception as e:
+        logging.info(f"genericMonitor# error sending email : {e}")
+        raise e
 @retry(
     wait=wait_fixed(30), 
     stop=stop_after_delay(60*60),
@@ -126,43 +126,42 @@ def sendWarningAlertEmail(name, alert, user, value):
     after=after_retry_log,
 )
 def sendDangerAlertEmail(alert, value, user, name):
-    logging.info(f"{name}# {alert.monitored_value} Sending danger alert email to '{user.email}'")
     try:
-        send_mail(
-            subject= f"IBDM Alert Danger: {alert.monitored_value}",
-            message="",
-            html_message= render_to_string(
-                template_name="emails/alert.html",
-                context={
-                    'alert': alert.monitored_value,
-                    'type': 'Danger',
-                    'valeur_actual': value,
-                    'message': alert.custom_alert_message
-                }
-            ),
-            from_email=settings.EMAIL_OF_SENDER,
-            recipient_list=[user.email]
-        )
+        p_n = 1
+        for provider in settings.EMAIL_PROVIDERS:
+            try:
+                logging.info(f"{name}# {provider.host} {alert.monitored_value} Sending danger alert email to '{user.email}'")
+                logging.info(f"emailScheduler#  {provider.host} sending danger alert email {alert} to '{user.email}'")
+                send_mail(
+                    subject= f"IBDM Alert De Danger: {alert.monitored_value}",
+                    message="",
+                    html_message= render_to_string(
+                        template_name="emails/alert.html",
+                        context={
+                            'alert': alert.monitored_value,
+                            'type': 'Danger',
+                            'valeur_actual': value,
+                            'message': alert.custom_alert_message
+                        }
+                    ),
+                    from_email=Env.EMAIL_PROVIDERS[provider.host].get("EMAIL_OF_SENDER"),
+                    recipient_list=[user.email],
+                    connection=provider,
+                )
+                break
+            except Exception as e:
+                if p_n == len(settings.EMAIL_PROVIDERS):
+                    raise e
+                else:
+                    logging.error(f"emailScheduler# {provider.host}: error sending danger alert email {alert} to '{user.email}': {e}")
+                    logging.error(f"{name}# {provider.host}: error sending danger alert email {alert} to '{user.email}': {e}")
+                    logging.info(f"{name}# trying using next provider")
+                    logging.info(f"emailScheduler# trying using next provider")
+                    p_n+=1
+        sent_alert = SentAlertEmail.objects.create(alert=alert, at_value=value, alert_type="danger")
+        sentEmail.objects.create(temps_envoi=datetime.now(), alert=sent_alert, receptionist=user)
+        logging.info(f"{name}# {alert.monitored_value} sent danger alert email to '{user.email}' at {datetime.now()}")
     except Exception as e:
-        logging.info("genericMonitor# error sending email, trying with secondary provider, error is: {e}")
-        send_mail(
-            subject= f"IBDM Alert D'Avertissement: {alert.monitored_value}",
-            message="",
-            html_message= render_to_string(
-                template_name="emails/alert.html",
-                context={
-                    'alert': alert.monitored_value,
-                    'type': 'Avertissement',
-                    'valeur_actual': value,
-                    'message': alert.custom_alert_message
-                }
-            ),
-            from_email=settings.EMAIL_OF_SENDER2,
-            connection=settings.EMAIL_SECONDARY_PROVIDER,
-            recipient_list=[user.email]
-        )
-    sent_alert = SentAlertEmail.objects.create(alert=alert, at_value=value, alert_type="danger")
-    sentEmail.objects.create(temps_envoi=datetime.now(), alert=sent_alert, receptionist=user)
-    logging.info(f"{name}# {alert.monitored_value} sent danger alert email to '{user.email}' at {datetime.now()}")
-            
+        logging.info(f"genericMonitor# error sending email : {e}")
+        raise e
 

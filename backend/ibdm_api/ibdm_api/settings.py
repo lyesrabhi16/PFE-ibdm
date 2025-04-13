@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+
 import os
 from pathlib import Path
 from corsheaders.defaults import default_headers
@@ -19,22 +20,25 @@ from api_v1.smtp_backend import EmailBackend
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-VERSION=Env.VERSION
-
+SETTINGS_JSON_FILE_PATH = os.path.join(BASE_DIR, "settings.json")
 
 # Path to store status data
 STATUS_FILE_PATH = os.path.join(BASE_DIR, "data",'status_data.json')
 
+SETTINGS_HASHED_FIELDS = ['DATABASES.*.PASSWORD', 'EMAIL_PROVIDERS.*.PASSWORD']
 
+Env.load_settings_json()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+
+VERSION=Env.VERSION
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = Env.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = Env.DEBUG
-
+print("DEBUG: ", DEBUG)
 SECURE_SSL_REDIRECT = True
 
 ALLOWED_HOSTS = Env.ALLOWED_HOSTS
@@ -124,63 +128,10 @@ WSGI_APPLICATION = "ibdm_api.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+print("DATABASES: ", Env.DATABASES)
 DATABASES = {
-    "default": {
-        "ENGINE": "mssql",
-        "NAME": Env.DATABASE_IBDM_NAME,
-        "USER": Env.DATABASE_IBDM_USER,
-        "PASSWORD": Env.DATABASE_IBDM_PASSWORD,
-        "HOST": Env.DATABASE_IBDM_HOST,
-        "PORT": Env.DATABASE_IBDM_PORT,
-        "OPTIONS": {
-            "driver": "ODBC Driver 17 for SQL Server",
-        },
-    },
-    "ibdm": {
-        "ENGINE": "mssql",
-        "NAME": Env.DATABASE_IBDM_NAME,
-        "USER": Env.DATABASE_IBDM_USER,
-        "PASSWORD": Env.DATABASE_IBDM_PASSWORD,
-        "HOST": Env.DATABASE_IBDM_HOST,
-        "PORT": Env.DATABASE_IBDM_PORT,
-        "OPTIONS": {
-            "driver": "ODBC Driver 17 for SQL Server",
-        },
-    },
-    "siroperie": {
-        "ENGINE": "mssql",
-        "NAME": Env.DATABASE_SIROPERIE_NAME,
-        "USER": Env.DATABASE_SIROPERIE_USER,
-        "PASSWORD": Env.DATABASE_SIROPERIE_PASSWORD,
-        "HOST": Env.DATABASE_SIROPERIE_HOST,
-        "PORT": Env.DATABASE_SIROPERIE_PORT,
-        "OPTIONS": {
-            "driver": "ODBC Driver 17 for SQL Server",
-        },
-    },
-    "filtration": {
-        "ENGINE": "mssql",
-        "NAME": Env.DATABASE_FILTRATION_NAME,
-        "USER": Env.DATABASE_FILTRATION_USER,
-        "PASSWORD": Env.DATABASE_FILTRATION_PASSWORD,
-        "HOST": Env.DATABASE_FILTRATION_HOST,
-        "PORT": Env.DATABASE_FILTRATION_PORT,
-        "OPTIONS": {
-            "driver": "ODBC Driver 17 for SQL Server",
-        },
-    },
-    "utilite": {
-        "ENGINE": "mssql",
-        "NAME": Env.DATABASE_UTILITE_NAME,
-        "USER": Env.DATABASE_UTILITE_USER,
-        "PASSWORD": Env.DATABASE_UTILITE_PASSWORD,
-        "HOST": Env.DATABASE_UTILITE_HOST,
-        "PORT": Env.DATABASE_UTILITE_PORT,
-        "OPTIONS": {
-            "driver": "ODBC Driver 17 for SQL Server",
-        },
-    },
+    "default": list(Env.DATABASES.values())[0] if len(Env.DATABASES) > 0 else {},
+    **dict(Env.DATABASES.items()),
 }
 CONN_MAX_AGE = None
 
@@ -188,10 +139,11 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(Env.DATABASE_IBDM_REDIS_HOST, Env.DATABASE_IBDM_REDIS_PORT)],
+            "hosts": [(Env.REDIS_DB.get("HOST"), Env.REDIS_DB.get("PORT"))],
         },
     }
 }
+print("CHANNEL_LAYERS: ", CHANNEL_LAYERS)
 
 CACHALOT_DATABASES = [
     "default",
@@ -309,21 +261,24 @@ MEDIA_URL = "/media/"
 
 ## Email settings
 EMAIL_BACKEND = "api_v1.smtp_backend.EmailBackend" #'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST =  Env.EMAIL_HOST
-EMAIL_USE_TLS = Env.EMAIL_USE_TLS
-EMAIL_PORT = Env.EMAIL_PORT
-EMAIL_HOST_USER =  Env.EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD =  Env.EMAIL_HOST_PASSWORD
-EMAIL_OF_SENDER = Env.EMAIL_OF_SENDER
-EMAIL_OF_SENDER2 = Env.EMAIL_OF_SENDER2
-EMAIL_SECONDARY_PROVIDER = EmailBackend(
-   host=Env.EMAIL_HOST2,
-   use_tls=Env.EMAIL_USE_TLS2,
-   port=Env.EMAIL_PORT2,
-   username=Env.EMAIL_HOST_USER2,
-   password=Env.EMAIL_HOST_PASSWORD2,
-)
+EMAIL_PROVIDERS = [
+    EmailBackend(
+        host=Env.EMAIL_PROVIDERS[email_provider].get("HOST"),
+        use_tls=Env.EMAIL_PROVIDERS[email_provider].get("USE_TLS"),
+        port=Env.EMAIL_PROVIDERS[email_provider].get("PORT"),
+        username=Env.EMAIL_PROVIDERS[email_provider].get("USER"),
+        password=Env.EMAIL_PROVIDERS[email_provider].get("PASSWORD"),
+    ) for email_provider in Env.EMAIL_PROVIDERS
+]
 
+
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher", # used to hash passwords
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.ScryptPasswordHasher",
+]
 
 LOG_DIR = os.path.join(BASE_DIR, "data", "logs")
 if os.path.exists(LOG_DIR) is False:
@@ -392,7 +347,7 @@ LOGGING = None if not Env.LOG_TO_FILES else {
             'formatter': 'verbose',
             'filters': ['emails_filter'],
         },
-        
+
         'file_emails_broadcast': {
             'class': 'logging.FileHandler',
             'filename': os.path.join(LOG_DIR, 'emails_broadcast.log'),
