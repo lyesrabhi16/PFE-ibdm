@@ -139,7 +139,7 @@ def check_db_connections():
         """Check Redis connection"""
         status = {}
         try:
-            redis_con = Redis(host=Env.DATABASE_IBDM_REDIS_HOST, port=Env.DATABASE_IBDM_REDIS_PORT, db=0, socket_connect_timeout=timeout)
+            redis_con = Redis(host=Env.REDIS_DB.get("HOST"), port=Env.REDIS_DB.get("PORT"), db=0, socket_connect_timeout=timeout)
             redis_con.ping()
             status["state"] ="CONNECTED"
             memory_info = redis_con.info()
@@ -171,7 +171,9 @@ def check_db_connections():
     del dbs_cons["default"]
 
     for db_name in dbs_cons:
-        db_cons_states[db_name] = "DISCONNECTED"
+        db_cons_states[db_name] = {
+            "state":"DISCONNECTED"
+        }
 
     # Wait for all futures to complete
     for _, thread in dbs_cons.items():
@@ -179,7 +181,9 @@ def check_db_connections():
 
     for db_name, thread in dbs_cons.items():
         thread.join(timeout=timeout)
-        db_cons_states[db_name] = results.get(db_name, "DISCONNECTED")
+        db_cons_states[db_name] = results.get(db_name, {
+            "state": "DISCONNECTED"
+        })
     return (datetime.now() - start).total_seconds(), db_cons_states
 
 

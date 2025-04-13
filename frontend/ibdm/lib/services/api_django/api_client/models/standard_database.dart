@@ -19,8 +19,8 @@ class StandardDatabase {
   factory StandardDatabase.fromJson(Map<String, Object?> json) => _$StandardDatabaseFromJson(json);
   
   final String state;
-  final Map<String, DatabaseStorageInfo> info;
-  final String query;
+  final Map<String, DatabaseStorageInfo>? info;
+  final String? query;
 
   Map<String, Object?> toJson() => _$StandardDatabaseToJson(this);
 }

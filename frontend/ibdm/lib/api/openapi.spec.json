@@ -3896,6 +3896,107 @@
                 }
             }
         },
+        "/restart": {
+            "get": {
+                "operationId": "restartServer",
+                "summary": "restart the server",
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/server-config": {
+            "get": {
+                "operationId": "getServerConfig",
+                "summary": "get the server settings",
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerConfig"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/server-config/set": {
+            "post": {
+                "operationId": "setServerConfig",
+                "summary": "set the server settings",
+                "tags": [
+                    "api"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServerConfigRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/status": {
             "get": {
                 "operationId": "getServerStatus",
@@ -4173,12 +4274,12 @@
                     "utilite.ut_sid_pg",
                     "utilite.ut_sid_tt",
                     "utilite.ut_sid_tc",
-                    "sucre.total.adue",
+                    "sucre.total",
                     "sucre.total.tetra",
-                    "sucre.total"
+                    "sucre.total.adue"
                 ],
                 "type": "string",
-                "description": "* `sucre.t_s21` - sucre.t_s21\n* `sucre.t_s22` - sucre.t_s22\n* `sucre.t_s23` - sucre.t_s23\n* `sucre.t_s24` - sucre.t_s24\n* `sucre.t_s25` - sucre.t_s25\n* `sucre.a_t02` - sucre.a_t02\n* `sucre.a_t03` - sucre.a_t03\n* `sucre.a_t04` - sucre.a_t04\n* `sucre.a_t05` - sucre.a_t05\n* `sucre.a_t06` - sucre.a_t06\n* `niveau.niv_f1` - niveau.niv_f2\n* `niveau.niv_uf1` - niveau.niv_uf1\n* `niveau.niv_uf2` - niveau.niv_uf2\n* `niveau.niv_os1` - niveau.niv_os1\n* `niveau.niv_os2` - niveau.niv_os2\n* `niveau.niv_os3` - niveau.niv_os3\n* `niveau.niv_os4` - niveau.niv_os4\n* `niveau.niv_os5` - niveau.niv_os5\n* `niveau.niv_os6` - niveau.niv_os6\n* `niveau.niv_os7` - niveau.niv_os7\n* `debit.d_F1` - debit.d_F1\n* `debit.d_uf1` - debit.d_uf1\n* `debit.d_uf2` - debit.d_uf2\n* `debit.d_uf3` - debit.d_uf3\n* `debit.d_uf4` - debit.d_uf4\n* `debit.d_uf5` - debit.d_uf5\n* `debit.d_uf6` - debit.d_uf6\n* `debit.d_os1` - debit.d_os1\n* `debit.d_os2` - debit.d_os2\n* `debit.d_os3` - debit.d_os3\n* `debit.d_os4` - debit.d_os4\n* `debit.d_os5` - debit.d_os5\n* `debit.d_os6` - debit.d_os6\n* `debit.d_os7` - debit.d_os7\n* `debit.d_os8` - debit.d_os8\n* `debit.d_os9` - debit.d_os9\n* `Pres_Cond.p_uf` - Pres_Cond.p_uf\n* `Pres_Cond.p_uf4` - Pres_Cond.p_uf4\n* `Pres_Cond.p_uf6` - Pres_Cond.p_uf6\n* `Pres_Cond.p_os1` - Pres_Cond.p_os1\n* `Pres_Cond.p_os2` - Pres_Cond.p_os2\n* `Pres_Cond.p_os3` - Pres_Cond.p_os3\n* `Pres_Cond.p_os4` - Pres_Cond.p_os4\n* `Pres_Cond.p_os5` - Pres_Cond.p_os5\n* `Pres_Cond.p_os6` - Pres_Cond.p_os6\n* `Pres_Cond.p_os7` - Pres_Cond.p_os7\n* `Pres_Cond.p_os71` - Pres_Cond.p_os71\n* `Pres_Cond.p_os8` - Pres_Cond.p_os8\n* `Pres_Cond.p_os9` - Pres_Cond.p_os9\n* `Pres_Cond.p_ose1` - Pres_Cond.p_ose1\n* `Pres_Cond.p_ose2` - Pres_Cond.p_ose2\n* `Pres_Cond.p_conc` - Pres_Cond.p_conc\n* `Pres_Cond.c_uf` - Pres_Cond.c_uf\n* `Pres_Cond.c_os1` - Pres_Cond.c_os1\n* `Pres_Cond.c_os2` - Pres_Cond.c_os2\n* `Pres_Cond.c_os3` - Pres_Cond.c_os3\n* `Pres_Cond.c_os4` - Pres_Cond.c_os4\n* `Pres_Cond.c_os5` - Pres_Cond.c_os5\n* `Pres_Cond.c_os6` - Pres_Cond.c_os6\n* `Pres_Cond.c_os7` - Pres_Cond.c_os7\n* `Pres_Cond.c_os8` - Pres_Cond.c_os8\n* `Pres_Cond.c_os9` - Pres_Cond.c_os9\n* `Pres_Cond.c_ose` - Pres_Cond.c_ose\n* `volume.vol_for` - volume.vol_for\n* `volume.vol_uf1` - volume.vol_uf1\n* `volume.vol_uf2` - volume.vol_uf2\n* `volume.vol_uf3` - volume.vol_uf3\n* `volume.vol_uf4` - volume.vol_uf4\n* `volume.vol_uf5` - volume.vol_uf5\n* `volume.vol_uf6` - volume.vol_uf6\n* `volume.vol_os1` - volume.vol_os1\n* `volume.vol_os2` - volume.vol_os2\n* `volume.vol_os3` - volume.vol_os3\n* `volume.vol_os4` - volume.vol_os4\n* `volume.vol_os5` - volume.vol_os5\n* `volume.vol_os6` - volume.vol_os6\n* `volume.vol_os7` - volume.vol_os7\n* `volume.vol_os8` - volume.vol_os8\n* `volume.vol_os9` - volume.vol_os9\n* `co2_ifruit.ut_co2_vc1` - co2_ifruit.ut_co2_vc1\n* `co2_ifruit.ut_co2_vc2` - co2_ifruit.ut_co2_vc2\n* `co2_ifruit.ut_co2_de` - co2_ifruit.ut_co2_de\n* `co2_ifruit.ut_co2_ve` - co2_ifruit.ut_co2_ve\n* `co2_ifruit.ut_co2_pc1` - co2_ifruit.ut_co2_pc1\n* `co2_ifruit.ut_co2_pc2` - co2_ifruit.ut_co2_pc2\n* `co2_ifruit.ut_co2_pn` - co2_ifruit.ut_co2_pn\n* `co2_ifruit.ut_co2_d182` - co2_ifruit.ut_co2_d182\n* `co2_ifruit.ut_co2_d1833` - co2_ifruit.ut_co2_d1833\n* `co2_ifruit.ut_co2_dcan35` - co2_ifruit.ut_co2_dcan35\n* `co2_ifruit.ut_co2_dkrv40` - co2_ifruit.ut_co2_dkrv40\n* `co2_ifruit.ut_co2_dcan2` - co2_ifruit.ut_co2_dcan2\n* `co2_ifruit.ut_co2_dcm16` - co2_ifruit.ut_co2_dcm16\n* `co2_ifruit.ut_co2_v182` - co2_ifruit.ut_co2_v182\n* `co2_ifruit.ut_co2_v1833` - co2_ifruit.ut_co2_v1833\n* `co2_ifruit.ut_co2_vcan35` - co2_ifruit.ut_co2_vcan35\n* `co2_ifruit.ut_co2_vkrv40` - co2_ifruit.ut_co2_vkrv40\n* `co2_ifruit.ut_co2_vcan2` - co2_ifruit.ut_co2_vcan2\n* `co2_ifruit.ut_co2_vcm16` - co2_ifruit.ut_co2_vcm16\n* `co2_ifruit.ut_co2_p182` - co2_ifruit.ut_co2_p182\n* `co2_ifruit.ut_co2_p1833` - co2_ifruit.ut_co2_p1833\n* `co2_ifruit.ut_co2_pcan35` - co2_ifruit.ut_co2_pcan35\n* `co2_ifruit.ut_co2_pkrv40` - co2_ifruit.ut_co2_pkrv40\n* `co2_ifruit.ut_co2_pcan2` - co2_ifruit.ut_co2_pcan2\n* `co2_ifruit.ut_co2_pcm16` - co2_ifruit.ut_co2_pcm16\n* `co2_ifruit.ut_n2_vn2` - co2_ifruit.ut_n2_vn2\n* `co2_ifruit.ut_n2_pn2` - co2_ifruit.ut_n2_pn2\n* `co2_ifruit.ut_soude` - co2_ifruit.ut_soude\n* `utilite.ut_kr_p7` - utilite.ut_kr_p7\n* `utilite.ut_kr_pn2` - utilite.ut_kr_pn2\n* `utilite.ut_kr_p40` - utilite.ut_kr_p40\n* `utilite.ut_kr_pv` - utilite.ut_kr_pv\n* `utilite.ut_kr_pg` - utilite.ut_kr_pg\n* `utilite.ut_kr_tt` - utilite.ut_kr_tt\n* `utilite.ut_kr_tc` - utilite.ut_kr_tc\n* `utilite.ut_sid_p7` - utilite.ut_sid_p7\n* `utilite.ut_sid_pn2` - utilite.ut_sid_pn2\n* `utilite.ut_sid_p40` - utilite.ut_sid_p40\n* `utilite.ut_sid_pv` - utilite.ut_sid_pv\n* `utilite.ut_sid_pg` - utilite.ut_sid_pg\n* `utilite.ut_sid_tt` - utilite.ut_sid_tt\n* `utilite.ut_sid_tc` - utilite.ut_sid_tc\n* `sucre.total.adue` - sucre.total.adue\n* `sucre.total.tetra` - sucre.total.tetra\n* `sucre.total` - sucre.total"
+                "description": "* `sucre.t_s21` - sucre.t_s21\n* `sucre.t_s22` - sucre.t_s22\n* `sucre.t_s23` - sucre.t_s23\n* `sucre.t_s24` - sucre.t_s24\n* `sucre.t_s25` - sucre.t_s25\n* `sucre.a_t02` - sucre.a_t02\n* `sucre.a_t03` - sucre.a_t03\n* `sucre.a_t04` - sucre.a_t04\n* `sucre.a_t05` - sucre.a_t05\n* `sucre.a_t06` - sucre.a_t06\n* `niveau.niv_f1` - niveau.niv_f2\n* `niveau.niv_uf1` - niveau.niv_uf1\n* `niveau.niv_uf2` - niveau.niv_uf2\n* `niveau.niv_os1` - niveau.niv_os1\n* `niveau.niv_os2` - niveau.niv_os2\n* `niveau.niv_os3` - niveau.niv_os3\n* `niveau.niv_os4` - niveau.niv_os4\n* `niveau.niv_os5` - niveau.niv_os5\n* `niveau.niv_os6` - niveau.niv_os6\n* `niveau.niv_os7` - niveau.niv_os7\n* `debit.d_F1` - debit.d_F1\n* `debit.d_uf1` - debit.d_uf1\n* `debit.d_uf2` - debit.d_uf2\n* `debit.d_uf3` - debit.d_uf3\n* `debit.d_uf4` - debit.d_uf4\n* `debit.d_uf5` - debit.d_uf5\n* `debit.d_uf6` - debit.d_uf6\n* `debit.d_os1` - debit.d_os1\n* `debit.d_os2` - debit.d_os2\n* `debit.d_os3` - debit.d_os3\n* `debit.d_os4` - debit.d_os4\n* `debit.d_os5` - debit.d_os5\n* `debit.d_os6` - debit.d_os6\n* `debit.d_os7` - debit.d_os7\n* `debit.d_os8` - debit.d_os8\n* `debit.d_os9` - debit.d_os9\n* `Pres_Cond.p_uf` - Pres_Cond.p_uf\n* `Pres_Cond.p_uf4` - Pres_Cond.p_uf4\n* `Pres_Cond.p_uf6` - Pres_Cond.p_uf6\n* `Pres_Cond.p_os1` - Pres_Cond.p_os1\n* `Pres_Cond.p_os2` - Pres_Cond.p_os2\n* `Pres_Cond.p_os3` - Pres_Cond.p_os3\n* `Pres_Cond.p_os4` - Pres_Cond.p_os4\n* `Pres_Cond.p_os5` - Pres_Cond.p_os5\n* `Pres_Cond.p_os6` - Pres_Cond.p_os6\n* `Pres_Cond.p_os7` - Pres_Cond.p_os7\n* `Pres_Cond.p_os71` - Pres_Cond.p_os71\n* `Pres_Cond.p_os8` - Pres_Cond.p_os8\n* `Pres_Cond.p_os9` - Pres_Cond.p_os9\n* `Pres_Cond.p_ose1` - Pres_Cond.p_ose1\n* `Pres_Cond.p_ose2` - Pres_Cond.p_ose2\n* `Pres_Cond.p_conc` - Pres_Cond.p_conc\n* `Pres_Cond.c_uf` - Pres_Cond.c_uf\n* `Pres_Cond.c_os1` - Pres_Cond.c_os1\n* `Pres_Cond.c_os2` - Pres_Cond.c_os2\n* `Pres_Cond.c_os3` - Pres_Cond.c_os3\n* `Pres_Cond.c_os4` - Pres_Cond.c_os4\n* `Pres_Cond.c_os5` - Pres_Cond.c_os5\n* `Pres_Cond.c_os6` - Pres_Cond.c_os6\n* `Pres_Cond.c_os7` - Pres_Cond.c_os7\n* `Pres_Cond.c_os8` - Pres_Cond.c_os8\n* `Pres_Cond.c_os9` - Pres_Cond.c_os9\n* `Pres_Cond.c_ose` - Pres_Cond.c_ose\n* `volume.vol_for` - volume.vol_for\n* `volume.vol_uf1` - volume.vol_uf1\n* `volume.vol_uf2` - volume.vol_uf2\n* `volume.vol_uf3` - volume.vol_uf3\n* `volume.vol_uf4` - volume.vol_uf4\n* `volume.vol_uf5` - volume.vol_uf5\n* `volume.vol_uf6` - volume.vol_uf6\n* `volume.vol_os1` - volume.vol_os1\n* `volume.vol_os2` - volume.vol_os2\n* `volume.vol_os3` - volume.vol_os3\n* `volume.vol_os4` - volume.vol_os4\n* `volume.vol_os5` - volume.vol_os5\n* `volume.vol_os6` - volume.vol_os6\n* `volume.vol_os7` - volume.vol_os7\n* `volume.vol_os8` - volume.vol_os8\n* `volume.vol_os9` - volume.vol_os9\n* `co2_ifruit.ut_co2_vc1` - co2_ifruit.ut_co2_vc1\n* `co2_ifruit.ut_co2_vc2` - co2_ifruit.ut_co2_vc2\n* `co2_ifruit.ut_co2_de` - co2_ifruit.ut_co2_de\n* `co2_ifruit.ut_co2_ve` - co2_ifruit.ut_co2_ve\n* `co2_ifruit.ut_co2_pc1` - co2_ifruit.ut_co2_pc1\n* `co2_ifruit.ut_co2_pc2` - co2_ifruit.ut_co2_pc2\n* `co2_ifruit.ut_co2_pn` - co2_ifruit.ut_co2_pn\n* `co2_ifruit.ut_co2_d182` - co2_ifruit.ut_co2_d182\n* `co2_ifruit.ut_co2_d1833` - co2_ifruit.ut_co2_d1833\n* `co2_ifruit.ut_co2_dcan35` - co2_ifruit.ut_co2_dcan35\n* `co2_ifruit.ut_co2_dkrv40` - co2_ifruit.ut_co2_dkrv40\n* `co2_ifruit.ut_co2_dcan2` - co2_ifruit.ut_co2_dcan2\n* `co2_ifruit.ut_co2_dcm16` - co2_ifruit.ut_co2_dcm16\n* `co2_ifruit.ut_co2_v182` - co2_ifruit.ut_co2_v182\n* `co2_ifruit.ut_co2_v1833` - co2_ifruit.ut_co2_v1833\n* `co2_ifruit.ut_co2_vcan35` - co2_ifruit.ut_co2_vcan35\n* `co2_ifruit.ut_co2_vkrv40` - co2_ifruit.ut_co2_vkrv40\n* `co2_ifruit.ut_co2_vcan2` - co2_ifruit.ut_co2_vcan2\n* `co2_ifruit.ut_co2_vcm16` - co2_ifruit.ut_co2_vcm16\n* `co2_ifruit.ut_co2_p182` - co2_ifruit.ut_co2_p182\n* `co2_ifruit.ut_co2_p1833` - co2_ifruit.ut_co2_p1833\n* `co2_ifruit.ut_co2_pcan35` - co2_ifruit.ut_co2_pcan35\n* `co2_ifruit.ut_co2_pkrv40` - co2_ifruit.ut_co2_pkrv40\n* `co2_ifruit.ut_co2_pcan2` - co2_ifruit.ut_co2_pcan2\n* `co2_ifruit.ut_co2_pcm16` - co2_ifruit.ut_co2_pcm16\n* `co2_ifruit.ut_n2_vn2` - co2_ifruit.ut_n2_vn2\n* `co2_ifruit.ut_n2_pn2` - co2_ifruit.ut_n2_pn2\n* `co2_ifruit.ut_soude` - co2_ifruit.ut_soude\n* `utilite.ut_kr_p7` - utilite.ut_kr_p7\n* `utilite.ut_kr_pn2` - utilite.ut_kr_pn2\n* `utilite.ut_kr_p40` - utilite.ut_kr_p40\n* `utilite.ut_kr_pv` - utilite.ut_kr_pv\n* `utilite.ut_kr_pg` - utilite.ut_kr_pg\n* `utilite.ut_kr_tt` - utilite.ut_kr_tt\n* `utilite.ut_kr_tc` - utilite.ut_kr_tc\n* `utilite.ut_sid_p7` - utilite.ut_sid_p7\n* `utilite.ut_sid_pn2` - utilite.ut_sid_pn2\n* `utilite.ut_sid_p40` - utilite.ut_sid_p40\n* `utilite.ut_sid_pv` - utilite.ut_sid_pv\n* `utilite.ut_sid_pg` - utilite.ut_sid_pg\n* `utilite.ut_sid_tt` - utilite.ut_sid_tt\n* `utilite.ut_sid_tc` - utilite.ut_sid_tc\n* `sucre.total` - sucre.total\n* `sucre.total.tetra` - sucre.total.tetra\n* `sucre.total.adue` - sucre.total.adue"
             },
             "AlertTypeEnum": {
                 "enum": [
@@ -4660,6 +4761,80 @@
                         "nullable": true
                     }
                 }
+            },
+            "ENVMODEEnum": {
+                "enum": [
+                    "production",
+                    "development"
+                ],
+                "type": "string",
+                "description": "* `production` - production\n* `development` - development"
+            },
+            "EmailProviderConf": {
+                "type": "object",
+                "properties": {
+                    "HOST": {
+                        "type": "string"
+                    },
+                    "PORT": {
+                        "type": "integer"
+                    },
+                    "USE_TLS": {
+                        "type": "boolean"
+                    },
+                    "USER": {
+                        "type": "string"
+                    },
+                    "PASSWORD": {
+                        "type": "string"
+                    },
+                    "EMAIL_OF_SENDER": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "EMAIL_OF_SENDER",
+                    "HOST",
+                    "PASSWORD",
+                    "PORT",
+                    "USER",
+                    "USE_TLS"
+                ]
+            },
+            "EmailProviderConfRequest": {
+                "type": "object",
+                "properties": {
+                    "HOST": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "PORT": {
+                        "type": "integer"
+                    },
+                    "USE_TLS": {
+                        "type": "boolean"
+                    },
+                    "USER": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "PASSWORD": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "EMAIL_OF_SENDER": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "EMAIL_OF_SENDER",
+                    "HOST",
+                    "PASSWORD",
+                    "PORT",
+                    "USER",
+                    "USE_TLS"
+                ]
             },
             "EmailSchedule": {
                 "type": "object",
@@ -6008,7 +6183,8 @@
                         "type": "object",
                         "additionalProperties": {
                             "$ref": "#/components/schemas/RedisInfo"
-                        }
+                        },
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -6189,6 +6365,190 @@
                     "temps_envoi"
                 ]
             },
+            "ServerConfig": {
+                "type": "object",
+                "properties": {
+                    "SECRET_KEY": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "ENV_MODE": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/ENVMODEEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "DEBUG": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "VERSION": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "SYSTEM_MONITOR_DB_TIMEOUT": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "ALLOWED_HOSTS": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "nullable": true
+                    },
+                    "CSRF_TRUSTED_ORIGINS": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "nullable": true
+                    },
+                    "LOG_TO_FILES": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "SERVER_DB_CONNECTION_CHECK_TIMEOUT": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "REDIS_DB": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/StandardDatabaseConf"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "DATABASES": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/StandardDatabaseConf"
+                        },
+                        "nullable": true
+                    },
+                    "EMAIL_PROVIDERS": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/EmailProviderConf"
+                        },
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "ALLOWED_HOSTS",
+                    "CSRF_TRUSTED_ORIGINS",
+                    "DATABASES",
+                    "DEBUG",
+                    "EMAIL_PROVIDERS",
+                    "ENV_MODE",
+                    "LOG_TO_FILES",
+                    "REDIS_DB",
+                    "SECRET_KEY",
+                    "SERVER_DB_CONNECTION_CHECK_TIMEOUT",
+                    "SYSTEM_MONITOR_DB_TIMEOUT",
+                    "VERSION"
+                ]
+            },
+            "ServerConfigRequest": {
+                "type": "object",
+                "properties": {
+                    "SECRET_KEY": {
+                        "type": "string",
+                        "nullable": true,
+                        "minLength": 1
+                    },
+                    "ENV_MODE": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/ENVMODEEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "DEBUG": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "VERSION": {
+                        "type": "string",
+                        "nullable": true,
+                        "minLength": 1
+                    },
+                    "SYSTEM_MONITOR_DB_TIMEOUT": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "ALLOWED_HOSTS": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "nullable": true
+                    },
+                    "CSRF_TRUSTED_ORIGINS": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "nullable": true
+                    },
+                    "LOG_TO_FILES": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "SERVER_DB_CONNECTION_CHECK_TIMEOUT": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "REDIS_DB": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/StandardDatabaseConfRequest"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "DATABASES": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/StandardDatabaseConfRequest"
+                        },
+                        "nullable": true
+                    },
+                    "EMAIL_PROVIDERS": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/EmailProviderConfRequest"
+                        },
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "ALLOWED_HOSTS",
+                    "CSRF_TRUSTED_ORIGINS",
+                    "DATABASES",
+                    "DEBUG",
+                    "EMAIL_PROVIDERS",
+                    "ENV_MODE",
+                    "LOG_TO_FILES",
+                    "REDIS_DB",
+                    "SECRET_KEY",
+                    "SERVER_DB_CONNECTION_CHECK_TIMEOUT",
+                    "SYSTEM_MONITOR_DB_TIMEOUT",
+                    "VERSION"
+                ]
+            },
             "StandardDatabase": {
                 "type": "object",
                 "properties": {
@@ -6199,16 +6559,110 @@
                         "type": "object",
                         "additionalProperties": {
                             "$ref": "#/components/schemas/DatabaseStorageInfo"
-                        }
+                        },
+                        "nullable": true
                     },
                     "query": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "required": [
                     "info",
                     "query",
                     "state"
+                ]
+            },
+            "StandardDatabaseConf": {
+                "type": "object",
+                "properties": {
+                    "ENGINE": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "NAME": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "USER": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "PASSWORD": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "HOST": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "PORT": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "OPTIONS": {
+                        "type": "object",
+                        "additionalProperties": {},
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "ENGINE",
+                    "HOST",
+                    "NAME",
+                    "OPTIONS",
+                    "PASSWORD",
+                    "PORT",
+                    "USER"
+                ]
+            },
+            "StandardDatabaseConfRequest": {
+                "type": "object",
+                "properties": {
+                    "ENGINE": {
+                        "type": "string",
+                        "nullable": true,
+                        "minLength": 1
+                    },
+                    "NAME": {
+                        "type": "string",
+                        "nullable": true,
+                        "minLength": 1
+                    },
+                    "USER": {
+                        "type": "string",
+                        "nullable": true,
+                        "minLength": 1
+                    },
+                    "PASSWORD": {
+                        "type": "string",
+                        "nullable": true,
+                        "minLength": 1
+                    },
+                    "HOST": {
+                        "type": "string",
+                        "nullable": true,
+                        "minLength": 1
+                    },
+                    "PORT": {
+                        "type": "string",
+                        "nullable": true,
+                        "minLength": 1
+                    },
+                    "OPTIONS": {
+                        "type": "object",
+                        "additionalProperties": {},
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "ENGINE",
+                    "HOST",
+                    "NAME",
+                    "OPTIONS",
+                    "PASSWORD",
+                    "PORT",
+                    "USER"
                 ]
             },
             "SubordinateAndSuperior": {

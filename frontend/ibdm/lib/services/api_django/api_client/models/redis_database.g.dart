@@ -9,7 +9,7 @@ part of 'redis_database.dart';
 RedisDatabase _$RedisDatabaseFromJson(Map<String, dynamic> json) =>
     RedisDatabase(
       state: json['state'] as String,
-      info: (json['info'] as Map<String, dynamic>).map(
+      info: (json['info'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, RedisInfo.fromJson(e as Map<String, dynamic>)),
       ),
     );
