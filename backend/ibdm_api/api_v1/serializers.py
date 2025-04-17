@@ -119,7 +119,7 @@ class EmailProviderConfSerializer(serializers.Serializer):
     EMAIL_OF_SENDER = serializers.CharField()
 
 class ServerConfigSerializer(serializers.Serializer):
-    SECRET_KEY = serializers.CharField(allow_null=True)
+    SECRET_KEY = serializers.CharField(allow_null=True, write_only=True, required=False)
     ENV_MODE = serializers.ChoiceField(allow_null=True,choices=list(map(lambda x: (x, x), [EnvModes.PRODUCTION, EnvModes.DEVELOPMENT])))
     DEBUG = serializers.BooleanField(allow_null=True)
     VERSION = serializers.CharField(allow_null=True)

@@ -38,7 +38,6 @@ SECRET_KEY = Env.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = Env.DEBUG
-print("DEBUG: ", DEBUG)
 SECURE_SSL_REDIRECT = True
 
 ALLOWED_HOSTS = Env.ALLOWED_HOSTS
@@ -128,22 +127,26 @@ WSGI_APPLICATION = "ibdm_api.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-print("DATABASES: ", Env.DATABASES)
 DATABASES = {
     "default": list(Env.DATABASES.values())[0] if len(Env.DATABASES) > 0 else {},
     **dict(Env.DATABASES.items()),
 }
-CONN_MAX_AGE = None
+CONN_MAX_AGE = 300
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(Env.REDIS_DB.get("HOST"), Env.REDIS_DB.get("PORT"))],
+            "hosts": [{
+                "host": Env.REDIS_DB.get("HOST"),
+                "port": Env.REDIS_DB.get("PORT"),
+                "username": Env.REDIS_DB.get("USER"),
+                "password": Env.REDIS_DB.get("PASSWORD"),
+                "db": Env.REDIS_DB.get("DB"),
+            },],
         },
     }
 }
-print("CHANNEL_LAYERS: ", CHANNEL_LAYERS)
 
 CACHALOT_DATABASES = [
     "default",

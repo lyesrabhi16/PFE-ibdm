@@ -8,7 +8,6 @@ part of 'server_config_request.dart';
 
 ServerConfigRequest _$ServerConfigRequestFromJson(Map<String, dynamic> json) =>
     ServerConfigRequest(
-      secretKey: json['SECRET_KEY'] as String?,
       envMode: json['ENV_MODE'],
       debug: json['DEBUG'] as bool?,
       version: json['VERSION'] as String?,
@@ -33,6 +32,7 @@ ServerConfigRequest _$ServerConfigRequestFromJson(Map<String, dynamic> json) =>
         (k, e) => MapEntry(
             k, EmailProviderConfRequest.fromJson(e as Map<String, dynamic>)),
       ),
+      secretKey: json['SECRET_KEY'] as String?,
     );
 
 Map<String, dynamic> _$ServerConfigRequestToJson(

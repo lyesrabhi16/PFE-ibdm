@@ -40,6 +40,9 @@ class Cuve extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double _value = value <= 100 ? value : 100;
+    if (value < 0) {
+      _value = 0;
+    } 
 
     return Padding(
       padding: EdgeInsets.symmetric(

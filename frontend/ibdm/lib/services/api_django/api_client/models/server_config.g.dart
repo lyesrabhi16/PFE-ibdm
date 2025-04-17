@@ -7,7 +7,6 @@ part of 'server_config.dart';
 // **************************************************************************
 
 ServerConfig _$ServerConfigFromJson(Map<String, dynamic> json) => ServerConfig(
-      secretKey: json['SECRET_KEY'] as String?,
       envMode: json['ENV_MODE'],
       debug: json['DEBUG'] as bool?,
       version: json['VERSION'] as String?,
@@ -36,7 +35,6 @@ ServerConfig _$ServerConfigFromJson(Map<String, dynamic> json) => ServerConfig(
 
 Map<String, dynamic> _$ServerConfigToJson(ServerConfig instance) =>
     <String, dynamic>{
-      'SECRET_KEY': instance.secretKey,
       'ENV_MODE': instance.envMode,
       'DEBUG': instance.debug,
       'VERSION': instance.version,
