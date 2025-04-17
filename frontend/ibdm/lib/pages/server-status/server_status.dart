@@ -418,8 +418,8 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
                           DataCell(FittedBox(
                             child: Text(
                               db.value is StandardDatabase
-                                  ? "${(db.value as StandardDatabase).info.entries.first.value.percent.toStringAsFixed(2)}%"
-                                  : "${(db.value as RedisDatabase).info.entries.first.value.percent.toStringAsFixed(2)}%",
+                                  ? "${(db.value as StandardDatabase).info?.entries.first.value.percent.toStringAsFixed(2)}%"
+                                  : "${(db.value as RedisDatabase).info?.entries.first.value.percent.toStringAsFixed(2)}%",
                               softWrap: false,
                             ),
                           )).removeWhen(isAtMostSmallScreen(context)),
@@ -809,7 +809,7 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
               children: [
                 ShadButton(
                   onPressed: () {
-                    Get.toNamed(Routes.settings);
+                    Get.toNamed(Routes.serverSettings);
                   },
                   icon: const Icon(Icons.settings),
                   child: Text(
@@ -821,7 +821,7 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
                 ),
                 ShadButton(
                   onPressed: () {
-                    printMessage("restart server pressed");
+                    api!.restartServer();
                   },
                   icon: const Icon(Icons.restart_alt_rounded),
                   child: Text(

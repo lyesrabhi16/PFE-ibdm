@@ -127,17 +127,23 @@ def rapport_filtration(email):
     volume_total_hytec = (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
     volume_total_osmotec = (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
     volume_total_osmosee = volume_total_hytec + volume_total_osmotec
+    value_contre_lavage = (volume.vol_con_lav or 0)
+
+    # consomation depuis le 1er forage
     cons_depuis_1er_forage = 0
     cons_depuis_1er_volume_total_eau_brute = 0
     cons_depuis_1er_volume_total_hytec = 0
     cons_depuis_1er_volume_total_osmotec = 0
     cons_depuis_1er_volume_total_osmosee = 0
+    cons_contre_lavage_depuis_1er = 0 # TODO: set this to the correct value
+    
     volume_list.append(volume)
     for volume in volume_list:
         cons_depuis_1er_forage += volume.vol_for
         cons_depuis_1er_volume_total_eau_brute += (volume.vol_uf1 or 0) + (volume.vol_uf2 or 0) + (volume.vol_uf3 or 0) + (volume.vol_uf4 or 0) + (volume.vol_uf5 or 0) + (volume.vol_uf6 or 0)
         cons_depuis_1er_volume_total_hytec += (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
         cons_depuis_1er_volume_total_osmotec += (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
+        cons_contre_lavage_depuis_1er += (volume.vol_con_lav or 0)
         
         _volume_total_hytec = (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
         _volume_total_osmotec = (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
@@ -305,6 +311,15 @@ def rapport_filtration(email):
                 "danger": False,
             },
             {
+                "type": "",
+                "nom": "Contre Lavage",
+                "valeur": "{:.2f}".format(value_contre_lavage),
+                "unite": "M3",
+                "fill": "",
+                "danger": True,
+
+            },
+            {
                 "type": "CONSOMMATION DEPUIS LE 1er",
                 "nom": "",
                 "valeur": "",
@@ -351,6 +366,15 @@ def rapport_filtration(email):
                 "unite": "M3",
                 "fill": "",
                 "danger": False,
+            },
+            {
+                "type": "",
+                "nom": "Contre Lavage",
+                "valeur": "{:.2f}".format(cons_contre_lavage_depuis_1er),
+                "unite": "M3",
+                "fill": "",
+                "danger": True,
+
             },
             {
                 "type": "CONDUCTIVITE",

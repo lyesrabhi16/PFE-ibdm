@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from api_v1.constants import ErrorCodes
+from api_v1.env import EnvModes
 
 class ErrorResponseSerializer(serializers.Serializer):
     status = serializers.CharField()
@@ -69,13 +70,13 @@ class RedisInfoSerializer(serializers.Serializer):
 
 class StandardDatabaseSerializer(serializers.Serializer):
     state = serializers.CharField()
-    info = serializers.DictField(child=DatabaseStorageInfoSerializer())
-    query = serializers.CharField()
+    info = serializers.DictField(child=DatabaseStorageInfoSerializer(), allow_null=True)
+    query = serializers.CharField(allow_null=True)
 
 
 class RedisDatabaseSerializer(serializers.Serializer):
     state = serializers.CharField()
-    info = serializers.DictField(child=RedisInfoSerializer())
+    info = serializers.DictField(child=RedisInfoSerializer(), allow_null=True)
 
 
 class DatabasesSerializer(serializers.Serializer):
@@ -92,9 +93,41 @@ class SystemStatusSerializer(serializers.Serializer):
     env = serializers.CharField()
     debug = serializers.BooleanField()
     description = serializers.CharField()
-    last_updated = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S.%f")
+    last_updated = serializers.DateTimeField()
     elapsed_time = serializers.CharField()
     system_info_elapsed_time = serializers.CharField()
     databases_elapsed_time = serializers.CharField()
     system_info = SystemInfoSerializer()
     databases = DatabasesSerializer()
+
+
+class StandardDatabaseConfSerializer(serializers.Serializer):
+    ENGINE = serializers.CharField(allow_null=True)
+    NAME = serializers.CharField(allow_null=True)
+    USER = serializers.CharField(allow_null=True)
+    PASSWORD = serializers.CharField(allow_null=True)
+    HOST = serializers.CharField(allow_null=True)
+    PORT = serializers.CharField(allow_null=True)
+    OPTIONS =serializers.DictField(allow_null=True)
+
+class EmailProviderConfSerializer(serializers.Serializer):
+    HOST = serializers.CharField()
+    PORT = serializers.IntegerField()
+    USE_TLS = serializers.BooleanField()
+    USER = serializers.CharField()
+    PASSWORD = serializers.CharField()
+    EMAIL_OF_SENDER = serializers.CharField()
+
+class ServerConfigSerializer(serializers.Serializer):
+    SECRET_KEY = serializers.CharField(allow_null=True, write_only=True, required=False)
+    ENV_MODE = serializers.ChoiceField(allow_null=True,choices=list(map(lambda x: (x, x), [EnvModes.PRODUCTION, EnvModes.DEVELOPMENT])))
+    DEBUG = serializers.BooleanField(allow_null=True)
+    VERSION = serializers.CharField(allow_null=True)
+    SYSTEM_MONITOR_DB_TIMEOUT = serializers.IntegerField(allow_null=True)
+    ALLOWED_HOSTS = serializers.ListField(child=serializers.CharField(), allow_null=True)
+    CSRF_TRUSTED_ORIGINS = serializers.ListField(child=serializers.CharField(), allow_null=True)
+    LOG_TO_FILES = serializers.BooleanField(allow_null=True)
+    SERVER_DB_CONNECTION_CHECK_TIMEOUT = serializers.IntegerField(allow_null=True)
+    REDIS_DB = StandardDatabaseConfSerializer(allow_null=True)
+    DATABASES = serializers.DictField(child=StandardDatabaseConfSerializer(), allow_null=True)
+    EMAIL_PROVIDERS = serializers.DictField(child=EmailProviderConfSerializer(), allow_null=True)

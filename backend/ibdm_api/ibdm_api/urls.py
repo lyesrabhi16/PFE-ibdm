@@ -19,7 +19,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import include, path, re_path
-from .views import index, getCA, getServerStatus, restartServer
+from ibdm_api.views import getServerConfig
+from .views import index, getCA, getServerStatus, restartServer, setServerConfig
 
 
 def redirect_home(request):
@@ -39,6 +40,8 @@ urlpatterns = [
     path("restart", restartServer),
     path('api/v1/', include('api_v1.urls')),
     path('drf/auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path("server-config", getServerConfig),
+    path("server-config/set", setServerConfig),
 
     path("app/", index),
     re_path(r"app/login.*$", redirect_home),

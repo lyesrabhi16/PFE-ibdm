@@ -39,8 +39,9 @@ class SideMenuContainer extends StatelessWidget {
 
     List<SideMenuItem> items = [];
     for (Destination dest in Destination.getDestinations(context)) {
+      final key = GlobalKey();
+
       items.add(SideMenuItem(builder: (context, displayMode) {
-        final key = GlobalObjectKey(dest.route);
         logger.e(
             "dest key: ${key.toString()} dest: ${dest.route} displayMode: $displayMode");
         if (dest.route == Get.currentRoute ||
@@ -66,9 +67,7 @@ class SideMenuContainer extends StatelessWidget {
             active: dest.route == Get.currentRoute ||
                 dest.route == Routes.customRoutes[Get.currentRoute],
             onTap: () {
-              if (dest.route != Get.currentRoute) {
-                Get.toNamed(dest.route);
-              }
+              Get.toNamed(dest.route);
             },
           )),
         );
