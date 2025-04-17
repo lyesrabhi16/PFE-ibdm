@@ -26,6 +26,7 @@ class Volume {
     this.volOs7,
     this.volOs8,
     this.volOs9,
+    this.volConLav,
   });
   
   factory Volume.fromJson(Map<String, Object?> json) => _$VolumeFromJson(json);
@@ -63,6 +64,8 @@ class Volume {
   final double? volOs8;
   @JsonKey(name: 'vol_os9')
   final double? volOs9;
+  @JsonKey(name: 'vol_con_lav')
+  final double? volConLav;
 
   Map<String, Object?> toJson() => _$VolumeToJson(this);
 }

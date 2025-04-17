@@ -115,7 +115,10 @@ def restartServer(request):
 @permission_classes([permissions.IsAuthenticated])
 def setServerConfig(request):
     try:
+        secret_key = request.data.get("SECRET_KEY", None)
         data = ServerConfigSerializer(request.data).data
+        if secret_key is not None:
+            data["SECRET_KEY"] = secret_key.strip()
         with open(settings.SETTINGS_JSON_FILE_PATH, "r") as f:
             existing_data = json.load(f)
             for key in data:
@@ -165,6 +168,7 @@ def getServerConfig(request):
     try:
         with open(settings.SETTINGS_JSON_FILE_PATH, "r") as f:
             json_data = json.load(f)
+            json_data["SECRET_KEY"] = "CONFIDENTIAL"
             data = ServerConfigSerializer(json_data).data
         return JsonResponse(data,
             status = 200,

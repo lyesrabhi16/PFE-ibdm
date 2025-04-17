@@ -24,7 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
-    final localecontroller = Get.find<LocaleController>();
+    final localeController = Get.find<LocaleController>();
 
     return AppCustomContainer(
       child: Padding(
@@ -68,19 +68,19 @@ class _SettingsPageState extends State<SettingsPage> {
                     SettingCard(
                       icon: Icons.language,
                       title: strings.value.language,
-                      subtitle: localecontroller.locale.value.languageCode,
+                      subtitle: localeController.locale.value.languageCode,
                       trailing: SizedBox(
                         height: 30,
                         width: 60,
                         child: LanguageSwitchButton(),
                       ),
                       onTap: () {
-                        final int nextIndex = (localecontroller.supportedLocales
-                                    .indexOf(localecontroller.locale.value) +
+                        final int nextIndex = (localeController.supportedLocales
+                                    .indexOf(localeController.locale.value) +
                                 1) %
-                            localecontroller.supportedLocales.length;
-                        localecontroller.setLocale(
-                            localecontroller.supportedLocales[nextIndex]);
+                            localeController.supportedLocales.length;
+                        localeController.setLocale(
+                            localeController.supportedLocales[nextIndex]);
                       },
                     ),
                     SettingCard(
@@ -93,6 +93,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: strings.value.about,
                       onTap: () => Get.toNamed(Routes.about),
                     ),
+                    SettingCard(
+                      icon: Icons.settings,
+                      title: strings.value.serverSettings,
+                      onTap: () => Get.toNamed(Routes.serverSettings),
+                    ).withPermission(Permissions.viewServerSettingsPage),
                   ].nonNulls.toList(),
                 );
               }),

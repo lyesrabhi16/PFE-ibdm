@@ -24,6 +24,7 @@ Volume _$VolumeFromJson(Map<String, dynamic> json) => Volume(
       volOs7: (json['vol_os7'] as num?)?.toDouble(),
       volOs8: (json['vol_os8'] as num?)?.toDouble(),
       volOs9: (json['vol_os9'] as num?)?.toDouble(),
+      volConLav: (json['vol_con_lav'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$VolumeToJson(Volume instance) => <String, dynamic>{
@@ -44,4 +45,5 @@ Map<String, dynamic> _$VolumeToJson(Volume instance) => <String, dynamic>{
       'vol_os7': instance.volOs7,
       'vol_os8': instance.volOs8,
       'vol_os9': instance.volOs9,
+      'vol_con_lav': instance.volConLav,
     };

@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
@@ -1193,14 +1192,22 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
       messageError: strings.value.failedToSendEmail,
       state: state,
     );
-    await api!.sendScheduledEmailNow(emailScheduleId: schedule.id);
-    if (state.value != FutureState.error) {
+    try {
+      await api!.sendScheduledEmailNow(emailScheduleId: schedule.id);
       state.value = FutureState.success;
+    } catch (e) {
+      state.value = FutureState.error;
+      logger.e("Failed to send email now : $e");
+      state.value = FutureState.error;
+      Toasts.showErrorToast(
+          context: context,
+          message: strings.value.failedToSendEmailWithId(schedule.id));
+    } finally {
+      Future.delayed(Duration(seconds: 2), () {
+        toastification.dismissById(toast.id);
+      });
+      ShadToaster.of(context).hide();
     }
-    Future.delayed(Duration(seconds: 2), () {
-      toastification.dismissById(toast.id);
-    });
-    ShadToaster.of(context).hide();
   }
 
   _getColumnSpacing() {

@@ -12,7 +12,6 @@ part 'server_config.g.dart';
 @JsonSerializable()
 class ServerConfig {
   const ServerConfig({
-    required this.secretKey,
     required this.envMode,
     required this.debug,
     required this.version,
@@ -28,8 +27,6 @@ class ServerConfig {
   
   factory ServerConfig.fromJson(Map<String, Object?> json) => _$ServerConfigFromJson(json);
   
-  @JsonKey(name: 'SECRET_KEY')
-  final String? secretKey;
   @JsonKey(name: 'ENV_MODE')
   final dynamic envMode;
   @JsonKey(name: 'DEBUG')

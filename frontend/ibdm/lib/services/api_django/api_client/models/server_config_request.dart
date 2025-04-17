@@ -12,7 +12,6 @@ part 'server_config_request.g.dart';
 @JsonSerializable()
 class ServerConfigRequest {
   const ServerConfigRequest({
-    required this.secretKey,
     required this.envMode,
     required this.debug,
     required this.version,
@@ -24,6 +23,7 @@ class ServerConfigRequest {
     required this.redisDB,
     required this.databases,
     required this.emailProviders,
+    this.secretKey,
   });
   
   factory ServerConfigRequest.fromJson(Map<String, Object?> json) => _$ServerConfigRequestFromJson(json);
