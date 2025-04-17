@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
 djangorestframework = "*"
 mssql-django = "*"
 drf-spectacular = {extras = ["sidecar"], version = "*"}
@@ -26,6 +25,8 @@ django-cachalot = "*"
 tenacity = "*"
 psutils = "*"
 psutil = "*"
+cryptography = "*"
+django = {extras = ["argon2"], version = "*"}
 
 [requires]
 python_version = "3.12.9"

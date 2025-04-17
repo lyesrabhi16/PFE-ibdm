@@ -110,6 +110,7 @@ class Volume(models.Model):
     vol_os7 = models.FloatField(db_column='Vol_OS7', blank=True, null=True)  # Field name made lowercase.
     vol_os8 = models.FloatField(db_column='Vol_OS8', blank=True, null=True)  # Field name made lowercase.
     vol_os9 = models.FloatField(db_column='Vol_OS9', blank=True, null=True)  # Field name made lowercase.
+    vol_con_lav = models.FloatField(db_column='Vol_Con_Lav', blank=True, null=True)  # Field name made lowercase.
 
     def __str__(self):
         return f"Volume({str(self.date)})"

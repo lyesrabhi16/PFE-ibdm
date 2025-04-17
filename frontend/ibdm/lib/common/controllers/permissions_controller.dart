@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
@@ -6,8 +7,15 @@ class PermissionsController extends GetxController {
   bool permissions_loading = false;
   Rx<bool> ready = false.obs;
   List<String> perms = [];
-
+  bool bypass = false;
   Future<void> loadPermissions() async {
+    if (bypass && !kReleaseMode) {
+      logger.e("bypass permissions loading");
+      ready.value = true;
+      permissions_loading = false;
+      return;
+    }
+
     if (permissions_loading) {
       logger.e("REFUSED TO LOAD: loading permissions is already in progress");
       return;
@@ -46,6 +54,10 @@ class PermissionsController extends GetxController {
   }
 
   bool hasPerm(String permission) {
+    if (bypass) {
+      logger.e("bypass permissions check");
+      return true;
+    }
     try {
       if (ready.value == false) {
         throw ("Permissions not ready");

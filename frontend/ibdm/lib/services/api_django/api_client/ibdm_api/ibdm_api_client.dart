@@ -55,6 +55,8 @@ import '../models/rapport.dart';
 import '../models/role.dart';
 import '../models/role_request.dart';
 import '../models/sent_email.dart';
+import '../models/server_config.dart';
+import '../models/server_config_request.dart';
 import '../models/subordinate_and_superior.dart';
 import '../models/subordinate_and_superior_request.dart';
 import '../models/success_response.dart';
@@ -802,6 +804,20 @@ abstract class IbdmApiClient {
   /// Get the CA certificate
   @GET('/ca')
   Future<String> getCA();
+
+  /// restart the server
+  @GET('/restart')
+  Future<void> restartServer();
+
+  /// get the server settings
+  @GET('/server-config')
+  Future<ServerConfig> getServerConfig();
+
+  /// set the server settings
+  @POST('/server-config/set')
+  Future<SuccessResponse> setServerConfig({
+    @Body() required ServerConfigRequest body,
+  });
 
   /// Get the server status
   @GET('/status')

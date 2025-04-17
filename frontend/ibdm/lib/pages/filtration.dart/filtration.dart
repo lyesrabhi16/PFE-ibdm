@@ -26,6 +26,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:widget_arrows/widget_arrows.dart';
+import 'package:ibdm/common/controllers/side_menu_state_controller.dart';
 
 class FiltrationPage extends StatefulWidget {
   const FiltrationPage({super.key});
@@ -139,6 +140,10 @@ class _FiltrationPageState extends State<FiltrationPage> {
       _somme_volume_eau_filtree_hytec + _somme_volume_eau_filtree_osmotec;
   double get _somme_debit_eau_filtree_osmosee =>
       _somme_debit_eau_filtree_hytec + _somme_debit_eau_filtree_osmotec;
+
+  final SideMenuStateController sideMenuStateController =
+      Get.find<SideMenuStateController>();
+
   @override
   Widget build(BuildContext context) {
     _getContext = () => context;
@@ -146,7 +151,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
         child: Padding(
       padding: EdgeInsets.all(AppSizes.sm),
       child: Obx(() {
-        printMessage("loaded: ${loaded.value}");
+        print("width: ${context.width}");
         if (!loaded.value) {
           printMessage("loading because of loaded value");
           load();
@@ -536,7 +541,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 ),
                               ),
                             ],
-                          ).removeWhen(isAtMostMediumScreen(context)),
+                          ).removeWhen(spaceIsNotEnough()),
                           Column(
                             children: [
                               ArrowElement(
@@ -805,7 +810,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                 ),
                               ),
                             ],
-                          ).removeWhen(isAtLeastLargeScreen(context)),
+                          ).removeWhen(!spaceIsNotEnough()),
                           SizedBox(
                             height: AppSizes.xl * 2,
                           ),
@@ -1233,6 +1238,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
             Cuve(
               title: "F1",
               okColor: successColor,
+              dangerPoint: 50,
               value: F1_value,
               niveau1: niveau.nivF1 ?? 0,
               niveau1Trailing: "M3",
@@ -1242,6 +1248,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
             Cuve(
               title: "F2",
               okColor: successColor,
+              dangerPoint: 50,
               value: F2_value,
               niveau1: niveau.nivF2 ?? 0,
               niveau1Trailing: "M3",
@@ -1293,6 +1300,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
             Cuve(
               title: "UF1",
               okColor: colorScheme.primary,
+              dangerPoint: 50,
               value: UF1_value,
               niveau1: niveau.nivUf1 ?? 0,
               niveau1Trailing: "M3",
@@ -1302,6 +1310,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
             Cuve(
               title: "UF2",
               okColor: colorScheme.primary,
+              dangerPoint: 50,
               value: UF2_value,
               niveau1: niveau.nivUf2 ?? 0,
               niveau1Trailing: "M3",
@@ -1421,6 +1430,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           title: "Hytec 1",
                           okColor: colorScheme.primaryContainer,
                           niveau1Trailing: "M3",
+                          dangerPoint: 50,
                           value: OS1_value,
                           niveau1: niveau.nivOs1 ?? 0,
                           niveau2: OS1_value,
@@ -1430,6 +1440,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           padding: AppSizes.sm + 1,
                           title: "Hytec 2",
                           okColor: colorScheme.primaryContainer,
+                          dangerPoint: 50,
                           value: OS2_value,
                           niveau1: niveau.nivOs2 ?? 0,
                           niveau2: OS2_value,
@@ -1440,6 +1451,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           padding: AppSizes.sm + 1,
                           title: "Hytec 3",
                           okColor: colorScheme.primaryContainer,
+                          dangerPoint: 50,
                           value: OS3_value,
                           niveau1: niveau.nivOs3 ?? 0,
                           niveau2: OS3_value,
@@ -1450,6 +1462,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           padding: AppSizes.sm + 1,
                           title: "Hytec 4",
                           okColor: colorScheme.primaryContainer,
+                          dangerPoint: 50,
                           value: OS4_value,
                           niveau1: (niveau.nivOs4 ?? 0) / 3,
                           niveau2: OS4_value,
@@ -1460,6 +1473,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           padding: AppSizes.sm + 1,
                           title: "Hytec 5",
                           okColor: colorScheme.primaryContainer,
+                          dangerPoint: 50,
                           value: OS4_value,
                           niveau1: (niveau.nivOs4 ?? 0) / 3,
                           niveau2: OS4_value,
@@ -1470,6 +1484,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           padding: AppSizes.sm + 1,
                           title: "Hytec 6",
                           okColor: colorScheme.primaryContainer,
+                          dangerPoint: 50,
                           value: OS4_value,
                           niveau1: (niveau.nivOs4 ?? 0) / 3,
                           niveau2: OS4_value,
@@ -1753,6 +1768,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                       Cuve(
                         title: "Osmotec 1",
                         okColor: colorScheme.secondary,
+                        dangerPoint: 50,
                         value: OS5_value,
                         niveau1: niveau.nivOs5 ?? 0,
                         niveau2: OS5_value,
@@ -1762,6 +1778,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                       Cuve(
                         title: "Osmotec 2",
                         okColor: colorScheme.secondary,
+                        dangerPoint: 50,
                         value: OS5_value,
                         niveau1: niveau.nivOs5 ?? 0,
                         niveau2: OS5_value,
@@ -1771,6 +1788,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                       Cuve(
                         title: "Osmotec 3",
                         okColor: colorScheme.secondary,
+                        dangerPoint: 50,
                         value: OS5_value,
                         niveau1: niveau.nivOs5 ?? 0,
                         niveau2: OS5_value,
@@ -1781,6 +1799,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                     Wrap(children: [
                       Cuve(
                         title: "Osmotec 4",
+                        dangerPoint: 50,
                         value: OS6_value,
                         niveau1: niveau.nivOs6 ?? 0,
                         niveau2: OS6_value,
@@ -1790,6 +1809,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                       ),
                       Cuve(
                         title: "Osmotec 5",
+                        dangerPoint: 50,
                         value: OS6_value,
                         niveau1: niveau.nivOs6 ?? 0,
                         niveau2: OS6_value,
@@ -1799,6 +1819,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                       ),
                       Cuve(
                         title: "Osmotec 6",
+                        dangerPoint: 50,
                         value: OS6_value,
                         niveau1: niveau.nivOs6 ?? 0,
                         niveau2: OS6_value,
@@ -1808,6 +1829,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                       ),
                       Cuve(
                         title: "Osmotec 7",
+                        dangerPoint: 50,
                         value: OS6_value,
                         niveau1: niveau.nivOs6 ?? 0,
                         niveau2: OS6_value,
@@ -1922,6 +1944,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
             ),
             Cuve(
               title: "Concentrat",
+              dangerPoint: 50,
               okColor: colorScheme.primary,
               niveau1: 0,
               niveau2: 0,
@@ -1930,6 +1953,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
             ),
             Cuve(
               title: "Double Osmose Utilité",
+              dangerPoint: 50,
               value: OS7_value,
               okColor: colorScheme.primary,
               niveau1: niveau.nivOs7 ?? 0,
@@ -2054,5 +2078,11 @@ class _FiltrationPageState extends State<FiltrationPage> {
               : Container(),
         ),
     ];
+  }
+
+  bool spaceIsNotEnough() {
+    return sideMenuStateController.isOpen
+        ? context.width <= 1500
+        : context.width <= 1250;
   }
 }

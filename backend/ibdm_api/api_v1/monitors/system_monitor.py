@@ -106,7 +106,10 @@ def check_db_connections():
         status={}
         # Obtain a cursor using the modified options
         try:
-            timeout_wrapper(lambda: connections[db_name].cursor(), timeout=timeout)
+            def test_cursor():
+                cursor = connections[db_name].cursor()
+                cursor.close()
+            timeout_wrapper(test_cursor, timeout=timeout)
             status["state"]="CONNECTED"
         except Exception as e:
             logger.error(f"system_monitor# Database connection error for {db_name}: {str(e)}")
@@ -128,18 +131,19 @@ def check_db_connections():
                     cursor.close()
 
                 timeout_wrapper(getDiskUsage, args=(disk_usage_data,), timeout=timeout)
-                
+
                 status["info"] = disk_usage_data
                 status["query"]="OK"
             except Exception as e:
                 logger.error(f"system_monitor# Database query error for {db_name}: {str(e)}")
                 status["query"]="ERROR"
         results[db_name] = status
+
     def check_redis_connection(results, db_name="ibdm_redis"):
         """Check Redis connection"""
         status = {}
         try:
-            redis_con = Redis(host=Env.DATABASE_IBDM_REDIS_HOST, port=Env.DATABASE_IBDM_REDIS_PORT, db=0, socket_connect_timeout=timeout)
+            redis_con = Redis(host=Env.REDIS_DB.get("HOST"), port=Env.REDIS_DB.get("PORT"), username=Env.REDIS_DB.get("USER"), password=Env.REDIS_DB.get("PASSWORD"), db=0, socket_connect_timeout=timeout)
             redis_con.ping()
             status["state"] ="CONNECTED"
             memory_info = redis_con.info()
@@ -155,11 +159,14 @@ def check_db_connections():
                     "connected_clients": memory_info.get("connected_clients", 0),
                 }
             }
- 
+
         except Exception as e:
-           status["state"] = "DISCONNECTED"
-        
+            print("Redis connection error:", e)
+            logger.error(f"system_monitor# Redis connection error for {db_name}: {str(e)}")
+            status["state"] = "DISCONNECTED"
+
         results[db_name] = status
+
     # Create a dictionary to store the results
     results = {}
     # Check database connections
@@ -171,7 +178,9 @@ def check_db_connections():
     del dbs_cons["default"]
 
     for db_name in dbs_cons:
-        db_cons_states[db_name] = "DISCONNECTED"
+        db_cons_states[db_name] = {
+            "state":"DISCONNECTED"
+        }
 
     # Wait for all futures to complete
     for _, thread in dbs_cons.items():
@@ -179,7 +188,9 @@ def check_db_connections():
 
     for db_name, thread in dbs_cons.items():
         thread.join(timeout=timeout)
-        db_cons_states[db_name] = results.get(db_name, "DISCONNECTED")
+        db_cons_states[db_name] = results.get(db_name, {
+            "state": "DISCONNECTED"
+        })
     return (datetime.now() - start).total_seconds(), db_cons_states
 
 
