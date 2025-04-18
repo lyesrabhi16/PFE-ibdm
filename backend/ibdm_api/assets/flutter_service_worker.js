@@ -122,22 +122,14 @@ const RESOURCES = {"assets/AssetManifest.bin": "78de34e2045dd716c8274cecbdd0d1d1
 "canvaskit/skwasm.worker.js": "89990e8c92bcb123999aa81f7e203b1c",
 "favicon.png": "a32e9cc5a15248fd736b2f0094c90b76",
 "flutter.js": "4b2350e14c6650ba82871f60906437ea",
-<<<<<<< HEAD
-"flutter_bootstrap.js": "476501701182333486dd62c6c1ef3a22",
-=======
-"flutter_bootstrap.js": "88e1b8534a9947c27865c2f76a4796c6",
->>>>>>> d748eaaa83043885dd56fc75fcce5117b695992f
+"flutter_bootstrap.js": "34872d7fc8f418d56e7dde0056acd7e9",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
 "index.html": "36922976cc4eed23cb8aa28b29e34527",
 "/": "36922976cc4eed23cb8aa28b29e34527",
-<<<<<<< HEAD
-"main.dart.js": "f378b93e1c4a2f52b7791549afd50b98",
-=======
-"main.dart.js": "ad06e66fb6f372a60d45962d66e718db",
->>>>>>> d748eaaa83043885dd56fc75fcce5117b695992f
+"main.dart.js": "6edb4cc2f027a37c8c76153b9bb0ab9c",
 "manifest.json": "8106d1314fda3f7d6f5105afc01a5d0e",
 "splash/img/branding-1x.png": "14285ca56c13939f812f877eefa9276d",
 "splash/img/branding-2x.png": "f75f93069efee2189a28f465d7ec3bf0",
