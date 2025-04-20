@@ -25,7 +25,7 @@ SETTINGS_JSON_FILE_PATH = os.path.join(BASE_DIR, "settings.json")
 # Path to store status data
 STATUS_FILE_PATH = os.path.join(BASE_DIR, "data",'status_data.json')
 
-SETTINGS_HASHED_FIELDS = ['DATABASES.*.PASSWORD', 'EMAIL_PROVIDERS.*.PASSWORD']
+SETTINGS_HASHED_FIELDS = ['DATABASES.*.PASSWORD', 'EMAIL_PROVIDERS.*.PASSWORD', 'REDIS_DB.PASSWORD']
 
 Env.load_settings_json()
 # Quick-start development settings - unsuitable for production

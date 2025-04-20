@@ -17,6 +17,8 @@ class LiveDataTopActionBar extends StatelessWidget {
   final List<Widget>? afterDataDisplayWidgets;
 
   final List<Widget>? beforeDataDisplayWidgets;
+  final Function? graphPressed;
+  final Function? listPressed;
 
   LiveDataTopActionBar({
     super.key,
@@ -27,6 +29,8 @@ class LiveDataTopActionBar extends StatelessWidget {
     this.beforeDataDisplayWidgets,
     this.afterDataDisplayWidgets,
     this.searchPressed,
+    this.graphPressed,
+    this.listPressed,
   });
 
   Function(DateTime dateTime)? searchPressed;
@@ -98,13 +102,10 @@ class LiveDataTopActionBar extends StatelessWidget {
                       width: 160,
                       height: 40,
                       allowDeselection: false,
-                      backgroundColor:
-                          _getBackgroundColor(!isLive.value),
-                      hoverBackgroundColor:
-                          _getBackgroundColor(isLive.value),
+                      backgroundColor: _getBackgroundColor(!isLive.value),
+                      hoverBackgroundColor: _getBackgroundColor(isLive.value),
                       foregroundColor: _getForgroundColor(!isLive.value),
-                      hoverForegroundColor:
-                          _getForgroundColor(isLive.value),
+                      hoverForegroundColor: _getForgroundColor(isLive.value),
                       enabled: !isLive.value,
                       icon: Icon(LucideIcons.calendar, size: 16),
                       formatDate: (d) => "${d.day}/${d.month}/${d.year}",
@@ -125,18 +126,14 @@ class LiveDataTopActionBar extends StatelessWidget {
                   ShadButton(
                       width: 120,
                       height: 40,
-                      backgroundColor:
-                          _getBackgroundColor(!isLive.value),
-                      hoverBackgroundColor:
-                          _getBackgroundColor(isLive.value),
+                      backgroundColor: _getBackgroundColor(!isLive.value),
+                      hoverBackgroundColor: _getBackgroundColor(isLive.value),
                       foregroundColor: _getForgroundColor(!isLive.value),
-                      hoverForegroundColor:
-                          _getForgroundColor(isLive.value),
+                      hoverForegroundColor: _getForgroundColor(isLive.value),
                       enabled: !isLive.value,
                       onHoverChange: (hovered) => {
-                            _textColor.value = _getForgroundColor(hovered
-                                ? isLive.value
-                                : !isLive.value),
+                            _textColor.value = _getForgroundColor(
+                                hovered ? isLive.value : !isLive.value),
                           },
                       icon: Icon(
                         LucideIcons.clock,
@@ -190,7 +187,11 @@ class LiveDataTopActionBar extends StatelessWidget {
               // show live data
               if (!isLive.value && _selectedDate.value != null)
                 ShadButton(
-                  width: 120,
+                  width: 140,
+                  icon: Icon(
+                    LucideIcons.search,
+                    size: 16,
+                  ),
                   backgroundColor: _getBackgroundColor(!isLive.value),
                   hoverBackgroundColor: !isLive.value
                       ? Theme.of(context).colorScheme.surfaceContainerLow
@@ -206,8 +207,25 @@ class LiveDataTopActionBar extends StatelessWidget {
                   ),
                   child: Text(strings.value.find.capitalize!),
                 ),
-              if (afterDataDisplayWidgets != null)
-                ...afterDataDisplayWidgets!,
+              ShadButton(
+                width: 120,
+                icon: Icon(
+                  LucideIcons.list,
+                  size: 16,
+                ),
+                onPressed: () => listPressed?.call(),
+                child: Text(strings.value.list),
+              ),
+              ShadButton(
+                width: 120,
+                icon: Icon(
+                  LucideIcons.chartSpline,
+                  size: 16,
+                ),
+                onPressed: () => graphPressed?.call(),
+                child: Text(strings.value.graph),
+              ),
+              if (afterDataDisplayWidgets != null) ...afterDataDisplayWidgets!,
             ],
           ),
         );

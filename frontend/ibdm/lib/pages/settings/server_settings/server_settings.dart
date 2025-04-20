@@ -322,9 +322,13 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(AppSizes.sm),
                                     child: Column(children: [
-                                      ShadTableCell.header(
-                                          child:
-                                              Text(strings.value.allowedHosts)),
+                                      Text(strings.value.allowedHosts,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              )),
                                       SizedBox(height: AppSizes.sm),
                                       Divider(),
                                       for (String host
@@ -407,9 +411,13 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(AppSizes.sm),
                                     child: Column(children: [
-                                      ShadTableCell.header(
-                                          child: Text(
-                                              strings.value.trustedOrigins)),
+                                      Text(strings.value.trustedOrigins,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              )),
                                       SizedBox(height: AppSizes.sm),
                                       Divider(),
                                       for (String host
@@ -507,9 +515,13 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(AppSizes.sm),
                                     child: Column(children: [
-                                      ShadTableCell.header(
-                                          child: Text(
-                                              strings.value.emailProviders)),
+                                      Text(strings.value.emailProviders,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              )),
                                       SizedBox(height: AppSizes.sm),
                                       Divider(),
                                       for (var provider in config
@@ -571,8 +583,13 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(AppSizes.sm),
                                     child: Column(children: [
-                                      ShadTableCell.header(
-                                          child: Text(strings.value.databases)),
+                                      Text(strings.value.databases,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              )),
                                       SizedBox(height: AppSizes.sm),
                                       Divider(),
                                       if (config.value?.redisDB != null)
@@ -654,28 +671,90 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
       loaded.value = false;
     }
     api ??= await ApiClientInstance.getApiClient();
-    await _loadConfig();
-    /* config.value = ServerConfig(
-        secretKey: "secretKey",
-        envMode: "production",
-        debug: true,
-        version: "1.0.3",
-        systemMonitorDBTimeout: 10,
-        allowedHosts: [],
-        csrfTrustedOrigins: [],
-        logTOFiles: false,
-        serverDBConnectionCheckTimeout: 3,
-        redisDB: StandardDatabaseConf(
-            engine: "reddis",
-            name: "Redis",
-            user: "user1",
-            password: "password1",
-            host: "HIHOST",
-            port: "6973",
-            options: {}),
-        databases: {},
-        emailProviders: {}); */
-    loaded.value = true;
+    try {
+      //await _loadConfig();
+      print("loading config");
+      config.value = ServerConfig.fromJson({
+        "VERSION": "1.0.2",
+        "ENV_MODE": "production",
+        "DEBUG": false,
+        "SYSTEM_MONITOR_DB_TIMEOUT": 3,
+        "ALLOWED_HOSTS": ["172.20.101.145"],
+        "CSRF_TRUSTED_ORIGINS": [
+          "https://172.20.101.145",
+          "https://localhost:8443"
+        ],
+        "LOG_TO_FILES": true,
+        "SERVER_DB_CONNECTION_CHECK_TIMEOUT": 3,
+        "REDIS_DB": {
+          "ENGINE": null,
+          "NAME": null,
+          "USER": null,
+          "PASSWORD": null,
+          "HOST": null,
+          "PORT": "6379",
+          "OPTIONS": null
+        },
+        "DATABASES": {
+          "ibdm": {
+            "ENGINE": "mssql",
+            "NAME": "ibdm_test",
+            "USER": "ibdm-system",
+            "PASSWORD":
+                "gAAAAABoARhvwpKn78L-Go4x7XipuMHF1Ua_XTkxHbFEcVMrdFgy6Y1RtZJN4vFzwaQDCo95RA8Y49MnevHCtSkn9QL5BoWKpA==",
+            "HOST": "127.0.0.1",
+            "PORT": "1433",
+            "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server"}
+          },
+          "siroperie": {
+            "ENGINE": "mssql",
+            "NAME": "siroperie",
+            "USER": "Ifri",
+            "PASSWORD":
+                "gAAAAABoARhwv3HaydAtltlEoL5HhdUluDBxDWWR-Gpud4Eal11Si_ixZ6P0HW2xL8TlMDZe6Rbm2Nvvn_8bVaobUvSJB_-tvA==",
+            "HOST": "172.20.101.144",
+            "PORT": "1433",
+            "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server"}
+          },
+          "filtration": {
+            "ENGINE": "mssql",
+            "NAME": "Filtration",
+            "USER": "Ifri",
+            "PASSWORD":
+                "gAAAAABoARhwTUbNfu2DPFIoQ6ypRbvspehkDN51hAods7-0rZG0FLB5QCjEBu1S6sPDKWEyiPjAgRCZhxIlTUnigTzG-1TMlQ==",
+            "HOST": "172.20.101.144",
+            "PORT": "1433",
+            "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server"}
+          },
+          "utilite": {
+            "ENGINE": "mssql",
+            "NAME": "Utilite",
+            "USER": "Ifri",
+            "PASSWORD":
+                "gAAAAABoARhw3ADec88ZoRJbSkQYv-zi8fzY9GD92ibMd_eRNUsewb57Fc72i3c84xh7RwmRIgA-XSWXE2rumAErxWWXXgJkhA==",
+            "HOST": "172.20.101.144",
+            "PORT": "1433",
+            "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server"}
+          }
+        },
+        "EMAIL_PROVIDERS": {
+          "172.16.10.29": {
+            "HOST": "172.16.10.29",
+            "PORT": 587,
+            "USE_TLS": true,
+            "USER": "Industrie@ifri-dz.local",
+            "PASSWORD":
+                "gAAAAABoARhwW1m0WScaEeHi2yWGP3Ff0_zqSkY3_jp3M9uhiIrDKTevz6cvWvX4heCb0Zf3HVK6GGfz2RDJDIRUaDxRpqTLFA==",
+            "EMAIL_OF_SENDER": "Industrie@ifri-dz.com"
+          }
+        }
+      });
+      print("config loaded : ${config.value}");
+    } catch (e) {
+      print("error loading config : $e");
+    } finally {
+      loaded.value = true;
+    }
   }
 
   _loadConfig() async {

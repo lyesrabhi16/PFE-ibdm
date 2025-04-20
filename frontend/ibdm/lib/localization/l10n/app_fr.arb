@@ -809,5 +809,24 @@
 	"savingConfig": "Sauvegarde de la configuration...",
 	"saveConfig" : "Sauvegarder la Configuration",
 	"saveConfigAlertMessage": "Êtes-vous sûr de vouloir sauvegarder la configuration ? Cela écrasera la configuration actuelle. La nouvelle configuration sera irréversiblement sauvegardée mais ne prendra effet qu'après le redémarrage du serveur.",
-	"failedToSendEmailWithId": "Échec de l'envoi de l'email avec l'ID {id}"
+	"failedToSendEmailWithId": "Échec de l'envoi de l'email avec l'ID {id}",
+	"@failedToSendEmailWithId": {
+        "placeholders": {
+            "id":{
+                "type": "int"
+            }
+        }
+    },
+	"failedToConnectToStatusBroadcast": "Échec de la connexion à Status Broadcast {retries, plural, zero {aucune tentative restante} one {1 tentative restante} other {{retries} tentatives restantes}}",
+	"@failedToConnectToStatusBroadcast": {
+		"placeholders": {
+			"retries": {
+				"type": "int"
+			}
+		}
+	},
+    "invalidEmailOrPassword": "Email ou mot de pass incorrecte",
+	"userWithThisEmailAlreadyExists": "Un Utilisateur avec cette email existe déja",
+	"list": "Liste",
+	"graph": "Graph"
 }
