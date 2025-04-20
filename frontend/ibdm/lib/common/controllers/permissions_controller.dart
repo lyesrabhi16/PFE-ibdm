@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/bypass_controller.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 
@@ -7,7 +8,7 @@ class PermissionsController extends GetxController {
   bool permissions_loading = false;
   Rx<bool> ready = false.obs;
   List<String> perms = [];
-  bool bypass = false;
+  bool bypass = BypassController.bypass;
   Future<void> loadPermissions() async {
     if (bypass && !kReleaseMode) {
       logger.e("bypass permissions loading");

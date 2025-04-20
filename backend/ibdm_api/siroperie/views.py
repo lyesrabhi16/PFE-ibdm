@@ -3,11 +3,13 @@ from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets
 from rest_framework import permissions
-from api_v1.utils import get_value_at, with_operation_ids
+from api_v1.utils import get_value_at, with_operation_ids, get_values_within
 from siroperie.models import Sucre
 from siroperie.serializers import SucreSerializer
-from api_v1.serializers import FeedMetaDataSerializer
+from api_v1.serializers import FeedMetaDataSerializer, StartEndDatesSerializer
 from rest_framework.decorators import api_view, permission_classes
+from api_v1.constants import ErrorCodes
+from django.utils.dateparse import parse_datetime
 @extend_schema(
     tags=["Sucre"]
 )
@@ -118,4 +120,40 @@ def getSucreMetaData(request):
             "end_date": sucreLast.date
         }).data
     )
+
+
+@extend_schema(
+    tags=["Sucre"],
+    operation_id="getSucresBetweenDates",
+    request=StartEndDatesSerializer,
+    responses={
+        200: SucreSerializer,
+    },
+)
+@api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
+def getSucresBetweenDates(request):
+    #try:
+    req_data = StartEndDatesSerializer(data=request.data)
+    if req_data.is_valid():
+        print("data: ", req_data.data)
+        start_date = parse_datetime(req_data.data["start_date"]).replace(hour=23,minute=59,second=59)
+        print("start_date: ", start_date)
+        end_date = parse_datetime(req_data.data["end_date"]).replace(hour=23,minute=59,second=59)
+        print("end_date: ", end_date)
+
+        values = get_values_within(Sucre, start_date, end_date)
+        return JsonResponse(
+            SucreSerializer(values, many=True).data,
+        )
+    """ except Exception as e:
+        return JsonResponse(
+            {
+                "status": "error",
+                "code": ErrorCodes.SERVER_ERROR.code,
+            },
+            status=ErrorCodes.SERVER_ERROR.status_code,
+        ) """
+
+
 

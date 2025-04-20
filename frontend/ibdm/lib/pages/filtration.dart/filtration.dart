@@ -61,9 +61,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
 
   ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
 
-  late FeedMetaData feedMetaData;
-
-  late final strings = getTranslations(getContext).obs;
+  FeedMetaData? feedMetaData;
 
   final Rx<DateTime> filtrationStartDate = DateTime.now().obs;
 
@@ -88,10 +86,10 @@ class _FiltrationPageState extends State<FiltrationPage> {
   int? second;
   Rx<bool> refresh = false.obs;
 
-  late Niveau niveau;
-  late Debit debit;
-  late Volume volume;
-  late PresCond presCond;
+  Niveau? niveau;
+  Debit? debit;
+  Volume? volume;
+  PresCond? presCond;
 
   double F1_value = 0.0;
   double F2_value = 0.0;
@@ -104,38 +102,38 @@ class _FiltrationPageState extends State<FiltrationPage> {
   double OS5_value = 0.0;
   double OS6_value = 0.0;
   double OS7_value = 0.0;
-  double get _somme_debit_forage => (debit.dF1 ?? 0) + (debit.dF2 ?? 0);
+  double get _somme_debit_forage => (debit!.dF1 ?? 0) + (debit!.dF2 ?? 0);
   double get _somme_debit_eau_brute =>
-      (debit.dUf1 ?? 0) +
-      (debit.dUf2 ?? 0) +
-      (debit.dUf3 ?? 0) +
-      (debit.dUf4 ?? 0) +
-      (debit.dUf5 ?? 0) +
-      (debit.dUf6 ?? 0);
+      (debit!.dUf1 ?? 0) +
+      (debit!.dUf2 ?? 0) +
+      (debit!.dUf3 ?? 0) +
+      (debit!.dUf4 ?? 0) +
+      (debit!.dUf5 ?? 0) +
+      (debit!.dUf6 ?? 0);
   double get _somme_debit_eau_filtree_hytec =>
-      (debit.dOs1 ?? 0) + (debit.dOs2 ?? 0) + (debit.dOs3 ?? 0);
+      (debit!.dOs1 ?? 0) + (debit!.dOs2 ?? 0) + (debit!.dOs3 ?? 0);
   double get _somme_debit_eau_filtree_osmotec =>
-      (debit.dOs4 ?? 0) +
-      (debit.dOs5 ?? 0) +
-      (debit.dOs6 ?? 0) +
-      (debit.dOs8 ?? 0) +
-      (debit.dOs9 ?? 0);
+      (debit!.dOs4 ?? 0) +
+      (debit!.dOs5 ?? 0) +
+      (debit!.dOs6 ?? 0) +
+      (debit!.dOs8 ?? 0) +
+      (debit!.dOs9 ?? 0);
   double get _somme_volume_eau_brute =>
-      (volume.volUf1 ?? 0) +
-      (volume.volUf2 ?? 0) +
-      (volume.volUf3 ?? 0) +
-      (volume.volUf4 ?? 0) +
-      (volume.volUf5 ?? 0) +
-      (volume.volUf6 ?? 0);
+      (volume!.volUf1 ?? 0) +
+      (volume!.volUf2 ?? 0) +
+      (volume!.volUf3 ?? 0) +
+      (volume!.volUf4 ?? 0) +
+      (volume!.volUf5 ?? 0) +
+      (volume!.volUf6 ?? 0);
 
   double get _somme_volume_eau_filtree_hytec =>
-      (volume.volOs1 ?? 0) + (volume.volOs2 ?? 0) + (volume.volOs3 ?? 0);
+      (volume!.volOs1 ?? 0) + (volume!.volOs2 ?? 0) + (volume!.volOs3 ?? 0);
   double get _somme_volume_eau_filtree_osmotec =>
-      (volume.volOs4 ?? 0) +
-      (volume.volOs5 ?? 0) +
-      (volume.volOs6 ?? 0) +
-      (volume.volOs8 ?? 0) +
-      (volume.volOs9 ?? 0);
+      (volume!.volOs4 ?? 0) +
+      (volume!.volOs5 ?? 0) +
+      (volume!.volOs6 ?? 0) +
+      (volume!.volOs8 ?? 0) +
+      (volume!.volOs9 ?? 0);
   double get _somme_volume_eau_filtree_osmosee =>
       _somme_volume_eau_filtree_hytec + _somme_volume_eau_filtree_osmotec;
   double get _somme_debit_eau_filtree_osmosee =>
@@ -147,11 +145,16 @@ class _FiltrationPageState extends State<FiltrationPage> {
   @override
   Widget build(BuildContext context) {
     _getContext = () => context;
+    final strings = getTranslations(context).obs;
     return AppCustomContainer(
         child: Padding(
       padding: EdgeInsets.all(AppSizes.sm),
       child: Obx(() {
-        print("width: ${context.width}");
+        if (retries == 0) {
+          return Center(
+            child: Text(strings.value.failedToConnectToFiltrationBroadcast(0)),
+          );
+        }
         if (!loaded.value) {
           printMessage("loading because of loaded value");
           load();
@@ -163,6 +166,12 @@ class _FiltrationPageState extends State<FiltrationPage> {
 
         if (refresh.value) {
           refresh.value = false;
+        }
+
+        if (feedMetaData == null) {
+          return CircularProgressIndicatorWithText(
+            text: strings.value.loading,
+          );
         }
         try {
           return _build();
@@ -180,6 +189,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
   }
 
   _build() {
+    final strings = getTranslations(context).obs;
     return Column(
       children: [
         Text(
@@ -244,26 +254,26 @@ class _FiltrationPageState extends State<FiltrationPage> {
                   presCond = PresCond.fromJson(data["data"]["pres_cond"]);
 
                   Future.delayed(Duration(microseconds: 100),
-                      () => filtrationEndDate.value = niveau.date);
-                  year = niveau.date.year;
-                  month = niveau.date.month;
-                  day = niveau.date.day;
-                  hour = niveau.date.hour;
-                  minute = niveau.date.minute;
-                  second = niveau.date.second;
+                      () => filtrationEndDate.value = niveau!.date);
+                  year = niveau!.date.year;
+                  month = niveau!.date.month;
+                  day = niveau!.date.day;
+                  hour = niveau!.date.hour;
+                  minute = niveau!.date.minute;
+                  second = niveau!.date.second;
                 }
 
-                F1_value = (niveau.nivF1 ?? 0) * 100 / 450;
-                F2_value = (niveau.nivF2 ?? 0) * 100 / 450;
-                UF1_value = (niveau.nivUf1 ?? 0) * 100 / 520;
-                UF2_value = (niveau.nivUf2 ?? 0) * 100 / 520;
-                OS1_value = (niveau.nivOs1 ?? 0) * 100 / 60;
-                OS2_value = (niveau.nivOs2 ?? 0) * 100 / 60;
-                OS3_value = (niveau.nivOs3 ?? 0) * 100 / 60;
-                OS4_value = (niveau.nivOs4 ?? 0) * 100 / 180;
-                OS5_value = (niveau.nivOs5 ?? 0) * 100 / 45;
-                OS6_value = (niveau.nivOs6 ?? 0) * 100 / 45;
-                OS7_value = (niveau.nivOs7 ?? 0) * 100 / 10;
+                F1_value = (niveau!.nivF1 ?? 0) * 100 / 450;
+                F2_value = (niveau!.nivF2 ?? 0) * 100 / 450;
+                UF1_value = (niveau!.nivUf1 ?? 0) * 100 / 520;
+                UF2_value = (niveau!.nivUf2 ?? 0) * 100 / 520;
+                OS1_value = (niveau!.nivOs1 ?? 0) * 100 / 60;
+                OS2_value = (niveau!.nivOs2 ?? 0) * 100 / 60;
+                OS3_value = (niveau!.nivOs3 ?? 0) * 100 / 60;
+                OS4_value = (niveau!.nivOs4 ?? 0) * 100 / 180;
+                OS5_value = (niveau!.nivOs5 ?? 0) * 100 / 45;
+                OS6_value = (niveau!.nivOs6 ?? 0) * 100 / 45;
+                OS7_value = (niveau!.nivOs7 ?? 0) * 100 / 10;
                 return Container(
                   constraints: BoxConstraints(),
                   decoration: BoxDecoration(
@@ -322,7 +332,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                                   ),
                                             ),
                                             Text(
-                                              "F1 : ${(debit.dF1 ?? 0).toStringAsFixed(2)} M3/H",
+                                              "F1 : ${(debit!.dF1 ?? 0).toStringAsFixed(2)} M3/H",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleMedium
@@ -332,7 +342,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                                   ),
                                             ),
                                             Text(
-                                              "F2 : ${(debit.dF2 ?? 0).toStringAsFixed(2)} M3/H",
+                                              "F2 : ${(debit!.dF2 ?? 0).toStringAsFixed(2)} M3/H",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleMedium
@@ -352,7 +362,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                               ),
                                             ),
                                             Text(
-                                              "${(volume.volFor ?? 0).toStringAsFixed(2)} M3",
+                                              "${(volume!.volFor ?? 0).toStringAsFixed(2)} M3",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleMedium
@@ -472,37 +482,37 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                                 title: "Total",
                                                 debit: _somme_debit_eau_brute,
                                                 volume: _somme_volume_eau_brute,
-                                                pression: (presCond.pUf ?? 0),
+                                                pression: (presCond!.pUf ?? 0),
                                                 bold: true),
                                             _dataRow(
                                               title: "UF1",
-                                              debit: (debit.dUf1 ?? 0),
-                                              volume: (volume.volUf1 ?? 0),
+                                              debit: (debit!.dUf1 ?? 0),
+                                              volume: (volume!.volUf1 ?? 0),
                                             ),
                                             _dataRow(
                                               title: "UF2",
-                                              debit: (debit.dUf2 ?? 0),
-                                              volume: (volume.volUf2 ?? 0),
+                                              debit: (debit!.dUf2 ?? 0),
+                                              volume: (volume!.volUf2 ?? 0),
                                             ),
                                             _dataRow(
                                               title: "UF3",
-                                              debit: (debit.dUf3 ?? 0),
-                                              volume: (volume.volUf3 ?? 0),
+                                              debit: (debit!.dUf3 ?? 0),
+                                              volume: (volume!.volUf3 ?? 0),
                                             ),
                                             _dataRow(
                                               title: "UF4",
-                                              debit: (debit.dUf4 ?? 0),
-                                              volume: (volume.volUf4 ?? 0),
+                                              debit: (debit!.dUf4 ?? 0),
+                                              volume: (volume!.volUf4 ?? 0),
                                             ),
                                             _dataRow(
                                               title: "UF5",
-                                              debit: (debit.dUf5 ?? 0),
-                                              volume: (volume.volUf5 ?? 0),
+                                              debit: (debit!.dUf5 ?? 0),
+                                              volume: (volume!.volUf5 ?? 0),
                                             ),
                                             _dataRow(
                                               title: "UF6",
-                                              debit: (debit.dUf6 ?? 0),
-                                              volume: (volume.volUf6 ?? 0),
+                                              debit: (debit!.dUf6 ?? 0),
+                                              volume: (volume!.volUf6 ?? 0),
                                             ),
                                           ],
                                         ),
@@ -583,7 +593,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                               ),
                                         ),
                                         Text(
-                                          "F1 : ${(debit.dF1 ?? 0).toStringAsFixed(2)} M3/H",
+                                          "F1 : ${(debit!.dF1 ?? 0).toStringAsFixed(2)} M3/H",
                                           style: Theme.of(context)
                                               .textTheme
                                               .titleMedium
@@ -592,7 +602,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                               ),
                                         ),
                                         Text(
-                                          "F2 : ${(debit.dF2 ?? 0).toStringAsFixed(2)} M3/H",
+                                          "F2 : ${(debit!.dF2 ?? 0).toStringAsFixed(2)} M3/H",
                                           style: Theme.of(context)
                                               .textTheme
                                               .titleMedium
@@ -611,7 +621,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                           ),
                                         ),
                                         Text(
-                                          "${(volume.volFor ?? 0).toStringAsFixed(2)} M3",
+                                          "${(volume!.volFor ?? 0).toStringAsFixed(2)} M3",
                                           style: Theme.of(context)
                                               .textTheme
                                               .titleMedium
@@ -630,7 +640,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                           ),
                                         ),
                                         Text(
-                                          "${(presCond.pUf ?? 0).toStringAsFixed(2)} Bars",
+                                          "${(presCond!.pUf ?? 0).toStringAsFixed(2)} Bars",
                                           style: Theme.of(context)
                                               .textTheme
                                               .titleMedium
@@ -742,37 +752,37 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                               title: "Total",
                                               debit: _somme_debit_eau_brute,
                                               volume: _somme_volume_eau_brute,
-                                              pression: (presCond.pUf ?? 0),
+                                              pression: (presCond!.pUf ?? 0),
                                               bold: true),
                                           _dataRow(
                                             title: "UF1",
-                                            debit: (debit.dUf1 ?? 0),
-                                            volume: (volume.volUf1 ?? 0),
+                                            debit: (debit!.dUf1 ?? 0),
+                                            volume: (volume!.volUf1 ?? 0),
                                           ),
                                           _dataRow(
                                             title: "UF2",
-                                            debit: (debit.dUf2 ?? 0),
-                                            volume: (volume.volUf2 ?? 0),
+                                            debit: (debit!.dUf2 ?? 0),
+                                            volume: (volume!.volUf2 ?? 0),
                                           ),
                                           _dataRow(
                                             title: "UF3",
-                                            debit: (debit.dUf3 ?? 0),
-                                            volume: (volume.volUf3 ?? 0),
+                                            debit: (debit!.dUf3 ?? 0),
+                                            volume: (volume!.volUf3 ?? 0),
                                           ),
                                           _dataRow(
                                             title: "UF4",
-                                            debit: (debit.dUf4 ?? 0),
-                                            volume: (volume.volUf4 ?? 0),
+                                            debit: (debit!.dUf4 ?? 0),
+                                            volume: (volume!.volUf4 ?? 0),
                                           ),
                                           _dataRow(
                                             title: "UF5",
-                                            debit: (debit.dUf5 ?? 0),
-                                            volume: (volume.volUf5 ?? 0),
+                                            debit: (debit!.dUf5 ?? 0),
+                                            volume: (volume!.volUf5 ?? 0),
                                           ),
                                           _dataRow(
                                             title: "UF6",
-                                            debit: (debit.dUf6 ?? 0),
-                                            volume: (volume.volUf6 ?? 0),
+                                            debit: (debit!.dUf6 ?? 0),
+                                            volume: (volume!.volUf6 ?? 0),
                                           ),
                                         ],
                                       ),
@@ -951,20 +961,20 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                                 ),
                                                 _dataRow(
                                                   title: "OS1",
-                                                  debit: (debit.dOs1 ?? 0),
-                                                  volume: (volume.volOs1 ?? 0),
+                                                  debit: (debit!.dOs1 ?? 0),
+                                                  volume: (volume!.volOs1 ?? 0),
                                                   showPression: false,
                                                 ),
                                                 _dataRow(
                                                   title: "OS2",
-                                                  debit: (debit.dOs2 ?? 0),
-                                                  volume: (volume.volOs2 ?? 0),
+                                                  debit: (debit!.dOs2 ?? 0),
+                                                  volume: (volume!.volOs2 ?? 0),
                                                   showPression: false,
                                                 ),
                                                 _dataRow(
                                                   title: "OS3",
-                                                  debit: (debit.dOs3 ?? 0),
-                                                  volume: (volume.volOs3 ?? 0),
+                                                  debit: (debit!.dOs3 ?? 0),
+                                                  volume: (volume!.volOs3 ?? 0),
                                                   showPression: false,
                                                 ),
                                               ],
@@ -1034,32 +1044,32 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                                 ),
                                                 _dataRow(
                                                   title: "OS4",
-                                                  debit: (debit.dOs4 ?? 0),
-                                                  volume: (volume.volOs4 ?? 0),
+                                                  debit: (debit!.dOs4 ?? 0),
+                                                  volume: (volume!.volOs4 ?? 0),
                                                   showPression: false,
                                                 ),
                                                 _dataRow(
                                                   title: "OS5",
-                                                  debit: (debit.dOs5 ?? 0),
-                                                  volume: (volume.volOs5 ?? 0),
+                                                  debit: (debit!.dOs5 ?? 0),
+                                                  volume: (volume!.volOs5 ?? 0),
                                                   showPression: false,
                                                 ),
                                                 _dataRow(
                                                   title: "OS6",
-                                                  debit: (debit.dOs6 ?? 0),
-                                                  volume: (volume.volOs6 ?? 0),
+                                                  debit: (debit!.dOs6 ?? 0),
+                                                  volume: (volume!.volOs6 ?? 0),
                                                   showPression: false,
                                                 ),
                                                 _dataRow(
                                                   title: "OS8",
-                                                  debit: (debit.dOs8 ?? 0),
-                                                  volume: (volume.volOs8 ?? 0),
+                                                  debit: (debit!.dOs8 ?? 0),
+                                                  volume: (volume!.volOs8 ?? 0),
                                                   showPression: false,
                                                 ),
                                                 _dataRow(
                                                   title: "OS9",
-                                                  debit: (debit.dOs9 ?? 0),
-                                                  volume: (volume.volOs9 ?? 0),
+                                                  debit: (debit!.dOs9 ?? 0),
+                                                  volume: (volume!.volOs9 ?? 0),
                                                   showPression: false,
                                                 ),
                                               ],
@@ -1176,7 +1186,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
       });
       return null;
     } finally {
-      filtrationEndDate.value = niveau.date;
+      filtrationEndDate.value = niveau!.date;
       refresh.value = !refresh.value;
     }
   }
@@ -1184,8 +1194,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
   _getTopActionsBar() {
     return LiveDataTopActionBar(
       isLive: isLive,
-      startDate: feedMetaData.startDate,
-      endDate: feedMetaData.endDate,
+      startDate: feedMetaData!.startDate,
+      endDate: feedMetaData!.endDate,
       selectedDate: filtrationEndDate.value,
       searchPressed: (dt) {
         year = dt.year;
@@ -1200,9 +1210,9 @@ class _FiltrationPageState extends State<FiltrationPage> {
   }
 
   _eauBrute() {
-    final _somme = (niveau.nivF1 ?? 0) + (niveau.nivF2 ?? 0);
+    final _somme = (niveau!.nivF1 ?? 0) + (niveau!.nivF2 ?? 0);
     final _pourcentage = (_somme * 100) / 900;
-
+    final strings = getTranslations(context).obs;
     return Column(
       children: [
         Container(
@@ -1240,7 +1250,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
               okColor: successColor,
               dangerPoint: 50,
               value: F1_value,
-              niveau1: niveau.nivF1 ?? 0,
+              niveau1: niveau!.nivF1 ?? 0,
               niveau1Trailing: "M3",
               niveau2: F1_value,
               niveau2Trailing: "%",
@@ -1250,7 +1260,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
               okColor: successColor,
               dangerPoint: 50,
               value: F2_value,
-              niveau1: niveau.nivF2 ?? 0,
+              niveau1: niveau!.nivF2 ?? 0,
               niveau1Trailing: "M3",
               niveau2: F2_value,
               niveau2Trailing: "%",
@@ -1262,9 +1272,10 @@ class _FiltrationPageState extends State<FiltrationPage> {
   }
 
   _eauFiltrer() {
-    final _somme = (niveau.nivUf1 ?? 0) + (niveau.nivUf2 ?? 0);
+    final _somme = (niveau!.nivUf1 ?? 0) + (niveau!.nivUf2 ?? 0);
     final _pourcentage =
-        ((niveau.nivUf1 ?? 0) + (niveau.nivUf2 ?? 0)) * 100 / 1040;
+        ((niveau!.nivUf1 ?? 0) + (niveau!.nivUf2 ?? 0)) * 100 / 1040;
+    final strings = getTranslations(context).obs;
     return Column(
       children: [
         Container(
@@ -1302,7 +1313,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
               okColor: colorScheme.primary,
               dangerPoint: 50,
               value: UF1_value,
-              niveau1: niveau.nivUf1 ?? 0,
+              niveau1: niveau!.nivUf1 ?? 0,
               niveau1Trailing: "M3",
               niveau2: UF1_value,
               niveau2Trailing: "%",
@@ -1312,7 +1323,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
               okColor: colorScheme.primary,
               dangerPoint: 50,
               value: UF2_value,
-              niveau1: niveau.nivUf2 ?? 0,
+              niveau1: niveau!.nivUf2 ?? 0,
               niveau1Trailing: "M3",
               niveau2: UF2_value,
               niveau2Trailing: "%",
@@ -1324,12 +1335,13 @@ class _FiltrationPageState extends State<FiltrationPage> {
   }
 
   _eauOsmosee() {
-    final hytec_somme = (niveau.nivOs1 ?? 0) +
-        (niveau.nivOs2 ?? 0) +
-        (niveau.nivOs3 ?? 0) +
-        (niveau.nivOs4 ?? 0);
+    final hytec_somme = (niveau!.nivOs1 ?? 0) +
+        (niveau!.nivOs2 ?? 0) +
+        (niveau!.nivOs3 ?? 0) +
+        (niveau!.nivOs4 ?? 0);
     final osmotec_somme =
-        (((niveau.nivOs5 ?? 0) + (niveau.nivOs6 ?? 0)) / 2) * 7;
+        (((niveau!.nivOs5 ?? 0) + (niveau!.nivOs6 ?? 0)) / 2) * 7;
+    final strings = getTranslations(context).obs;
     return Column(
       children: [
         Container(
@@ -1432,7 +1444,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           niveau1Trailing: "M3",
                           dangerPoint: 50,
                           value: OS1_value,
-                          niveau1: niveau.nivOs1 ?? 0,
+                          niveau1: niveau!.nivOs1 ?? 0,
                           niveau2: OS1_value,
                           niveau2Trailing: "%",
                         ),
@@ -1442,7 +1454,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           okColor: colorScheme.primaryContainer,
                           dangerPoint: 50,
                           value: OS2_value,
-                          niveau1: niveau.nivOs2 ?? 0,
+                          niveau1: niveau!.nivOs2 ?? 0,
                           niveau2: OS2_value,
                           niveau1Trailing: "M3",
                           niveau2Trailing: "%",
@@ -1453,7 +1465,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           okColor: colorScheme.primaryContainer,
                           dangerPoint: 50,
                           value: OS3_value,
-                          niveau1: niveau.nivOs3 ?? 0,
+                          niveau1: niveau!.nivOs3 ?? 0,
                           niveau2: OS3_value,
                           niveau1Trailing: "M3",
                           niveau2Trailing: "%",
@@ -1464,7 +1476,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           okColor: colorScheme.primaryContainer,
                           dangerPoint: 50,
                           value: OS4_value,
-                          niveau1: (niveau.nivOs4 ?? 0) / 3,
+                          niveau1: (niveau!.nivOs4 ?? 0) / 3,
                           niveau2: OS4_value,
                           niveau1Trailing: "M3",
                           niveau2Trailing: "%",
@@ -1475,7 +1487,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           okColor: colorScheme.primaryContainer,
                           dangerPoint: 50,
                           value: OS4_value,
-                          niveau1: (niveau.nivOs4 ?? 0) / 3,
+                          niveau1: (niveau!.nivOs4 ?? 0) / 3,
                           niveau2: OS4_value,
                           niveau1Trailing: "M3",
                           niveau2Trailing: "%",
@@ -1486,7 +1498,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                           okColor: colorScheme.primaryContainer,
                           dangerPoint: 50,
                           value: OS4_value,
-                          niveau1: (niveau.nivOs4 ?? 0) / 3,
+                          niveau1: (niveau!.nivOs4 ?? 0) / 3,
                           niveau2: OS4_value,
                           niveau1Trailing: "M3",
                           niveau2Trailing: "%",
@@ -1649,7 +1661,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                   ),
                                 ),
                                 Text(
-                                  "${(presCond.pOse1 ?? 0).toStringAsFixed(2)} Bars",
+                                  "${(presCond!.pOse1 ?? 0).toStringAsFixed(2)} Bars",
                                   style: Theme.of(getContext)
                                       .textTheme
                                       .titleMedium
@@ -1668,7 +1680,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                   ),
                                 ),
                                 Text(
-                                  "${(presCond.cOse ?? 0).toStringAsFixed(2)} µs",
+                                  "${(presCond!.cOse ?? 0).toStringAsFixed(2)} µs",
                                   style: Theme.of(getContext)
                                       .textTheme
                                       .titleMedium
@@ -1770,7 +1782,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         okColor: colorScheme.secondary,
                         dangerPoint: 50,
                         value: OS5_value,
-                        niveau1: niveau.nivOs5 ?? 0,
+                        niveau1: niveau!.nivOs5 ?? 0,
                         niveau2: OS5_value,
                         niveau1Trailing: "M3",
                         niveau2Trailing: "%",
@@ -1780,7 +1792,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         okColor: colorScheme.secondary,
                         dangerPoint: 50,
                         value: OS5_value,
-                        niveau1: niveau.nivOs5 ?? 0,
+                        niveau1: niveau!.nivOs5 ?? 0,
                         niveau2: OS5_value,
                         niveau1Trailing: "M3",
                         niveau2Trailing: "%",
@@ -1790,7 +1802,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         okColor: colorScheme.secondary,
                         dangerPoint: 50,
                         value: OS5_value,
-                        niveau1: niveau.nivOs5 ?? 0,
+                        niveau1: niveau!.nivOs5 ?? 0,
                         niveau2: OS5_value,
                         niveau1Trailing: "M3",
                         niveau2Trailing: "%",
@@ -1801,7 +1813,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         title: "Osmotec 4",
                         dangerPoint: 50,
                         value: OS6_value,
-                        niveau1: niveau.nivOs6 ?? 0,
+                        niveau1: niveau!.nivOs6 ?? 0,
                         niveau2: OS6_value,
                         okColor: colorScheme.primaryContainer,
                         niveau1Trailing: "M3",
@@ -1811,7 +1823,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         title: "Osmotec 5",
                         dangerPoint: 50,
                         value: OS6_value,
-                        niveau1: niveau.nivOs6 ?? 0,
+                        niveau1: niveau!.nivOs6 ?? 0,
                         niveau2: OS6_value,
                         okColor: colorScheme.primaryContainer,
                         niveau1Trailing: "M3",
@@ -1821,7 +1833,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         title: "Osmotec 6",
                         dangerPoint: 50,
                         value: OS6_value,
-                        niveau1: niveau.nivOs6 ?? 0,
+                        niveau1: niveau!.nivOs6 ?? 0,
                         niveau2: OS6_value,
                         okColor: colorScheme.primaryContainer,
                         niveau1Trailing: "M3",
@@ -1831,7 +1843,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         title: "Osmotec 7",
                         dangerPoint: 50,
                         value: OS6_value,
-                        niveau1: niveau.nivOs6 ?? 0,
+                        niveau1: niveau!.nivOs6 ?? 0,
                         niveau2: OS6_value,
                         okColor: colorScheme.primaryContainer,
                         niveau1Trailing: "M3",
@@ -1882,7 +1894,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                   ),
                                 ),
                                 Text(
-                                  "${(presCond.pOse2 ?? 0).toStringAsFixed(2)} Bars",
+                                  "${(presCond!.pOse2 ?? 0).toStringAsFixed(2)} Bars",
                                   style: Theme.of(getContext)
                                       .textTheme
                                       .titleMedium
@@ -1901,7 +1913,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                                   ),
                                 ),
                                 Text(
-                                  "${(presCond.cOse ?? 0).toStringAsFixed(2)} µs",
+                                  "${(presCond!.cOse ?? 0).toStringAsFixed(2)} µs",
                                   style: Theme.of(getContext)
                                       .textTheme
                                       .titleMedium
@@ -1956,7 +1968,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
               dangerPoint: 50,
               value: OS7_value,
               okColor: colorScheme.primary,
-              niveau1: niveau.nivOs7 ?? 0,
+              niveau1: niveau!.nivOs7 ?? 0,
               niveau2: OS7_value,
               niveau1Trailing: "M3",
               niveau2Trailing: "%",
@@ -1967,7 +1979,16 @@ class _FiltrationPageState extends State<FiltrationPage> {
     );
   }
 
+  bool loading = false;
+  int counter = 0;
+  int blocked = 0;
   Future<void> load() async {
+    counter++;
+    if (loading) {
+      blocked++;
+      return;
+    }
+    loading = true;
     final strings = getTranslations(context);
     printMessage("load...");
 
@@ -1996,11 +2017,11 @@ class _FiltrationPageState extends State<FiltrationPage> {
           logger.e(
               "Error connecting to filtration broadcast${retries > 0 ? ',retrying' : ''}");
           if (retries > 0) {
-            printMessage("retrying in 1 second");
+            printMessage("retrying in 3 second");
             retries--;
-            Future.delayed(Duration(seconds: 1), load);
-          } else {
-            retries = 3;
+            if (retries > 0) {
+              Future.delayed(Duration(seconds: 3), load);
+            }
           }
           Toasts.showErrorToastNotification(
               context: context,
@@ -2013,6 +2034,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
       printMessage("loading faild: $e");
     } finally {
       loaded.value = true;
+      loading = false;
     }
   }
 
@@ -2040,7 +2062,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
           child: debit != null
               ? FittedBox(
                   child: Text(
-                    "${debit.toStringAsFixed(2)} M3/H",
+                    "${debit!.toStringAsFixed(2)} M3/H",
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: bold ? FontWeight.bold : null,
                           color: colorScheme.onPrimary,
@@ -2054,7 +2076,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
           child: volume != null
               ? FittedBox(
                   child: Text(
-                    "${volume.toStringAsFixed(2)} M3",
+                    "${volume!.toStringAsFixed(2)} M3",
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: bold ? FontWeight.bold : null,
                           color: colorScheme.onPrimary,

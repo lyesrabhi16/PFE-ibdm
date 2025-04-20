@@ -28,6 +28,18 @@ def getServerStatusFromFile():
             return status_data
     return None
 
+
+def get_values_within(model, startDate, endDate):
+
+    print_log("VALUES", f'{model} ${startDate} to ${endDate}')
+    
+
+    # Query for exactly midnight (00:00:xx)
+    return model.objects.filter(
+        date__gte=startDate,
+        date__lt=endDate
+    ).first()
+
 def get_value_at(model, date):
 
     print_log("VALUE", f'{model} ${date}')
