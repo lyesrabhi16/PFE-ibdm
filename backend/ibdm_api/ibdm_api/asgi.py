@@ -17,6 +17,7 @@ from siroperie.routing import siroperie_urlpatterns
 from filtration.routing import filtration_urlpatterns
 from emails.routing import sent_emails_urlpatterns
 from utilite.routing import utilite_urlpatterns
+from api_v1.routing import broadcast_urlpatterns
 from .routing import status_urlpatterns
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ibdm_api.settings')
 
@@ -28,6 +29,7 @@ websocket_urlPatterns = [
     *sent_emails_urlpatterns,
     *utilite_urlpatterns,
     *status_urlpatterns,
+    *broadcast_urlpatterns,
 ]
 
 application = ProtocolTypeRouter({

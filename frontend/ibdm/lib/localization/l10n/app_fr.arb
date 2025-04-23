@@ -809,5 +809,39 @@
 	"savingConfig": "Sauvegarde de la configuration...",
 	"saveConfig" : "Sauvegarder la Configuration",
 	"saveConfigAlertMessage": "Êtes-vous sûr de vouloir sauvegarder la configuration ? Cela écrasera la configuration actuelle. La nouvelle configuration sera irréversiblement sauvegardée mais ne prendra effet qu'après le redémarrage du serveur.",
-	"failedToSendEmailWithId": "Échec de l'envoi de l'email avec l'ID {id}"
+	"failedToSendEmailWithId": "Échec de l'envoi de l'email avec l'ID {id}",
+	"@failedToSendEmailWithId": {
+        "placeholders": {
+            "id":{
+                "type": "int"
+            }
+        }
+    },
+	"failedToConnectToStatusBroadcast": "Échec de la connexion à Status Broadcast {retries, plural, zero {aucune tentative restante} one {1 tentative restante} other {{retries} tentatives restantes}}",
+	"@failedToConnectToStatusBroadcast": {
+		"placeholders": {
+			"retries": {
+				"type": "int"
+			}
+		}
+	},
+    "invalidEmailOrPassword": "Email ou mot de pass incorrecte",
+	"userWithThisEmailAlreadyExists": "Un Utilisateur avec cette email existe déja",
+	"list": "Liste",
+	"graph": "Graph",
+	"errorConnectingBroadcast": "Erreur de connexion à la diffusion, les données en temps réel ne fonctionneront pas",
+	"date": "Date",
+	"sucre": "Sucre",
+	"utilite": "Utilite",
+	"co2": "CO2",
+	"niveau": "Niveau",
+	"volume": "Volume",
+	"debit": "Debit",
+	"presCond": "Pres Cond",
+	"failedToGetNiveauData": "Échec de l'obtention des données de niveau",
+	"failedToGetVolumeData": "Échec de l'obtention des données de volume",
+	"failedToGetDebitData": "Échec de l'obtention des données de débit",
+	"failedToGetPresCondData": "Échec de l'obtention des données de pres cond",
+	"value": "Valeur",
+	"visualize": "Visualiser"
 }

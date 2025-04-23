@@ -9,7 +9,7 @@ import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/initial_binding.dart';
 import 'package:ibdm/pages/co2/co2.dart';
-import 'package:ibdm/pages/filtration.dart/filtration.dart';
+import 'package:ibdm/pages/filtration/filtration.dart';
 import 'package:ibdm/pages/server-status/server_status.dart';
 import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
@@ -38,7 +38,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = createTextTheme(context, "Poppins", "Poppins");
     MaterialTheme theme = MaterialTheme(textTheme);
-
     return Obx(
       () => ShadApp.custom(
         themeMode: themeModeController.themeMode.value,

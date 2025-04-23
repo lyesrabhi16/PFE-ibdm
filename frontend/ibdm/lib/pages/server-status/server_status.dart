@@ -7,7 +7,6 @@ import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/pages/users.dart';
-import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/routes.dart';
@@ -38,7 +37,6 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
   ThemeData get theme => Theme.of(getContext);
   IbdmApiClient? api;
   final loaded = false.obs;
-  final _loadedStatus = false.obs;
   SystemStatus? status;
 
   List<DataRepresentation> get systemContainerInfo {
@@ -214,6 +212,9 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
     ];
   }
 
+  Rx<bool> refresh = false.obs;
+  int retries = 3;
+
   @override
   Widget build(BuildContext context) {
     _getContext = () => context;
@@ -229,61 +230,38 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
               minHeight: context.height,
               maxHeight: double.infinity,
             ),
-            child: FutureBuilder(
-              future: Future.wait([load()]),
-              builder: (context, _) {
-                if (!loaded.value) {
-                  return Obx(() {
-                    return CircularProgressIndicatorWithText(
-                      text: strings.value.loading,
-                    );
-                  });
-                }
-                try {
-                  return StreamBuilder(
-                    stream: ServerStatusPage.stream,
-                    builder: (context, snapshot) {
-                      printMessage("snapshot: $snapshot");
-                      if (snapshot.hasData) {
-                        final data = JsonCodec().decode(snapshot.data);
-                        if (data != null &&
-                            data.containsKey("data") &&
-                            data["data"] != null) {
-                          try {
-                            final decoded = data["data"];
-                            status = SystemStatus.fromJson(decoded);
-                          } catch (e) {
-                            logger.e("Error parsing data: $e");
-                            return const Center(
-                              child: Text("Error parsing data"),
-                            );
-                          }
-                        }
-                      } else if (snapshot.hasError) {
-                        logger.e("Error: ${snapshot.error}");
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return CircularProgressIndicatorWithText(
-                          text: strings.value.waitingForConnection,
-                        );
-                      }
-                      return _build();
-                    },
-                  );
-                } catch (e) {
-                  logger.e("Error in Future Builder: $e");
-                  load();
-                  return Center(
-                    child: Text(
-                      "Error loading data: $e",
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.error,
-                      ),
-                    ),
-                  );
-                }
-              },
-            ),
+            child: Obx(() {
+              if (retries == 0) {
+                return Center(
+                  child:
+                      Text(strings.value.failedToConnectToStatusBroadcast(0)),
+                );
+              }
+              if (!loaded.value) {
+                printMessage("loading because of loaded value");
+                load();
+                logger.e("loading because of loaded value");
+                return CircularProgressIndicatorWithText(
+                  text: strings.value.loading,
+                );
+              }
+
+              if (refresh.value) {
+                refresh.value = false;
+              }
+
+              try {
+                return _build();
+              } catch (e) {
+                printMessage("error: $e");
+                ServerStatusPage.channel?.sink.close();
+                ServerStatusPage.stream = null;
+                load();
+                return CircularProgressIndicatorWithText(
+                  text: strings.value.loading,
+                );
+              }
+            }),
           ),
         ),
       ),
@@ -291,6 +269,70 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
   }
 
   _build() {
+    try {
+      final strings = getTranslations(context).obs;
+      return StreamBuilder(
+        stream: ServerStatusPage.stream,
+        builder: (context, snapshot) {
+          printMessage("snapshot: $snapshot");
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            printMessage("waiting for connection");
+            return CircularProgressIndicatorWithText(
+              text: strings.value.waitingForConnection,
+            );
+          }
+          if (!snapshot.hasData ||
+              snapshot.data == null ||
+              snapshot.hasError ||
+              snapshot.data.isEmpty) {
+            logger.e("loading inside of stream builder");
+            if (ServerStatusPage.channel?.closeCode != null ||
+                snapshot.connectionState != ConnectionState.active) {
+              logger.e("closing channel");
+              ServerStatusPage.channel?.sink.close();
+              ServerStatusPage.stream = null;
+              logger.e("reopening channel...");
+              Future.delayed(Duration(seconds: 1), load);
+            }
+            return CircularProgressIndicatorWithText(
+              text: strings.value.reconnecting,
+            );
+          }
+          final data = JsonCodec().decode(snapshot.data);
+          if (data["data"] == null || data["data"].isEmpty) {
+            logger.e("data is null");
+            return CircularProgressIndicatorWithText(
+              text: strings.value.waitingForValidData,
+            );
+          }
+
+          try {
+            final decoded = data["data"];
+            status = SystemStatus.fromJson(decoded);
+          } catch (e) {
+            logger.e("Error parsing data: $e");
+            return const Center(
+              child: Text("Error parsing data"),
+            );
+          }
+          return _content();
+        },
+      );
+    } catch (e) {
+      logger.e("Error in Future Builder: $e");
+      load();
+      return Center(
+        child: Text(
+          "Error loading data: $e",
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: colorScheme.error,
+          ),
+        ),
+      );
+    }
+  }
+
+  _content() {
     final strings = getTranslations(context).obs;
     return Obx(
       () {
@@ -344,16 +386,59 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
     );
   }
 
+  bool loading = false;
+  int counter = 0;
+  int blocked = 0;
   Future<void> load() async {
-    if (loaded.value) {
-      loaded.value = false;
+    counter++;
+    if (loading) {
+      blocked++;
+      return;
     }
-    api ??= await ApiClientInstance.getApiClient();
-    printMessage("Call Load Status");
-    await _loadStatus();
-    printMessage("Status Loaded");
+    loading = true;
+    final strings = getTranslations(context);
+    printMessage("load...");
 
-    loaded.value = true;
+    loaded.value = false;
+
+    try {
+      if (ServerStatusPage.stream == null) {
+        try {
+          printMessage("connecting to ServerStatusPage broadcast");
+          ServerStatusPage.channel = WebSocketChannel.connect(
+              Uri.parse(ApiConfig.status_broadcast_websocket_url));
+
+          printMessage("ServerStatusPage broadcast connected");
+          await ServerStatusPage.channel!.ready;
+          printMessage("ServerStatusPage broadcast ready");
+          ServerStatusPage.stream =
+              ServerStatusPage.channel!.stream.asBroadcastStream();
+          loaded.value = true;
+          printMessage("ServerStatusPage broadcast loaded");
+        } catch (e) {
+          printMessage("error connecting to ServerStatusPage broadcast: $e");
+          logger.e(
+              "Error connecting to ServerStatusPage broadcast${retries > 0 ? ',retrying' : ''}");
+          if (retries > 0) {
+            printMessage("retrying in 3 second");
+            retries--;
+            if (retries > 0) {
+              Future.delayed(Duration(seconds: 3), load);
+            }
+          }
+          Toasts.showErrorToastNotification(
+              context: context,
+              message: strings.failedToConnectToStatusBroadcast(retries));
+        }
+      } else {
+        printMessage("Not Loading because Stream is not null");
+      }
+    } catch (e) {
+      printMessage("loading faild: $e");
+    } finally {
+      loaded.value = true;
+      loading = false;
+    }
   }
 
   _dbStatesContainer() {
@@ -719,29 +804,6 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
         ),
       ),
     );
-  }
-
-  _loadStatus() async {
-    final strings = getTranslations(context);
-    _loadedStatus.value = false;
-    try {
-      logger.e("closing status channel");
-      ServerStatusPage.channel?.sink.close();
-      ServerStatusPage.stream = null;
-      logger.e("reopening status channel");
-      ServerStatusPage.channel = WebSocketChannel.connect(
-        Uri.parse(ApiConfig.status_broadcast_websocket_url),
-      );
-      await ServerStatusPage.channel!.ready;
-      ServerStatusPage.stream ??= ServerStatusPage.channel!.stream;
-    } catch (e) {
-      logger.e("failed to load server status: $e");
-      if (context.mounted) {
-        Toasts.showErrorToastNotification(
-            context: context, message: strings.failedToLoadServerStatus);
-      }
-    }
-    _loadedStatus.value = true;
   }
 
   _logoContainer() {

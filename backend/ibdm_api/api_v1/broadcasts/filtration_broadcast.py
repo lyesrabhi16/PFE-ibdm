@@ -61,4 +61,15 @@ def broadcast_filtration():
             "data": data,
         },
     )
+
+    """ async_to_sync(channel_layer.group_send)(
+        "broadcast",
+        {
+            "type": "broadcast.data",
+            "data": {
+                "type": "filtration",
+                "data": data,
+            },
+        },
+    ) """
     logging.info(f"broadcast_filtration# {niveau_latest.date} done in {time.time() - start_func}")

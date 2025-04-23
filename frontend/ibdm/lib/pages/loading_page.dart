@@ -26,7 +26,6 @@ class _LoadingPageState extends State<LoadingPage> {
   UserController userController = Get.find<UserController>();
 
   bool _permissions_loaded = false;
-
   bool _roles_loaded = false;
 
   _loadFinished() {
@@ -79,7 +78,6 @@ class _LoadingPageState extends State<LoadingPage> {
         });
       }
     }
-
     return Obx(
       () {
         return Scaffold(

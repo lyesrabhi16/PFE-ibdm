@@ -20,13 +20,22 @@ def broadcast_status():
     #start_monitor= time.time()
     #sucreMonitor(data)
     #logging.info(f"broadcast_sucre# starting SucreMonitor {time.time() - start_monitor}")
-    
+    send_data = SystemStatusSerializer(data).data
     async_to_sync(channel_layer.group_send)(
         "status",
         {
             "type": "status.data",
-            "data": SystemStatusSerializer(data).data,
+            "data": send_data,
         },
     )
-
+    """ async_to_sync(channel_layer.group_send)(
+        "broadcast",
+        {
+            "type": "broadcast.data",
+            "data": {
+                "type": "status",
+                "data": send_data,
+            },
+        },
+    ) """
     logging.info(f"broadcast_status# {data} done in {time.time() - start_func}")

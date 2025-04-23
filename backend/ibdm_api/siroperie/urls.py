@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from siroperie.views import SucreView, getSucreAtSpecificTime, getSucreMetaData
+from siroperie.views import SucreView, getSucreAtSpecificTime, getSucreMetaData, SucreListView
 
 
 
@@ -17,5 +17,6 @@ urlpatterns = [
     path('', include(router.urls), name="Siroperie Api Root"),
     path("sucre/specific", getSucreAtSpecificTime, name="sucre-specific"),
     path("sucre/meta", getSucreMetaData, name="sucre-meta"),
+    path("sucre/list", SucreListView.as_view({"get": "list"}), name="sucre-start-end-list"),
     path("sucre/<str:pk>/", SucreView.as_view({"get": "retrieve"}), name="sucre-detail"),
 ]

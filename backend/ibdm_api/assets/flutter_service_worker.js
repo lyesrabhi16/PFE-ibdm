@@ -83,7 +83,7 @@ const RESOURCES = {"assets/AssetManifest.bin": "78de34e2045dd716c8274cecbdd0d1d1
 "assets/assets/images/ifruit_logo.png": "e67fc7efb0ab6c736fd8296dc745c646",
 "assets/assets/images/logo.png": "a32e9cc5a15248fd736b2f0094c90b76",
 "assets/FontManifest.json": "4af0a70f2ec44d17eee5ebbea3fb4d05",
-"assets/fonts/MaterialIcons-Regular.otf": "607d07a2313b87a06466e0b7f2ed9735",
+"assets/fonts/MaterialIcons-Regular.otf": "2466d050f7bd24bfe02f17e50fd43960",
 "assets/NOTICES": "907785a17cc2129b6618b1ec9cbd715d",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "e986ebe42ef785b27164c36a9abc7818",
 "assets/packages/fluttertoast/assets/toastify.css": "a85675050054f179444bc5ad70ffc635",
@@ -122,14 +122,22 @@ const RESOURCES = {"assets/AssetManifest.bin": "78de34e2045dd716c8274cecbdd0d1d1
 "canvaskit/skwasm.worker.js": "89990e8c92bcb123999aa81f7e203b1c",
 "favicon.png": "a32e9cc5a15248fd736b2f0094c90b76",
 "flutter.js": "4b2350e14c6650ba82871f60906437ea",
+<<<<<<< HEAD
 "flutter_bootstrap.js": "34872d7fc8f418d56e7dde0056acd7e9",
+=======
+"flutter_bootstrap.js": "13d3ad61146f09bec2646b80f9342c67",
+>>>>>>> afd960eef2e3858911602e4d2eb7eba78409d1d7
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
 "index.html": "36922976cc4eed23cb8aa28b29e34527",
 "/": "36922976cc4eed23cb8aa28b29e34527",
+<<<<<<< HEAD
 "main.dart.js": "6edb4cc2f027a37c8c76153b9bb0ab9c",
+=======
+"main.dart.js": "c1f4fe6a55d9694c1e83aa69ad2aa903",
+>>>>>>> afd960eef2e3858911602e4d2eb7eba78409d1d7
 "manifest.json": "8106d1314fda3f7d6f5105afc01a5d0e",
 "splash/img/branding-1x.png": "14285ca56c13939f812f877eefa9276d",
 "splash/img/branding-2x.png": "f75f93069efee2189a28f465d7ec3bf0",
