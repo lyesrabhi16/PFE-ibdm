@@ -17,8 +17,6 @@ class FeedMetaDataSerializer(serializers.Serializer):
 
 
 
-
-
 class SystemInfoSerializer(serializers.Serializer):
     os = serializers.CharField()
     python_version = serializers.CharField()
@@ -71,7 +69,7 @@ class RedisInfoSerializer(serializers.Serializer):
 class StandardDatabaseSerializer(serializers.Serializer):
     state = serializers.CharField()
     info = serializers.DictField(child=DatabaseStorageInfoSerializer(), allow_null=True)
-    query = serializers.CharField(allow_null=True)
+    query = serializers.CharField(allow_null=True, required=False)
 
 
 class RedisDatabaseSerializer(serializers.Serializer):
@@ -102,13 +100,13 @@ class SystemStatusSerializer(serializers.Serializer):
 
 
 class StandardDatabaseConfSerializer(serializers.Serializer):
-    ENGINE = serializers.CharField(allow_null=True)
-    NAME = serializers.CharField(allow_null=True)
-    USER = serializers.CharField(allow_null=True)
-    PASSWORD = serializers.CharField(allow_null=True)
-    HOST = serializers.CharField(allow_null=True)
-    PORT = serializers.CharField(allow_null=True)
-    OPTIONS =serializers.DictField(allow_null=True)
+    ENGINE = serializers.CharField(allow_null=True, required=False)
+    NAME = serializers.CharField(allow_null=True, required=False)
+    USER = serializers.CharField(allow_null=True, required=False)
+    PASSWORD = serializers.CharField(allow_null=True, required=False)
+    HOST = serializers.CharField(allow_null=True, required=False)
+    PORT = serializers.CharField(allow_null=True, required=False)
+    OPTIONS =serializers.DictField(allow_null=True, required=False)
 
 class EmailProviderConfSerializer(serializers.Serializer):
     HOST = serializers.CharField()
@@ -131,3 +129,8 @@ class ServerConfigSerializer(serializers.Serializer):
     REDIS_DB = StandardDatabaseConfSerializer(allow_null=True)
     DATABASES = serializers.DictField(child=StandardDatabaseConfSerializer(), allow_null=True)
     EMAIL_PROVIDERS = serializers.DictField(child=EmailProviderConfSerializer(), allow_null=True)
+
+
+class StartEndDatesSerializer(serializers.Serializer):
+    start_date = serializers.DateTimeField()
+    end_date = serializers.DateTimeField()

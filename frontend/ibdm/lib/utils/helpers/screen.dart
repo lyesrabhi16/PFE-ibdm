@@ -37,3 +37,11 @@ bool isAtMostSmallScreen(BuildContext context) {
 bool isAtMostMediumScreen(BuildContext context) {
   return context.width < ScreenSizes.lg;
 }
+
+bool screenIsAtMost(double size, BuildContext context) {
+  return context.width < size;
+}
+
+bool screenIsAtLeast(double size, BuildContext context) {
+  return context.width >= size;
+}

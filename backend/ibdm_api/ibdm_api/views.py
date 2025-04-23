@@ -29,7 +29,7 @@ def index(request):
 )
 @api_view(["GET"])
 def getCA(request):
-    ca = os.path.join(BASE_DIR,"certs","ifruit_CA.crt")
+    ca = os.path.join(BASE_DIR,"certs","ibdmCA.crt")
     if not os.path.exists(ca):
         logging.error(f"CA file not found: {ca}")
         return HttpResponse(status=404)

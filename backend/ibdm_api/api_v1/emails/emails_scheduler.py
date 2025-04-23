@@ -47,7 +47,7 @@ def sendEmailWithFile(file, users, email, **kwargs):
         for provider in settings.EMAIL_PROVIDERS:
             provider_str = provider.host if provider else "DEFAULT PROVIDER" 
             try:
-                logging.info(f"emailScheduler#{" retrying with " if p_n > 1 else ""} {provider_str}: sending email {email_message.subject} to '{email_message.to}'")
+                logging.info(f"emailScheduler#{' retrying with ' if p_n > 1 else ''} {provider_str}: sending email {email_message.subject} to '{email_message.to}'")
                 email_message.from_email = Env.EMAIL_PROVIDERS[provider.host].get("EMAIL_OF_SENDER")
                 email_message.content_subtype = "html"
                 if file is not None:

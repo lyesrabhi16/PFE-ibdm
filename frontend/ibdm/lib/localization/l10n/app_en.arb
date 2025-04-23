@@ -808,5 +808,39 @@
     "savingConfig": "Saving Configuration...",
     "saveConfig" : "Save Configuration",
     "saveConfigAlertMessage": "Are you sure you want to save the configuration? This will overwrite the current configuration. The new configuration will be irreversibly saved but it will not take effect until the server is restarted.",
-    "failedToSendEmailWithId": "Failed to send email with id: {id}"
+    "failedToSendEmailWithId": "Failed to send email with id: {id}",
+    "@failedToSendEmailWithId": {
+        "placeholders": {
+            "id":{
+                "type": "int"
+            }
+        }
+    },
+    "failedToConnectToStatusBroadcast": "Failed to connect to Status Broadcast, {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
+	"@failedToConnectToStatusBroadcast": {
+		"placeholders": {
+			"retries": {
+				"type": "int"
+			}
+		}
+	},
+    "invalidEmailOrPassword": "Email or Password incorrect",
+    "userWithThisEmailAlreadyExists": "A User with this email already exists",
+    "list": "List",
+    "graph": "Graph",
+    "errorConnectingBroadcast": "Error connecting to broadcast, live data will not work",
+    "date": "Date",
+    "sucre": "Sucre",
+    "utilite": "Utilite",
+    "co2": "CO2",
+    "niveau": "Niveau",
+	"volume": "Volume",
+	"debit": "Debit",
+	"presCond": "Pres Cond",
+    "failedToGetNiveauData": "Failed to get niveau data",
+    "failedToGetVolumeData": "Failed to get volume data",
+    "failedToGetDebitData": "Failed to get debit data",
+    "failedToGetPresCondData": "Failed to get pres cond data",
+    "value": "Value",
+    "visualize" : "Visualize"
 }

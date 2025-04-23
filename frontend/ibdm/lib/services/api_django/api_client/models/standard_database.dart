@@ -13,7 +13,7 @@ class StandardDatabase {
   const StandardDatabase({
     required this.state,
     required this.info,
-    required this.query,
+    this.query,
   });
   
   factory StandardDatabase.fromJson(Map<String, Object?> json) => _$StandardDatabaseFromJson(json);

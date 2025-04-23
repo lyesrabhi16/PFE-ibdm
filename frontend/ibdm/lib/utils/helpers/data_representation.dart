@@ -1,15 +1,19 @@
+import 'package:flutter/widgets.dart';
+
 class DataRepresentation<T> {
   final String name;
   final String code;
+  final IconData? icon;
   Map<String, T>? source;
-  final T Function(dynamic v)? transform;
-  final dynamic Function(Map<String, T> v)? toValue;
+  final T Function(dynamic value)? transform;
+  final dynamic Function(Map<String, T> sourceObject)? toValue;
   DataRepresentation({
     required this.name,
     required this.code,
     this.source,
     this.transform,
     this.toValue,
+    this.icon,
   });
   get value {
     if (source == null) {

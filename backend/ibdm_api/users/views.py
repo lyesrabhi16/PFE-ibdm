@@ -31,7 +31,7 @@ from rest_framework import serializers
     on_update="updateUser",
     on_partial_update="partialUpdateUser",
 )
-@extend_schema(tags=["users"])
+@extend_schema(tags=["Users"])
 @extend_schema_view(
     list=extend_schema(summary="Get users", description="Get all users", parameters=[
         OpenApiParameter(
@@ -184,14 +184,14 @@ class PermissionViewSet(viewsets.ModelViewSet):
     on_update="updateSubordinateAndSuperior",
     on_partial_update="partialUpdateSubordinateAndSuperior",
 )
-@extend_schema(tags=["users"])
+@extend_schema(tags=["Users"])
 class SubordinateAndSuperiorViewSet(viewsets.ModelViewSet):
 
     queryset = SubordinateAndSuperior.objects.all()
     serializer_class = SubordinateAndSuperiorSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-@extend_schema(tags=["users"], operation_id="getSubordinateAndSuperiorId", responses={
+@extend_schema(tags=["Users"], operation_id="getSubordinateAndSuperiorId", responses={
     200: GetSubordinateAndSuperiorIdResponseSerializer,
     404: ErrorResponseSerializer,
 })
@@ -207,7 +207,7 @@ def getSubordinateAndSuperiorId(request, subordinate, superior):
     return JsonResponse(ErrorResponseSerializer({"status": "error", "code": ErrorCodes.NOT_FOUND.code}).data, status=ErrorCodes.NOT_FOUND.status_code)
 
 @extend_schema(
-    tags=["users"],
+    tags=["Users"],
     operation_id="getAllUserPerms",
     responses={
         200: UserPermsSerializer,

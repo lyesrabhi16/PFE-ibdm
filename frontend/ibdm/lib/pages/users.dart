@@ -21,6 +21,7 @@ import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
+import 'package:ibdm/utils/constants/error_codes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
@@ -800,7 +801,7 @@ class _UsersPageState extends State<UsersPage> {
           ),
           //right refresh button
           SizedBox(
-            width: AppSizes.xl * 4,
+            width: AppSizes.xl * 5,
             child: IconWithLabelButton(
               icon: Icons.refresh_rounded,
               onTap: () => _loadUsers(context, page: currentPage ?? 1),
@@ -1931,6 +1932,28 @@ class _UsersPageState extends State<UsersPage> {
       _loadUsers(context);
     } catch (e) {
       logger.e("failed to add user: $e");
+      if (e is dio.DioException) {
+        for (var item in (e.response?.data as Map).entries) {
+          final errors = item.value as List;
+          final translatedErrors = [];
+          for (var error in errors) {
+            final tErr = switch (error) {
+              ErrorCodes.USER_WITH_EMAIL_EXISTS =>
+                strings.value.userWithThisEmailAlreadyExists,
+              _ => error,
+            };
+            translatedErrors.add(tErr);
+          }
+          String message = translatedErrors.join(", ");
+
+          String key = item.key;
+          Toasts.showErrorToastNotification(
+            context: Get.context!,
+            title: key,
+            message: message,
+          );
+        }
+      }
       // show error toast
       loadingToastState.value = FutureState.error;
       // close toast after a duration
