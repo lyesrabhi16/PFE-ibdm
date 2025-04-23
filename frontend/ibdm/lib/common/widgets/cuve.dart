@@ -18,6 +18,8 @@ class Cuve extends StatelessWidget {
     this.dangerPoint = 10,
     this.height = 250,
     this.padding = AppSizes.md,
+    this.showNiveau2 = true,
+    this.innerTitle,
   });
 
   final String title;
@@ -31,6 +33,8 @@ class Cuve extends StatelessWidget {
   final double dangerPoint;
   final double height;
   final double padding;
+  final bool showNiveau2;
+  final String? innerTitle;
   Color get color => value > dangerPoint ? okColor : dangerColor;
 
   @override
@@ -70,7 +74,7 @@ class Cuve extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          title,
+                          innerTitle ?? title,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: color,
@@ -85,15 +89,16 @@ class Cuve extends StatelessWidget {
                             ),
                           ).marginAll(AppSizes.sm),
                         ),
-                        FittedBox(
-                          child: Text(
-                            "${niveau2.toStringAsFixed(2)} ${niveau2Trailing}",
-                            softWrap: false,
-                            style: TextStyle(
-                              color: color,
-                            ),
-                          ).marginAll(AppSizes.sm),
-                        ),
+                        if (showNiveau2)
+                          FittedBox(
+                            child: Text(
+                              "${niveau2.toStringAsFixed(2)} ${niveau2Trailing}",
+                              softWrap: false,
+                              style: TextStyle(
+                                color: color,
+                              ),
+                            ).marginAll(AppSizes.sm),
+                          ),
                       ],
                     ),
                   ).marginAll(AppSizes.sm),

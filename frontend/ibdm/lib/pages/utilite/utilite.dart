@@ -32,6 +32,8 @@ class _UtilitePageState extends State<UtilitePage> {
   BuildContext get getContext => _getContext!.call()!;
   ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
 
+  late FeedMetaData feedMetaData;
+
   final Rx<DateTime> utiliteStartDate = DateTime.now().obs;
 
   final Rx<DateTime> utiliteEndDate = DateTime.now().obs;
@@ -47,7 +49,6 @@ class _UtilitePageState extends State<UtilitePage> {
   int? minute;
   int? second;
 
-  late Co2Ifruit co2_ifruit;
   late Utilite utilite;
 
   final RxBool loaded = false.obs;
@@ -114,6 +115,7 @@ class _UtilitePageState extends State<UtilitePage> {
           final res = await (await ApiClientInstance.getApiClient())
               .getFiltrationMetaData();
           printMessage("utilite broadcast connected");
+          feedMetaData = res;
           utiliteStartDate.value = res.startDate;
           utiliteEndDate.value = res.endDate;
           await UtilitePage.channel!.ready;
@@ -208,7 +210,6 @@ class _UtilitePageState extends State<UtilitePage> {
                     );
                   }
                   if (isLive.value) {
-                    co2_ifruit = Co2Ifruit.fromJson(data["data"]["co2_ifruit"]);
                     utilite = Utilite.fromJson(data["data"]["utilite"]);
 
                     Future.delayed(Duration(microseconds: 100),
@@ -351,37 +352,24 @@ class _UtilitePageState extends State<UtilitePage> {
       final api = await ApiClientInstance.getApiClient();
       int done = 0;
       _setDone() {
-        done++;
-        if (done == 2) {
-          refresh.value = true;
-          _state.value = FutureState.success;
-          loaded.value = true;
-          Future.delayed(Durations.long2, () {
-            toastification.dismissById(toast.id);
-          });
-        }
+        refresh.value = true;
+        _state.value = FutureState.success;
+        loaded.value = true;
+        Future.delayed(Durations.long2, () {
+          toastification.dismissById(toast.id);
+        });
       }
 
-      api
-          .getCo2IfruitAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {co2_ifruit = v, _setDone()});
-      api
-          .getUtiliteAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {utilite = v, _setDone()});
+      final res = await api.getUtiliteAtSpecificTime(
+        year: year!,
+        month: month,
+        day: day,
+        hour: hour,
+        minute: minute,
+        second: second,
+      );
+      utilite = res;
+      _setDone();
     } catch (e) {
       logger.e("Failed to get Utilite data");
       _state.value = FutureState.error;
@@ -390,6 +378,9 @@ class _UtilitePageState extends State<UtilitePage> {
         toastification.dismissById(toast.id);
       });
       return null;
+    } finally {
+      utiliteEndDate.value = utilite.date;
+      refresh.value = !refresh.value;
     }
   }
 
@@ -397,8 +388,8 @@ class _UtilitePageState extends State<UtilitePage> {
     return Obx(() {
       return LiveDataTopActionBar(
         isLive: isLive,
-        startDate: utiliteStartDate.value,
-        endDate: utiliteEndDate.value,
+        startDate: feedMetaData.startDate,
+        endDate: feedMetaData.endDate,
         selectedDate: utiliteEndDate.value,
         searchPressed: (dt) {
           year = dt.year;

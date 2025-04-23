@@ -19,6 +19,7 @@ from api_v1.smtp_backend import EmailBackend
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+VERSION=Env.VERSION
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -29,7 +30,9 @@ SECRET_KEY = Env.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = Env.DEBUG
 
-ALLOWED_HOSTS = ["*"]
+SECURE_SSL_REDIRECT = True
+
+ALLOWED_HOSTS = Env.ALLOWED_HOSTS
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = [
@@ -37,17 +40,16 @@ CORS_ALLOW_HEADERS = [
     "X-CSRFToken",
 ]
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8001"]
+CSRF_TRUSTED_ORIGINS = Env.CSRF_TRUSTED_ORIGINS
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SAMESITE = "None" if DEBUG else "Strict"
+SESSION_COOKIE_SAMESITE = "None" if DEBUG else "Strict"
 
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
 # Application definition
-NPM_BIN_PATH="C:\\Program Files\\nodejs\\npm.cmd"
 INSTALLED_APPS = [
     "jazzmin",
     "django.contrib.admin",
@@ -328,7 +330,8 @@ logging.addLevelName(13, "SIROPERIE")
 logging.addLevelName(14, "FILTRATION")
 logging.addLevelName(15, "UTILITE")
 
-LOGGING = {
+# sourcery skip: swap-if-expression
+LOGGING = None if not Env.LOG_TO_FILES else {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
@@ -425,21 +428,26 @@ LOGGING = {
             'formatter': 'verbose',
             'filters': ['monitors_filter'],
         },
+        "file_system_monitor":{
+            'class': "logging.FileHandler",
+            'filename': os.path.join(LOG_DIR, 'system_monitor.log'),
+            'formatter': 'verbose',
+            'filters': ['system_monitor_filter'],
+        },
     },
     "root": {
-        "level": "CRITICAL",
+        "level": "DEBUG",
         "handlers": [
                         "console",
+                        'file_debug', 'file_info', "file_warning", "file_error", "file_critical",
                     ],
         "propagate": True,
     },
     'loggers': {
         'django': {
             'handlers': [
-                            "console", 
-                            'file_debug', 'file_info', "file_warning", "file_error", "file_critical",
                             "file_emails", "file_emails_broadcast", "file_utilite_broadcast", "file_filtration_broadcast", "file_sucre_broadcast",
-                            "file_monitors"
+                            "file_monitors", "file_system_monitor"
                         ],
             'level': 'DEBUG',
             'propagate': True,
@@ -505,6 +513,10 @@ LOGGING = {
                     "Pres_CondMonitor", "debitMonitor"
                 ])
         },
+        'system_monitor_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: require_tags(record, ["system_monitor"])
+        },
     },
 }
 
@@ -515,11 +527,15 @@ def require_level(record, level):
 def require_tags(record, tags):
     if (record.levelno == logging.DEBUG):
         return False
-    message_split = record.message.split("#")
-    if len(message_split) == 1:
-        return False
-    tag = message_split[0]
-    if tag not in seen_tags:
-        print("new tag:", tag)
-        seen_tags.add(tag)
-    return tag in tags
+    try:
+        message_split = record.getMessage().split("#")
+        if len(message_split) == 1:
+            return False
+        tag = message_split[0]
+        if tag not in seen_tags:
+            print("new tag:", tag)
+            seen_tags.add(tag)
+        return tag in tags
+    except Exception as e:
+        logging.getLogger("django").error(f"logger# failed to log message({record.msg}) args({record.args}) with error {e}")
+    return False

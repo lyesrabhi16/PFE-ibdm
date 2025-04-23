@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Group,
 from django.db import models
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from drf_spectacular.types import OpenApiTypes
+from django.core.exceptions import ValidationError
 # Create your models here.
 
 class UserManager(BaseUserManager):
@@ -79,6 +80,7 @@ class Role(models.Model):
         return self.group.name
 
 
+
 class SubordinateAndSuperior(models.Model):
     superior = models.ForeignKey("User", on_delete=models.CASCADE, related_name="superior")
     subordinate = models.ForeignKey("User", on_delete=models.CASCADE, related_name="subordinate")
@@ -87,6 +89,24 @@ class SubordinateAndSuperior(models.Model):
 
     def __str__(self):
         return f"{self.superior.email} {self.superior.role} is superior to {self.subordinate.email} {self.subordinate.role}"
+
+    def _check(self):
+
+        if self.superior == self.subordinate:
+            raise ValidationError("A user cannot be their own superior.")
+
+        # Check for circular hierarchy
+        current_superior = self.superior
+        while current_superior:
+            if current_superior == self.subordinate:
+                raise ValidationError("Circular hierarchy detected: A user cannot be their own superior indirectly.")
+            try:
+                current_superior = SubordinateAndSuperior.objects.get(subordinate=current_superior).superior
+            except SubordinateAndSuperior.DoesNotExist:
+                break
+    def save(self, *args, **kwargs):
+        self._check()
+        super().save(*args, **kwargs)
 
 class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=50, blank=True)
@@ -124,7 +144,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             return True
         
         return super().has_perm(perm, obj)
-
     class Meta:
         permissions = [
             ("can_view_users_page", "Can view users page"),
@@ -135,5 +154,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             ("can_view_email_alerts", "Can view email alerts"),
             ("can_view_emails_sent", "Can view emails sent"),
             ("can_view_utilite_page", "Can view utilite page"),
+            ("can_view_co2_page", "Can view co2 page"),
+
         ]
     

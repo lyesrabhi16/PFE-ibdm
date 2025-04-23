@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
-import 'package:ibdm/common/controllers/permissions_controler.dart';
+import 'package:ibdm/common/controllers/permissions_controller.dart';
 import 'package:ibdm/common/controllers/routes_controller.dart';
 import 'package:ibdm/common/controllers/side_menu_state_controller.dart';
 import 'package:ibdm/common/controllers/theme_mode_controller.dart';

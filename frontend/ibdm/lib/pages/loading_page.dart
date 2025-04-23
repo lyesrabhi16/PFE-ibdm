@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/loading_page_controller.dart';
-import 'package:ibdm/common/controllers/permissions_controler.dart';
+import 'package:ibdm/common/controllers/permissions_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';

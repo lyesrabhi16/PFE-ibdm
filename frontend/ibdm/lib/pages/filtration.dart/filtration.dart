@@ -10,6 +10,7 @@ import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/models/debit.dart';
+import 'package:ibdm/services/api_django/api_client/models/feed_meta_data.dart';
 import 'package:ibdm/services/api_django/api_client/models/niveau.dart';
 import 'package:ibdm/services/api_django/api_client/models/pres_cond.dart';
 import 'package:ibdm/services/api_django/api_client/models/volume.dart';
@@ -57,6 +58,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
   BuildContext get getContext => _getContext!.call()!;
 
   ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
+
+  late FeedMetaData feedMetaData;
 
   late final strings = getTranslations(getContext).obs;
 
@@ -1108,75 +1111,75 @@ class _FiltrationPageState extends State<FiltrationPage> {
       logger
           .e("Getting filtration data $year $month $day $hour $minute $second");
       final api = await ApiClientInstance.getApiClient();
-      int done = 0;
       _setDone() {
-        done++;
-        if (done == 4) {
-          refresh.value = true;
-          _state.value = FutureState.success;
-          loaded.value = true;
-          Future.delayed(Durations.long2, () {
-            toastification.dismissById(toast.id);
-          });
-        }
+        refresh.value = true;
+        _state.value = FutureState.success;
+        loaded.value = true;
+        Future.delayed(Durations.long2, () {
+          toastification.dismissById(toast.id);
+        });
       }
 
-      api
-          .getNiveauAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {niveau = v, _setDone()});
-      api
-          .getDebitAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {debit = v, _setDone()});
-      api
-          .getVolumeAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {volume = v, _setDone()});
-      api
-          .getPresCondAtSpecificTime(
-            year: year!,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
-          )
-          .then((v) => {presCond = v, _setDone()});
+      final List<dynamic> v = await Future.wait([
+        api.getNiveauAtSpecificTime(
+          year: year!,
+          month: month,
+          day: day,
+          hour: hour,
+          minute: minute,
+          second: second,
+        ),
+        api.getDebitAtSpecificTime(
+          year: year!,
+          month: month,
+          day: day,
+          hour: hour,
+          minute: minute,
+          second: second,
+        ),
+        api.getVolumeAtSpecificTime(
+          year: year!,
+          month: month,
+          day: day,
+          hour: hour,
+          minute: minute,
+          second: second,
+        ),
+        api.getPresCondAtSpecificTime(
+          year: year!,
+          month: month,
+          day: day,
+          hour: hour,
+          minute: minute,
+          second: second,
+        ),
+      ]);
+
+      niveau = v[0] as Niveau;
+      debit = v[1] as Debit;
+      volume = v[2] as Volume;
+      presCond = v[3] as PresCond;
+
+      _setDone();
     } catch (e) {
-      logger.e("Failed to get filtration data");
+      logger.e("Failed to get filtration data : $e");
       _state.value = FutureState.error;
       loaded.value = true;
       Future.delayed(Durations.long2, () {
         toastification.dismissById(toast.id);
       });
       return null;
+    } finally {
+      filtrationEndDate.value = niveau.date;
+      refresh.value = !refresh.value;
     }
   }
 
   _getTopActionsBar() {
     return LiveDataTopActionBar(
       isLive: isLive,
-      startDate: filtrationStartDate.value,
-      endDate: filtrationEndDate.value,
+      startDate: feedMetaData.startDate,
+      endDate: feedMetaData.endDate,
       selectedDate: filtrationEndDate.value,
       searchPressed: (dt) {
         year = dt.year;
@@ -1954,6 +1957,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
           final res = await (await ApiClientInstance.getApiClient())
               .getFiltrationMetaData();
           printMessage("filtration broadcast connected");
+          feedMetaData = res;
           filtrationStartDate.value = res.startDate;
           filtrationEndDate.value = res.endDate;
           await FiltrationPage.channel!.ready;
