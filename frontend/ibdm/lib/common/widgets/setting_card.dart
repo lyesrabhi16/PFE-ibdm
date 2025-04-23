@@ -9,6 +9,7 @@ class SettingCard extends StatelessWidget {
     this.subtitle,
     this.trailing,
     this.onTap,
+    this.titleTextStyle,
   });
 
   final IconData icon;
@@ -16,6 +17,8 @@ class SettingCard extends StatelessWidget {
   final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
+
+  final TextStyle? titleTextStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,10 @@ class SettingCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
         child: ListTile(
           leading: Icon(icon, color: Colors.blueAccent),
-          title: Text(title),
+          title: Text(
+            title,
+            style: titleTextStyle,
+          ),
           subtitle: subtitle != null ? Text(subtitle!) : null,
           trailing: trailing,
           onTap: onTap,

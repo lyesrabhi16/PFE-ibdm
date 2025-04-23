@@ -9,8 +9,10 @@ from django.http import JsonResponse
 from api_v1.utils import get_value_at, with_operation_ids
 from api_v1.serializers import ErrorResponseSerializer, FeedMetaDataSerializer
 from api_v1.constants import ErrorCodes
+from django.utils.dateparse import parse_datetime
+
 # Create your views here.
-@extend_schema(tags=["filtration"])
+@extend_schema(tags=["Filtration"])
 @with_operation_ids(
     on_list="getNiveaux",
     on_retrieve="getNiveau",
@@ -21,7 +23,7 @@ class NiveauViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = NiveauSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-@extend_schema(tags=["filtration"])
+@extend_schema(tags=["Filtration"])
 @with_operation_ids(
     on_list="getDebits",
     on_retrieve="getDebit",
@@ -32,7 +34,7 @@ class DebitViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = DebitSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-@extend_schema(tags=["filtration"])
+@extend_schema(tags=["Filtration"])
 @with_operation_ids(
     on_list="getPresConds",
     on_retrieve="getPresCond",
@@ -43,7 +45,7 @@ class PresCondViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = PresCondSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-@extend_schema(tags=["filtration"])
+@extend_schema(tags=["Filtration"])
 @with_operation_ids(
     on_list="getVolumes",
     on_retrieve="getVolume",
@@ -56,7 +58,7 @@ class VolumeViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 @extend_schema(
-    tags=["filtration"],
+    tags=["Filtration"],
     operation_id="getNiveauAtSpecificTime",
     request=None,
     responses={
@@ -132,7 +134,7 @@ def getNiveauAtSpecificTime(request):
 
 
 @extend_schema(
-    tags=["filtration"],
+    tags=["Filtration"],
     operation_id="getDebitAtSpecificTime",
     request=None,
     responses={
@@ -208,7 +210,7 @@ def getDebitAtSpecificTime(request):
 
 
 @extend_schema(
-    tags=["filtration"],
+    tags=["Filtration"],
     operation_id="getVolumeAtSpecificTime",
     request=None,
     responses={
@@ -285,7 +287,7 @@ def getVolumeAtSpecificTime(request):
 
 
 @extend_schema(
-    tags=["filtration"],
+    tags=["Filtration"],
     operation_id="getPresCondAtSpecificTime",
     request=None,
     responses={
@@ -360,7 +362,7 @@ def getPresCondAtSpecificTime(request):
         return JsonResponse({}, status=404)
 
 @extend_schema(
-    tags=["filtration"],
+    tags=["Filtration"],
     operation_id="getFiltrationMetaData",
     request=None,
     responses={
@@ -391,3 +393,222 @@ def getFiltrationMetaData(request):
             }
         ).data
     )
+
+@extend_schema(
+    tags=["Filtration"],
+    summary="get all the niveau values between two dates",
+    request=None,
+    parameters=[
+        OpenApiParameter(
+            name="start_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="end_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+    ],
+    responses={
+        200: NiveauSerializer,
+    },
+)
+@with_operation_ids(
+    on_list="getNiveauxBetweenDates"
+)
+class NiveauListView(viewsets.ReadOnlyModelViewSet):
+    queryset = Niveau.objects.all()
+    serializer_class = NiveauSerializer
+    
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+        if start_date and end_date:
+            try:
+                start_date = parse_datetime(start_date)
+                end_date = parse_datetime(end_date)
+            except ValueError:
+                return Niveau.objects.none()
+            
+            queryset = Niveau.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            return queryset
+        return Niveau.objects.none()
+
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+        response.data["meta"] = {
+            "start_date": self.request.query_params.get("start_date"),
+            "end_date": self.request.query_params.get("end_date"),
+        }
+        return response
+
+@extend_schema(
+    tags=["Filtration"],
+    summary="get all the debit values between two dates",
+    request=None,
+    parameters=[
+        OpenApiParameter(
+            name="start_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="end_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+    ],
+    responses={
+        200: DebitSerializer,
+    },
+)
+
+@with_operation_ids(
+    on_list="getDebitsBetweenDates"
+)
+class DebitListView(viewsets.ReadOnlyModelViewSet):
+    queryset = Debit.objects.all()
+    serializer_class = DebitSerializer
+    
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+        if start_date and end_date:
+            try:
+                start_date = parse_datetime(start_date)
+                end_date = parse_datetime(end_date)
+            except ValueError:
+                return Debit.objects.none()
+            
+            queryset = Debit.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            return queryset
+        return Debit.objects.none()
+
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+        response.data["meta"] = {
+            "start_date": self.request.query_params.get("start_date"),
+            "end_date": self.request.query_params.get("end_date"),
+        }
+        return response
+
+@extend_schema(
+    tags=["Filtration"],
+    summary="get all the volume values between two dates",
+    request=None,
+    parameters=[
+        OpenApiParameter(
+            name="start_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="end_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+    ],
+    responses={
+        200: VolumeSerializer,
+    },
+)
+@with_operation_ids(
+    on_list="getVolumesBetweenDates"
+)
+class VolumeListView(viewsets.ReadOnlyModelViewSet):
+    queryset = Volume.objects.all()
+    serializer_class = VolumeSerializer
+    
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+        if start_date and end_date:
+            try:
+                start_date = parse_datetime(start_date)
+                end_date = parse_datetime(end_date)
+            except ValueError:
+                return Volume.objects.none()
+            
+            queryset = Volume.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            return queryset
+        return Volume.objects.none()
+
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+        response.data["meta"] = {
+            "start_date": self.request.query_params.get("start_date"),
+            "end_date": self.request.query_params.get("end_date"),
+        }
+        return response
+
+@extend_schema(
+    tags=["Filtration"],
+    summary="get all the pres_cond values between two dates",
+    request=None,
+    parameters=[
+        OpenApiParameter(
+            name="start_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="end_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+    ],
+    responses={
+        200: PresCondSerializer,
+    },
+)
+@with_operation_ids(
+    on_list="getPresCondsBetweenDates"
+)
+class PresCondListView(viewsets.ReadOnlyModelViewSet):
+    queryset = PresCond.objects.all()
+    serializer_class = PresCondSerializer
+    
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+        if start_date and end_date:
+            try:
+                start_date = parse_datetime(start_date)
+                end_date = parse_datetime(end_date)
+            except ValueError:
+                return PresCond.objects.none()
+            
+            queryset = PresCond.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            return queryset
+        return PresCond.objects.none()
+
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+        response.data["meta"] = {
+            "start_date": self.request.query_params.get("start_date"),
+            "end_date": self.request.query_params.get("end_date"),
+        }
+        return response
+
+        

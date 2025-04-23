@@ -5,8 +5,8 @@ class DataRepresentation<T> {
   final String code;
   final IconData? icon;
   Map<String, T>? source;
-  final T Function(dynamic v)? transform;
-  final dynamic Function(Map<String, T> v)? toValue;
+  final T Function(dynamic value)? transform;
+  final dynamic Function(Map<String, T> sourceObject)? toValue;
   DataRepresentation({
     required this.name,
     required this.code,

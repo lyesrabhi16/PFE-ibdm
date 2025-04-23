@@ -828,5 +828,20 @@
     "invalidEmailOrPassword": "Email ou mot de pass incorrecte",
 	"userWithThisEmailAlreadyExists": "Un Utilisateur avec cette email existe déja",
 	"list": "Liste",
-	"graph": "Graph"
+	"graph": "Graph",
+	"errorConnectingBroadcast": "Erreur de connexion à la diffusion, les données en temps réel ne fonctionneront pas",
+	"date": "Date",
+	"sucre": "Sucre",
+	"utilite": "Utilite",
+	"co2": "CO2",
+	"niveau": "Niveau",
+	"volume": "Volume",
+	"debit": "Debit",
+	"presCond": "Pres Cond",
+	"failedToGetNiveauData": "Échec de l'obtention des données de niveau",
+	"failedToGetVolumeData": "Échec de l'obtention des données de volume",
+	"failedToGetDebitData": "Échec de l'obtention des données de débit",
+	"failedToGetPresCondData": "Échec de l'obtention des données de pres cond",
+	"value": "Valeur",
+	"visualize": "Visualiser"
 }

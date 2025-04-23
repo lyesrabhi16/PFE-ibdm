@@ -22,12 +22,23 @@ def broadcast_sent_emails():
     logging.info(f"broadcast_sent_emails# {data} retrieved in {time.time() - start} seconds")
     if last_sent is not None and data.pk == last_sent.pk:
         return
+    send_data = SentEmailSerializer(data, context={ "request": None }).data
     async_to_sync(channel_layer.group_send)(
         "sent_emails",
         {
             "type": "sent.emails",
-            "data": SentEmailSerializer(data, context={ "request": None }).data,
+            "data": send_data,
         },
     )
+    """ async_to_sync(channel_layer.group_send)(
+        "broadcast",
+        {
+            "type": "broadcast.data",
+            "data": {
+                "type": "sent-emails",
+                "data": send_data,
+            },
+        },
+    ) """
     last_sent = data
     logging.info(f"broadcast_sent_emails# {data} done in {time.time() - start_func}")

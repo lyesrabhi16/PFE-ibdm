@@ -41,4 +41,14 @@ def broadcast_utilite():
             "data": data,
         },
     )
+    """ async_to_sync(channel_layer.group_send)(
+        "broadcast",
+        {
+            "type": "broadcast.data",
+            "data": {
+                "type": "utilite",
+                "data": data,
+            },
+        },
+    ) """
     logging.info(f"broadcast_utilite# {co2_ifruit_latest.date} done in {time.time() - start_func}")
