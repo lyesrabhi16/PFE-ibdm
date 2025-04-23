@@ -4,7 +4,7 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/middlewares/require_un_authenticated_route_middleware.dart';
 import 'package:ibdm/pages/co2/co2.dart';
-import 'package:ibdm/pages/filtration.dart/filtration.dart';
+import 'package:ibdm/pages/filtration/filtration.dart';
 import 'package:ibdm/pages/no_permissions.dart';
 import 'package:ibdm/pages/not_found.dart';
 import 'package:ibdm/pages/server-status/server_status.dart';

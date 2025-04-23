@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
 
@@ -61,8 +62,11 @@ class LiveDataTopActionBar extends StatelessWidget {
     final strings = getTranslations(context).obs;
     final _textColor = _getForgroundColor(!isLive.value).obs;
     final _selectedDate = selectedDate.obs;
+
     return Obx(
       () {
+        logger.e("isLive: ${isLive.value}");
+        logger.e("selectedDate: ${_selectedDate.value}");
         return Padding(
           padding: EdgeInsets.all(AppSizes.sm),
           child: Wrap(
@@ -124,7 +128,7 @@ class LiveDataTopActionBar extends StatelessWidget {
                   ),
                   // time
                   ShadButton(
-                      width: 120,
+                      width: 160,
                       height: 40,
                       backgroundColor: _getBackgroundColor(!isLive.value),
                       hoverBackgroundColor: _getBackgroundColor(isLive.value),

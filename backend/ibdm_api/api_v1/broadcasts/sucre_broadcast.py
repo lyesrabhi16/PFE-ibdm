@@ -22,12 +22,23 @@ def broadcast_sucre():
     start_monitor= time.time()
     sucreMonitor(data)
     logging.info(f"broadcast_sucre# starting SucreMonitor {time.time() - start_monitor}")
+    send_data=SucreSerializer(data, context={ "request": None }).data
     async_to_sync(channel_layer.group_send)(
         "sucre",
         {
             "type": "sucre.data",
-            "data": SucreSerializer(data, context={ "request": None }).data,
+            "data": send_data,
         },
     )
+    """ async_to_sync(channel_layer.group_send)(
+        "broadcast",
+        {
+            "type": "broadcast.data",
+            "data": {
+                "type": "sucre",
+                "data": send_data,
+            },
+        },
+    ) """
 
     logging.info(f"broadcast_sucre# {data} done in {time.time() - start_func}")
