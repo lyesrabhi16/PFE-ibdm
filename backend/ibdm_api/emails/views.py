@@ -240,6 +240,7 @@ def sendScheduledEmailNow(request, email_schedule_id):
             }).data,status=200
         )
     except EmailSchedule.DoesNotExist:
+        logging.error("emailScheduler# error sending email: email schedule does not exist")
         return JsonResponse(ErrorResponseSerializer(
             {
                 "status": "error",
@@ -247,6 +248,7 @@ def sendScheduledEmailNow(request, email_schedule_id):
             }
         ).data, status=ErrorCodes.NOT_FOUND.status_code)
     except Exception as e:
+        logging.error(f"emailScheduler# error sending email: {e}")
         return JsonResponse(ErrorResponseSerializer(
             {
                 "status": "error",

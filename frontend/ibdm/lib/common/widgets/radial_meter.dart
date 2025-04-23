@@ -20,6 +20,7 @@ class RadialMeter extends StatelessWidget {
     this.okValue2Color,
     this.dangerValue1Color,
     this.dangerValue2Color,
+    this.showTrack2 = true,
   });
 
   final double value1;
@@ -37,6 +38,7 @@ class RadialMeter extends StatelessWidget {
   final Color? okValue2Color;
   final Color? dangerValue1Color;
   final Color? dangerValue2Color;
+  final bool showTrack2;
   @override
   Widget build(BuildContext context) {
     final Color _okValue1Color = okValue1Color ?? Colors.blue;
@@ -89,23 +91,25 @@ class RadialMeter extends StatelessWidget {
                           .bodyMedium!
                           .copyWith(color: _value1Color),
                     ),
-                    Text(
-                      value2Label,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: _value2Color),
-                    ),
-                    Text(
-                      "${value2.toStringAsFixed(2)} $value2Suffix",
-                      textAlign: TextAlign.center,
-                      softWrap: false,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: _value2Color),
-                    ),
+                    if (showTrack2) ...[
+                      Text(
+                        value2Label,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(color: _value2Color),
+                      ),
+                      Text(
+                        "${value2.toStringAsFixed(2)} $value2Suffix",
+                        textAlign: TextAlign.center,
+                        softWrap: false,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(color: _value2Color),
+                      ),
+                    ]
                   ],
                 ),
               ),
@@ -138,20 +142,22 @@ class RadialMeter extends StatelessWidget {
                   color: _value1Color,
                   radialOffset: 0,
                 ),
-                RadialValueBar(
-                  value: max,
-                  color: Colors.grey.withAlpha(80),
-                  radialOffset: 15,
-                ),
-                RadialValueBar(
-                  value: value2 > 0
-                      ? value2 > max
-                          ? max
-                          : value2
-                      : zeroOffset,
-                  color: _value2Color,
-                  radialOffset: 15,
-                ),
+                if (showTrack2) ...[
+                  RadialValueBar(
+                    value: max,
+                    color: Colors.grey.withAlpha(80),
+                    radialOffset: 15,
+                  ),
+                  RadialValueBar(
+                    value: value2 > 0
+                        ? value2 > max
+                            ? max
+                            : value2
+                        : zeroOffset,
+                    color: _value2Color,
+                    radialOffset: 15,
+                  ),
+                ]
               ],
               widgetPointer: [],
             ),
