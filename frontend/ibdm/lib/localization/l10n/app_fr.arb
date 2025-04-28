@@ -843,5 +843,7 @@
 	"failedToGetDebitData": "Échec de l'obtention des données de débit",
 	"failedToGetPresCondData": "Échec de l'obtention des données de pres cond",
 	"value": "Valeur",
-	"visualize": "Visualiser"
+	"visualize": "Visualiser",
+	"week": "Semaine",
+	"precision": "Précision"
 }

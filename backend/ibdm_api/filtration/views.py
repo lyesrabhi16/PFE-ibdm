@@ -6,10 +6,11 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes
 from django.http import JsonResponse
-from api_v1.utils import get_value_at, with_operation_ids
+from api_v1.utils import get_value_at, with_operation_ids, filter_by_fetch_type
 from api_v1.serializers import ErrorResponseSerializer, FeedMetaDataSerializer
 from api_v1.constants import ErrorCodes
 from django.utils.dateparse import parse_datetime
+
 
 # Create your views here.
 @extend_schema(tags=["Filtration"])
@@ -410,7 +411,13 @@ def getFiltrationMetaData(request):
             required=True,
             type=str,
             location="query",
-        ),
+        ),OpenApiParameter(
+                name="fetch_type",
+                required=False,
+                type=str,                
+                enum=["all", "seconds", "minutes", "hours", "days", "weeks", "months", "years"],
+                location="query",
+            ),
     ],
     responses={
         200: NiveauSerializer,
@@ -429,6 +436,7 @@ class NiveauListView(viewsets.ReadOnlyModelViewSet):
 
         start_date = self.request.query_params.get("start_date")
         end_date = self.request.query_params.get("end_date")
+        fetch_type = self.request.query_params.get("fetch_type", "all")
         if start_date and end_date:
             try:
                 start_date = parse_datetime(start_date)
@@ -436,7 +444,7 @@ class NiveauListView(viewsets.ReadOnlyModelViewSet):
             except ValueError:
                 return Niveau.objects.none()
             
-            queryset = Niveau.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            queryset = filter_by_fetch_type(Niveau, start_date, end_date, fetch_type)
             return queryset
         return Niveau.objects.none()
 
@@ -464,7 +472,13 @@ class NiveauListView(viewsets.ReadOnlyModelViewSet):
             required=True,
             type=str,
             location="query",
-        ),
+        ),OpenApiParameter(
+                name="fetch_type",
+                required=False,
+                type=str,
+                enum=["all", "seconds", "minutes", "hours", "days", "weeks", "months", "years"],
+                location="query",
+            ),
     ],
     responses={
         200: DebitSerializer,
@@ -484,6 +498,7 @@ class DebitListView(viewsets.ReadOnlyModelViewSet):
 
         start_date = self.request.query_params.get("start_date")
         end_date = self.request.query_params.get("end_date")
+        fetch_type = self.request.query_params.get("fetch_type", "all")
         if start_date and end_date:
             try:
                 start_date = parse_datetime(start_date)
@@ -491,7 +506,7 @@ class DebitListView(viewsets.ReadOnlyModelViewSet):
             except ValueError:
                 return Debit.objects.none()
             
-            queryset = Debit.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            queryset = filter_by_fetch_type(Debit, start_date, end_date, fetch_type)
             return queryset
         return Debit.objects.none()
 
@@ -519,7 +534,13 @@ class DebitListView(viewsets.ReadOnlyModelViewSet):
             required=True,
             type=str,
             location="query",
-        ),
+        ),OpenApiParameter(
+                name="fetch_type",
+                required=False,
+                type=str,
+                enum=["all", "seconds", "minutes", "hours", "days", "weeks", "months", "years"],
+                location="query",
+            ),
     ],
     responses={
         200: VolumeSerializer,
@@ -538,6 +559,7 @@ class VolumeListView(viewsets.ReadOnlyModelViewSet):
 
         start_date = self.request.query_params.get("start_date")
         end_date = self.request.query_params.get("end_date")
+        fetch_type = self.request.query_params.get("fetch_type", "all")
         if start_date and end_date:
             try:
                 start_date = parse_datetime(start_date)
@@ -545,7 +567,7 @@ class VolumeListView(viewsets.ReadOnlyModelViewSet):
             except ValueError:
                 return Volume.objects.none()
             
-            queryset = Volume.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            queryset = filter_by_fetch_type(Volume, start_date, end_date, fetch_type)
             return queryset
         return Volume.objects.none()
 
@@ -573,7 +595,13 @@ class VolumeListView(viewsets.ReadOnlyModelViewSet):
             required=True,
             type=str,
             location="query",
-        ),
+        ),OpenApiParameter(
+                name="fetch_type",
+                required=False,
+                type=str,
+                enum=["all", "seconds", "minutes", "hours", "days", "weeks", "months", "years"],
+                location="query",
+            ),
     ],
     responses={
         200: PresCondSerializer,
@@ -592,6 +620,7 @@ class PresCondListView(viewsets.ReadOnlyModelViewSet):
 
         start_date = self.request.query_params.get("start_date")
         end_date = self.request.query_params.get("end_date")
+        fetch_type = self.request.query_params.get("fetch_type", "all")
         if start_date and end_date:
             try:
                 start_date = parse_datetime(start_date)
@@ -599,7 +628,7 @@ class PresCondListView(viewsets.ReadOnlyModelViewSet):
             except ValueError:
                 return PresCond.objects.none()
             
-            queryset = PresCond.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            queryset = filter_by_fetch_type(PresCond, start_date, end_date, fetch_type)
             return queryset
         return PresCond.objects.none()
 

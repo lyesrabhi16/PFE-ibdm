@@ -85,6 +85,7 @@ export 'models/format.dart';
 export 'models/lang.dart';
 export 'models/interval.dart';
 export 'models/rapport.dart';
+export 'models/fetch_type.dart';
 // Root client
 export 'api_client.dart';
 

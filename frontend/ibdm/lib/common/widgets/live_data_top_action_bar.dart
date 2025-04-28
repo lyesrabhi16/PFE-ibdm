@@ -65,8 +65,8 @@ class LiveDataTopActionBar extends StatelessWidget {
 
     return Obx(
       () {
-        logger.e("isLive: ${isLive.value}");
-        logger.e("selectedDate: ${_selectedDate.value}");
+        //logger.e("isLive: ${isLive.value}");
+        //logger.e("selectedDate: ${_selectedDate.value}");
         return Padding(
           padding: EdgeInsets.all(AppSizes.sm),
           child: Wrap(

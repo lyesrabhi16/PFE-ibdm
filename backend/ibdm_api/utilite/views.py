@@ -8,6 +8,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from .serializers import Co2IfruitSerializer,UtiliteSerializer, Co2IfruitConsommationSerializer
 from rest_framework.decorators import api_view, permission_classes
 from django.utils.dateparse import parse_datetime
+from api_v1.utils import filter_by_fetch_type
 
 @extend_schema(tags=["Utilite"])
 @with_operation_ids(
@@ -331,7 +332,13 @@ def get_co2_consommation(from_date, to_date):
             required=True,
             type=str,
             location="query",
-        ),
+        ),OpenApiParameter(
+                name="fetch_type",
+                required=False,
+                type=str,
+                enum=["all", "seconds", "minutes", "hours", "days", "weeks", "months", "years"],
+                location="query",
+            ),
     ],
     responses={
         200: UtiliteSerializer,
@@ -350,6 +357,7 @@ class UtiliteListView(viewsets.ReadOnlyModelViewSet):
 
         start_date = self.request.query_params.get("start_date")
         end_date = self.request.query_params.get("end_date")
+        fetch_type = self.request.query_params.get("fetch_type", "all")
         if start_date and end_date:
             try:
                 start_date = parse_datetime(start_date)
@@ -357,7 +365,7 @@ class UtiliteListView(viewsets.ReadOnlyModelViewSet):
             except ValueError:
                 return Utilite.objects.none()
             
-            queryset = Utilite.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            queryset = filter_by_fetch_type(Utilite, start_date, end_date, fetch_type)
             return queryset
         return Utilite.objects.none()
 
@@ -388,6 +396,13 @@ class UtiliteListView(viewsets.ReadOnlyModelViewSet):
             type=str,
             location="query",
         ),
+        OpenApiParameter(
+                name="fetch_type",
+                required=False,
+                type=str,
+                enum=["all", "seconds", "minutes", "hours", "days", "weeks", "months", "years"],
+                location="query",
+            ),
     ],
     responses={
         200: Co2IfruitSerializer,
@@ -406,6 +421,7 @@ class CO2ListView(viewsets.ReadOnlyModelViewSet):
 
         start_date = self.request.query_params.get("start_date")
         end_date = self.request.query_params.get("end_date")
+        fetch_type = self.request.query_params.get("fetch_type", "all")
         if start_date and end_date:
             try:
                 start_date = parse_datetime(start_date)
@@ -413,7 +429,7 @@ class CO2ListView(viewsets.ReadOnlyModelViewSet):
             except ValueError:
                 return Co2Ifruit.objects.none()
             
-            queryset = Co2Ifruit.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            queryset = filter_by_fetch_type(Co2Ifruit, start_date, end_date, fetch_type)
             return queryset
         return Co2Ifruit.objects.none()
 
