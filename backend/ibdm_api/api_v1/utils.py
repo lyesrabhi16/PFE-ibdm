@@ -8,6 +8,10 @@ from django.conf import settings
 import json
 import time
 
+from django.db.models import Q
+from concurrent.futures import ThreadPoolExecutor
+
+
 
 def getServerStatusFromFile():
     status_file = settings.STATUS_FILE_PATH
@@ -154,3 +158,169 @@ def with_operation_ids(
         else:
             raise ValueError("This decorator only works with classes that inherit from viewsets.ModelViewSet or viewsets.ReadOnlyModelViewSet")
     return decorator
+
+
+
+def filter_by_fetch_type(model, start_date, end_date,fetch_type):
+        def normalize_date(date, fetch_type):
+            if fetch_type == "seconds":
+                return date.replace(microsecond=0)
+            elif fetch_type == "minutes":
+                return date.replace(second=0, microsecond=0)
+            elif fetch_type == "hours":
+                return date.replace(minute=0, second=0, microsecond=0)
+            elif fetch_type == "days":
+                return date.replace(hour=0, minute=0, second=0, microsecond=0)
+            elif fetch_type == "weeks":
+                day_of_week = date.weekday()
+                return (date - timedelta(days=day_of_week)).replace(hour=0, minute=0, second=0, microsecond=0)
+            elif fetch_type == "months":
+                return date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            elif fetch_type == "years":
+                return date.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+            return date
+        def appendToDates(date, dates):
+                if dates == []:
+                    dates.append([date])
+                else:
+                    if len(dates[-1]) < 500:
+                        dates[-1].append(date)
+                    else:
+                        dates.append([date])
+
+        def get_all_possible_dates_from_chunks(chunked_dates, fetch_type, customQ=None):
+            threads = []
+
+            all_possible_dates = set()
+            current_chunk = 0
+            all_chunks = len(chunked_dates)
+            
+            with ThreadPoolExecutor() as executor:
+                def process_chunk(chunk, chunk_index):
+                    query = Q()
+                    print("chunk", len(chunk), chunk_index, "/", all_chunks)
+                    for date in chunk:
+                        if customQ is not None:
+                            query |= customQ(date, fetch_type)
+                        else:
+                            query |= Q(date__range=(date.replace(minute=59,second=0), date.replace(minute=59,second=59)))
+                    _dates = model.objects.filter(query).distinct().order_by("-date").values_list("date", flat=True)
+
+                    date_dict = {}
+                    for date in _dates:
+                        normalized_date = normalize_date(date, fetch_type)
+                        if normalized_date not in date_dict:
+                            date_dict[normalized_date] = date
+                    
+                    print("chunk", chunk_index, "size: ", _dates.count(),"normalized possible_dates size: ", len(date_dict))
+                    return date_dict.values()
+
+                for chunk in chunked_dates:
+                    current_chunk += 1
+                    threads.append(executor.submit(process_chunk, chunk, current_chunk))
+                for future in threads:
+                    all_possible_dates.update(future.result())
+            print("all_possible_dates size: ", len(all_possible_dates))
+            print("all_possible_dates gathered, took: ", (datetime.now() - start).total_seconds())
+
+            return all_possible_dates
+
+        start = datetime.now()
+        
+        # Mapping fetch types to their threshold values
+        thresholds = {
+            "all": 0.001,
+            "seconds": 1,
+            "minutes": 60,
+            "hours": 3600,
+            "days": 86400,
+            "weeks": 604800,
+            "months": 2592000,
+            "years": 31536000
+        }
+        print("fetch_type", fetch_type)
+        threshold = thresholds.get(fetch_type)
+        if threshold is None:
+            print("Invalid fetch_type provided.")
+            return model.objects.none()
+        
+        if fetch_type == "all":
+            return model.objects.filter(
+                date__range=(start_date, end_date)
+            ).order_by("-date")
+
+
+        dates = []
+        d = start_date
+        while d <= end_date:
+            appendToDates(d, dates)
+            d += timedelta(seconds=threshold)
+        
+        values = []
+        seen_dates = set()
+        with ThreadPoolExecutor() as executor:
+            def process_chunk(chunk, dates, values, seen_dates, fetch_type):
+                    print(f"chunk {len(chunk)} {dates.index(chunk) + 1}/{len(dates)} range: {chunk[0]} - {chunk[-1]}")
+                    q = Q()
+                    for date in chunk:
+                        match fetch_type:
+                            case "seconds":
+                                start_date = date.replace(microsecond=0)
+                                end_date = date.replace(microsecond=999999)
+                            case "minutes":
+                                start_date = date.replace(second=55, microsecond=0)
+                                end_date = date.replace(second=59, microsecond=999999)
+                            case "hours":
+                                start_date = date.replace(minute=59, second=55, microsecond=0)
+                                end_date = date.replace(minute=59, second=59, microsecond=999999)
+                            case "days":
+                                start_date = date.replace(hour=23, minute=55, second=0, microsecond=0)
+                                end_date = date.replace(hour=23, minute=59, second=59, microsecond=999999)
+                            case "weeks":
+                                end_of_week_date = date + timedelta(days=(6 - date.weekday()))
+                                start_date = end_of_week_date.replace(hour=23, minute=59, second=0, microsecond=0)
+                                end_date = end_of_week_date.replace(hour=23, minute=59, second=59, microsecond=999999)
+                            case "months":
+                                if date.month in [1, 3, 5, 7, 8, 10, 12]:
+                                    start_date = date.replace(day=31, hour=23, minute=55, second=0, microsecond=0)
+                                    end_date = date.replace(day=31, hour=23, minute=59, second=59, microsecond=999999)
+                                elif date.month in [4, 6, 9, 11]:
+                                    start_date = date.replace(day=30, hour=23, minute=55, second=0, microsecond=0)
+                                    end_date = date.replace(day=30, hour=23, minute=59, second=59, microsecond=999999)
+                                elif date.month == 2:
+                                    if (date.year % 4 == 0 and date.year % 100 != 0) or (date.year % 400 == 0):
+                                        start_date = date.replace(day=29, hour=23, minute=55, second=0, microsecond=0)
+                                        end_date = date.replace(day=29, hour=23, minute=59, second=59, microsecond=999999)
+                                    else:
+                                        start_date = date.replace(day=28, hour=23, minute=55, second=0, microsecond=0)
+                                        end_date = date.replace(day=28, hour=23, minute=59, second=59, microsecond=999999)
+                            case "years":
+                                start_date = date.replace(month=12, day=31, hour=23, minute=59, second=0, microsecond=0)
+                                end_date = date.replace(month=12, day=31, hour=23, minute=59, second=59, microsecond=999999)
+
+                        q |= Q(date__range=(start_date, end_date))
+                    queryset = model.objects.filter(q).distinct().order_by("-date")
+                    print("queryset", queryset.count())
+                    for record in queryset:
+                        normalized_date = normalize_date(record.date, fetch_type)
+                        if normalized_date not in seen_dates:
+                            seen_dates.add(normalized_date)
+                            values.append(record)
+                    print("done")
+            
+            futures = []
+            for chunk in dates:
+                futures.append(executor.submit(process_chunk, chunk,dates, values, seen_dates, fetch_type))
+
+            for future in futures:
+                future.result()
+
+        print("values", len(values))
+        # Get final queryset with unique normalized dates
+        #final_queryset = Sucre.objects.filter(date__in=values).order_by("-date")
+        
+        print(f"Results: {len(values)}")
+        print(f"Took: {(datetime.now() - start).total_seconds()}")
+        
+        return sorted(values, key=lambda x: x.date, reverse=True)
+    

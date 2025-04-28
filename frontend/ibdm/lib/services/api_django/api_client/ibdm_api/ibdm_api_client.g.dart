@@ -737,6 +737,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -745,6 +746,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -909,6 +911,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -917,6 +920,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -1054,6 +1058,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -1062,6 +1067,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -1199,6 +1205,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -1207,6 +1214,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -1344,6 +1352,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -1352,6 +1361,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -2645,6 +2655,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -2653,6 +2664,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -2817,6 +2829,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -2825,6 +2838,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };

@@ -16,6 +16,7 @@ import '../models/debit.dart';
 import '../models/email_schedule.dart';
 import '../models/email_schedule_request.dart';
 import '../models/feed_meta_data.dart';
+import '../models/fetch_type.dart';
 import '../models/format.dart';
 import '../models/get_subordinate_and_superior_id_response.dart';
 import '../models/group.dart';
@@ -292,6 +293,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -340,6 +342,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -385,6 +388,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -430,6 +434,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -475,6 +480,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -845,6 +851,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -896,6 +903,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });

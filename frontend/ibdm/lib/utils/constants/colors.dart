@@ -24,6 +24,14 @@ class AppColors {
   static const Color grey = Color(0xFF9E9E9E);
   static const Color lightGrey = Color(0xFFE0E0E0);
 
+  static Color getColorFromString(String input) {
+    final int hash = input.hashCode;
+    final int red = (hash & 0xFF0000) >> 16;
+    final int green = (hash & 0x00FF00) >> 8;
+    final int blue = hash & 0x0000FF;
+    return Color.fromARGB(255, red, green, blue);
+  }
+
   static Color getRoleColorWithRole(Role role) {
     int colorValue = int.parse("FF${role.color.split("#")[1]}", radix: 16);
     return Color(colorValue);

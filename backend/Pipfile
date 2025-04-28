@@ -27,6 +27,8 @@ psutils = "*"
 psutil = "*"
 cryptography = "*"
 django = {extras = ["argon2"], version = "*"}
+pandas = "*"
+swifter = "*"
 
 [requires]
 python_version = "3.12.9"
