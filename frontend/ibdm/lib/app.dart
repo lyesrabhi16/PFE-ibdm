@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/loading_page_controller.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
-import 'package:ibdm/common/controllers/permissions_controler.dart';
+import 'package:ibdm/common/controllers/permissions_controller.dart';
 import 'package:ibdm/common/controllers/routes_controller.dart';
 import 'package:ibdm/common/controllers/side_menu_state_controller.dart';
 import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/initial_binding.dart';
+import 'package:ibdm/pages/co2/co2.dart';
 import 'package:ibdm/pages/filtration.dart/filtration.dart';
 import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
@@ -94,6 +95,13 @@ class MyApp extends StatelessWidget {
                 logger.e("closing sent emails channel");
                 EmailSentsPage.channel?.sink.close();
                 EmailSentsPage.stream = null;
+              }
+
+              if ((routing?.current != Routes.co2) &&
+                  (CO2Page.stream != null)) {
+                logger.e("closing co2 channel");
+                CO2Page.channel?.sink.close();
+                CO2Page.stream = null;
               }
 
               logger.d("Route ${routing?.current}");

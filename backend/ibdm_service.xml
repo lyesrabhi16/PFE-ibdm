@@ -65,6 +65,15 @@ Their modification will not take affect without the service re-installation.
     <allowservicelogon>true</allowservicelogon>
   </serviceaccount>
   -->
+
+  <!--
+  <serviceaccount>
+    <domain>YOURDOMAIN</domain>
+    <user>useraccount</user>
+    <password>Pa55w0rd</password>
+    <allowservicelogon>true</allowservicelogon>
+  </serviceaccount>
+  -->
   
   <!--
     OPTION: onfailure
@@ -76,6 +85,7 @@ Their modification will not take affect without the service re-installation.
   <onfailure action="restart" delay="20 sec"/>
   <onfailure action="reboot" />
   -->
+  <onfailure action="restart" delay="10 sec"/>
   
   <!--
     OPTION: resetfailure
@@ -228,7 +238,8 @@ SECTION:Logging
   <!--
     <logpath>%BASE%\logs</logpath>
   -->
-  
+    <logpath>%BASE%\ibdm_api\data\logs</logpath>
+
   <!--
     OPTION: log
     Defines logging mode for logs produced by the executable.

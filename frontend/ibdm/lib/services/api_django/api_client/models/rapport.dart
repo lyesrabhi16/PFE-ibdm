@@ -6,6 +6,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 @JsonEnum()
 enum Rapport {
+  @JsonValue('co2_ifruit')
+  co2Ifruit('co2_ifruit'),
   @JsonValue('filtration')
   filtration('filtration'),
   @JsonValue('inventaire-sucre')

@@ -1,72 +1,119 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- [existing head content remains unchanged] -->
+  <base href="/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="ibdm">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <title>ibdm</title>
+  <link rel="manifest" href="manifest.json">
+  
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
   
   <style>
+    :root {
+      --primary-color: #3d5afe;
+      --primary-light: #536dfe;
+      --primary-dark: #304ffe;
+      --text-primary: #212121;
+      --text-secondary: #505050;
+      --background: #ffffff;
+      --progress-bg: #e8eaf6;
+      --progress-bar: linear-gradient(to right, #3d5afe, #536dfe);
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+    
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    
     #splash-screen {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: white;
+      background: var(--background);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
       z-index: 9999;
+      transition: opacity 0.5s ease;
     }
+    
     .splash-content {
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
   
     .splash-logo {
       width: 150px;
       height: 150px;
-    }
-    .text-content {
-      font-size: 30px;
-      font-weight: 300;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 4px 12px var(--shadow));
+      transition: transform 0.3s ease;
     }
     
-    /* Improved progress percentage text */
+    .text-content {
+      font-size: 28px;
+      font-weight: 500;
+      margin-bottom: 30px;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+    }
+    
+    /* Progress percentage text */
     .progress-percentage {
       font-size: 16px;
       font-weight: 600;
-      margin-bottom: 8px;
-      color: #007bff;
+      margin-bottom: 10px;
+      color: var(--primary-color);
       letter-spacing: 0.5px;
       transition: all 0.3s ease;
     }
     
-    /* New horizontal progress bar styles */
+    /* Horizontal progress bar */
     .progress-container {
-      width: 250px;
-      height: 8px;
-      background-color: #e9ecef;
-      border-radius: 6px;
+      width: 280px;
+      height: 6px;
+      background-color: var(--progress-bg);
+      border-radius: 8px;
       margin: 8px auto;
       overflow: hidden;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
     }
     
     .progress-bar {
       height: 100%;
       width: 0%; /* Initial width */
-      background-color: #007bff;
-      background-image: linear-gradient(to right, #0062cc, #007bff);
-      border-radius: 6px;
+      background: var(--progress-bar);
+      border-radius: 8px;
       transition: width 0.3s ease;
     }
     
-    /* Improved status text below progress bar */
+    /* Status text */
     .progress-status {
       font-size: 14px;
-      color: #495057;
-      margin-top: 10px;
-      min-height: 18px; /* Ensure consistent height */
+      color: var(--text-secondary);
+      margin-top: 12px;
+      min-height: 18px;
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -75,42 +122,35 @@
     
     .footer-image {
       position: fixed;
-      bottom: 10px;
+      bottom: 16px;
       left: 50%;
       transform: translateX(-50%);
-      width: 200px; 
-      opacity: 0.6; 
+      width: 160px; 
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
     }
 
     .footer-image img {
       width: 100%;
       height: auto;
+      filter: drop-shadow(0 2px 4px var(--shadow));
+    }
+    
+    .footer-image:hover {
+      opacity: 0.9;
     }
 
     /* Dark mode specific styles */
-    .dark-mode #splash-screen {
-      background: #121212;
-    }
-    
-    .dark-mode .text-content {
-      color: #f8f9fa;
-    }
-
-    .dark-mode .progress-container {
-      background: #333;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
-    }
-
-    .dark-mode .progress-bar {
-      background-image: linear-gradient(to right, #0d6efd, #4dabf7);
-    }
-
-    .dark-mode .progress-percentage {
-      color: #4dabf7;
-    }
-
-    .dark-mode .progress-status {
-      color: #adb5bd;
+    .dark-mode {
+      --primary-color: #7986cb;
+      --primary-light: #9fa8da;
+      --primary-dark: #5c6bc0;
+      --text-primary: #e0e0e0;
+      --text-secondary: #b0b0b0;
+      --background: #121212;
+      --progress-bg: #333;
+      --progress-bar: linear-gradient(to right, #5c6bc0, #7986cb);
+      --shadow: rgba(0, 0, 0, 0.3);
     }
   </style>
   
@@ -148,7 +188,7 @@
   
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      // Charger les paramètres depuis le localStorage
+      // Load settings from localStorage
       const darkThemeMode = localStorage.getItem("darkThemeMode") === "true";
       const locale = localStorage.getItem("locale") || "en";
       const body = document.body;
@@ -182,15 +222,15 @@
       // Determine language for status messages
       const lang = (locale === '"fr"' || locale === "fr") ? "fr" : "en";
       
-      // use dark mode
+      // Apply dark mode if set
       if (darkThemeMode) {
         document.body.classList.add('dark-mode');
       }
   
-      // use fr language 
-      const text_language = document.getElementById("text-id");
+      // Set welcome text based on language
+      const welcomeText = document.getElementById("text-id");
       if (locale === '"fr"' || locale === "fr") {
-        text_language.textContent = "Bienvenue dans votre application";
+        welcomeText.textContent = "Bienvenue dans votre application";
       }
       
       // Function to update progress
@@ -198,13 +238,6 @@
         progressBar.style.width = percent + '%';
         progressPercentage.textContent = percent + '%';
         progressStatus.textContent = statusMessages[lang][status] || status;
-        
-        // Animate the percentage text color based on progress
-        if (percent >= 90) {
-          progressPercentage.style.color = darkThemeMode ? '#63e6be' : '#20c997';
-        } else if (percent >= 50) {
-          progressPercentage.style.color = darkThemeMode ? '#4dabf7' : '#007bff';
-        }
       }
       
       // Progress bar animation
@@ -247,7 +280,7 @@ Read more: https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts
       }
       _flutter.buildConfig = {"engineRevision":"e672b006cb34c921db85b8e2f482ed3144a4574b","builds":[{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"}]};
       
-      // Cacher le splash screen après le chargement de Flutter
+      // Hide splash screen after Flutter loads
       const splashScreen = document.getElementById("splash-screen");
   
       _flutter.loader.load({
@@ -284,10 +317,9 @@ Read more: https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts
             
             // Small delay to show the completed progress bar before hiding
             setTimeout(() => {
-              // Masquer le splash screen après le chargement
+              // Hide splash screen with fade effect
               if (splashScreen) {
                 splashScreen.style.opacity = "0";
-                splashScreen.style.transition = "opacity 0.5s ease";
                 setTimeout(() => {
                   splashScreen.style.display = "none";
                 }, 500);
@@ -295,7 +327,7 @@ Read more: https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts
             }, 300);
           } catch (error) {
             console.error("Error initializing Flutter app:", error);
-            progressBar.style.backgroundColor = "#ff3333";
+            progressBar.style.backgroundColor = "#dc3545";
             updateProgress(100, "error");
           }
         }

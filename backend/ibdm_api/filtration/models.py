@@ -1,5 +1,5 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
+# self is an auto-generated Django model module.
+# You'll have to do the following manually to clean self up:
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
@@ -27,7 +27,9 @@ class Debit(models.Model):
     d_os7 = models.FloatField(db_column='D_OS7', blank=True, null=True)  # Field name made lowercase.
     d_os8 = models.FloatField(db_column='D_OS8', blank=True, null=True)  # Field name made lowercase.
     d_os9 = models.FloatField(db_column='D_OS9', blank=True, null=True)  # Field name made lowercase.
-
+    
+    def __str__(self):
+        return f"Debit({str(self.date)})"
     class Meta:
         managed = False
         db_table = 'Debit'
@@ -46,6 +48,8 @@ class Niveau(models.Model):
     niv_os6 = models.FloatField(db_column='Niv_OS6', blank=True, null=True)  # Field name made lowercase.
     niv_os7 = models.FloatField(db_column='Niv_OS7', blank=True, null=True)  # Field name made lowercase.
 
+    def __str__(self):
+        return f"Niveau({str(self.date)})"
     class Meta:
         managed = False
         db_table = 'Niveau'
@@ -80,7 +84,9 @@ class PresCond(models.Model):
     c_os8 = models.FloatField(db_column='C_OS8', blank=True, null=True)  # Field name made lowercase.
     c_os9 = models.FloatField(db_column='C_OS9', blank=True, null=True)  # Field name made lowercase.
     c_ose = models.FloatField(db_column='C_OSE', blank=True, null=True)  # Field name made lowercase.
-
+    
+    def __str__(self):
+        return f"PresCond({str(self.date)})"
     class Meta:
         managed = False
         db_table = 'Pres_Cond'
@@ -105,6 +111,8 @@ class Volume(models.Model):
     vol_os8 = models.FloatField(db_column='Vol_OS8', blank=True, null=True)  # Field name made lowercase.
     vol_os9 = models.FloatField(db_column='Vol_OS9', blank=True, null=True)  # Field name made lowercase.
 
+    def __str__(self):
+        return f"Volume({str(self.date)})"
     class Meta:
         managed = False
         db_table = 'Volume'

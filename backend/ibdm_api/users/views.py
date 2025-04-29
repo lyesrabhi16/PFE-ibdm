@@ -2,11 +2,12 @@ from django.contrib.auth.models import Group, Permission
 from django.http import JsonResponse
 from rest_framework import permissions, viewsets
 from api_v1.utils import with_operation_ids
-from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema_view
+from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema_view, OpenApiTypes
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from api_v1.constants import ErrorCodes
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
+from rest_framework.request import Request
 from users.models import SubordinateAndSuperior
 from api_v1.serializers import ErrorResponseSerializer
 from .models import Role, User
@@ -14,12 +15,14 @@ from .serializers import (
     GroupSerializer,
     RoleSerializer,
     SubordinateAndSuperiorSerializer,
+    UserPermsSerializer,
     UserSerializer,
     PermissionSerializer,
     GetSubordinateAndSuperiorIdResponseSerializer,
 )
 from rest_framework.decorators import api_view, permission_classes
 from logs.logging import logger as logging
+from rest_framework import serializers
 @with_operation_ids(
     on_list="getUsers",
     on_create="addUser",
@@ -75,14 +78,45 @@ class UserViewSet(viewsets.ModelViewSet):
 
         if (self.request.user.is_superuser or self.request.user.is_admin):
             return qs
-        
-        sub_sup = SubordinateAndSuperior.objects.filter(superior=self.request.user)
-        if sub_sup.exists():
-            subordinates = [s.subordinate for s in sub_sup]
+
+        # traverse the subordinate and superior relationship to get all subordinates of the user
+        # and their subordinates
+        # if the user has no subordinates, return an empty queryset
+        def traverse_tree(user):
+            sub_sup = SubordinateAndSuperior.objects.filter(superior=user)
+            if sub_sup.exists():
+                subordinates = {s.subordinate for s in sub_sup}
+                for s in sub_sup:    
+                  subordinates = subordinates.union(traverse_tree(s.subordinate))
+                return subordinates
+            return set()
+
+        subordinates = traverse_tree(self.request.user)
+        if len(subordinates) > 0:
             qs = qs.filter(id__in=[u.id for u in subordinates])
             return qs
-        return qs.filter(id=self.request.user.id)
+        return qs.none()
     
+    def check(self, serializer):
+        if self.request.user.is_superuser or self.request.user.is_admin:
+            return
+        # check if the user can add a user with requested role
+        managed_roles = self.request.user.role.managed_roles.all()
+        can_add = any(
+            serializer.validated_data['role'] == role.group.name
+            for role in managed_roles
+        )
+        if not can_add :
+            raise serializers.ValidationError({
+                "role": f"You do not have permission to add with this role {serializer.validated_data['role']}."
+            })
+        
+    def perform_create(self, serializer):
+        self.check(serializer)
+        return super().perform_create(serializer)
+    def preform_save(self, serializer):
+        self.check(serializer)
+        return super().perform_create(serializer)
 
 @with_operation_ids(
     on_list="getGroups",
@@ -171,4 +205,24 @@ def getSubordinateAndSuperiorId(request, subordinate, superior):
     if sub_sup.exists():
         return JsonResponse({"id": sub_sup[0].pk})
     return JsonResponse(ErrorResponseSerializer({"status": "error", "code": ErrorCodes.NOT_FOUND.code}).data, status=ErrorCodes.NOT_FOUND.status_code)
-    
+
+@extend_schema(
+    tags=["users"],
+    operation_id="getAllUserPerms",
+    responses={
+        200: UserPermsSerializer,
+    }
+)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def getAllUserPerms(request: Request):
+    perms = set()
+    if request.user.is_superuser:
+        perms = Permission.objects.all().values_list("codename", flat=True)
+    else:
+        user_perms = Permission.objects.filter(user=request.user).values_list("codename", flat=True)
+        role_perms = Permission.objects.filter(group=request.user.role.group).values_list("codename", flat=True)
+        perms = set().union(user_perms, role_perms)
+    return JsonResponse(UserPermsSerializer({
+        "perms": perms
+    }).data, status=200)

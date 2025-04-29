@@ -9,7 +9,8 @@ from api_v1.emails.rapports.inventaire_sucre import rapport_inventaire_sucre
 from api_v1.emails.rapports.utilite import rapport_utilite
 from api_v1.emails.rapports.filtration import rapport_filtration
 from users.models import User
-
+from tenacity import retry, stop_after_delay, wait_fixed
+from api_v1.emails.rapports.co2 import rapport_co2
 def getHtmlMessage(email: EmailSchedule):
     match (email.rapport):
         case "inventaire-sucre":
@@ -18,19 +19,47 @@ def getHtmlMessage(email: EmailSchedule):
             return rapport_utilite(email)
         case "filtration":
             return rapport_filtration(email)
+        case "co2_ifruit":
+            return rapport_co2(email)
         case _:
             raise ValueError(f"emailScheduler# rapport {email.rapport} not found")
-            
-def sendEmailWithFile(file, provider=None, **kwargs):
-    email_message = EmailMessage(**kwargs)
-    email_message.content_subtype = "html"
-    if file is not None:
-        email_message.attach_file(file)
-    if provider:
-        email_message.connection = provider
-    email_message.send()
-    logging.info(f"emailScheduler#: email {email_message.subject} sent to '{email_message.to}'")
 
+def before_retry_log(*args):
+    logging.info(f"emailScheduler# retry-before: {args}")
+
+
+def after_retry_log(*args):
+    logging.info(f"emailScheduler# retry-after: {args}")
+# retry with a wait of 1 minute for 1 hour
+@retry(
+    wait=wait_fixed(60),
+    stop=stop_after_delay(60*60),
+    before=before_retry_log,
+    after=after_retry_log,
+)
+def sendEmailWithFile(file, users, email, provider=None, **kwargs):
+    try:
+        provider_str = provider.host if provider else "DEFAULT PROVIDER" 
+        email_message = EmailMessage(**kwargs)
+        # set priority to high
+        email_message.extra_headers["X-Priority"] = 2
+
+        logging.info(f"emailScheduler# {provider_str}: sending email {email_message.subject} to '{email_message.to}'")
+        email_message.content_subtype = "html"
+        if file is not None:
+            email_message.attach_file(file)
+        if provider:
+            email_message.connection = provider
+        email_message.send()
+        for user in users:
+            sentEmail.objects.create(temps_envoi=datetime.now(), receptionist=user, schedule=email)
+        logging.info(f"emailScheduler# {provider_str}: email {email_message.subject} sent to '{email_message.to}'")
+    except Exception as e:
+        if provider:
+            logging.error(f"emailScheduler# {provider_str}: error sending email {email_message.subject} to '{email_message.to}': {e}")
+        else:
+            logging.info("emailScheduler# trying using secondary provider")
+            sendEmailWithFile(file, users, email, provider=settings.EMAIL_SECONDARY_PROVIDER, **kwargs)
 def sendEmail(email: EmailSchedule, schedule_next=True):
     logging.info(f"emailScheduler# send email: {email}")
     emails_in_process.add(email)
@@ -38,36 +67,25 @@ def sendEmail(email: EmailSchedule, schedule_next=True):
     users = set()
 
     for user in email.scheduled_users.all():
-        send_to.add(user.email)
+        send_to.add(user)
         users.add(user)
 
     for role in email.scheduled_roles.all():
         for user in User.objects.filter(role=role):
-            send_to.add(user.email)
+            send_to.add(user)
             users.add(user)
     logging.info(f"emailScheduler# send email to: {send_to}")
     message, file, subject = getHtmlMessage(email)
-    for email_str in send_to:
-        threading.Thread(
-            target=sendEmailWithFile,kwargs={
-            "file": file,
-            "subject":f"IBDM {subject}",
-            "body": message,
-            "from_email":settings.EMAIL_OF_SENDER,
-            "to":[email_str]
-        }).start()
-        threading.Thread(
-            target=sendEmailWithFile,kwargs={
-            "file": file,
-            "provider": settings.EMAIL_SECONDARY_PROVIDER,
-            "subject":f"IBDM {subject}",
-            "body": message,
-            "from_email":settings.EMAIL_OF_SENDER,
-            "to":[email_str]
-        }).start()
-    for user in users:
-        sentEmail.objects.create(temps_envoi=datetime.now(), receptionist=user, schedule=email)
-
+    threading.Thread(
+        target=sendEmailWithFile,kwargs={
+        "file": file,
+        "users": send_to,
+        "email": email,
+        "subject":f"IBDM {subject}",
+        "body": message,
+        "from_email":settings.EMAIL_OF_SENDER,
+        "to": send_to,
+    }).start()
     if email.next_run_time is None:
         raise ValueError("emailScheduler# next_run_time is None, how did this happen?")
     if schedule_next:
