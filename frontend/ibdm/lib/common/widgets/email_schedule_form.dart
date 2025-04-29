@@ -101,6 +101,11 @@ class _EmailScheduleFormState extends State<EmailScheduleForm> {
 
   final RxBool _showNextRunTime = false.obs;
 
+  final RxBool _searchInUsers = false.obs;
+  final RxBool _searchInRoles = false.obs;
+  final RxList<User> _searchResultsUsers = <User>[].obs;
+  final RxList<Role> _searchResultsRoles = <Role>[].obs;
+
   _loadUsers() async {
     final strings = getTranslations(getContext);
     try {
@@ -304,7 +309,18 @@ class _EmailScheduleFormState extends State<EmailScheduleForm> {
                             children: [
                               Text(strings.value.sendThisAlertToRoles),
                               SizedBox(height: AppSizes.sm),
-                              ShadSelect<Role>.multiple(
+                              ShadSelect<Role>.multipleWithSearch(
+                                onSearchChanged: (value) {
+                                  _searchInRoles.value = false;
+                                  if (value.isNotEmpty) {
+                                    _searchInRoles.value = true;
+                                    _searchResultsRoles.value = userController
+                                        .roles
+                                        .where(
+                                            (role) => searchRoles(role, value))
+                                        .toList();
+                                  }
+                                },
                                 enabled: widget.editable,
                                 closeOnSelect: false,
                                 onChanged: (v) {
@@ -315,7 +331,10 @@ class _EmailScheduleFormState extends State<EmailScheduleForm> {
                                 anchor: ShadAnchorAuto(
                                   preferBelow: false,
                                 ),
-                                options: userController.roles.map(
+                                options: (_searchInRoles.value
+                                        ? _searchResultsRoles
+                                        : userController.roles)
+                                    .map(
                                   (r) => ShadOption(
                                     value: r,
                                     child: Text(r.name,
@@ -368,7 +387,17 @@ class _EmailScheduleFormState extends State<EmailScheduleForm> {
                               children: [
                                 Text(strings.value.sendThisAlertToUsers),
                                 SizedBox(height: AppSizes.sm),
-                                ShadSelect<User>.multiple(
+                                ShadSelect<User>.multipleWithSearch(
+                                  onSearchChanged: (value) {
+                                    _searchInUsers.value = false;
+                                    if (value.isNotEmpty) {
+                                      _searchInUsers.value = true;
+                                      _searchResultsUsers.value = _users
+                                          .where((element) =>
+                                              searchUsers(element, value))
+                                          .toList();
+                                    }
+                                  },
                                   enabled: widget.editable,
                                   onChanged: (v) {
                                     sendToUsers.clear();
@@ -379,7 +408,10 @@ class _EmailScheduleFormState extends State<EmailScheduleForm> {
                                   anchor: ShadAnchorAuto(
                                     preferBelow: false,
                                   ),
-                                  options: _users.map(
+                                  options: (_searchInUsers.value
+                                          ? _searchResultsUsers
+                                          : _users)
+                                      .map(
                                     (user) => ShadOption(
                                       value: user,
                                       child: Text(getUserName(user),

@@ -5,9 +5,17 @@ from api_v1.broadcasts.sucre_broadcast import broadcast_sucre
 from api_v1.broadcasts.sent_emails_broadcast import broadcast_sent_emails
 from api_v1.broadcasts.utilite_broadcast import broadcast_utilite
 from api_v1.emails.emails_scheduler import email_scheduler
+from api_v1.monitors.system_monitor import system_monitor
 
 scheduler = TwistedScheduler()
 
+
+scheduler.add_job(
+    system_monitor,
+    "cron",
+    second="*/1",
+    id="system_monitoring",
+)
 
 scheduler.add_job(
     broadcast_sucre,

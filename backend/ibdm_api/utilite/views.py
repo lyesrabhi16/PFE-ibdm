@@ -5,7 +5,7 @@ from api_v1.utils import get_value_at, with_operation_ids
 from api_v1.serializers import FeedMetaDataSerializer
 from utilite.models import Co2Ifruit, Utilite
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from .serializers import Co2IfruitSerializer,UtiliteSerializer
+from .serializers import Co2IfruitSerializer,UtiliteSerializer, Co2IfruitConsommationSerializer
 from rest_framework.decorators import api_view, permission_classes
 
 @extend_schema(tags=["Utilite"])
@@ -212,3 +212,102 @@ def getUtiliteMetaData(request):
             }
         ).data
     )
+
+
+
+
+
+@extend_schema(
+    tags=["Utilite"],
+    summary="get co2_ifruit consommation",
+    operation_id="getCo2IfruitConsommation",
+    request=None,
+    responses={
+        200: Co2IfruitConsommationSerializer,
+    },
+    parameters=[
+        OpenApiParameter(
+            name="from_year",
+            required=True,
+            type=int,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="from_month",
+            required=False,
+            type=int,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="from_day",
+            required=False,
+            type=int,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="to_year",
+            required=True,
+            type=int,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="to_month",
+            required=False,
+            type=int,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="to_day",
+            required=False,
+            type=int,
+            location="query",
+        ),
+    ]
+)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def getCo2IfruitConsommation(request):
+    """
+    getCo2IfruitConsommation
+    """
+    from_year = int(request.query_params.get('from_year', None))
+    to_year = int(request.query_params.get('to_year', None))
+    from_month = int(request.query_params.get('from_month', "01"))
+    to_month = int(request.query_params.get('to_month', "01"))
+    from_day = int(request.query_params.get('from_day', "01"))
+    to_day = int(request.query_params.get('to_day', "01"))
+
+    from_date = datetime(
+        year=from_year,
+        month=from_month,
+        day=from_day,
+    )
+
+    to_date = datetime(
+        year=to_year,
+        month=to_month,
+        day=to_day,
+    )
+
+    record = get_co2_consommation(from_date, to_date)
+    if (record):
+        return JsonResponse(Co2IfruitConsommationSerializer(record).data)
+    else:
+        return JsonResponse({}, status=404)
+
+
+def get_co2_consommation(from_date, to_date):
+    from_record = Co2IfruitSerializer(get_value_at(Co2Ifruit, from_date)).data
+    to_record = Co2IfruitSerializer(get_value_at(Co2Ifruit, to_date)).data
+    record = {}
+    for key in from_record:
+        try:
+            record[key] = float(to_record[key]) - float(from_record[key])
+        except Exception as e:
+            record[key] = None
+    record["from_date"] = from_date
+    record["to_date"] = to_date
+    record["from_value"] = from_record
+    record["to_value"] = to_record
+    record["date"] = to_date
+    return record

@@ -47,6 +47,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
     super.deactivate();
   }
 
+  late FeedMetaData feedMetaData;
+
   final Rx<bool> loaded = false.obs;
 
   double TS21_value = 80;
@@ -127,6 +129,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
         second: second,
       );
       sucre = _sucre;
+
       refresh.value = true;
       _state.value = FutureState.success;
       loaded.value = true;
@@ -137,6 +140,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
       loaded.value = true;
       return null;
     } finally {
+      sucre_end_date.value = sucre.date;
+      refresh.value = !refresh.value;
       Future.delayed(Durations.long2, () {
         toastification.dismissById(toast.id);
       });
@@ -436,6 +441,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
         final res =
             await (await ApiClientInstance.getApiClient()).getSucreMetaData();
         printMessage("sucre broadcast connected");
+        feedMetaData = res;
         sucre_start_date.value = res.startDate;
         sucre_end_date.value = res.endDate;
         await SiroperiePage.channel!.ready;
@@ -467,8 +473,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
     final strings = getTranslations(getContext).obs;
     return LiveDataTopActionBar(
       isLive: isLive,
-      startDate: sucre_start_date.value,
-      endDate: sucre_end_date.value,
+      startDate: feedMetaData.startDate,
+      endDate: feedMetaData.endDate,
       selectedDate: sucre_end_date.value,
       searchPressed: (dt) {
         year = dt.year;

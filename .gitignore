@@ -1,3 +1,5 @@
+# status file
+status_data.json
 # Logs
 *.log
 npm-debug.log*

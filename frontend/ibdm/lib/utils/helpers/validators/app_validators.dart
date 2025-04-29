@@ -17,13 +17,9 @@ class AppValidators {
   }
 
   static String? roleSelectionValidator(String? v) {
-    return null; /* 
     return FormBuilderValidators.compose([
       FormBuilderValidators.required(),
-      FormBuilderValidators.containsElement(
-          Role.values.map((r) => r.name).toList(),
-          errorText: "Invalid Role")
-    ])(v); */
+    ])(v);
   }
 
   static String? perPageValidator(String? value, Rx<bool> expandPerPage) {
@@ -46,8 +42,18 @@ class AppValidators {
   }
 
   static String? superiorSelectionValidator(
-      String? id, List<User> superiorOptions) {
+      String? userId, String? superiorid, List<User> superiorOptions) {
     UserController userController = Get.find<UserController>();
+    final strings = getTranslations(Get.context!);
+    if (userController.user?.userId.toString() == superiorid &&
+        userId == userController.user?.userId.toString()) {
+      return strings.cannotBeASuperiorToYourself;
+    }
+
+    if (userId != null && superiorid != null && userId == superiorid) {
+      return strings.cannotBeASuperiorForHimself;
+    }
+
     if (userController.user?.role == "ADMIN_SYSTEM") {
       return null;
     }
@@ -57,7 +63,7 @@ class AppValidators {
           FormBuilderValidators.containsElement(
             superiorOptions.map((u) => "${u.userId}").toList(),
           ))
-    ])(id);
+    ])(superiorid);
   }
 
   static String? customPasswordValidator(

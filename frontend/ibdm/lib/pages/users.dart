@@ -1096,7 +1096,7 @@ class _UsersPageState extends State<UsersPage> {
                 child: CircularProgressIndicator(),
               );
             }
-
+            logger.e("superior options: $_addUserSuperiorOptions");
             return UserForm(
               addUserEmailController: UsersPage.addUserEmailController,
               addUserNameController: UsersPage.addUserNameController,
@@ -1299,22 +1299,64 @@ class _UsersPageState extends State<UsersPage> {
   void _loadSuperiorsOptions(BuildContext context) async {
     _loadedAddUserSuperiorOptions.value = false;
     final strings = getTranslations(context).obs;
+    final UserController userController = Get.find();
     final me =
-        "${UsersPage.userController.user!.username.isEmpty ? UsersPage.userController.user!.email : UsersPage.userController.user!.username}(${strings.value.me})";
+        "${userController.user!.username.isEmpty ? userController.user!.email : userController.user!.username}(${strings.value.me})";
     List<ShadOption<User>> options = [
       ShadOption(
-        value: UsersPage.userController.user!,
+        value: userController.user!,
         child: Text(
           me,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: AppColors.getRoleColorWithRoleValue(
-                    UsersPage.userController.user!.role),
+                    userController.user!.role),
               ),
         ),
       ),
     ];
-    // can add any kind of user
+
     try {
+      if (userController.user!.role == "ADMIN_SYSTEM") {
+        final api = await ApiClientInstance.getApiClient();
+        final res = await api.getUsers(
+          enablePagination: false,
+        );
+
+        for (User user in res.data) {
+          logger.e("sup user id: ${user.userId}");
+          user.userId != userController.user!.userId
+              ? {
+                  options.add(
+                    ShadOption(
+                        value: user,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(getUserName(user, orEmail: true)),
+                            SizedBox(width: AppSizes.md),
+                            Text(
+                              user.role,
+                              style: Theme.of(Get.context!)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: AppColors.getRoleColorWithRoleValue(
+                                        user.role),
+                                  ),
+                            )
+                          ],
+                        )),
+                  ),
+                  logger.e("added user:${user.userId}"),
+                }
+              : logger.e(
+                  "skipping ${user.userId} because ${user.userId} ${userController.user!.userId} ${user.userId != userController.user!.userId}");
+        }
+        _addUserSuperiorOptions.value = options;
+        logger.e("superior options in func: $options ${res.data}");
+        _loadedAddUserSuperiorOptions.value = true;
+        return;
+      }
       traverseSubordinatesTree(
           User user, Function(User user) onUserFound) async {
         if (user.subordinates.isNotEmpty) {
@@ -1328,24 +1370,28 @@ class _UsersPageState extends State<UsersPage> {
       }
 
       await traverseSubordinatesTree(
-        UsersPage.userController.user!,
-        (user) => options.add(
-          ShadOption(
-              value: user,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text(user.username.isNotEmpty ? user.username : user.email),
-                  SizedBox(width: AppSizes.md),
-                  Text(
-                    user.role,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.getRoleColorWithRoleValue(user.role),
-                        ),
-                  )
-                ],
-              )),
-        ),
+        userController.user!,
+        (user) => user.userId != userController.user!.userId
+            ? options.add(
+                ShadOption(
+                    value: user,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text(getUserName(user, orEmail: true)),
+                        SizedBox(width: AppSizes.md),
+                        Text(
+                          user.role,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppColors.getRoleColorWithRoleValue(
+                                        user.role),
+                                  ),
+                        )
+                      ],
+                    )),
+              )
+            : {},
       );
 
       _addUserSuperiorOptions.value = options;
@@ -1353,10 +1399,12 @@ class _UsersPageState extends State<UsersPage> {
       return;
     } catch (e) {
       logger.e("failed to get users: $e");
-      Toasts.showErrorToastNotification(
-          context: context,
-          message: strings.value.failedToGetUsersMessage,
-          title: strings.value.errorFailedToGetUsers);
+      if (Get.context != null && Get.context!.mounted) {
+        Toasts.showErrorToastNotification(
+            context: Get.context!,
+            message: strings.value.failedToGetUsersMessage,
+            title: strings.value.errorFailedToGetUsers);
+      }
       _addUserSuperiorOptions.value = [];
       _loadedAddUserSuperiorOptions.value = true;
       return;
@@ -1409,13 +1457,56 @@ class _UsersPageState extends State<UsersPage> {
         title:
             Text("${strings.value.user}: ${getUserName(user, orEmail: true)}"),
         description: Text(strings.value.editUser),
+        removeBorderRadiusWhenTiny: true,
         actions: [
+          ShadButton(
+            icon: Icon(Icons.close),
+            child: Text(strings.value.close),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ).removeWhen(isAtLeastMediumScreen(context)),
+          Obx(() {
+            return loadedUserDetails.value
+                ? ShadButton.destructive(
+                    child: Text(strings.value.delete),
+                    onPressed: () {
+                      UsersPage.selectedUsers.add(userDetails!);
+                      _onDeleteButtonClick(
+                        context,
+                        onDeleteConfirmed: () => Navigator.of(context).pop(),
+                      );
+                    },
+                  )
+                : SizedBox.shrink();
+          }).removeWhen(isAtLeastMediumScreen(context)),
+          Obx(() {
+            return loadedUserDetails.value
+                ? ShadButton(
+                    icon: Icon(Icons.edit),
+                    child: Text(strings.value.save),
+                    onPressed: () {
+                      onSaveButtonPressed(
+                        context: context,
+                        user: newUser,
+                        password: (password != null) && (password!.isNotEmpty)
+                            ? password
+                            : null,
+                        userAvatarBytes: editUserAvatarBytes,
+                        userAvatarFile: editUserAvatarFile,
+                      );
+
+                      // logger.e("Failed to save alert : $e");
+                    },
+                  )
+                : SizedBox.shrink();
+          }).removeWhen(isAtLeastMediumScreen(context)),
           Obx(() => Expanded(
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (loadedUserDetails.value)
+                    if (_loaded.value)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -1438,7 +1529,7 @@ class _UsersPageState extends State<UsersPage> {
                                 context: context,
                                 user: newUser,
                                 password:
-                                    password != null && password.isNotEmpty
+                                    (password != null) && (password!.isNotEmpty)
                                         ? password
                                         : null,
                                 userAvatarBytes: editUserAvatarBytes,
@@ -1450,67 +1541,75 @@ class _UsersPageState extends State<UsersPage> {
                       ),
                     ShadButton(
                       icon: Icon(Icons.close),
-                      child: Text(strings.value.cancel),
+                      child: Text(strings.value.close),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
                   ],
                 ),
-              ))
-        ],
-        child: Obx(
-          () {
-            if (!loadedUserDetails.value ||
-                !loadedRoles.value ||
-                !_loadedAddUserSuperiorOptions.value) {
-              return Center(
-                child: CircularProgressIndicator(),
+              )).removeWhen(isAtMostSmallScreen(context)),
+        ].nonNulls.toList(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: 700,
+          ),
+          child: Obx(
+            () {
+              if (!loadedUserDetails.value ||
+                  !loadedRoles.value ||
+                  !_loadedAddUserSuperiorOptions.value) {
+                print("loadedUserDetails : ${loadedUserDetails.value}");
+                print("loadedRoles : ${loadedRoles.value}");
+                print(
+                    "_loadedAddUserSuperiorOptions : ${_loadedAddUserSuperiorOptions.value}");
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              final role = roles.firstWhereOrNull((r) => r.name == user.role);
+              return UserForm(
+                editable: true,
+                showPlaceHolders: false,
+                role: role,
+                user: user,
+                onAddUser: (email, username, fPassword, phone, role, superior,
+                        firstName, lastName, avatarBytes, avatarFile) =>
+                    {
+                  editUserAvatarBytes = avatarBytes,
+                  editUserAvatarFile = avatarFile,
+                  password = fPassword,
+                  UsersPage.addUserSuperior = superior,
+                  newUser = User(
+                    userId: newUser.userId,
+                    email: email,
+                    username: username,
+                    phoneNumber: phone,
+                    role: role.name,
+                    superiors: newUser.superiors,
+                    firstName: firstName,
+                    lastName: lastName,
+                    avatarUrl: null,
+                    subordinates: newUser.subordinates,
+                    userPermissions: newUser.userPermissions,
+                  )
+                },
+                addUserEmailController:
+                    TextEditingController(text: userDetails!.email),
+                addUserNameController:
+                    TextEditingController(text: userDetails!.username),
+                addFirstNameController:
+                    TextEditingController(text: userDetails!.firstName),
+                addLastNameController:
+                    TextEditingController(text: userDetails!.lastName),
+                addUserPasswordController: TextEditingController(),
+                addUserPhoneController:
+                    TextEditingController(text: userDetails!.phoneNumber),
+                formKeyAddUser: UsersPage.formKeyAddUser,
+                addUserSuperiorOptions: _addUserSuperiorOptions,
               );
-            }
-            final role = roles.firstWhereOrNull((r) => r.name == user.role);
-            return UserForm(
-              editable: true,
-              showPlaceHolders: false,
-              role: role,
-              user: user,
-              onAddUser: (email, username, password, phone, role, superior,
-                      firstName, lastName, avatarBytes, avatarFile) =>
-                  {
-                editUserAvatarBytes = avatarBytes,
-                editUserAvatarFile = avatarFile,
-                password = password,
-                logger.e("superior: $superior"),
-                UsersPage.addUserSuperior = superior,
-                newUser = User(
-                  userId: newUser.userId,
-                  email: email,
-                  username: username,
-                  phoneNumber: phone,
-                  role: role.name,
-                  superiors: newUser.superiors,
-                  firstName: firstName,
-                  lastName: lastName,
-                  avatarUrl: null,
-                  subordinates: newUser.subordinates,
-                  userPermissions: newUser.userPermissions,
-                )
-              },
-              addUserEmailController:
-                  TextEditingController(text: userDetails!.email),
-              addUserNameController:
-                  TextEditingController(text: userDetails!.username),
-              addFirstNameController:
-                  TextEditingController(text: userDetails!.firstName),
-              addLastNameController:
-                  TextEditingController(text: userDetails!.lastName),
-              addUserPasswordController: TextEditingController(),
-              addUserPhoneController:
-                  TextEditingController(text: userDetails!.phoneNumber),
-              formKeyAddUser: UsersPage.formKeyAddUser,
-              addUserSuperiorOptions: _addUserSuperiorOptions,
-            );
-          },
+            },
+          ),
         ),
       ),
     );
@@ -1762,6 +1861,7 @@ class _UsersPageState extends State<UsersPage> {
       logger.e(
           "${strings.value.avatar} : ${userAvatarBytes != null} ${UsersPage.addUserAvatarBytesFileName} ${userAvatarFile != null}");
       late final User res;
+      print("password in onSaveButtonPressed: $password");
       if (kIsWeb) {
         res = await api.partialUpdateUserOnWeb(
           id: user.userId,

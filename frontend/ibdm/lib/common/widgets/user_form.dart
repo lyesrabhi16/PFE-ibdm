@@ -52,9 +52,9 @@ class UserForm extends StatelessWidget {
   )? onAddUser;
 
   final bool editable;
+  static final RxList<Role> roles = <Role>[].obs;
   Role? role;
   final bool showPlaceHolders;
-  static final RxList<Role> roles = <Role>[].obs;
   // add user form
   final GlobalKey<FormState> formKeyAddUser;
   final TextEditingController addUserEmailController;
@@ -64,7 +64,16 @@ class UserForm extends StatelessWidget {
   final TextEditingController addUserPasswordController;
   final TextEditingController addUserPhoneController;
   final RxList<ShadOption<User>> addUserSuperiorOptions;
-
+  List<ShadOption<User>> get _addUserSuperiorOptions => addUserSuperiorOptions
+      .where(
+        (o) => user == null
+            ? true
+            : o.value.userId != user!.userId &&
+                !user!.subordinates
+                    .map((s) => s.userId)
+                    .contains(o.value.userId),
+      )
+      .toList();
   bool get isEditing => user != null && editable == true;
 
   final Rx<bool> _loaded = false.obs;
@@ -73,7 +82,7 @@ class UserForm extends StatelessWidget {
 
   User? _superiorInitialValue;
 
-  Rx<Role?> get _addUserRole => roles.firstOrNull.obs;
+  Role? get _addUserRole => getInitialRoleValue();
 
   final Rx<bool> _searchAddUserSuperior = false.obs;
 
@@ -92,18 +101,27 @@ class UserForm extends StatelessWidget {
   // use on non-web
   Uint8List? _addUserAvatarBytes;
 
-  Role getInitialRoleValue({required List<Role> userRoles}) {
-    return userController.roles.firstWhereOrNull((e) => e.name == user?.role) ??
-        userRoles.first;
+  Role? getInitialRoleValue() {
+    logger.e(
+        "initial Role: ${userController.user?.role} ${userController.roles.map((r) => r.name)}");
+    final user_managed_roles = userController.roles
+        .firstWhereOrNull((e) => e.name == userController.user!.role)
+        ?.managedRoles;
+    logger.e("user_managed_roles: $user_managed_roles");
+    return user_managed_roles == null || user_managed_roles.isEmpty
+        ? null
+        : userController.roles
+            .firstWhereOrNull((e) => e.name == user_managed_roles.first);
   }
 
   Iterable<Widget> getRoleOptions(BuildContext context) {
-    final userRole =
+    final _currentUserRole =
         roles.firstWhereOrNull((r) => r.name == userController.user?.role);
 
-    logger.e("user_role: $userRole ${userController.user?.role} $roles");
+    logger.e(
+        "current_user_role: $_currentUserRole ${userController.user?.role} $roles");
 
-    return userRole?.managedRoles.map((roleName) => ShadOption(
+    return _currentUserRole?.managedRoles.map((roleName) => ShadOption(
               value: roles.firstWhere((r) => r.name == roleName),
               child: Text(
                 roleName,
@@ -132,7 +150,7 @@ class UserForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
     logger.d("building user form");
-    final userRole = _addUserRole;
+    final userRole = (role ?? _addUserRole).obs;
     _load(context);
 
     return Obx(() {
@@ -141,13 +159,17 @@ class UserForm extends StatelessWidget {
           child: CircularProgressIndicator(),
         );
       }
-      userRole.value = role ?? roles.firstOrNull;
       logger
           .e("User: $user ${user?.avatarUrl} ${_addUserAvatarSelected.value}");
       return Form(
         key: formKeyAddUser,
         onChanged: () {
           logger.e("form changed: $_addUserSuperior");
+          if (userRole.value == null) {
+            logger.e("role is null in user form on changed");
+            return;
+          }
+          print("_addUserSuperior: $_addUserSuperior");
           onAddUser?.call(
             addUserEmailController.text,
             addUserNameController.text,
@@ -304,6 +326,20 @@ class UserForm extends StatelessWidget {
               ShadInputFormField(
                 enabled: editable,
                 controller: addUserPasswordController,
+                onChanged: (v) {
+                  onAddUser?.call(
+                    addUserEmailController.text,
+                    addUserNameController.text,
+                    addUserPasswordController.text,
+                    addUserPhoneController.text,
+                    userRole.value!,
+                    _addUserSuperior,
+                    addFirstNameController.text,
+                    addLastNameController.text,
+                    _addUserAvatarBytes,
+                    _addUserAvatarFile,
+                  );
+                },
                 keyboardType: TextInputType.visiblePassword,
                 validator: (v) => AppValidators.customPasswordValidator(v,
                     optional: isEditing),
@@ -421,13 +457,14 @@ class UserForm extends StatelessWidget {
                   label: Text(strings.value.superior),
                   validator: (value) =>
                       AppValidators.superiorSelectionValidator(
-                    "${value?.userId}",
-                    addUserSuperiorOptions.map((o) => o.value).toList(),
+                    user?.userId.toString(),
+                    value?.userId.toString(),
+                    _addUserSuperiorOptions.map((o) => o.value).toList(),
                   ),
                   allowDeselection: true,
                   options: _searchAddUserSuperior.value
                       ? _searchAddUserSuperiorOptions
-                      : addUserSuperiorOptions,
+                      : _addUserSuperiorOptions,
                   placeholder: Container(
                       constraints: BoxConstraints(
                         minWidth: context.width,
@@ -437,7 +474,7 @@ class UserForm extends StatelessWidget {
                     preferBelow: false,
                   ),
                   onChanged: (value) {
-                    logger.d("value: $value");
+                    logger.d("superior value: ${value?.email}");
                     _addUserSuperior = value;
                     onAddUser?.call(
                       addUserEmailController.text,
@@ -470,7 +507,7 @@ class UserForm extends StatelessWidget {
                           false; // turn it off to trigger update later
                       _searchAddUserSuperiorOptions.clear();
                       _searchAddUserSuperiorOptions
-                          .addAll(addUserSuperiorOptions.where((o) {
+                          .addAll(_addUserSuperiorOptions.where((o) {
                         if (o.value.username.contains(value)) {
                           return true;
                         }
