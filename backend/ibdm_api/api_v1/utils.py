@@ -35,7 +35,7 @@ def getServerStatusFromFile():
 
 def get_values_within(model, startDate, endDate):
 
-    print_log("VALUES", f'{model} ${startDate} to ${endDate}')
+    print_log("VALUES", f'{model} {startDate} to {endDate}')
     
 
     # Query for exactly midnight (00:00:xx)
