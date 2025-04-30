@@ -24,11 +24,27 @@ class AppColors {
   static const Color grey = Color(0xFF9E9E9E);
   static const Color lightGrey = Color(0xFFE0E0E0);
 
-  static Color getColorFromString(String input) {
+  static Color getColorFromString(String input,
+      {Color backgroundColor = Colors.white}) {
     final int hash = input.hashCode;
-    final int red = (hash & 0xFF0000) >> 16;
-    final int green = (hash & 0x00FF00) >> 8;
-    final int blue = hash & 0x0000FF;
+    int red = (hash & 0xFF0000) >> 16;
+    int green = (hash & 0x00FF00) >> 8;
+    int blue = hash & 0x0000FF;
+
+    // If the color is too light, darken it (for light backgrounds)
+    final luminance = 0.299 * red + 0.587 * green + 0.114 * blue;
+    if (backgroundColor.computeLuminance() > 0.5 && luminance > 200) {
+      // Darken the color
+      red = (red * 0.5).round();
+      green = (green * 0.5).round();
+      blue = (blue * 0.5).round();
+    } else if (backgroundColor.computeLuminance() <= 0.5 && luminance < 100) {
+      // Lighten the color for dark backgrounds
+      red = ((255 - red) * 0.5 + red).round();
+      green = ((255 - green) * 0.5 + green).round();
+      blue = ((255 - blue) * 0.5 + blue).round();
+    }
+
     return Color.fromARGB(255, red, green, blue);
   }
 

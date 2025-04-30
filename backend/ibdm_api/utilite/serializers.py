@@ -22,4 +22,8 @@ class UtiliteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Utilite
         fields = "__all__"
-        
+
+class Co2MultiMetaConsommationsSerializer(serializers.Serializer):
+    from_date = serializers.DateTimeField()
+    to_date = serializers.DateTimeField()
+    consommations = Co2IfruitConsommationSerializer(many=True)

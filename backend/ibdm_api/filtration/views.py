@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from filtration.models import Niveau, Debit, PresCond, Volume
 from filtration.serializers import DebitSerializer, NiveauSerializer, PresCondSerializer, VolumeSerializer
@@ -10,7 +10,8 @@ from api_v1.utils import get_value_at, with_operation_ids, filter_by_fetch_type
 from api_v1.serializers import ErrorResponseSerializer, FeedMetaDataSerializer
 from api_v1.constants import ErrorCodes
 from django.utils.dateparse import parse_datetime
-
+from filtration.utils import calculate_consommation_filtration
+from filtration.serializers import FiltrationMetaConsommationSerializer, FiltrationMultiMetaConsommationsSerializer
 
 # Create your views here.
 @extend_schema(tags=["Filtration"])
@@ -640,4 +641,167 @@ class PresCondListView(viewsets.ReadOnlyModelViewSet):
         }
         return response
 
-        
+
+
+
+@extend_schema(
+    tags=["Filtration"],
+    summary="get filtration consommation",
+    operation_id="getFiltrationConsommation",
+    request=None,
+    responses={
+        200: FiltrationMetaConsommationSerializer,
+    },
+    parameters=[
+        OpenApiParameter(
+            name="from_year",
+            required=True,
+            type=int,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="from_month",
+            required=False,
+            type=int,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="from_day",
+            required=False,
+            type=int,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="to_year",
+            required=True,
+            type=int,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="to_month",
+            required=False,
+            type=int,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="to_day",
+            required=False,
+            type=int,
+            location="query",
+        ),
+    ]
+)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def getFiltrationConsommation(request):
+    """
+    getFiltrationConsommation
+    """
+    from_year = int(request.query_params.get('from_year', None))
+    to_year = int(request.query_params.get('to_year', None))
+    from_month = int(request.query_params.get('from_month', "01"))
+    to_month = int(request.query_params.get('to_month', "01"))
+    from_day = int(request.query_params.get('from_day', "01"))
+    to_day = int(request.query_params.get('to_day', "01"))
+
+    from_date = datetime(
+        year=from_year,
+        month=from_month,
+        day=from_day,
+    )
+
+    to_date = datetime(
+        year=to_year,
+        month=to_month,
+        day=to_day,
+    )
+
+    record = get_filtration_consommation(from_date, to_date)
+    if (record):
+        print("record", record)
+        print("forage", record["consommation"]["forage"])
+        return JsonResponse(FiltrationMetaConsommationSerializer(record).data)
+    else:
+        return JsonResponse({}, status=404)
+
+
+
+def get_filtration_consommation(from_date, to_date):
+    
+    
+    record = {}
+    
+    values = calculate_consommation_filtration(from_date, to_date)
+    record["from_date"] = from_date
+    record["to_date"] = to_date
+    record["consommation"] = {
+        "forage": values["forage"],
+        "eau_brute": values["eau_brute"],
+        "hytec": values["hytec"],
+        "osmotec": values["osmotec"],
+        "osmosee": values["osmosee"],
+        "contre_lavage": values["contre_lavage"],
+    }
+    
+    return record
+
+
+@extend_schema(
+    tags=["Filtration"],
+    summary="get filtration consommation between dates",
+    operation_id="getFiltrationConsommationBetweenDates",
+    request=None,
+    responses={
+        200: FiltrationMultiMetaConsommationsSerializer,
+    },
+    parameters=[
+        OpenApiParameter(
+            name="start_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="end_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+    ]
+)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def getFiltrationConsommationBetweenDates(request):
+    """
+    getFiltrationConsommationBetweenDates
+    """
+
+    start_date = request.query_params.get("start_date")
+    end_date = request.query_params.get("end_date")
+    if start_date and end_date:
+        try:
+            start_date = parse_datetime(start_date)
+            end_date = parse_datetime(end_date)
+        except ValueError:
+            return JsonResponse({
+                "status": "error",
+                "error": ErrorCodes.INVALID_DATE_FORMAT.code,
+            }, status=ErrorCodes.INVALID_DATE_FORMAT.status_code)
+        record = {}
+        record["from_date"] = start_date
+        record["to_date"] = end_date
+        record["consommations"] = []    
+        d = start_date
+        while d <= end_date:
+            record["consommations"].append(get_filtration_consommation(d, d))
+            d += timedelta(days=1)
+        record["consommations"] = sorted(record["consommations"], key=lambda x: x["from_date"], reverse=True)
+        print("record", record)
+        print("forage", record["consommations"][0]["consommation"]["forage"])
+        return JsonResponse(FiltrationMultiMetaConsommationsSerializer(record).data)
+    else:
+        return JsonResponse({
+            "status": "error",
+            "error": ErrorCodes.NOT_FOUND.code,
+        }, status=ErrorCodes.NOT_FOUND.status_code)
+    
