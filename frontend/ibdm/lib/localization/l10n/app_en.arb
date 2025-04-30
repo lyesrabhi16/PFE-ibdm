@@ -719,7 +719,7 @@
     "aProposIBDMDescription": "IBDM is an industrial data management software designed to facilitate the monitoring and analysis of industrial equipment performance.",
     "contactezNous": "Contact Us",
     "adresse": "Akbou, Bejaia, Algeria",
-    "createdBy": "Created by : Lyes Rabhi (lyes@example.com) & Kheloufi Mounir (mounir@example.com)",
+    "createdBy": "Created by : Lyes Rabhi (lyes.rabhi.020@gmail.com) & Kheloufi Mounir (mounirkheloufi2002@gmail.com)"
     "failedToConnectToCO2Broadcast": "Failed to connect to CO2 Broadcast, {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
     "@failedToConnectToCO2Broadcast": {
         "placeholders": {
