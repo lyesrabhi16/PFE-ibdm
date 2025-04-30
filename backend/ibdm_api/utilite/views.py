@@ -484,7 +484,7 @@ def getCo2ConsommationBetweenDates(request):
             record["consommations"].append(get_co2_consommation(from_date, to_date))
             d += timedelta(days=1)
         record["consommations"] = sorted(record["consommations"], key=lambda x: x["from_date"], reverse=True)
-        print("record", record)
+        #print("record", record)
         return JsonResponse(Co2MultiMetaConsommationsSerializer(record).data)
     else:
         return JsonResponse({
