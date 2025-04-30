@@ -8,29 +8,22 @@ from filtration.models import Debit, Niveau, PresCond, Volume
 import threading
 
 from api_v1.utils import get_midnight_value, get_value_at, print_log
+from filtration.utils import calculate_consommation_filtration
 
-
-volume_list : List[Volume] = []
 
 niveau : Niveau|None = None
 volume : Volume|None = None
 debit  : Debit|None= None
 pres_cond : PresCond|None = None
 
-dates = []
 
 def loadNiveau():
     global niveau
-
     niveau = get_midnight_value(Niveau)
 
 def loadVolume(date=None):
     global volume
-    if date is None:
-        volume = get_midnight_value(Volume)
-    else:
-        v = get_value_at(Volume, date)
-        volume_list.append(v)
+    volume = get_midnight_value(Volume)
         
 def loadDebit():
     global debit
@@ -53,13 +46,7 @@ def rapport_filtration(email):
     volume_list = []
     dates = []
     now = datetime.now()
-    threads = []
-    for i in range(1, now.day):
-        date = datetime(now.year, now.month, i)
-        thread = threading.Thread(target=loadVolume, args=(date,))
-        threads.append(thread)
-        thread.start()
-
+    
     thread_n = threading.Thread(target=loadNiveau)
     thread_v = threading.Thread(target=loadVolume)
     thread_d = threading.Thread(target=loadDebit)
@@ -70,13 +57,13 @@ def rapport_filtration(email):
     thread_d.start()
     thread_p.start()
     print_log("FILTRATION", "threads started")
-    for thread in threads:
-        thread.join()
+    
     thread_n.join()
     thread_v.join()
     thread_d.join()
     thread_p.join()
     print_log("FILTRATION", "threads finished")
+    
     if (niveau is None or volume is None or debit is None or pres_cond is None):
         return "les données nécessaire ne sont pas disponible pour le "+now.strftime("%Y-%m-%d")
 
@@ -122,7 +109,7 @@ def rapport_filtration(email):
     FILL_OS7 = (niveau.niv_os7 or 0) * 100 / 10
     # conductivité
     cond_calculer = calculateCond()
-    # consomlation
+    # consommation
     volume_total_eau_brute = (volume.vol_uf1 or 0) + (volume.vol_uf2 or 0) + (volume.vol_uf3 or 0) + (volume.vol_uf4 or 0) + (volume.vol_uf5 or 0) + (volume.vol_uf6 or 0)
     volume_total_hytec = (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
     volume_total_osmotec = (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
@@ -130,27 +117,16 @@ def rapport_filtration(email):
     value_contre_lavage = (volume.vol_con_lav or 0)
 
     # consomation depuis le 1er forage
-    cons_depuis_1er_forage = 0
-    cons_depuis_1er_volume_total_eau_brute = 0
-    cons_depuis_1er_volume_total_hytec = 0
-    cons_depuis_1er_volume_total_osmotec = 0
-    cons_depuis_1er_volume_total_osmosee = 0
-    cons_contre_lavage_depuis_1er = 0 # TODO: set this to the correct value
+    le_1er = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    now = datetime.now()
+    cons_depuis_1er  = calculate_consommation_filtration(le_1er, now)
+    cons_depuis_1er_forage = cons_depuis_1er["forage"]
+    cons_depuis_1er_volume_total_eau_brute = cons_depuis_1er["eau_brute"]
+    cons_depuis_1er_volume_total_hytec = cons_depuis_1er["hytec"]
+    cons_depuis_1er_volume_total_osmotec = cons_depuis_1er["osmotec"]
+    cons_depuis_1er_volume_total_osmosee = cons_depuis_1er["osmosee"]
+    cons_contre_lavage_depuis_1er = cons_depuis_1er["contre_lavage"]
     
-    volume_list.append(volume)
-    for volume in volume_list:
-        cons_depuis_1er_forage += volume.vol_for
-        cons_depuis_1er_volume_total_eau_brute += (volume.vol_uf1 or 0) + (volume.vol_uf2 or 0) + (volume.vol_uf3 or 0) + (volume.vol_uf4 or 0) + (volume.vol_uf5 or 0) + (volume.vol_uf6 or 0)
-        cons_depuis_1er_volume_total_hytec += (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
-        cons_depuis_1er_volume_total_osmotec += (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
-        cons_contre_lavage_depuis_1er += (volume.vol_con_lav or 0)
-        
-        _volume_total_hytec = (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
-        _volume_total_osmotec = (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
-    
-        cons_depuis_1er_volume_total_osmosee += _volume_total_hytec + _volume_total_osmotec
-        
-
     data = {
         "date": niveau.date.strftime("%Y-%m-%d"),
         "rapport_name": "Filtration",

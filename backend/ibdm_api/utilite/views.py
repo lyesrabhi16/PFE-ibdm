@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.http import JsonResponse
 from rest_framework import viewsets,permissions
 from api_v1.utils import get_value_at, with_operation_ids
@@ -9,6 +9,10 @@ from .serializers import Co2IfruitSerializer,UtiliteSerializer, Co2IfruitConsomm
 from rest_framework.decorators import api_view, permission_classes
 from django.utils.dateparse import parse_datetime
 from api_v1.utils import filter_by_fetch_type
+from .utils import get_co2_consommation
+from api_v1.constants import ErrorCodes
+from .serializers import Co2MultiMetaConsommationsSerializer
+
 
 @extend_schema(tags=["Utilite"])
 @with_operation_ids(
@@ -298,21 +302,7 @@ def getCo2IfruitConsommation(request):
         return JsonResponse({}, status=404)
 
 
-def get_co2_consommation(from_date, to_date):
-    from_record = Co2IfruitSerializer(get_value_at(Co2Ifruit, from_date)).data
-    to_record = Co2IfruitSerializer(get_value_at(Co2Ifruit, to_date)).data
-    record = {}
-    for key in from_record:
-        try:
-            record[key] = float(to_record[key]) - float(from_record[key])
-        except Exception as e:
-            record[key] = None
-    record["from_date"] = from_date
-    record["to_date"] = to_date
-    record["from_value"] = from_record
-    record["to_value"] = to_record
-    record["date"] = to_date
-    return record
+
 
 
 
@@ -442,4 +432,63 @@ class CO2ListView(viewsets.ReadOnlyModelViewSet):
         return response
 
 
-        
+@extend_schema(
+    tags=["Utilite"],
+    summary="get co2 consommation between dates",
+    operation_id="getCo2ConsommationBetweenDates",
+    request=None,
+    responses={
+        200: Co2MultiMetaConsommationsSerializer,
+    },
+    parameters=[
+        OpenApiParameter(
+            name="start_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="end_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+    ]
+)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def getCo2ConsommationBetweenDates(request):
+    """
+    getCo2ConsommationBetweenDates
+    """
+
+    start_date = request.query_params.get("start_date")
+    end_date = request.query_params.get("end_date")
+    if start_date and end_date:
+        try:
+            start_date = parse_datetime(start_date)
+            end_date = parse_datetime(end_date)
+        except ValueError:
+            return JsonResponse({
+                "status": "error",
+                "error": ErrorCodes.INVALID_DATE_FORMAT.code,
+            }, status=ErrorCodes.INVALID_DATE_FORMAT.status_code)
+        record = {}
+        record["from_date"] = start_date
+        record["to_date"] = end_date
+        record["consommations"] = []    
+        d = start_date
+        while d <= end_date:
+            from_date = datetime(d.year, d.month, d.day) - timedelta(days=1)
+            to_date = datetime(d.year, d.month, d.day)
+            record["consommations"].append(get_co2_consommation(from_date, to_date))
+            d += timedelta(days=1)
+        record["consommations"] = sorted(record["consommations"], key=lambda x: x["from_date"], reverse=True)
+        print("record", record)
+        return JsonResponse(Co2MultiMetaConsommationsSerializer(record).data)
+    else:
+        return JsonResponse({
+            "status": "error",
+            "error": ErrorCodes.NOT_FOUND.code,
+        }, status=ErrorCodes.NOT_FOUND.status_code)
+    

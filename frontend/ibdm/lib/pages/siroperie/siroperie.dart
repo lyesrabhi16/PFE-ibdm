@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -8,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/app_line_chart.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/cuve.dart';
 import 'package:ibdm/common/widgets/data_list.dart';
@@ -564,7 +567,20 @@ class _SiroperiePageState extends State<SiroperiePage> {
                             fontWeight: FontWeight.bold,
                           )).marginAll(AppSizes.md),
                   AppLineChart(
-                    getGraphData: getGraphData,
+                    graphTypes: [
+                      GraphType(
+                        name: "TOTAL",
+                        getGraphData: getTotalGraphData,
+                      ),
+                      GraphType(
+                        name: "TETRA",
+                        getGraphData: getTetraGraphData,
+                      ),
+                      GraphType(
+                        name: "ADUE",
+                        getGraphData: getAdueGraphData,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -626,8 +642,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
     });
   }
 
-  Future<Map> getGraphData(
-      DateTime startDate, DateTime endDate, FetchType fetchType) async {
+  Future<Map> getTotalGraphData(
+      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
     final strings = getTranslations(getContext);
     Map data = {
       "Tetra": [],
@@ -656,6 +672,90 @@ class _SiroperiePageState extends State<SiroperiePage> {
             (e.aT04 ?? 0) +
             (e.aT05 ?? 0) +
             (e.aT06 ?? 0),
+      });
+    }
+    return data;
+  }
+
+  Future<Map> getTetraGraphData(
+      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
+    final strings = getTranslations(getContext);
+    Map data = {
+      "TS21": [],
+      "TS22": [],
+      "TS23": [],
+      "TS24": [],
+      "TS25": [],
+    };
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getSucresBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (Sucre e in res.data) {
+      data["TS21"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.tS21 ?? 0,
+      });
+      data["TS22"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.tS22 ?? 0,
+      });
+      data["TS23"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.tS23 ?? 0,
+      });
+      data["TS24"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.tS24 ?? 0,
+      });
+      data["TS25"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.tS25 ?? 0,
+      });
+    }
+    return data;
+  }
+
+  Future<Map> getAdueGraphData(
+      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
+    final strings = getTranslations(getContext);
+    Map data = {
+      "T02": [],
+      "T03": [],
+      "T04": [],
+      "T05": [],
+      "T06": [],
+    };
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getSucresBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (Sucre e in res.data) {
+      data["T02"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.aT02 ?? 0,
+      });
+      data["T03"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.aT03 ?? 0,
+      });
+      data["T04"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.aT04 ?? 0,
+      });
+      data["T05"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.aT05 ?? 0,
+      });
+      data["T06"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.aT06 ?? 0,
       });
     }
     return data;
@@ -1249,416 +1349,6 @@ class _SiroperiePageState extends State<SiroperiePage> {
                 ]));
       },
     );
-  }
-}
-
-class AppLineChart extends StatelessWidget {
-  final Future<Map> Function(DateTime start, DateTime end, FetchType fetchType)
-      getGraphData;
-  AppLineChart({
-    super.key,
-    required this.getGraphData,
-  });
-  double? maxX;
-  double? minX;
-  double? maxY;
-  double? minY;
-
-  DateTime startDate = DateTime.now().copyWith(
-    hour: 0,
-    minute: 0,
-    second: 0,
-    millisecond: 0,
-    microsecond: 0,
-  );
-  DateTime endDate = DateTime.now().copyWith(
-    hour: 23,
-    minute: 59,
-    second: 59,
-    millisecond: 999,
-    microsecond: 999,
-  );
-  FetchType fetchType = FetchType.hours;
-
-  final RxBool graphLoaded = false.obs;
-  final Map graphData = {};
-
-  Function? _getContext;
-  BuildContext get getContext => _getContext!.call()!;
-  @override
-  Widget build(BuildContext context) {
-    _getContext = () => context;
-    final strings = getTranslations(context).obs;
-    return Obx(() {
-      if (graphData.isEmpty && !graphLoaded.value) {
-        _getGraphData();
-      }
-
-      logger.e("maxX: $maxX minX: $minX maxY: $maxY minY: $minY");
-
-      //logger.e("graph data: $graphData");
-
-      return Padding(
-        padding: const EdgeInsets.all(AppSizes.sm),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                ShadSelect<FetchType>(
-                  onChanged: (value) {
-                    fetchType = value!;
-                  },
-                  allowDeselection: false,
-                  initialValue: fetchType,
-                  options: [
-                    for (var e in FetchType.values
-                        .where((e) => e != FetchType.$unknown))
-                      ShadOption(
-                        value: e,
-                        child: Text(e.name.capitalize!),
-                      ),
-                  ],
-                  selectedOptionBuilder: (context, value) {
-                    return Text(
-                      "${strings.value.precision} : ${value.name.capitalize!}",
-                      style:
-                          Theme.of(context).textTheme.titleMedium?.copyWith(),
-                    );
-                  },
-                ),
-                ShadDatePicker.range(
-                  onRangeChanged: (value) {
-                    startDate = value!.start!.copyWith(
-                      hour: 0,
-                      minute: 0,
-                      second: 0,
-                      millisecond: 0,
-                      microsecond: 0,
-                    );
-                    endDate = value.end?.copyWith(
-                          hour: 23,
-                          minute: 59,
-                          second: 59,
-                          millisecond: 999,
-                          microsecond: 999,
-                        ) ??
-                        value.start!.copyWith(
-                          hour: 23,
-                          minute: 59,
-                          second: 59,
-                          millisecond: 999,
-                          microsecond: 999,
-                        );
-                    print("getGraphData: $value");
-                  },
-                  closeOnSelection: false,
-                  closeOnTapOutside: true,
-                  selectableDayPredicate: (day) => true,
-                  allowDeselection: false,
-                  selected: ShadDateTimeRange(
-                    start: startDate,
-                    end: endDate,
-                  ),
-                ),
-                ShadButton(
-                  child: Text(strings.value.find),
-                  onPressed: () {
-                    _getGraphData();
-                  },
-                ),
-              ],
-            ),
-            Wrap(
-              children: [
-                for (var key in graphData.keys)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        color: AppColors.getColorFromString(key),
-                      ),
-                      SizedBox(width: AppSizes.sm),
-                      Text(
-                        key,
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                      ),
-                    ],
-                  ),
-              ],
-            ),
-            SizedBox(height: AppSizes.md),
-            !graphLoaded.value
-                ? SizedBox(
-                    height: 600,
-                    child: CircularProgressIndicatorWithText(
-                      text: strings.value.loading,
-                    ),
-                  )
-                : graphData.isEmpty
-                    ? SizedBox(
-                        height: 600,
-                        child: Center(
-                          child: Text(strings.value.dataNotFound),
-                        ),
-                      )
-                    : Builder(builder: (context) {
-                        final spots = {};
-                        for (var e in graphData.entries) {
-                          spots[e.key] = <FlSpot>[];
-                          for (var d in e.value) {
-                            spots[e.key].add(
-                                FlSpot(d["x"].toDouble(), d["y"].toDouble()));
-                          }
-                        }
-                        logger.e("spots: $spots");
-                        final shownXTitles = <String>[];
-                        return SizedBox(
-                          width: context.width,
-                          height: context.height / 2,
-                          child: LineChart(LineChartData(
-                              gridData: FlGridData(
-                                getDrawingHorizontalLine: (value) {
-                                  return FlLine(
-                                    color: AppColors.black.withAlpha(20),
-                                  );
-                                },
-                                getDrawingVerticalLine: (value) {
-                                  return FlLine(
-                                    color: AppColors.black.withAlpha(20),
-                                  );
-                                },
-                              ),
-                              lineTouchData: LineTouchData(
-                                touchTooltipData: LineTouchTooltipData(
-                                  fitInsideHorizontally: true,
-                                  fitInsideVertically: true,
-                                  showOnTopOfTheChartBoxArea: true,
-                                  getTooltipItems: (touchedSpots) {
-                                    return touchedSpots.map((touchedSpot) {
-                                      final x =
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                              touchedSpot.x.toInt());
-                                      final y = touchedSpot.y;
-                                      final key = graphData.keys
-                                          .elementAt(touchedSpot.barIndex);
-                                      return LineTooltipItem(
-                                        "$key : ${NumberFormat.compactCurrency(
-                                          decimalDigits: 2,
-                                          locale: "fr",
-                                          symbol: " L",
-                                        ).format(y)}",
-                                        Theme.of(context)
-                                            .textTheme
-                                            .titleMedium!
-                                            .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  AppColors.getColorFromString(
-                                                      key),
-                                            ),
-                                        children: [
-                                          TextSpan(
-                                            text:
-                                                "\n${x.day.toString().padLeft(2, "0")}/${x.month.toString().padLeft(2, "0")}/${x.year.toString().padLeft(2, "0")}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.copyWith(
-                                                  color: AppColors
-                                                      .getColorFromString(key),
-                                                ),
-                                          ),
-                                          TextSpan(
-                                            text:
-                                                "\n${x.hour.toString().padLeft(2, "0")}:${x.minute.toString().padLeft(2, "0")}:${x.second.toString().padLeft(2, "0")}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.copyWith(
-                                                  color: AppColors
-                                                      .getColorFromString(key),
-                                                ),
-                                          )
-                                        ],
-                                      );
-                                    }).toList();
-                                  },
-                                  tooltipRoundedRadius: 5,
-                                  tooltipPadding: EdgeInsets.all(AppSizes.sm),
-                                  tooltipMargin: AppSizes.sm,
-                                ),
-                              ),
-                              titlesData: FlTitlesData(
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                                rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    maxIncluded: true,
-                                    minIncluded: true,
-                                    reservedSize: 100,
-                                    getTitlesWidget: (value, meta) {
-                                      return Text(NumberFormat.compactCurrency(
-                                        decimalDigits: 2,
-                                        locale: "fr",
-                                        symbol: " L",
-                                      ).format(value));
-                                    },
-                                  ),
-                                ),
-                                bottomTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    minIncluded: true,
-                                    reservedSize: 100,
-                                    getTitlesWidget: (value, meta) {
-                                      final date =
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                              value.toInt());
-                                      String formattedDate =
-                                          switch (fetchType) {
-                                        FetchType.hours => DateFormat(
-                                                endDate.day == startDate.day
-                                                    ? "HH:mm"
-                                                    : "dd/MM/yyyy HH:mm")
-                                            .format(date),
-                                        FetchType.days =>
-                                          DateFormat("dd/MM/yyyy").format(date),
-                                        FetchType.weeks => getWeek(date),
-                                        FetchType.months => getMonth(date),
-                                        FetchType.years => date.year.toString(),
-                                        _ =>
-                                          DateFormat("dd/MM/yyyy").format(date),
-                                      };
-                                      if (!(shownXTitles.lastOrNull ==
-                                          formattedDate)) {
-                                        shownXTitles.add(formattedDate);
-                                      } else {
-                                        return const SizedBox.shrink();
-                                      }
-                                      return RotatedBox(
-                                        quarterTurns: 1,
-                                        child: Center(
-                                          child: FittedBox(
-                                            child: Text(
-                                              formattedDate,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium
-                                                  ?.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                              textAlign: TextAlign.center,
-                                              softWrap: false,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                              borderData: FlBorderData(
-                                show: true,
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: AppColors.black.withAlpha(100),
-                                    width: 2,
-                                  ),
-                                  left: BorderSide(
-                                    color: AppColors.black.withAlpha(100),
-                                    width: 2,
-                                  ),
-                                  right: BorderSide.none,
-                                  top: BorderSide.none,
-                                ),
-                              ),
-                              lineBarsData: [
-                                for (var e in graphData.entries)
-                                  LineChartBarData(
-                                    spots: spots[e.key] ?? [],
-                                    isCurved: true,
-                                    barWidth: 2,
-                                    dotData: FlDotData(show: false),
-                                    color: AppColors.getColorFromString(e.key),
-                                    curveSmoothness: 0.5,
-                                    preventCurveOverShooting: true,
-                                    belowBarData: BarAreaData(
-                                      show: true,
-                                      color: AppColors.getColorFromString(e.key)
-                                          .withAlpha(50),
-                                    ),
-                                  ),
-                              ])),
-                        );
-                      }),
-          ],
-        ),
-      );
-    });
-  }
-
-  Future<void> _getGraphData() async {
-    graphLoaded.value = false;
-    try {
-      graphData.clear();
-      print(
-          "getGraphData: startDate: $startDate endDate: $endDate fetchType: $fetchType");
-      final res = await getGraphData(
-        startDate,
-        endDate,
-        fetchType,
-      );
-      graphData.addEntries(res.entries);
-      //logger.e("graph data: $graphData");
-    } catch (e) {
-      logger.e(e);
-      Toasts.showErrorToast(
-        context: getContext,
-        message: getTranslations(getContext).failedToLoadData,
-      );
-    }
-    graphLoaded.value = true;
-  }
-
-  String getWeek(DateTime date) {
-    final strings = getTranslations(getContext);
-    final weekNumber = date.weekNumber;
-    return "${strings.week} $weekNumber";
-  }
-
-  String getMonth(DateTime date) {
-    final strings = getTranslations(getContext);
-    final month = switch (date.month) {
-      1 => strings.january,
-      2 => strings.february,
-      3 => strings.march,
-      4 => strings.april,
-      5 => strings.may,
-      6 => strings.june,
-      7 => strings.july,
-      8 => strings.august,
-      9 => strings.september,
-      10 => strings.october,
-      11 => strings.november,
-      12 => strings.december,
-      _ => strings.unknown,
-    };
-    return month;
   }
 }
 

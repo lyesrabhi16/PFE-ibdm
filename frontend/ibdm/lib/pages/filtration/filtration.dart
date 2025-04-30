@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/app_line_chart.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/cuve.dart';
 import 'package:ibdm/common/widgets/divider_with_text.dart';
@@ -13,8 +14,11 @@ import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
 import 'package:ibdm/common/widgets/multiple_data_lists.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
+import 'package:ibdm/services/api_django/api_client/models/co2_ifruit_consommation.dart';
 import 'package:ibdm/services/api_django/api_client/models/debit.dart';
 import 'package:ibdm/services/api_django/api_client/models/feed_meta_data.dart';
+import 'package:ibdm/services/api_django/api_client/models/fetch_type.dart';
+import 'package:ibdm/services/api_django/api_client/models/filtration_meta_consommation.dart';
 import 'package:ibdm/services/api_django/api_client/models/niveau.dart';
 import 'package:ibdm/services/api_django/api_client/models/pres_cond.dart';
 import 'package:ibdm/services/api_django/api_client/models/volume.dart';
@@ -22,6 +26,7 @@ import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/helpers/common_heplers.dart';
 import 'package:ibdm/utils/helpers/data_representation.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
@@ -1197,6 +1202,192 @@ class _FiltrationPageState extends State<FiltrationPage> {
     }
   }
 
+  _openConsommationDialog() async {
+    final strings = getTranslations(getContext).obs;
+    FiltrationMetaConsommation? cons;
+    final now = DateTime.now();
+    final toDate = DateTime(
+      year ?? now.year,
+      month ?? now.month,
+      day ?? now.day,
+    );
+    final fromDate = toDate;
+    final Rx<DateTimeRange> _selectedDateRange = DateTimeRange(
+      start: fromDate,
+      end: toDate,
+    ).obs;
+
+    final Rx<bool> _dataLoaded = false.obs;
+    final Rx<bool> _failed = false.obs;
+    int retries = 3;
+    _getConsData() async {
+      _dataLoaded.value = false;
+
+      try {
+        cons = await (await ApiClientInstance.getApiClient())
+            .getFiltrationConsommation(
+          fromYear: _selectedDateRange.value.start.year,
+          fromMonth: _selectedDateRange.value.start.month,
+          fromDay: _selectedDateRange.value.start.day,
+          toYear: _selectedDateRange.value.end.year,
+          toMonth: _selectedDateRange.value.end.month,
+          toDay: _selectedDateRange.value.end.day,
+        );
+        _failed.value = false;
+        _dataLoaded.value = true;
+      } catch (e) {
+        if (retries > 0) {
+          retries--;
+          _getConsData();
+        } else {
+          retries = 3;
+
+          _failed.value = true;
+          _dataLoaded.value = true;
+          Toasts.showErrorToast(
+            context: getContext,
+            message: strings.value.failedToGetInventory,
+          );
+        }
+      }
+    }
+
+    return showShadDialog(
+      context: getContext,
+      builder: (context) => ShadDialog(
+        title: Text(
+          strings.value.consommation,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        description: Text(strings.value.consommationDescription),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                ShadDatePicker.range(
+                  onRangeChanged: (value) => {
+                    _selectedDateRange.value = DateTimeRange(
+                      start: value?.start ?? _selectedDateRange.value.start,
+                      end: value?.end ?? value!.start!,
+                    ),
+                  },
+                  closeOnSelection: false,
+                  closeOnTapOutside: true,
+                  selectableDayPredicate: (day) =>
+                      day.isSameDayOrGreatier(filtrationStartDate.value) &&
+                      day.isSameDayOrLower(filtrationEndDate.value),
+                  allowDeselection: false,
+                  formatDateRange: (dateRange) =>
+                      dateTimeRangeToString(dateRange.start, dateRange.end),
+                  selected: ShadDateTimeRange(
+                    start: _selectedDateRange.value.start,
+                    end: _selectedDateRange.value.end,
+                  ),
+                  initialMonth: _selectedDateRange.value.start,
+                  fromMonth: filtrationStartDate.value,
+                  toMonth: filtrationEndDate.value,
+                ),
+                ShadButton(
+                  icon: Icon(LucideIcons.search),
+                  onPressed: () {
+                    _getConsData();
+                  },
+                  child: Text(strings.value.find),
+                ),
+              ],
+            ),
+            Obx(() {
+              if (!_dataLoaded.value) {
+                _getConsData();
+                return SizedBox(
+                    height: 600,
+                    child: CircularProgressIndicatorWithText(
+                      text: strings.value.loading,
+                    ));
+              }
+              if (_failed.value) {
+                return Text(strings.value.failedToGetInventory);
+              }
+              return Column(
+                children: [
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: context.width,
+                        minHeight: 300,
+                        maxHeight: 680,
+                      ),
+                      child: ShadTable.list(
+                        columnSpanExtent: (t) => FixedTableSpanExtent(
+                            [0].contains(t) ? 150 : context.width - (150)),
+                        header: [
+                          ShadTableCell.header(child: Text(strings.value.name)),
+                          ShadTableCell.header(
+                              child: Text(strings.value.value)),
+                        ],
+                        children: [
+                          for (var r in [
+                            DataRepresentation(
+                              name: "forage",
+                              code: "forage",
+                              source: cons?.consommation.toJson(),
+                            ),
+                            DataRepresentation(
+                              name: "eau brute",
+                              code: "eau_brute",
+                              source: cons?.consommation.toJson(),
+                            ),
+                            DataRepresentation(
+                              name: "hytec",
+                              code: "hytec",
+                              source: cons?.consommation.toJson(),
+                            ),
+                            DataRepresentation(
+                              name: "osmotec",
+                              code: "osmotec",
+                              source: cons?.consommation.toJson(),
+                            ),
+                            DataRepresentation(
+                              name: "osmosee",
+                              code: "osmosee",
+                              source: cons?.consommation.toJson(),
+                            ),
+                            DataRepresentation(
+                              name: "contre lavage",
+                              code: "contre_lavage",
+                              source: cons?.consommation.toJson(),
+                            ),
+                          ])
+                            [
+                              ShadTableCell(
+                                child: Text(
+                                  r.name,
+                                  softWrap: false,
+                                ),
+                              ),
+                              ShadTableCell(
+                                child: Text(
+                                  (r.value?.toStringAsFixed(2) ?? "")
+                                      .toString(),
+                                  softWrap: false,
+                                ),
+                              ),
+                            ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            })
+          ],
+        ),
+      ),
+    );
+  }
+
   _getTopActionsBar() {
     final strings = getTranslations(context).obs;
 
@@ -1213,6 +1404,403 @@ class _FiltrationPageState extends State<FiltrationPage> {
         minute = dt.minute;
         second = dt.second;
         _getFiltrationData();
+      },
+      afterDataDisplayWidgets: [
+        ShadButton(
+          icon: Icon(LucideIcons.clipboardList),
+          onPressed: () => _openConsommationDialog(),
+          child: Text(strings.value.consommation),
+        )
+      ],
+      graphPressed: () {
+        showShadDialog(
+          context: context,
+          builder: (context) => ShadDialog(
+            constraints: BoxConstraints(
+              minWidth: min(context.width, 600),
+              maxWidth: min(context.width, 800),
+              minHeight: min(context.height, 600),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("",
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        )).marginAll(AppSizes.md),
+                AppLineChart(
+                  graphTypes: [
+                    GraphType(
+                      name: "Niveau",
+                      getGraphData: getNiveauGraphData,
+                      ySuffix: " M3",
+                    ),
+                    GraphType(
+                      name: "Niveau Eau Brute détaillé",
+                      getGraphData: (start, end, fetchType) =>
+                          getNiveauGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeEauBrute: true,
+                        includeEauFiltre: false,
+                        includeEauOsmosee: false,
+                        includeHytec: false,
+                        includeOsmotec: false,
+                        includeDoubleOsmose: false,
+                        detailEauBrute: true,
+                        detailEauFiltre: false,
+                        detailEauOsmosee: false,
+                        detailHytec: false,
+                        detailOsmotec: false,
+                      ),
+                      ySuffix: " M3",
+                    ),
+                    GraphType(
+                      name: "Niveau Eau Filtrée détaillé",
+                      getGraphData: (start, end, fetchType) =>
+                          getNiveauGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeEauBrute: false,
+                        includeEauFiltre: true,
+                        includeEauOsmosee: false,
+                        includeHytec: false,
+                        includeOsmotec: false,
+                        includeDoubleOsmose: false,
+                        detailEauBrute: false,
+                        detailEauFiltre: true,
+                        detailEauOsmosee: false,
+                        detailHytec: false,
+                        detailOsmotec: false,
+                      ),
+                      ySuffix: " M3",
+                    ),
+                    GraphType(
+                      name: "Niveau Eau Osmosée détaillé",
+                      getGraphData: (start, end, fetchType) =>
+                          getNiveauGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeEauBrute: false,
+                        includeEauFiltre: false,
+                        includeEauOsmosee: true,
+                        includeHytec: false,
+                        includeOsmotec: false,
+                        includeDoubleOsmose: false,
+                        detailEauBrute: false,
+                        detailEauFiltre: false,
+                        detailEauOsmosee: true,
+                        detailHytec: false,
+                        detailOsmotec: false,
+                      ),
+                      ySuffix: " M3",
+                    ),
+                    GraphType(
+                      name: "Niveau Hytec détaillé",
+                      getGraphData: (start, end, fetchType) =>
+                          getNiveauGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeEauBrute: false,
+                        includeEauFiltre: false,
+                        includeEauOsmosee: false,
+                        includeHytec: true,
+                        includeOsmotec: false,
+                        includeDoubleOsmose: false,
+                        detailEauBrute: false,
+                        detailEauFiltre: false,
+                        detailEauOsmosee: false,
+                        detailHytec: true,
+                        detailOsmotec: false,
+                      ),
+                      ySuffix: " M3",
+                    ),
+                    GraphType(
+                      name: "Niveau Osmotec détaillé",
+                      getGraphData: (start, end, fetchType) =>
+                          getNiveauGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeEauBrute: false,
+                        includeEauFiltre: false,
+                        includeEauOsmosee: false,
+                        includeHytec: false,
+                        includeOsmotec: true,
+                        includeDoubleOsmose: false,
+                        detailEauBrute: false,
+                        detailEauFiltre: false,
+                        detailEauOsmosee: false,
+                        detailHytec: false,
+                        detailOsmotec: true,
+                      ),
+                      ySuffix: " M3",
+                    ),
+                    GraphType(
+                      name: "Pression",
+                      getGraphData: getPressionGraphData,
+                      ySuffix: " Bars",
+                    ),
+                    GraphType(
+                      name: "Pression OS",
+                      getGraphData: (start, end, fetchType) =>
+                          getPressionGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeOS: true,
+                        includeUF: false,
+                      ),
+                      ySuffix: " Bars",
+                    ),
+                    GraphType(
+                      name: "Pression OSE",
+                      getGraphData: (start, end, fetchType) =>
+                          getPressionGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeOS: false,
+                        includeUF: false,
+                        includeOSE: true,
+                      ),
+                      ySuffix: " Bars",
+                    ),
+                    GraphType(
+                      name: "Pression Hytec",
+                      getGraphData: (start, end, fetchType) =>
+                          getPressionGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeOS: false,
+                        includeUF: false,
+                        includeHytec: true,
+                      ),
+                      ySuffix: " Bars",
+                    ),
+                    GraphType(
+                      name: "Pression Osmotec",
+                      getGraphData: (start, end, fetchType) =>
+                          getPressionGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeOS: false,
+                        includeUF: false,
+                        includeOsmotec: true,
+                      ),
+                      ySuffix: " Bars",
+                    ),
+                    GraphType(
+                      name: "Pression Utilité",
+                      getGraphData: (start, end, fetchType) =>
+                          getPressionGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeOS: false,
+                        includeUF: false,
+                        includeUtilite: true,
+                      ),
+                      ySuffix: " Bars",
+                    ),
+                    GraphType(
+                      name: "Pression UF",
+                      getGraphData: (start, end, fetchType) =>
+                          getPressionGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeOS: false,
+                        includeUF: true,
+                        includeOSE: false,
+                      ),
+                      ySuffix: " Bars",
+                    ),
+                    GraphType(
+                      name: "Débit",
+                      getGraphData: getDebitGraphData,
+                      ySuffix: " M3/H",
+                    ),
+                    GraphType(
+                      name: "Débit UF détaillé",
+                      getGraphData: (start, end, fetchType) =>
+                          getDebitGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeForage: false,
+                        includeUF: true,
+                        includeOS: false,
+                        detailUF: true,
+                      ),
+                      ySuffix: " M3/H",
+                    ),
+                    GraphType(
+                      name: "Débit OS détaillé",
+                      getGraphData: (start, end, fetchType) =>
+                          getDebitGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeForage: false,
+                        includeUF: false,
+                        includeOS: true,
+                        detailOS: true,
+                      ),
+                      ySuffix: " M3/H",
+                    ),
+                    GraphType(
+                      name: "Débit OS",
+                      getGraphData: (start, end, fetchType) =>
+                          getDebitGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeForage: false,
+                        includeUF: false,
+                        includeOS: false,
+                        includeHytec: true,
+                        includeOsmotec: true,
+                      ),
+                      ySuffix: " M3/H",
+                    ),
+                    GraphType(
+                      name: "Débit Hytec",
+                      getGraphData: (start, end, fetchType) =>
+                          getDebitGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeForage: true,
+                        includeUF: false,
+                        includeOS: false,
+                        detailForage: false,
+                        includeHytec: true,
+                        detailHytec: true,
+                      ),
+                      ySuffix: " M3/H",
+                    ),
+                    GraphType(
+                      name: "Débit Osmotec",
+                      getGraphData: (start, end, fetchType) =>
+                          getDebitGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeForage: false,
+                        includeUF: false,
+                        includeOS: false,
+                        detailForage: false,
+                        includeOsmotec: true,
+                        detailOsmotec: true,
+                      ),
+                      ySuffix: " M3/H",
+                    ),
+                    GraphType(
+                      name: "Débit Forage détaillé",
+                      getGraphData: (start, end, fetchType) =>
+                          getDebitGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeForage: true,
+                        includeUF: false,
+                        includeOS: false,
+                        detailForage: true,
+                      ),
+                      ySuffix: " M3/H",
+                    ),
+                    GraphType(
+                      name: "Volume",
+                      getGraphData: getVolumeGraphData,
+                      ySuffix: " M3",
+                    ),
+                    GraphType(
+                      name: "Volume UF détaillé",
+                      getGraphData: (start, end, fetchType) =>
+                          getVolumeGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeContreLavage: false,
+                        includeForage: false,
+                        includeUF: true,
+                        includeOS: false,
+                        detailUF: true,
+                      ),
+                      ySuffix: " M3",
+                    ),
+                    GraphType(
+                      name: "Volume OS détaillé",
+                      getGraphData: (start, end, fetchType) =>
+                          getVolumeGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeContreLavage: false,
+                        includeForage: false,
+                        includeUF: false,
+                        includeOS: true,
+                        detailOS: true,
+                      ),
+                      ySuffix: " M3",
+                    ),
+                    GraphType(
+                      name: "Conductivité",
+                      getGraphData: getConductiviteGraphData,
+                      ySuffix: " µS",
+                    ),
+                    GraphType(
+                      name: "Conductivité OS",
+                      getGraphData: (
+                        start,
+                        end,
+                        fetchType,
+                      ) =>
+                          getConductiviteGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeOS: true,
+                        includeUF: false,
+                      ),
+                      ySuffix: " µS",
+                    ),
+                    GraphType(
+                      name: "Conductivité UF",
+                      getGraphData: (
+                        start,
+                        end,
+                        fetchType,
+                      ) =>
+                          getConductiviteGraphData(
+                        start,
+                        end,
+                        fetchType,
+                        includeOS: false,
+                        includeUF: true,
+                      ),
+                      ySuffix: " µS",
+                    ),
+                    GraphType(
+                      name: "Consommation",
+                      supportsFetchType: false,
+                      getGraphData: getConsommationGraphData,
+                      ySuffix: " M3",
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
       },
       listPressed: () {
         logger.e("list pressed");
@@ -1381,6 +1969,921 @@ class _FiltrationPageState extends State<FiltrationPage> {
         );
       },
     );
+  }
+
+  Future<Map> getConsommationGraphData(
+      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
+    final strings = getTranslations(getContext);
+    Map data = {
+      "forage": [],
+      "eau_brute": [],
+      "hytec": [],
+      "osmotec": [],
+      "osmosee": [],
+      "contre_lavage": [],
+    };
+
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getFiltrationConsommationBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+    );
+    for (var e in res.consommations) {
+      if (data.containsKey("forage")) {
+        data["forage"].add({
+          "x": e.fromDate.millisecondsSinceEpoch,
+          "y": e.consommation.forage ?? 0,
+        });
+      }
+      if (data.containsKey("eau_brute")) {
+        data["eau_brute"].add({
+          "x": e.fromDate.millisecondsSinceEpoch,
+          "y": e.consommation.eauBrute ?? 0,
+        });
+      }
+      if (data.containsKey("hytec")) {
+        data["hytec"].add({
+          "x": e.fromDate.millisecondsSinceEpoch,
+          "y": e.consommation.hytec ?? 0,
+        });
+      }
+      if (data.containsKey("osmotec")) {
+        data["osmotec"].add({
+          "x": e.fromDate.millisecondsSinceEpoch,
+          "y": e.consommation.osmotec ?? 0,
+        });
+      }
+      if (data.containsKey("osmosee")) {
+        data["osmosee"].add({
+          "x": e.fromDate.millisecondsSinceEpoch,
+          "y": e.consommation.osmosee ?? 0,
+        });
+      }
+      if (data.containsKey("contre_lavage")) {
+        data["contre_lavage"].add({
+          "x": e.fromDate.millisecondsSinceEpoch,
+          "y": e.consommation.contreLavage ?? 0,
+        });
+      }
+    }
+    return data;
+  }
+
+  Future<Map> getNiveauGraphData(
+    DateTime startDate,
+    DateTime endDate,
+    FetchType? fetchType, {
+    bool includeEauBrute = true,
+    bool includeEauFiltre = true,
+    bool includeEauOsmosee = true,
+    bool includeHytec = false,
+    bool includeOsmotec = false,
+    bool includeDoubleOsmose = true,
+    bool detailEauBrute = false,
+    bool detailEauFiltre = false,
+    bool detailEauOsmosee = false,
+    bool detailHytec = false,
+    bool detailOsmotec = false,
+  }) async {
+    final strings = getTranslations(getContext);
+    Map data = {};
+    if (includeEauBrute) {
+      if (detailEauBrute) {
+        data["F1"] = [];
+        data["F2"] = [];
+      } else {
+        data["Eau Brute"] = [];
+      }
+    }
+    if (includeEauFiltre) {
+      if (detailEauFiltre) {
+        data["UF1"] = [];
+        data["UF2"] = [];
+      } else {
+        data["Eau Filtrée"] = [];
+      }
+    }
+    if (includeEauOsmosee) {
+      if (detailEauOsmosee) {
+        data["OS1"] = [];
+        data["OS2"] = [];
+        data["OS3"] = [];
+        data["OS4"] = [];
+        data["OS5"] = [];
+        data["OS6"] = [];
+      } else {
+        data["Eau Osmosée"] = [];
+      }
+    }
+    if (includeHytec) {
+      if (detailHytec) {
+        data["OS1"] = [];
+        data["OS2"] = [];
+        data["OS3"] = [];
+        data["OS4"] = [];
+      } else {
+        data["Hytec"] = [];
+      }
+    }
+    if (includeOsmotec) {
+      if (detailOsmotec) {
+        data["OS5"] = [];
+        data["OS6"] = [];
+      } else {
+        data["Osmotec"] = [];
+      }
+    }
+    if (includeDoubleOsmose) {
+      data["Double Osmose Utilité"] = [];
+    }
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getNiveauxBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (var e in res.data) {
+      if (includeEauBrute) {
+        if (detailEauBrute) {
+          data["F1"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivF1 ?? 0,
+          });
+          data["F2"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivF2 ?? 0,
+          });
+        } else {
+          data["Eau Brute"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": (e.nivF1 ?? 0) + (e.nivF2 ?? 0),
+          });
+        }
+      }
+      if (includeEauFiltre) {
+        if (detailEauFiltre) {
+          data["UF1"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivUf1 ?? 0,
+          });
+          data["UF2"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivUf2 ?? 0,
+          });
+        } else {
+          data["Eau Filtrée"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": (e.nivUf1 ?? 0) + (e.nivUf2 ?? 0),
+          });
+        }
+      }
+      if (includeEauOsmosee) {
+        if (detailEauOsmosee) {
+          data["OS1"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs1 ?? 0,
+          });
+          data["OS2"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs2 ?? 0,
+          });
+          data["OS3"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs3 ?? 0,
+          });
+          data["OS4"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs4 ?? 0,
+          });
+          data["OS5"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs5 ?? 0,
+          });
+          data["OS6"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs6 ?? 0,
+          });
+        } else {
+          data["Eau Osmosée"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": (e.nivOs1 ?? 0) +
+                (e.nivOs2 ?? 0) +
+                (e.nivOs3 ?? 0) +
+                (e.nivOs4 ?? 0) +
+                ((e.nivOs5 ?? 0) + (e.nivOs6 ?? 0)) / 2 * 7,
+          });
+        }
+      }
+      if (includeHytec) {
+        if (detailHytec) {
+          data["OS1"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs1 ?? 0,
+          });
+          data["OS2"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs2 ?? 0,
+          });
+          data["OS3"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs3 ?? 0,
+          });
+          data["OS4"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs4 ?? 0,
+          });
+        } else {
+          data["Hytec"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": (e.nivOs1 ?? 0) +
+                (e.nivOs2 ?? 0) +
+                (e.nivOs3 ?? 0) +
+                (e.nivOs4 ?? 0),
+          });
+        }
+      }
+      if (includeOsmotec) {
+        if (detailOsmotec) {
+          data["OS5"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs5 ?? 0,
+          });
+          data["OS6"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": e.nivOs6 ?? 0,
+          });
+        } else {
+          data["Osmotec"].add({
+            "x": e.date.millisecondsSinceEpoch,
+            "y": (e.nivOs5 ?? 0) + (e.nivOs6 ?? 0),
+          });
+        }
+      }
+      if (includeDoubleOsmose) {
+        data["Double Osmose Utilité"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.nivOs7 ?? 0,
+        });
+      }
+    }
+    return data;
+  }
+
+  Future<Map> getVolumeGraphData(
+    DateTime startDate,
+    DateTime endDate,
+    FetchType? fetchType, {
+    bool includeContreLavage = true,
+    bool includeForage = true,
+    bool includeUF = true,
+    bool includeOS = true,
+    bool detailUF = false,
+    bool detailOS = false,
+  }) async {
+    final strings = getTranslations(getContext);
+    Map data = {};
+    if (includeContreLavage) {
+      data["contre lavage"] = [];
+    }
+    if (includeForage) {
+      data["forage"] = [];
+    }
+    if (includeUF) {
+      if (detailUF) {
+        data["UF1"] = [];
+        data["UF2"] = [];
+        data["UF3"] = [];
+        data["UF4"] = [];
+        data["UF5"] = [];
+        data["UF6"] = [];
+      } else {
+        data["UF"] = [];
+      }
+    }
+    if (includeOS) {
+      if (detailOS) {
+        data["OS1"] = [];
+        data["OS2"] = [];
+        data["OS3"] = [];
+        data["OS4"] = [];
+        data["OS5"] = [];
+        data["OS6"] = [];
+        data["OS7"] = [];
+        data["OS8"] = [];
+        data["OS9"] = [];
+      } else {
+        data["OS"] = [];
+      }
+    }
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getVolumesBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (var e in res.data) {
+      if (data.containsKey("contre lavage")) {
+        data["contre lavage"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volConLav ?? 0,
+        });
+      }
+      if (data.containsKey("forage")) {
+        data["forage"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volFor ?? 0,
+        });
+      }
+      if (data.containsKey("UF1")) {
+        data["UF1"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volUf1 ?? 0,
+        });
+      }
+      if (data.containsKey("UF2")) {
+        data["UF2"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volUf2 ?? 0,
+        });
+      }
+      if (data.containsKey("UF3")) {
+        data["UF3"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volUf3 ?? 0,
+        });
+      }
+      if (data.containsKey("UF4")) {
+        data["UF4"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volUf4 ?? 0,
+        });
+      }
+      if (data.containsKey("UF5")) {
+        data["UF5"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volUf5 ?? 0,
+        });
+      }
+      if (data.containsKey("UF6")) {
+        data["UF6"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volUf6 ?? 0,
+        });
+      }
+      if (data.containsKey("UF")) {
+        data["UF"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": (e.volUf1 ?? 0) +
+              (e.volUf2 ?? 0) +
+              (e.volUf3 ?? 0) +
+              (e.volUf4 ?? 0) +
+              (e.volUf5 ?? 0) +
+              (e.volUf6 ?? 0),
+        });
+      }
+      if (data.containsKey("OS1")) {
+        data["OS1"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volOs1 ?? 0,
+        });
+      }
+      if (data.containsKey("OS2")) {
+        data["OS2"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volOs2 ?? 0,
+        });
+      }
+      if (data.containsKey("OS3")) {
+        data["OS3"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volOs3 ?? 0,
+        });
+      }
+      if (data.containsKey("OS4")) {
+        data["OS4"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volOs4 ?? 0,
+        });
+      }
+      if (data.containsKey("OS5")) {
+        data["OS5"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volOs5 ?? 0,
+        });
+      }
+      if (data.containsKey("OS6")) {
+        data["OS6"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volOs6 ?? 0,
+        });
+      }
+      if (data.containsKey("OS7")) {
+        data["OS7"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volOs7 ?? 0,
+        });
+      }
+      if (data.containsKey("OS8")) {
+        data["OS8"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volOs8 ?? 0,
+        });
+      }
+      if (data.containsKey("OS9")) {
+        data["OS9"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.volOs9 ?? 0,
+        });
+      }
+      if (data.containsKey("OS")) {
+        data["OS"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": (e.volOs1 ?? 0) +
+              (e.volOs2 ?? 0) +
+              (e.volOs3 ?? 0) +
+              (e.volOs4 ?? 0) +
+              (e.volOs5 ?? 0) +
+              (e.volOs6 ?? 0),
+        });
+      }
+    }
+    return data;
+  }
+
+  Future<Map> getPressionGraphData(
+    DateTime startDate,
+    DateTime endDate,
+    FetchType? fetchType, {
+    bool includeOS = true,
+    bool includeUF = true,
+    bool includeOSE = false,
+    bool includeHytec = false,
+    bool includeOsmotec = false,
+    bool includeUtilite = false,
+  }) async {
+    final strings = getTranslations(getContext);
+    Map data = {};
+
+    if (includeOS) {
+      data["os1"] = [];
+      data["os2"] = [];
+      data["os3"] = [];
+      data["os4"] = [];
+      data["os5"] = [];
+      data["os6"] = [];
+      data["os8"] = [];
+      data["os9"] = [];
+      data["os7"] = [];
+      data["os71"] = [];
+      data["conc"] = [];
+      data["ose1"] = [];
+      data["ose2"] = [];
+    }
+
+    if (includeHytec) {
+      data["os1"] = [];
+      data["os2"] = [];
+      data["os3"] = [];
+    }
+    if (includeOsmotec) {
+      data["os4"] = [];
+      data["os5"] = [];
+      data["os6"] = [];
+      data["os8"] = [];
+      data["os9"] = [];
+    }
+    if (includeUtilite) {
+      data["os7"] = [];
+      data["os71"] = [];
+    }
+    if (includeOSE) {
+      data["conc"] = [];
+      data["ose1"] = [];
+      data["ose2"] = [];
+    }
+    if (includeUF) {
+      data["uf"] = [];
+      data["uf4"] = [];
+      data["uf6"] = [];
+    }
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getPresCondsBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (var e in res.data) {
+      if (data.containsKey("conc")) {
+        data["conc"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pConc ?? 0,
+        });
+      }
+      if (data.containsKey("os1")) {
+        data["os1"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOs1 ?? 0,
+        });
+      }
+      if (data.containsKey("os2")) {
+        data["os2"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOs2 ?? 0,
+        });
+      }
+      if (data.containsKey("os3")) {
+        data["os3"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOs3 ?? 0,
+        });
+      }
+      if (data.containsKey("os4")) {
+        data["os4"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOs4 ?? 0,
+        });
+      }
+      if (data.containsKey("os5")) {
+        data["os5"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOs5 ?? 0,
+        });
+      }
+      if (data.containsKey("os6")) {
+        data["os6"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOs6 ?? 0,
+        });
+      }
+      if (data.containsKey("os7")) {
+        data["os7"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOs7 ?? 0,
+        });
+      }
+      if (data.containsKey("os8")) {
+        data["os8"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOs8 ?? 0,
+        });
+      }
+      if (data.containsKey("os9")) {
+        data["os9"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOs9 ?? 0,
+        });
+      }
+      if (data.containsKey("os71")) {
+        data["os71"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOs71 ?? 0,
+        });
+      }
+      if (data.containsKey("ose1")) {
+        data["ose1"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOse1 ?? 0,
+        });
+      }
+      if (data.containsKey("ose2")) {
+        data["ose2"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pOse2 ?? 0,
+        });
+      }
+
+      if (data.containsKey("uf")) {
+        data["uf"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pUf ?? 0,
+        });
+      }
+      if (data.containsKey("uf4")) {
+        data["uf4"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pUf4 ?? 0,
+        });
+      }
+      if (data.containsKey("uf6")) {
+        data["uf6"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.pUf6 ?? 0,
+        });
+      }
+    }
+    return data;
+  }
+
+  Future<Map> getDebitGraphData(
+    DateTime startDate,
+    DateTime endDate,
+    FetchType? fetchType, {
+    bool includeForage = true,
+    bool includeUF = true,
+    bool includeOS = true,
+    bool includeHytec = false,
+    bool includeOsmotec = false,
+    bool detailForage = false,
+    bool detailUF = false,
+    bool detailOS = false,
+    bool detailHytec = false,
+    bool detailOsmotec = false,
+  }) async {
+    final strings = getTranslations(getContext);
+    Map data = {};
+    if (includeForage) {
+      if (detailForage) {
+        data["F1"] = [];
+        data["F2"] = [];
+      } else {
+        data["Forage"] = [];
+      }
+    }
+    if (includeUF) {
+      if (detailUF) {
+        data["UF1"] = [];
+        data["UF2"] = [];
+        data["UF3"] = [];
+        data["UF4"] = [];
+        data["UF5"] = [];
+        data["UF6"] = [];
+      } else {
+        data["UF"] = [];
+      }
+    }
+    if (includeOS) {
+      if (detailOS) {
+        data["OS1"] = [];
+        data["OS2"] = [];
+        data["OS3"] = [];
+        data["OS4"] = [];
+        data["OS5"] = [];
+        data["OS6"] = [];
+        data["OS7"] = [];
+        data["OS8"] = [];
+        data["OS9"] = [];
+      } else {
+        data["OS"] = [];
+      }
+    }
+    if (includeHytec) {
+      if (detailHytec) {
+        data["OS1"] = [];
+        data["OS2"] = [];
+        data["OS3"] = [];
+        data["OS4"] = [];
+      } else {
+        data["Hytec"] = [];
+      }
+    }
+    if (includeOsmotec) {
+      if (detailOsmotec) {
+        data["OS5"] = [];
+        data["OS6"] = [];
+      } else {
+        data["Osmotec"] = [];
+      }
+    }
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getDebitsBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (var e in res.data) {
+      if (data.containsKey("F1")) {
+        data["F1"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dF1 ?? 0,
+        });
+      }
+      if (data.containsKey("F2")) {
+        data["F2"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dF2 ?? 0,
+        });
+      }
+      if (data.containsKey("Forage")) {
+        data["Forage"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": (e.dF1 ?? 0) + (e.dF2 ?? 0),
+        });
+      }
+      if (data.containsKey("UF1")) {
+        data["UF1"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dUf1 ?? 0,
+        });
+      }
+      if (data.containsKey("UF2")) {
+        data["UF2"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dUf2 ?? 0,
+        });
+      }
+      if (data.containsKey("UF3")) {
+        data["UF3"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dUf3 ?? 0,
+        });
+      }
+      if (data.containsKey("UF4")) {
+        data["UF4"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dUf4 ?? 0,
+        });
+      }
+      if (data.containsKey("UF5")) {
+        data["UF5"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dUf5 ?? 0,
+        });
+      }
+      if (data.containsKey("UF6")) {
+        data["UF6"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dUf6 ?? 0,
+        });
+      }
+      if (data.containsKey("UF")) {
+        data["UF"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": (e.dUf1 ?? 0) +
+              (e.dUf2 ?? 0) +
+              (e.dUf3 ?? 0) +
+              (e.dUf4 ?? 0) +
+              (e.dUf5 ?? 0) +
+              (e.dUf6 ?? 0),
+        });
+      }
+      if (data.containsKey("OS1")) {
+        data["OS1"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dOs1 ?? 0,
+        });
+      }
+      if (data.containsKey("OS2")) {
+        data["OS2"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dOs2 ?? 0,
+        });
+      }
+      if (data.containsKey("OS3")) {
+        data["OS3"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dOs3 ?? 0,
+        });
+      }
+      if (data.containsKey("OS4")) {
+        data["OS4"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dOs4 ?? 0,
+        });
+      }
+      if (data.containsKey("OS5")) {
+        data["OS5"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dOs5 ?? 0,
+        });
+      }
+      if (data.containsKey("OS6")) {
+        data["OS6"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dOs6 ?? 0,
+        });
+      }
+      if (data.containsKey("OS7")) {
+        data["OS7"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dOs7 ?? 0,
+        });
+      }
+      if (data.containsKey("OS8")) {
+        data["OS8"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dOs8 ?? 0,
+        });
+      }
+      if (data.containsKey("OS9")) {
+        data["OS9"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.dOs9 ?? 0,
+        });
+      }
+      if (data.containsKey("Hytec")) {
+        data["Hytec"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": (e.dOs1 ?? 0) + (e.dOs2 ?? 0) + (e.dOs3 ?? 0) + (e.dOs4 ?? 0),
+        });
+      }
+      if (data.containsKey("Osmotec")) {
+        data["Osmotec"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": (e.dOs5 ?? 0) + (e.dOs6 ?? 0),
+        });
+      }
+      if (data.containsKey("OS")) {
+        data["OS"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": (e.dOs1 ?? 0) +
+              (e.dOs2 ?? 0) +
+              (e.dOs3 ?? 0) +
+              (e.dOs4 ?? 0) +
+              (e.dOs5 ?? 0) +
+              (e.dOs6 ?? 0),
+        });
+      }
+    }
+    return data;
+  }
+
+  Future<Map> getConductiviteGraphData(
+    DateTime startDate,
+    DateTime endDate,
+    FetchType? fetchType, {
+    bool includeOS = true,
+    bool includeUF = true,
+  }) async {
+    final strings = getTranslations(getContext);
+
+    Map data = {};
+    if (includeOS) {
+      data["OS1"] = [];
+      data["OS2"] = [];
+      data["OS3"] = [];
+      data["OS4"] = [];
+      data["OS5"] = [];
+      data["OS6"] = [];
+      data["OS7"] = [];
+      data["OS8"] = [];
+      data["OS9"] = [];
+      data["OSE"] = [];
+    }
+    if (includeUF) {
+      data["UF"] = [];
+    }
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getPresCondsBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (var e in res.data) {
+      if (data.containsKey("OS1")) {
+        data["OS1"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.cOs1 ?? 0,
+        });
+        data["OS2"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.cOs2 ?? 0,
+        });
+        data["OS3"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.cOs3 ?? 0,
+        });
+        data["OS4"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.cOs4 ?? 0,
+        });
+        data["OS5"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.cOs5 ?? 0,
+        });
+        data["OS6"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.cOs6 ?? 0,
+        });
+        data["OS7"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.cOs7 ?? 0,
+        });
+        data["OS8"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.cOs8 ?? 0,
+        });
+        data["OS9"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.cOs9 ?? 0,
+        });
+        data["OSE"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.cOse ?? 0,
+        });
+      }
+      if (data.containsKey("UF")) {
+        data["UF"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.cUf ?? 0,
+        });
+      }
+    }
+    return data;
   }
 
   void showDataDialog(DataRepresentation<dynamic> d) {

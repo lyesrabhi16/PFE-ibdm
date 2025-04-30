@@ -22,4 +22,21 @@ class VolumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Volume
         fields = "__all__"
-        
+
+class FiltrationConsommationSerializer(serializers.Serializer):
+    forage = serializers.FloatField()
+    eau_brute = serializers.FloatField()
+    hytec = serializers.FloatField()
+    osmotec = serializers.FloatField()
+    osmosee = serializers.FloatField()
+    contre_lavage = serializers.FloatField()
+class FiltrationMetaConsommationSerializer(serializers.Serializer):
+    from_date = serializers.DateTimeField()
+    to_date = serializers.DateTimeField()
+    consommation = FiltrationConsommationSerializer()
+
+class FiltrationMultiMetaConsommationsSerializer(serializers.Serializer):
+    from_date = serializers.DateTimeField()
+    to_date = serializers.DateTimeField()
+    consommations = FiltrationMetaConsommationSerializer(many=True)
+    

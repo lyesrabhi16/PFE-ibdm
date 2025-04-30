@@ -844,5 +844,9 @@
     "value": "Value",
     "visualize" : "Visualize",
     "week": "Week",
-    "precision": "Precision"
+    "precision": "Precision",
+    "type": "Type",
+    "consommationDescription": "show the consommation in a range of dates.",
+    "previousDay": "Previous Day",
+    "sinceFirstOfMonth": "Since First of Month"
 }
