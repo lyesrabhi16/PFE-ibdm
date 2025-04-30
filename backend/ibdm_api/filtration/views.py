@@ -718,8 +718,8 @@ def getFiltrationConsommation(request):
 
     record = get_filtration_consommation(from_date, to_date)
     if (record):
-        print("record", record)
-        print("forage", record["consommation"]["forage"])
+        #print("record", record)
+        #print("forage", record["consommation"]["forage"])
         return JsonResponse(FiltrationMetaConsommationSerializer(record).data)
     else:
         return JsonResponse({}, status=404)
@@ -796,8 +796,8 @@ def getFiltrationConsommationBetweenDates(request):
             record["consommations"].append(get_filtration_consommation(d, d))
             d += timedelta(days=1)
         record["consommations"] = sorted(record["consommations"], key=lambda x: x["from_date"], reverse=True)
-        print("record", record)
-        print("forage", record["consommations"][0]["consommation"]["forage"])
+        #print("record", record)
+        #print("forage", record["consommations"][0]["consommation"]["forage"])
         return JsonResponse(FiltrationMultiMetaConsommationsSerializer(record).data)
     else:
         return JsonResponse({

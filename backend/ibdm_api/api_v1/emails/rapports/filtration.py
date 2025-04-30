@@ -21,7 +21,7 @@ def loadNiveau():
     global niveau
     niveau = get_midnight_value(Niveau)
 
-def loadVolume(date=None):
+def loadVolume():
     global volume
     volume = get_midnight_value(Volume)
         

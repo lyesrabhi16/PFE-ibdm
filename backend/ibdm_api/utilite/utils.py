@@ -3,8 +3,8 @@ from api_v1.utils import get_value_at
 from .serializers import Co2IfruitSerializer
 
 def get_co2_consommation(from_date, to_date):
-    print("from_date", from_date)
-    print("to_date", to_date)
+    #print("from_date", from_date)
+    #print("to_date", to_date)
     from_record = Co2IfruitSerializer(get_value_at(Co2Ifruit, from_date)).data
     to_record = Co2IfruitSerializer(get_value_at(Co2Ifruit, to_date)).data
     record = {}

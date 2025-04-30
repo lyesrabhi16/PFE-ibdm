@@ -2958,10 +2958,10 @@ class _FiltrationPageState extends State<FiltrationPage> {
     final Volume? _volume = linkedData[date.toIso8601String()]?.volume;
     final PresCond? _presCond = linkedData[date.toIso8601String()]?.presCond;
 
-    print("linkedData niveau: $_niveau");
-    print("linkedData debit: $_debit");
-    print("linkedData volume: $_volume");
-    print("linkedData presCond: $_presCond");
+    printMessage("linkedData niveau: $_niveau");
+    printMessage("linkedData debit: $_debit");
+    printMessage("linkedData volume: $_volume");
+    printMessage("linkedData presCond: $_presCond");
 
     if (_niveau == null) {
       logger.e("Niveau is null");
