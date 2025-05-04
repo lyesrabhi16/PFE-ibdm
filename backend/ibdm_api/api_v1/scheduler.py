@@ -1,4 +1,5 @@
-from apscheduler.schedulers.twisted import TwistedScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
+
 from api_v1.broadcasts.filtration_broadcast import broadcast_filtration
 from api_v1.broadcasts.sucre_broadcast import broadcast_sucre
 from api_v1.broadcasts.sent_emails_broadcast import broadcast_sent_emails
@@ -7,7 +8,7 @@ from api_v1.emails.emails_scheduler import email_scheduler
 from api_v1.monitors.system_monitor import system_monitor
 from api_v1.broadcasts.status_broadcast import broadcast_status
 
-scheduler = TwistedScheduler()
+scheduler = BackgroundScheduler()
 
 
 scheduler.add_job(

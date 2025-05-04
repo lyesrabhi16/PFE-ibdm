@@ -672,9 +672,9 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
     }
     api ??= await ApiClientInstance.getApiClient();
     try {
-      //await _loadConfig();
-      print("loading config");
-      config.value = ServerConfig.fromJson({
+      await _loadConfig();
+      printMessage("loading config");
+      /* config.value = ServerConfig.fromJson({
         "VERSION": "1.0.2",
         "ENV_MODE": "production",
         "DEBUG": false,
@@ -748,10 +748,10 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
             "EMAIL_OF_SENDER": "Industrie@ifri-dz.com"
           }
         }
-      });
-      print("config loaded : ${config.value}");
+      }); */
+      printMessage("config loaded : ${config.value}");
     } catch (e) {
-      print("error loading config : $e");
+      printMessage("error loading config : $e");
     } finally {
       loaded.value = true;
     }
