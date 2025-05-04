@@ -827,5 +827,20 @@
     "invalidEmailOrPassword": "Email or Password incorrect",
     "userWithThisEmailAlreadyExists": "A User with this email already exists",
     "list": "List",
-    "graph": "Graph"
+    "graph": "Graph",
+    "errorConnectingBroadcast": "Error connecting to broadcast, live data will not work",
+    "date": "Date",
+    "sucre": "Sucre",
+    "utilite": "Utilite",
+    "co2": "CO2",
+    "niveau": "Niveau",
+	"volume": "Volume",
+	"debit": "Debit",
+	"presCond": "Pres Cond",
+    "failedToGetNiveauData": "Failed to get niveau data",
+    "failedToGetVolumeData": "Failed to get volume data",
+    "failedToGetDebitData": "Failed to get debit data",
+    "failedToGetPresCondData": "Failed to get pres cond data",
+    "value": "Value",
+    "visualize" : "Visualize"
 }

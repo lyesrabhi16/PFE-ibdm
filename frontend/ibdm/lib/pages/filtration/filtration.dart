@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
@@ -8,6 +10,7 @@ import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/cuve.dart';
 import 'package:ibdm/common/widgets/divider_with_text.dart';
 import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
+import 'package:ibdm/common/widgets/multiple_data_lists.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/models/debit.dart';
@@ -19,6 +22,7 @@ import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/helpers/data_representation.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
@@ -90,6 +94,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
   Debit? debit;
   Volume? volume;
   PresCond? presCond;
+
+  final Map<String, LinkedFiltrationData> linkedData = {};
 
   double F1_value = 0.0;
   double F2_value = 0.0;
@@ -1192,6 +1198,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
   }
 
   _getTopActionsBar() {
+    final strings = getTranslations(context).obs;
+
     return LiveDataTopActionBar(
       isLive: isLive,
       startDate: feedMetaData!.startDate,
@@ -1206,7 +1214,288 @@ class _FiltrationPageState extends State<FiltrationPage> {
         second = dt.second;
         _getFiltrationData();
       },
+      listPressed: () {
+        logger.e("list pressed");
+        showShadDialog(
+          variant: ShadDialogVariant.alert,
+          context: Get.context!,
+          builder: (context) {
+            logger.e("buliding shad dialog");
+            return ShadDialog(
+              constraints: BoxConstraints(
+                minWidth: min(context.width, 600),
+                maxWidth: min(context.width, 800),
+              ),
+              child: MultipleDataLists(
+                tabs: [
+                  DataListTab(
+                    name: strings.value.niveau,
+                    onTap: showDataDialog,
+                    getData: (start, end, page) async {
+                      final api = await ApiClientInstance.getApiClient();
+                      final res = await api.getNiveauxBetweenDates(
+                        startDate: start.toIso8601String(),
+                        endDate: end.toIso8601String(),
+                        page: page,
+                        perPage: 100,
+                      );
+                      final List<DataRepresentation> list = [];
+                      for (var s in res.data) {
+                        list.add(DataRepresentation(
+                            name: strings.value.date,
+                            code: "date",
+                            source: s.toJson(),
+                            transform: (dateString) {
+                              final date = DateTime.parse(dateString);
+                              return "${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year.toString().padLeft(2, "0")}   ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}:${date.second.toString().padLeft(2, "0")}.${date.millisecond}";
+                            }));
+
+                        if (linkedData.containsKey(s.date.toIso8601String())) {
+                          linkedData[s.date.toIso8601String()]!.niveau = s;
+                        } else {
+                          linkedData[s.date.toIso8601String()] =
+                              LinkedFiltrationData(
+                            dateTime: s.date,
+                            niveau: s,
+                          );
+                        }
+                      }
+                      final json_data = res.toJson();
+                      json_data["data"] = list;
+                      return json_data;
+                    },
+                  ),
+                  DataListTab(
+                    name: strings.value.volume,
+                    onTap: showDataDialog,
+                    getData: (start, end, page) async {
+                      final api = await ApiClientInstance.getApiClient();
+                      final res = await api.getVolumesBetweenDates(
+                        startDate: start.toIso8601String(),
+                        endDate: end.toIso8601String(),
+                        page: page,
+                        perPage: 100,
+                      );
+                      final List<DataRepresentation> list = [];
+                      for (var s in res.data) {
+                        list.add(DataRepresentation(
+                            name: strings.value.date,
+                            code: "date",
+                            source: s.toJson(),
+                            transform: (dateString) {
+                              final date = DateTime.parse(dateString);
+                              return "${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year.toString().padLeft(2, "0")}   ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}:${date.second.toString().padLeft(2, "0")}.${date.millisecond}";
+                            }));
+
+                        if (linkedData.containsKey(s.date.toIso8601String())) {
+                          linkedData[s.date.toIso8601String()]!.volume = s;
+                        } else {
+                          linkedData[s.date.toIso8601String()] =
+                              LinkedFiltrationData(
+                            dateTime: s.date,
+                            volume: s,
+                          );
+                        }
+                      }
+                      final json_data = res.toJson();
+                      json_data["data"] = list;
+                      return json_data;
+                    },
+                  ),
+                  DataListTab(
+                    name: strings.value.debit,
+                    onTap: showDataDialog,
+                    getData: (start, end, page) async {
+                      final api = await ApiClientInstance.getApiClient();
+                      final res = await api.getDebitsBetweenDates(
+                        startDate: start.toIso8601String(),
+                        endDate: end.toIso8601String(),
+                        page: page,
+                        perPage: 100,
+                      );
+                      final List<DataRepresentation> list = [];
+                      for (var s in res.data) {
+                        list.add(DataRepresentation(
+                            name: strings.value.date,
+                            code: "date",
+                            source: s.toJson(),
+                            transform: (dateString) {
+                              final date = DateTime.parse(dateString);
+                              return "${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year.toString().padLeft(2, "0")}   ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}:${date.second.toString().padLeft(2, "0")}.${date.millisecond}";
+                            }));
+                        if (linkedData.containsKey(s.date.toIso8601String())) {
+                          linkedData[s.date.toIso8601String()]!.debit = s;
+                        } else {
+                          linkedData[s.date.toIso8601String()] =
+                              LinkedFiltrationData(
+                            dateTime: s.date,
+                            debit: s,
+                          );
+                        }
+                      }
+                      final json_data = res.toJson();
+                      json_data["data"] = list;
+                      return json_data;
+                    },
+                  ),
+                  DataListTab(
+                    name: strings.value.presCond,
+                    onTap: showDataDialog,
+                    getData: (start, end, page) async {
+                      final api = await ApiClientInstance.getApiClient();
+                      final res = await api.getPresCondsBetweenDates(
+                        startDate: start.toIso8601String(),
+                        endDate: end.toIso8601String(),
+                        page: page,
+                        perPage: 100,
+                      );
+                      final List<DataRepresentation> list = [];
+                      for (var s in res.data) {
+                        list.add(DataRepresentation(
+                            name: strings.value.date,
+                            code: "date",
+                            source: s.toJson(),
+                            transform: (dateString) {
+                              final date = DateTime.parse(dateString);
+                              return "${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year.toString().padLeft(2, "0")}   ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}:${date.second.toString().padLeft(2, "0")}.${date.millisecond}";
+                            }));
+                        if (linkedData.containsKey(s.date.toIso8601String())) {
+                          linkedData[s.date.toIso8601String()]!.presCond = s;
+                        } else {
+                          linkedData[s.date.toIso8601String()] =
+                              LinkedFiltrationData(
+                            dateTime: s.date,
+                            presCond: s,
+                          );
+                        }
+                      }
+                      final json_data = res.toJson();
+                      json_data["data"] = list;
+                      return json_data;
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
+  }
+
+  void showDataDialog(DataRepresentation<dynamic> d) {
+    final strings = getTranslations(context);
+    showShadDialog(
+      context: context,
+      builder: (context) {
+        return ShadDialog(
+            constraints: BoxConstraints(
+              minWidth: min(context.width, 800),
+              maxWidth: min(context.width, 800),
+              minHeight: 400,
+              maxHeight: 600,
+            ),
+            actions: [
+              ShadButton.ghost(
+                child: Text(strings.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              ShadButton(
+                child: Text(strings.visualize),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onTapListItem(d);
+                },
+              ),
+            ],
+            child: ShadTable.list(
+                columnSpanExtent: (i) =>
+                    FixedTableSpanExtent(min(context.width, 400)),
+                header: [
+                  ShadTableCell.header(
+                      child: Text(
+                    strings.name,
+                  )),
+                  ShadTableCell.header(
+                      child: Text(
+                    strings.value,
+                  )),
+                ],
+                children: [
+                  for (var e in d.source!.entries)
+                    [
+                      ShadTableCell(
+                        child: Text(
+                          e.key.toUpperCase(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      ShadTableCell(
+                        child: Text(
+                          e.value.toString(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      )
+                    ]
+                ]));
+      },
+    );
+  }
+
+  void onTapListItem(DataRepresentation<dynamic> d) {
+    final strings = getTranslations(context).obs;
+
+    logger.e("showing before: $year $month $day $hour $minute $second");
+    final date = DateTime.parse(d.source!["date"]);
+
+    final Niveau? _niveau = linkedData[date.toIso8601String()]?.niveau;
+    final Debit? _debit = linkedData[date.toIso8601String()]?.debit;
+    final Volume? _volume = linkedData[date.toIso8601String()]?.volume;
+    final PresCond? _presCond = linkedData[date.toIso8601String()]?.presCond;
+
+    print("linkedData niveau: $_niveau");
+    print("linkedData debit: $_debit");
+    print("linkedData volume: $_volume");
+    print("linkedData presCond: $_presCond");
+
+    if (_niveau == null) {
+      logger.e("Niveau is null");
+      Toasts.showErrorToastNotification(
+          context: context, message: strings.value.failedToGetNiveauData);
+      return;
+    } else if (_debit == null) {
+      logger.e("Debit is null");
+      Toasts.showErrorToastNotification(
+          context: context, message: strings.value.failedToGetDebitData);
+      return;
+    } else if (_volume == null) {
+      logger.e("Volume is null");
+      Toasts.showErrorToastNotification(
+          context: context, message: strings.value.failedToGetVolumeData);
+      return;
+    } else if (_presCond == null) {
+      logger.e("PresCond is null");
+      Toasts.showErrorToastNotification(
+          context: context, message: strings.value.failedToGetPresCondData);
+      return;
+    }
+    Navigator.of(context).pop();
+
+    niveau = _niveau;
+    debit = _debit;
+    volume = _volume;
+    presCond = _presCond;
+
+    year = date.year;
+    month = date.month;
+    day = date.day;
+    hour = date.hour;
+    minute = date.minute;
+    second = date.second;
+    logger.e("showing: $year $month $day $hour $minute $second");
+    isLive.trigger(false);
   }
 
   _eauBrute() {
@@ -2107,4 +2396,20 @@ class _FiltrationPageState extends State<FiltrationPage> {
         ? context.width <= 1500
         : context.width <= 1250;
   }
+}
+
+class LinkedFiltrationData {
+  Niveau? niveau;
+  PresCond? presCond;
+  Volume? volume;
+  Debit? debit;
+  DateTime? dateTime;
+
+  LinkedFiltrationData({
+    this.dateTime,
+    this.niveau,
+    this.presCond,
+    this.volume,
+    this.debit,
+  });
 }

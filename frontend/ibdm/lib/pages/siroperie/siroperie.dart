@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,12 +11,14 @@ import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/cuve.dart';
 import 'package:ibdm/common/widgets/data_list.dart';
 import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
+import 'package:ibdm/common/widgets/multiple_data_lists.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/helpers/data_representation.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
@@ -295,153 +298,173 @@ class _SiroperiePageState extends State<SiroperiePage> {
                             (sucre!.aT04 ?? 0) +
                             (sucre!.aT05 ?? 0) +
                             (sucre!.aT06 ?? 0);
-                        return Container(
-                          color: colorScheme.surfaceContainer,
-                          width: context.width,
-                          height: context.height / 2,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                // sucre tetra
-                                Column(
-                                  children: [
-                                    Wrap(
-                                      alignment: WrapAlignment.center,
-                                      children: [
-                                        Text(strings.value.sucreTetraTitle,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleLarge
-                                                ?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                )).marginAll(AppSizes.sm),
-                                        _getBottomDataBarTetra(label: false),
-                                      ],
-                                    ),
-                                    Wrap(
-                                      alignment: WrapAlignment.spaceEvenly,
-                                      children: [
-                                        Cuve(
-                                          title: "TS21",
-                                          value: TS21_value,
-                                          niveau1: sucre!.tS21 ?? 0,
-                                          niveau2: convertSugarLToKG(
-                                              sucre!.tS21 ?? 0),
-                                        ),
-                                        Cuve(
-                                          title: "TS22",
-                                          value: TS22_value,
-                                          niveau1: sucre!.tS22 ?? 0,
-                                          niveau2: convertSugarLToKG(
-                                              sucre!.tS22 ?? 0),
-                                        ),
-                                        Cuve(
-                                          title: "TS23",
-                                          value: TS23_value,
-                                          niveau1: sucre!.tS23 ?? 0,
-                                          niveau2: convertSugarLToKG(
-                                              sucre!.tS23 ?? 0),
-                                        ),
-                                        Cuve(
-                                          title: "TS24",
-                                          value: TS24_value,
-                                          niveau1: sucre!.tS24 ?? 0,
-                                          niveau2: convertSugarLToKG(
-                                              sucre!.tS24 ?? 0),
-                                        ),
-                                        Cuve(
-                                          title: "TS25",
-                                          value: TS25_value,
-                                          niveau1: sucre!.tS25 ?? 0,
-                                          niveau2: convertSugarLToKG(
-                                              sucre!.tS25 ?? 0),
-                                        ),
-                                      ],
-                                    ),
-                                    _getBottomDataBarTetra(),
-                                  ],
-                                ),
-
-                                // sucre adue
-                                Container(
-                                  color: colorScheme.secondaryContainer,
+                        return Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                color: colorScheme.surfaceContainer,
+                                width: context.width,
+                                height: context.height / 2,
+                                child: SingleChildScrollView(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      Wrap(
-                                        alignment: WrapAlignment.center,
+                                      // sucre tetra
+                                      Column(
                                         children: [
-                                          Text(strings.value.sucreAdueTitle,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleLarge
-                                                  ?.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                  )).marginAll(AppSizes.sm),
-                                          _getBottomDataBarAdue(label: false),
+                                          Wrap(
+                                            alignment: WrapAlignment.center,
+                                            children: [
+                                              Text(
+                                                  strings.value.sucreTetraTitle,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge
+                                                      ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      )).marginAll(AppSizes.sm),
+                                              _getBottomDataBarTetra(
+                                                  label: false),
+                                            ],
+                                          ),
+                                          Wrap(
+                                            alignment:
+                                                WrapAlignment.spaceEvenly,
+                                            children: [
+                                              Cuve(
+                                                title: "TS21",
+                                                value: TS21_value,
+                                                niveau1: sucre!.tS21 ?? 0,
+                                                niveau2: convertSugarLToKG(
+                                                    sucre!.tS21 ?? 0),
+                                              ),
+                                              Cuve(
+                                                title: "TS22",
+                                                value: TS22_value,
+                                                niveau1: sucre!.tS22 ?? 0,
+                                                niveau2: convertSugarLToKG(
+                                                    sucre!.tS22 ?? 0),
+                                              ),
+                                              Cuve(
+                                                title: "TS23",
+                                                value: TS23_value,
+                                                niveau1: sucre!.tS23 ?? 0,
+                                                niveau2: convertSugarLToKG(
+                                                    sucre!.tS23 ?? 0),
+                                              ),
+                                              Cuve(
+                                                title: "TS24",
+                                                value: TS24_value,
+                                                niveau1: sucre!.tS24 ?? 0,
+                                                niveau2: convertSugarLToKG(
+                                                    sucre!.tS24 ?? 0),
+                                              ),
+                                              Cuve(
+                                                title: "TS25",
+                                                value: TS25_value,
+                                                niveau1: sucre!.tS25 ?? 0,
+                                                niveau2: convertSugarLToKG(
+                                                    sucre!.tS25 ?? 0),
+                                              ),
+                                            ],
+                                          ),
+                                          _getBottomDataBarTetra(),
                                         ],
                                       ),
-                                      Wrap(
-                                        alignment: WrapAlignment.spaceEvenly,
-                                        children: [
-                                          Cuve(
-                                            title: "T02",
-                                            value: T02_value,
-                                            niveau1: sucre!.aT02 ?? 0,
-                                            niveau2: convertSugarLToKG(
-                                                sucre!.aT02 ?? 0),
-                                          ),
-                                          Cuve(
-                                            title: "T03",
-                                            value: T03_value,
-                                            niveau1: sucre!.aT03 ?? 0,
-                                            niveau2: convertSugarLToKG(
-                                                sucre!.aT03 ?? 0),
-                                          ),
-                                          Cuve(
-                                            title: "T04",
-                                            value: T04_value,
-                                            niveau1: sucre!.aT04 ?? 0,
-                                            niveau2: convertSugarLToKG(
-                                                sucre!.aT04 ?? 0),
-                                          ),
-                                          Cuve(
-                                            title: "T05",
-                                            value: T05_value,
-                                            niveau1: sucre!.aT05 ?? 0,
-                                            niveau2: convertSugarLToKG(
-                                                sucre!.aT05 ?? 0),
-                                          ),
-                                          Cuve(
-                                            title: "T06",
-                                            value: T06_value,
-                                            niveau1: sucre!.aT06 ?? 0,
-                                            niveau2: convertSugarLToKG(
-                                                sucre!.aT06 ?? 0),
-                                          ),
-                                        ],
+
+                                      // sucre adue
+                                      Container(
+                                        color: colorScheme.secondaryContainer,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Wrap(
+                                              alignment: WrapAlignment.center,
+                                              children: [
+                                                Text(
+                                                    strings
+                                                        .value.sucreAdueTitle,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleLarge
+                                                        ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        )).marginAll(
+                                                    AppSizes.sm),
+                                                _getBottomDataBarAdue(
+                                                    label: false),
+                                              ],
+                                            ),
+                                            Wrap(
+                                              alignment:
+                                                  WrapAlignment.spaceEvenly,
+                                              children: [
+                                                Cuve(
+                                                  title: "T02",
+                                                  value: T02_value,
+                                                  niveau1: sucre!.aT02 ?? 0,
+                                                  niveau2: convertSugarLToKG(
+                                                      sucre!.aT02 ?? 0),
+                                                ),
+                                                Cuve(
+                                                  title: "T03",
+                                                  value: T03_value,
+                                                  niveau1: sucre!.aT03 ?? 0,
+                                                  niveau2: convertSugarLToKG(
+                                                      sucre!.aT03 ?? 0),
+                                                ),
+                                                Cuve(
+                                                  title: "T04",
+                                                  value: T04_value,
+                                                  niveau1: sucre!.aT04 ?? 0,
+                                                  niveau2: convertSugarLToKG(
+                                                      sucre!.aT04 ?? 0),
+                                                ),
+                                                Cuve(
+                                                  title: "T05",
+                                                  value: T05_value,
+                                                  niveau1: sucre!.aT05 ?? 0,
+                                                  niveau2: convertSugarLToKG(
+                                                      sucre!.aT05 ?? 0),
+                                                ),
+                                                Cuve(
+                                                  title: "T06",
+                                                  value: T06_value,
+                                                  niveau1: sucre!.aT06 ?? 0,
+                                                  niveau2: convertSugarLToKG(
+                                                      sucre!.aT06 ?? 0),
+                                                ),
+                                              ],
+                                            ),
+                                            _getBottomDataBarAdue(),
+                                          ],
+                                        ),
                                       ),
-                                      _getBottomDataBarAdue(),
                                     ],
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+                            // bottom actions bar
+                            Container(
+                              width: context.width,
+                              decoration: BoxDecoration(
+                                  color: colorScheme.surfaceContainer,
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft:
+                                        Radius.circular(AppSizes.borderRadius),
+                                    bottomRight:
+                                        Radius.circular(AppSizes.borderRadius),
+                                  )),
+                              child: _getBottomDataBar(),
+                            ),
+                          ],
                         );
                       },
                     ),
-                  ),
-                  Container(
-                    width: context.width,
-                    decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainer,
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(AppSizes.borderRadius),
-                          bottomRight: Radius.circular(AppSizes.borderRadius),
-                        )),
-                    child: _getBottomDataBar(),
                   ),
                 ],
               ),
@@ -505,51 +528,104 @@ class _SiroperiePageState extends State<SiroperiePage> {
 
   _getTopActionsBar() {
     final strings = getTranslations(getContext).obs;
-    return LiveDataTopActionBar(
-      isLive: isLive,
-      startDate: feedMetaData!.startDate,
-      endDate: feedMetaData!.endDate,
-      selectedDate: sucre_end_date.value,
-      searchPressed: (dt) {
-        year = dt.year;
-        month = dt.month;
-        day = dt.day;
-        hour = dt.hour;
-        minute = dt.minute;
-        second = dt.second;
-        _getSucreData();
-      },
-      listPressed: () {
-        showShadDialog(
-          context: context,
-          builder: (context) {
-            return ShadDialog(
-              child: DataList(
-                getData: (start, end) async {
-                  try {
-                    final api = await ApiClientInstance.getApiClient();
-                  } catch (e) {}
-                  return [];
-                },
-              ),
-            );
-          },
-        );
-      },
-      afterDataDisplayWidgets: [
-        // inventory button
-        ShadButton(
-          icon: Icon(LucideIcons.clipboardList),
-          onPressed: () => _openInventoryDialog(),
-          child: Text(strings.value.inventory),
-        )
-      ],
-    );
+    return Obx(() {
+      logger.e("sucre_end_date: ${sucre_end_date.value}");
+      return LiveDataTopActionBar(
+        isLive: isLive,
+        startDate: feedMetaData!.startDate,
+        endDate: feedMetaData!.endDate,
+        selectedDate: isLive.value ? sucre_end_date.value : sucre!.date,
+        searchPressed: (dt) {
+          year = dt.year;
+          month = dt.month;
+          day = dt.day;
+          hour = dt.hour;
+          minute = dt.minute;
+          second = dt.second;
+          _getSucreData();
+        },
+        listPressed: () {
+          showShadDialog(
+            context: context,
+            builder: (context) {
+              return ShadDialog(
+                constraints: BoxConstraints(
+                  minWidth: min(context.width, 600),
+                  maxWidth: min(context.width, 800),
+                ),
+                child: MultipleDataLists(
+                  tabs: [
+                    DataListTab(
+                        name: strings.value.sucre,
+                        onTap: showDataDialog,
+                        getData: (start, end, page) async {
+                          final api = await ApiClientInstance.getApiClient();
+                          final res = await api.getSucresBetweenDates(
+                            startDate: start.toIso8601String(),
+                            endDate: end.toIso8601String(),
+                            page: page,
+                            perPage: 100,
+                          );
+                          final List<DataRepresentation> list = [];
+                          for (var s in res.data) {
+                            list.add(DataRepresentation(
+                                name: strings.value.date,
+                                code: "date",
+                                source: s.toJson(),
+                                transform: (dateString) {
+                                  final date = DateTime.parse(dateString);
+                                  return "${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year.toString().padLeft(2, "0")}   ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}:${date.second.toString().padLeft(2, "0")}.${date.millisecond}";
+                                }));
+                          }
+                          final json_data = res.toJson();
+                          json_data["data"] = list;
+                          return json_data;
+                        }),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+        afterDataDisplayWidgets: [
+          // inventory button
+          ShadButton(
+            icon: Icon(LucideIcons.clipboardList),
+            onPressed: () => _openInventoryDialog(),
+            child: Text(strings.value.inventory),
+          )
+        ],
+      );
+    });
+  }
+
+  void onTapListItem(DataRepresentation<dynamic> d) {
+    Navigator.of(context).pop();
+    logger.e("showing: $year $month $day $hour $minute $second");
+    sucre = Sucre.fromJson(d.source!);
+    year = sucre!.date.year;
+    month = sucre!.date.month;
+    day = sucre!.date.day;
+    hour = sucre!.date.hour;
+    minute = sucre!.date.minute;
+    second = sucre!.date.second;
+    isLive.trigger(false);
+    refresh.trigger(true);
   }
 
   _getBottomDataBar() {
     final strings = getTranslations(getContext).obs;
-    return Obx(() => Padding(
+    return Obx(
+      () {
+        if (refresh.value) {
+          refresh.toggle();
+        }
+        final sucreTotalL = sommeTetraL + sommeAdueL;
+        final sucreTotalKG = sommeTetraKG + sommeAdueKG;
+        logger.e("sucreTotal L: $sucreTotalL");
+        logger.e("sucreTotal KG: $sucreTotalKG");
+
+        return Padding(
           padding: EdgeInsets.all(AppSizes.sm),
           child: Container(
             decoration: BoxDecoration(
@@ -573,7 +649,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
                       SizedBox(width: AppSizes.lg)
                           .removeWhen(isAtLeastMediumScreen(getContext)),
                       Text(
-                        " ${(sommeTetraL + sommeAdueL).toStringAsFixed(2)} L",
+                        " ${(sucreTotalL).toStringAsFixed(2)} L",
                         style:
                             Theme.of(getContext).textTheme.titleLarge?.copyWith(
                                   color: (sommeTetraL + sommeAdueL) < 84000
@@ -584,7 +660,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
                       ),
                       SizedBox(width: AppSizes.lg),
                       Text(
-                        " ${(sommeTetraKG + sommeAdueKG).toStringAsFixed(2)} KG",
+                        " ${(sucreTotalKG).toStringAsFixed(2)} KG",
                         style: Theme.of(getContext)
                             .textTheme
                             .titleLarge
@@ -601,7 +677,9 @@ class _SiroperiePageState extends State<SiroperiePage> {
               ),
             ),
           ),
-        ));
+        );
+      },
+    );
   }
 
   _getBottomDataBarTetra({bool label = true}) {
@@ -1047,6 +1125,67 @@ class _SiroperiePageState extends State<SiroperiePage> {
           ],
         ),
       ),
+    );
+  }
+
+  void showDataDialog(DataRepresentation<dynamic> d) {
+    final strings = getTranslations(context);
+    showShadDialog(
+      context: context,
+      builder: (context) {
+        return ShadDialog(
+            constraints: BoxConstraints(
+              minWidth: min(context.width, 800),
+              maxWidth: min(context.width, 800),
+              minHeight: 400,
+              maxHeight: 600,
+            ),
+            actions: [
+              ShadButton.ghost(
+                child: Text(strings.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              ShadButton(
+                child: Text(strings.visualize),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onTapListItem(d);
+                },
+              ),
+            ],
+            child: ShadTable.list(
+                columnSpanExtent: (i) =>
+                    FixedTableSpanExtent(min(context.width, 400)),
+                header: [
+                  ShadTableCell.header(
+                      child: Text(
+                    strings.name,
+                  )),
+                  ShadTableCell.header(
+                      child: Text(
+                    strings.value,
+                  )),
+                ],
+                children: [
+                  for (var e in d.source!.entries)
+                    [
+                      ShadTableCell(
+                        child: Text(
+                          e.key.toUpperCase(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      ShadTableCell(
+                        child: Text(
+                          e.value.toString(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      )
+                    ]
+                ]));
+      },
     );
   }
 }

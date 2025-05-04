@@ -38,7 +38,7 @@ def get_values_within(model, startDate, endDate):
     return model.objects.filter(
         date__gte=startDate,
         date__lt=endDate
-    ).first()
+    )
 
 def get_value_at(model, date):
 

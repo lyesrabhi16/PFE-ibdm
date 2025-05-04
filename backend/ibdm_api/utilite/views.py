@@ -7,6 +7,7 @@ from utilite.models import Co2Ifruit, Utilite
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from .serializers import Co2IfruitSerializer,UtiliteSerializer, Co2IfruitConsommationSerializer
 from rest_framework.decorators import api_view, permission_classes
+from django.utils.dateparse import parse_datetime
 
 @extend_schema(tags=["Utilite"])
 @with_operation_ids(
@@ -311,3 +312,118 @@ def get_co2_consommation(from_date, to_date):
     record["to_value"] = to_record
     record["date"] = to_date
     return record
+
+
+
+@extend_schema(
+    tags=["Utilite"],
+    summary="get all the utilite values between two dates",
+    request=None,
+    parameters=[
+        OpenApiParameter(
+            name="start_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="end_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+    ],
+    responses={
+        200: UtiliteSerializer,
+    },
+)
+@with_operation_ids(
+    on_list="getUtiliteBetweenDates"
+)
+class UtiliteListView(viewsets.ReadOnlyModelViewSet):
+    queryset = Utilite.objects.all()
+    serializer_class = UtiliteSerializer
+    
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+        if start_date and end_date:
+            try:
+                start_date = parse_datetime(start_date)
+                end_date = parse_datetime(end_date)
+            except ValueError:
+                return Utilite.objects.none()
+            
+            queryset = Utilite.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            return queryset
+        return Utilite.objects.none()
+
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+        response.data["meta"] = {
+            "start_date": self.request.query_params.get("start_date"),
+            "end_date": self.request.query_params.get("end_date"),
+        }
+        return response
+
+
+
+@extend_schema(
+    tags=["Utilite"],
+    summary="get all the co2 values between two dates",
+    request=None,
+    parameters=[
+        OpenApiParameter(
+            name="start_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+        OpenApiParameter(
+            name="end_date",
+            required=True,
+            type=str,
+            location="query",
+        ),
+    ],
+    responses={
+        200: Co2IfruitSerializer,
+    },
+)
+@with_operation_ids(
+    on_list="getCO2BetweenDates"
+)
+class CO2ListView(viewsets.ReadOnlyModelViewSet):
+    queryset = Co2Ifruit.objects.all()
+    serializer_class = Co2IfruitSerializer
+    
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+        if start_date and end_date:
+            try:
+                start_date = parse_datetime(start_date)
+                end_date = parse_datetime(end_date)
+            except ValueError:
+                return Co2Ifruit.objects.none()
+            
+            queryset = Co2Ifruit.objects.filter(date__range=[start_date, end_date]).order_by("-date")
+            return queryset
+        return Co2Ifruit.objects.none()
+
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+        response.data["meta"] = {
+            "start_date": self.request.query_params.get("start_date"),
+            "end_date": self.request.query_params.get("end_date"),
+        }
+        return response
+
+
+        
