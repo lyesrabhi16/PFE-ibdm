@@ -12,8 +12,8 @@ AlertEmailRequest _$AlertEmailRequestFromJson(Map<String, dynamic> json) =>
       monitorType: json['monitor_type'] == null
           ? null
           : MonitorTypeEnum.fromJson(json['monitor_type'] as String),
-      dangerPoint: (json['danger_point'] as num?)?.toInt(),
-      warningPoint: (json['warning_point'] as num?)?.toInt(),
+      dangerPoint: (json['danger_point'] as num?)?.toDouble(),
+      warningPoint: (json['warning_point'] as num?)?.toDouble(),
       dangerReminderInterval:
           (json['danger_reminder_interval'] as num?)?.toInt(),
       warningReminderInterval:
@@ -164,8 +164,8 @@ const _$AlertEnumEnumMap = {
   AlertEnum.undefined118: 'utilite.ut_sid_pg',
   AlertEnum.undefined119: 'utilite.ut_sid_tt',
   AlertEnum.undefined120: 'utilite.ut_sid_tc',
-  AlertEnum.undefined121: 'sucre.total.tetra',
-  AlertEnum.undefined122: 'sucre.total',
+  AlertEnum.undefined121: 'sucre.total',
+  AlertEnum.undefined122: 'sucre.total.tetra',
   AlertEnum.undefined123: 'sucre.total.adue',
   AlertEnum.$unknown: r'$unknown',
 };

@@ -8,9 +8,12 @@ from emails.models import EmailSchedule, sentEmail
 from api_v1.emails.rapports.inventaire_sucre import rapport_inventaire_sucre
 from api_v1.emails.rapports.utilite import rapport_utilite
 from api_v1.emails.rapports.filtration import rapport_filtration
+from api_v1.env import Env
 from users.models import User
 from tenacity import retry, stop_after_delay, wait_fixed
 from api_v1.emails.rapports.co2 import rapport_co2
+
+
 def getHtmlMessage(email: EmailSchedule):
     match (email.rapport):
         case "inventaire-sucre":
@@ -37,29 +40,35 @@ def after_retry_log(*args):
     before=before_retry_log,
     after=after_retry_log,
 )
-def sendEmailWithFile(file, users, email, provider=None, **kwargs):
+def sendEmailWithFile(file, users, email, **kwargs):
+    email_message = EmailMessage(**kwargs)
     try:
-        provider_str = provider.host if provider else "DEFAULT PROVIDER" 
-        email_message = EmailMessage(**kwargs)
-        # set priority to high
-        email_message.extra_headers["X-Priority"] = 2
+        p_n = 1
+        for provider in settings.EMAIL_PROVIDERS:
+            provider_str = provider.host if provider else "DEFAULT PROVIDER" 
+            try:
+                logging.info(f"emailScheduler#{" retrying with " if p_n > 1 else ""} {provider_str}: sending email {email_message.subject} to '{email_message.to}'")
+                email_message.from_email = Env.EMAIL_PROVIDERS[provider.host].get("EMAIL_OF_SENDER")
+                email_message.content_subtype = "html"
+                if file is not None:
+                    email_message.attach_file(file)
+                email_message.connection = provider
+                email_message.send()
+                for user in users:
+                    sentEmail.objects.create(temps_envoi=datetime.now(), receptionist=user, schedule=email)
+                logging.info(f"emailScheduler# {provider_str}: email {email_message.subject} sent to '{email_message.to}'")
+                break
+            except Exception as e:
+                if p_n == len(settings.EMAIL_PROVIDERS):
+                    raise e
+                else:
+                    logging.error(f"emailScheduler# {provider_str}: error sending email {email_message.subject} to '{email_message.to}': {e}")
+                    logging.info("emailScheduler# trying using next provider")
+                    p_n+=1
 
-        logging.info(f"emailScheduler# {provider_str}: sending email {email_message.subject} to '{email_message.to}'")
-        email_message.content_subtype = "html"
-        if file is not None:
-            email_message.attach_file(file)
-        if provider:
-            email_message.connection = provider
-        email_message.send()
-        for user in users:
-            sentEmail.objects.create(temps_envoi=datetime.now(), receptionist=user, schedule=email)
-        logging.info(f"emailScheduler# {provider_str}: email {email_message.subject} sent to '{email_message.to}'")
     except Exception as e:
-        if provider:
-            logging.error(f"emailScheduler# {provider_str}: error sending email {email_message.subject} to '{email_message.to}': {e}")
-        else:
-            logging.info("emailScheduler# trying using secondary provider")
-            sendEmailWithFile(file, users, email, provider=settings.EMAIL_SECONDARY_PROVIDER, **kwargs)
+        logging.info(f"emailScheduler# failed to send email {email_message.subject} to '{email_message.to}' : {e}")
+        raise e
 def sendEmail(email: EmailSchedule, schedule_next=True):
     logging.info(f"emailScheduler# send email: {email}")
     emails_in_process.add(email)
@@ -83,7 +92,6 @@ def sendEmail(email: EmailSchedule, schedule_next=True):
         "email": email,
         "subject":f"IBDM {subject}",
         "body": message,
-        "from_email":settings.EMAIL_OF_SENDER,
         "to": send_to,
     }).start()
     if email.next_run_time is None:

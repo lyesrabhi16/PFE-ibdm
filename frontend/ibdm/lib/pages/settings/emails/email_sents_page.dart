@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:data_table_2/data_table_2.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/per_page_input.dart';
+import 'package:ibdm/common/widgets/scrollable_shad_sheet_container.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
@@ -106,203 +109,180 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
     final strings = getTranslations(getContext).obs;
     return AppCustomContainer(
         backButton: true,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSizes.sm),
-          child: Obx(() {
-            if (!loaded.value) {
-              load();
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: max(context.height - AppSizes.heightOffset * 2, 600),
+              maxHeight: max(context.height - AppSizes.heightOffset * 2, 600),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSizes.sm),
+              child: Obx(() {
+                if (!loaded.value) {
+                  load();
+                  return CircularProgressIndicatorWithText(
+                    text: strings.value.loading,
+                  );
+                }
 
-            _showCheckboxColumn.value = false;
+                _showCheckboxColumn.value = false;
 
-            return Column(
-              children: [
-                Text(
-                  strings.value.emailSents,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                SizedBox(height: AppSizes.xl),
-                Container(
-                  constraints: BoxConstraints(
-                    minWidth: context.width,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(AppSizes.sm),
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      runAlignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      direction: Axis.horizontal,
-                      runSpacing: AppSizes.sm,
-                      verticalDirection: VerticalDirection.down,
-                      children: [
-                        SearchBar(
-                          controller: _searchController,
-                          onSubmitted: (_) =>
-                              _searchController.text != prevSearch
-                                  ? _loadSents()
-                                  : null,
-                          onTapOutside: (_) =>
-                              _searchController.text != prevSearch
-                                  ? _loadSents()
-                                  : null,
-                          constraints: BoxConstraints(
-                            maxWidth: 200,
-                            minHeight: AppSizes.lg * 1.5,
-                            maxHeight: AppSizes.lg * 1.5,
-                          ),
-                          backgroundColor: WidgetStatePropertyAll(
-                              Theme.of(context).colorScheme.surfaceContainer),
-                          elevation: WidgetStatePropertyAll(0),
-                          leading: Icon(Icons.search),
-                          hintText: strings.value.search,
-                        ),
-                        Wrap(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: SizedBox(
-                                width: AppSizes.xl * 4,
-                                child: IconWithLabelButton(
-                                  icon: Icons.settings,
-                                  text: strings.value.options,
-                                  onTap: () {
-                                    showShadSheet(
-                                        context: context,
-                                        side: ShadSheetSide.right,
-                                        isDismissible: true,
-                                        builder: (context) {
-                                          return ShadSheet(
-                                              scrollable: false,
-                                              child: ScrollConfiguration(
-                                                behavior:
-                                                    ScrollConfiguration.of(
-                                                            context)
-                                                        .copyWith(
-                                                  dragDevices: {
-                                                    PointerDeviceKind.touch,
-                                                    PointerDeviceKind.mouse,
-                                                    PointerDeviceKind.stylus,
-                                                    PointerDeviceKind
-                                                        .invertedStylus,
-                                                    PointerDeviceKind.trackpad,
-                                                    PointerDeviceKind.unknown,
-                                                  },
-                                                  scrollbars: true,
-                                                ),
-                                                child: SingleChildScrollView(
-                                                  physics:
-                                                      BouncingScrollPhysics(),
-                                                  child: Container(
-                                                    constraints: BoxConstraints(
-                                                      minWidth:
-                                                          context.width / 2,
-                                                      maxWidth: context.width,
-                                                      minHeight: context.height,
-                                                      maxHeight: context.height,
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              AppSizes.sm),
-                                                      child: Scaffold(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        body:
-                                                            _topPageActionsSmallScreen(),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ));
-                                        });
-                                  },
-                                ),
+                return Column(
+                  children: [
+                    Text(
+                      strings.value.emailSents,
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
                               ),
-                            ).removeWhen(isAtLeastMediumScreen(context)),
-                          ].nonNulls.toList(),
-                        )
-                      ],
                     ),
-                  ),
-                ),
-                Container(
-                      width: context.width,
+                    SizedBox(height: AppSizes.xl),
+                    Container(
+                      constraints: BoxConstraints(
+                        minWidth: context.width,
+                      ),
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainer,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius:
                             BorderRadius.circular(AppSizes.borderRadius),
                       ),
-                      child: _topPageActions(
-                        alignment: WrapAlignment.spaceBetween,
-                        expandPerPage: _expandPerPage.value,
-                        filtersPopoverController: _filtersPopoverController,
-                        filtersActive: _filtersActive,
-                        perPageFormKey: _perPageFormKey,
-                        tagFilterController: _tagFilterController,
-                        emailTypeFilterController: _emailTypeFilterController,
-                        sortPopoverController: _sortPopoverController,
-                        sortASC: _sortASC,
-                        sortActive: _sortActive,
+                      child: Padding(
+                        padding: EdgeInsets.all(AppSizes.sm),
+                        child: Wrap(
+                          alignment: WrapAlignment.center,
+                          runAlignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          direction: Axis.horizontal,
+                          runSpacing: AppSizes.sm,
+                          verticalDirection: VerticalDirection.down,
+                          children: [
+                            SearchBar(
+                              controller: _searchController,
+                              onSubmitted: (_) =>
+                                  _searchController.text != prevSearch
+                                      ? _loadSents()
+                                      : null,
+                              onTapOutside: (_) =>
+                                  _searchController.text != prevSearch
+                                      ? _loadSents()
+                                      : null,
+                              constraints: BoxConstraints(
+                                maxWidth: 200,
+                                minHeight: AppSizes.lg * 1.5,
+                                maxHeight: AppSizes.lg * 1.5,
+                              ),
+                              backgroundColor: WidgetStatePropertyAll(
+                                  Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainer),
+                              elevation: WidgetStatePropertyAll(0),
+                              leading: Icon(Icons.search),
+                              hintText: strings.value.search,
+                            ),
+                            Wrap(
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: SizedBox(
+                                    width: AppSizes.xl * 4,
+                                    child: IconWithLabelButton(
+                                      icon: Icons.settings,
+                                      text: strings.value.options,
+                                      onTap: () {
+                                        showShadSheet(
+                                            context: context,
+                                            side: ShadSheetSide.right,
+                                            isDismissible: true,
+                                            builder: (context) {
+                                              return ScrollableShadSheetContainer(
+                                                child:
+                                                    _topPageActionsSmallScreen(),
+                                              );
+                                            });
+                                      },
+                                    ),
+                                  ),
+                                ).removeWhen(isAtLeastMediumScreen(context)),
+                              ].nonNulls.toList(),
+                            )
+                          ],
+                        ),
                       ),
-                    ).removeWhen(isAtMostSmallScreen(context)) ??
-                    SizedBox.shrink(),
-                SizedBox(
-                  height: AppSizes.sm,
-                ),
-                Expanded(
-                  child: Container(
-                    constraints: BoxConstraints(
-                      minWidth: context.width,
                     ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainer,
-                      borderRadius:
-                          BorderRadius.circular(AppSizes.borderRadius),
-                    ),
-                    child: _loadingSentEmails.value
-                        ? Center(child: CircularProgressIndicator())
-                        : DataTable2(
-                            columnSpacing: _getColumnSpacing(),
-                            showCheckboxColumn: _showCheckboxColumn.value,
-                            sortColumnIndex: 0,
-                            dataRowColor: WidgetStateProperty.fromMap({
-                              WidgetState.hovered: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                              WidgetState.focused: colorScheme.primaryContainer,
-                            }),
-                            columns: _getCols(),
-                            rows: _getRows(),
+                    Container(
+                          width: context.width,
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainer,
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.borderRadius),
                           ),
-                  ),
-                ),
-                SizedBox(
-                  height: AppSizes.sm,
-                ),
-                _bottomPageActions(
-                  currentPage: sentsMeta.currentPage,
-                  nbrTotalPages: sentsMeta.totalPages,
-                  nbrShown: sentsMeta.data.length,
-                  nbrTotal: sentsMeta.totalResults,
-                  onPrevPress: (p) => {page = p, _loadSents()},
-                  onNextPress: (p) => {page = p, _loadSents()},
-                  onPagePress: (p) => {page = p, _loadSents()},
-                  data: sents,
-                  label: strings.value.sents,
-                )
-              ],
-            );
-          }),
+                          child: _topPageActions(
+                            alignment: WrapAlignment.spaceBetween,
+                            expandPerPage: _expandPerPage.value,
+                            filtersPopoverController: _filtersPopoverController,
+                            filtersActive: _filtersActive,
+                            perPageFormKey: _perPageFormKey,
+                            tagFilterController: _tagFilterController,
+                            emailTypeFilterController:
+                                _emailTypeFilterController,
+                            sortPopoverController: _sortPopoverController,
+                            sortASC: _sortASC,
+                            sortActive: _sortActive,
+                          ),
+                        ).removeWhen(isAtMostSmallScreen(context)) ??
+                        SizedBox.shrink(),
+                    SizedBox(
+                      height: AppSizes.sm,
+                    ),
+                    Expanded(
+                      child: Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surfaceContainer,
+                          borderRadius:
+                              BorderRadius.circular(AppSizes.borderRadius),
+                        ),
+                        child: _loadingSentEmails.value
+                            ? CircularProgressIndicatorWithText(
+                                text: strings.value.loadingSents,
+                              )
+                            : DataTable2(
+                                columnSpacing: _getColumnSpacing(),
+                                showCheckboxColumn: _showCheckboxColumn.value,
+                                sortColumnIndex: 0,
+                                dataRowColor: WidgetStateProperty.fromMap({
+                                  WidgetState.hovered: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                  WidgetState.focused:
+                                      colorScheme.primaryContainer,
+                                }),
+                                columns: _getCols(),
+                                rows: _getRows(),
+                              ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: AppSizes.sm,
+                    ),
+                    _bottomPageActions(
+                      currentPage: sentsMeta.currentPage,
+                      nbrTotalPages: sentsMeta.totalPages,
+                      nbrShown: sentsMeta.data.length,
+                      nbrTotal: sentsMeta.totalResults,
+                      onPrevPress: (p) => {page = p, _loadSents()},
+                      onNextPress: (p) => {page = p, _loadSents()},
+                      onPagePress: (p) => {page = p, _loadSents()},
+                      data: sents,
+                      label: strings.value.sents,
+                    )
+                  ],
+                );
+              }),
+            ),
+          ),
         ));
   }
 
@@ -559,9 +539,14 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                   closeOnTapOutside: false,
                   popover: (context) => Container(
                     constraints: BoxConstraints(
-                        minWidth: AppSizes.xl * 6, maxWidth: AppSizes.xl * 8),
-                    child: filterContent(context, tagFilterController,
-                        emailTypeFilterController),
+                      minWidth: AppSizes.xl * 6,
+                      maxWidth: AppSizes.xl * 8,
+                      maxHeight: context.height * 0.4,
+                    ),
+                    child: SingleChildScrollView(
+                      child: filterContent(context, tagFilterController,
+                          emailTypeFilterController),
+                    ),
                   ),
                   child: IconWithLabelButton(
                     icon: Icons.filter_alt,
@@ -584,11 +569,17 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                     color: Theme.of(context).colorScheme.surfaceContainer,
                   ),
                   closeOnTapOutside: false,
-                  popover: (context) => SizedBox(
-                    width: AppSizes.xl * 6,
-                    child: sortContent(
-                      context: context,
-                      sortASC: sortASC,
+                  popover: (context) => ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: AppSizes.xl * 6,
+                      maxWidth: AppSizes.xl * 8,
+                      maxHeight: context.height * 0.4,
+                    ),
+                    child: SingleChildScrollView(
+                      child: sortContent(
+                        context: context,
+                        sortASC: sortASC,
+                      ),
                     ),
                   ),
                   child: IconWithLabelButton(

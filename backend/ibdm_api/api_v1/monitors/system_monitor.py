@@ -1,13 +1,12 @@
 # monitor.py
-import concurrent
 import os
 import sys
 import json
 import platform
 import threading
 import psutil
-import logging
 import traceback
+import uuid
 from datetime import datetime
 
 from django.db import connections
@@ -15,10 +14,11 @@ from django.conf import settings
 from api_v1.env import Env
 from redis import Redis
 
+from api_v1.sql import RAW_SQL
 from logs.logging import logger
 
 # Path to store status data
-STATUS_FILE = os.path.join(settings.BASE_DIR, 'status_data.json')
+STATUS_FILE = settings.STATUS_FILE_PATH
 
 # Flag to control the monitoring loop
 running = True
@@ -38,7 +38,6 @@ def get_system_info():
     system_info["cpu_architecture"] = platform.architecture()[0]
     system_info["cpu_model"] = platform.processor()
     system_info["cpu_frequency"] = psutil.cpu_freq().current if psutil.cpu_freq() else None
-    system_info["uptime"] = (datetime.now() - datetime.fromtimestamp(psutil.boot_time())).total_seconds()
     # Memory information
     system_info["total_memory"] = psutil.virtual_memory().total
     system_info["available_memory"] = psutil.virtual_memory().available
@@ -62,18 +61,16 @@ def get_system_info():
 
 
     # System uptime
-    system_info["boot_time"] = psutil.boot_time()
+    system_info["uptime"] = (datetime.now() - datetime.fromtimestamp(psutil.boot_time())).total_seconds()
+    system_info["boot_time"] = datetime.fromtimestamp(psutil.boot_time()).strftime('%Y-%m-%d %H:%M:%S')
+    system_info["system_time"] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     # Network information
-    network_info = {}
-    for interface_name, interface_addresses in psutil.net_if_addrs().items():
-        for address in interface_addresses:
-            if str(address.family) == 'AddressFamily.AF_INET':
-                network_info[interface_name] = address.address
-    system_info["network_interfaces"] = network_info
     system_info["network_io_sent"] = psutil.net_io_counters().bytes_sent
     system_info["network_io_received"] = psutil.net_io_counters().bytes_recv
-
+    system_info["ip_addresses"] = {
+        name: address[1][1] for name, address in psutil.net_if_addrs().items()
+    }
     return (datetime.now() - start).total_seconds(), system_info
 
 
@@ -103,25 +100,72 @@ def check_db_connections():
     """Check all database connections"""
     start = datetime.now()
     db_cons_states = {}
-    timeout = 3  # Timeout in milliseconds
+    timeout = Env.SERVER_DB_CONNECTION_CHECK_TIMEOUT  # Timeout in seconds
     def check_db_connection(results, db_name):
         """Check a specific database connection with a timeout."""
-
+        status={}
         # Obtain a cursor using the modified options
         try:
-            timeout_wrapper(lambda: connections[db_name].cursor(), timeout=timeout)
-            results[db_name]="CONNECTED"
+            def test_cursor():
+                cursor = connections[db_name].cursor()
+                cursor.close()
+            timeout_wrapper(test_cursor, timeout=timeout)
+            status["state"]="CONNECTED"
         except Exception as e:
             logger.error(f"system_monitor# Database connection error for {db_name}: {str(e)}")
-            results[db_name]="DISCONNECTED"
+            status["state"]="DISCONNECTED"
+        if status["state"]=="CONNECTED":
+            try:
+                disk_usage_data = {}
+                def getDiskUsage(store_in):
+                    cursor = connections[db_name].cursor()
+                    cursor.execute(RAW_SQL.GET_DISK_USAGE)
+                    disk_usage_data = cursor.fetchall()
+                    for row in disk_usage_data:
+                        store_in[row[0]]={
+                            "used": row[1],
+                            "available": row[2],
+                            "total": row[2] + row[1],
+                            "percent": row[1] * 100 / row[2],
+                        }
+                    cursor.close()
+
+                timeout_wrapper(getDiskUsage, args=(disk_usage_data,), timeout=timeout)
+
+                status["info"] = disk_usage_data
+                status["query"]="OK"
+            except Exception as e:
+                logger.error(f"system_monitor# Database query error for {db_name}: {str(e)}")
+                status["query"]="ERROR"
+        results[db_name] = status
 
     def check_redis_connection(results, db_name="ibdm_redis"):
         """Check Redis connection"""
+        status = {}
         try:
-            Redis(host=Env.DATABASE_IBDM_REDIS_HOST, port=Env.DATABASE_IBDM_REDIS_PORT, db=0, socket_connect_timeout=timeout).ping()
-            results[db_name]="CONNECTED"
+            redis_con = Redis(host=Env.REDIS_DB.get("HOST"), port=Env.REDIS_DB.get("PORT"), username=Env.REDIS_DB.get("USER"), password=Env.REDIS_DB.get("PASSWORD"), db=0, socket_connect_timeout=timeout)
+            redis_con.ping()
+            status["state"] ="CONNECTED"
+            memory_info = redis_con.info()
+            status["info"]= {
+                "ibdm_redis": {
+                    "used_memory": memory_info.get("used_memory", 0),
+                    "total_memory": memory_info.get("total_system_memory",0),
+                    "free_memory": memory_info.get("total_system_memory", 0)
+                    - memory_info.get("used_memory", 0),
+                    "percent": memory_info.get("used_memory", 0) * 100 / memory_info.get("total_system_memory", 1),
+                    "total_keys": memory_info.get("db0", {}).get("keys", 0),
+                    "uptime_in_seconds": memory_info.get("uptime_in_seconds", 0),
+                    "connected_clients": memory_info.get("connected_clients", 0),
+                }
+            }
+
         except Exception as e:
-            results[db_name]="DISCONNECTED"
+            print("Redis connection error:", e)
+            logger.error(f"system_monitor# Redis connection error for {db_name}: {str(e)}")
+            status["state"] = "DISCONNECTED"
+
+        results[db_name] = status
 
     # Create a dictionary to store the results
     results = {}
@@ -134,7 +178,9 @@ def check_db_connections():
     del dbs_cons["default"]
 
     for db_name in dbs_cons:
-        db_cons_states[db_name] = "DISCONNECTED"
+        db_cons_states[db_name] = {
+            "state":"DISCONNECTED"
+        }
 
     # Wait for all futures to complete
     for _, thread in dbs_cons.items():
@@ -142,7 +188,9 @@ def check_db_connections():
 
     for db_name, thread in dbs_cons.items():
         thread.join(timeout=timeout)
-        db_cons_states[db_name] = results.get(db_name, "DISCONNECTED")
+        db_cons_states[db_name] = results.get(db_name, {
+            "state": "DISCONNECTED"
+        })
     return (datetime.now() - start).total_seconds(), db_cons_states
 
 
@@ -151,6 +199,9 @@ def system_monitor():
     start_time = datetime.now()
     db_elapased_time, db_connections = check_db_connections()
     system_elapsed_time, system_info = get_system_info()
+    # Write to temporary file first to avoid partial writes
+    temp_file = os.path.join(settings.BASE_DIR, f"status_data.{uuid.uuid4()}.json.tmp")
+        
     try:
         # Collect all monitoring data
         status_data = {
@@ -168,16 +219,19 @@ def system_monitor():
         }
 
         status_data["elapsed_time"] = f"{(datetime.now() - start_time).total_seconds()}s"
-        # Write to temporary file first to avoid partial writes
-        temp_file = f"{STATUS_FILE}.tmp"
         with open(temp_file, 'w') as f:
             json.dump(status_data, f, indent=4, default=str)
 
         # Atomic rename to avoid race conditions
         os.replace(temp_file, STATUS_FILE)
+        
         logger.info(f"system_monitor# Status data saved to {STATUS_FILE}")
         logger.info("system_monitor# Monitoring cycle completed successfully")
     except Exception as e:
         logger.error(f"system_monitor# Error in monitoring cycle: {str(e)}")
         logger.error(f"system_monitor# {traceback.format_exc()}")
+    finally:
+        # remove temp file
+        if os.path.exists(temp_file):
+            os.remove(temp_file)
 

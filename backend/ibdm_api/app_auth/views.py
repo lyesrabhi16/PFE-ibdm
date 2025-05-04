@@ -1,18 +1,16 @@
-import re
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes, api_view
 
 from django.contrib.auth import authenticate, login, logout
-from drf_spectacular.utils import extend_schema, inline_serializer
+from drf_spectacular.utils import extend_schema
 from app_auth.serializers import HasPermResponseSerializer, LoginRequestSerializer, LoginResponseSerializer
 
 from api_v1.constants import ErrorCodes
 from api_v1.serializers import ErrorResponseSerializer, SuccessResponseSerializer
 from users.models import User
 from users.serializers import UserSerializer
-from rest_framework import serializers
 # Create your views here.
 
 
@@ -71,7 +69,6 @@ def login_view(request):
                })
 @api_view(["POST"])
 @permission_classes([])
-
 def logout_view(request):
 
     logout(request)

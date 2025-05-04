@@ -10,4 +10,6 @@ class Permissions {
   static const viewEmailsSent = "can_view_emails_sent";
   static const viewUtilitePage = "can_view_utilite_page";
   static const viewCo2Page = "can_view_co2_page";
+  static const viewServerStatusPage = "can_view_server_status_page";
+  static const viewServerSettingsPage = "can_view_server_settings_page";
 }

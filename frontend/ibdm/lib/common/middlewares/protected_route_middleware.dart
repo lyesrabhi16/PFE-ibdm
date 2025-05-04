@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/controllers/bypass_controller.dart';
 import 'package:ibdm/common/controllers/permissions_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/utils/constants/route_permissions.dart';
@@ -10,10 +12,14 @@ class ProtectedRouteMiddleware extends GetMiddleware {
   static final PermissionsController permissionsController =
       Get.find<PermissionsController>();
   RoutePermissions? routePermissions;
+  bool bypass = BypassController.bypass;
 
   ProtectedRouteMiddleware({super.priority, this.routePermissions});
   @override
   RouteSettings? redirect(String? route) {
+    if (bypass && !kReleaseMode) {
+      return null;
+    }
     if (!userController.isAuthenticated) {
       return RouteSettings(name: Routes.login);
     }

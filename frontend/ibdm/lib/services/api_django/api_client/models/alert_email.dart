@@ -33,9 +33,9 @@ class AlertEmail {
   @JsonKey(name: 'monitor_type')
   final MonitorTypeEnum? monitorType;
   @JsonKey(name: 'danger_point')
-  final int? dangerPoint;
+  final double? dangerPoint;
   @JsonKey(name: 'warning_point')
-  final int? warningPoint;
+  final double? warningPoint;
   @JsonKey(name: 'danger_reminder_interval')
   final int? dangerReminderInterval;
   @JsonKey(name: 'warning_reminder_interval')

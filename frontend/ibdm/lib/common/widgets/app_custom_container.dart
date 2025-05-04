@@ -18,10 +18,9 @@ class AppCustomContainer extends StatelessWidget {
   final Widget child;
   final bool backButton;
   static final userController = Get.find<UserController>();
-
+  static final permissionsController = Get.find<PermissionsController>();
+  
   _checkPermissions() {
-    final permissionsController = Get.find<PermissionsController>();
-
     if (permissionsController.ready.value == false) {
       throw ("permissions not ready in _checkPermission of AppCustomContainer");
     }
@@ -42,8 +41,11 @@ class AppCustomContainer extends StatelessWidget {
     final loadingPageController = Get.find<LoadingPageController>();
 
     return Obx(() {
+      
       if (loadingPageController.isLoading.value) {
-        return LoadingPage();
+        return LoadingPage(
+            load: !LoadingPage.inProgress &&
+                !permissionsController.permissions_loading);
       }
 
       _checkPermissions();

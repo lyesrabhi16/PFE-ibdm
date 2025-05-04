@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
@@ -146,21 +147,39 @@ class UserForm extends StatelessWidget {
     _loaded.value = true;
   }
 
+  _valuesChanged() {
+    logger.e("values changed: ${addUserEmailController.text}");
+    if (_addUserRole == null) {
+      return;
+    }
+    onAddUser?.call(
+      addUserEmailController.text,
+      addUserNameController.text,
+      addUserPasswordController.text,
+      addUserPhoneController.text,
+      _addUserRole!,
+      _addUserSuperior,
+      addFirstNameController.text,
+      addLastNameController.text,
+      _addUserAvatarBytes,
+      _addUserAvatarFile,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
     logger.d("building user form");
     final userRole = (role ?? _addUserRole).obs;
     _load(context);
-
     return Obx(() {
       if (!_loaded.value) {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
+        return CircularProgressIndicatorWithText(text: strings.value.loading,);
       }
       logger
           .e("User: $user ${user?.avatarUrl} ${_addUserAvatarSelected.value}");
+
+      _valuesChanged();
       return Form(
         key: formKeyAddUser,
         onChanged: () {
@@ -169,19 +188,8 @@ class UserForm extends StatelessWidget {
             logger.e("role is null in user form on changed");
             return;
           }
-          print("_addUserSuperior: $_addUserSuperior");
-          onAddUser?.call(
-            addUserEmailController.text,
-            addUserNameController.text,
-            addUserPasswordController.text,
-            addUserPhoneController.text,
-            userRole.value!,
-            _addUserSuperior,
-            addFirstNameController.text,
-            addLastNameController.text,
-            _addUserAvatarBytes,
-            _addUserAvatarFile,
-          );
+          printMessage("_addUserSuperior: $_addUserSuperior");
+          _valuesChanged();
         },
         child: SingleChildScrollView(
           child: Column(
@@ -277,18 +285,7 @@ class UserForm extends StatelessWidget {
                                       _addUserAvatarSelected.value = true;
                                     }
 
-                                    onAddUser?.call(
-                                      addUserEmailController.text,
-                                      addUserNameController.text,
-                                      addUserPasswordController.text,
-                                      addUserPhoneController.text,
-                                      userRole.value!,
-                                      _addUserSuperior,
-                                      addFirstNameController.text,
-                                      addLastNameController.text,
-                                      _addUserAvatarBytes,
-                                      _addUserAvatarFile,
-                                    );
+                                    _valuesChanged();
 
                                     openFilePickerToast.value =
                                         FutureState.success;
@@ -327,18 +324,7 @@ class UserForm extends StatelessWidget {
                 enabled: editable,
                 controller: addUserPasswordController,
                 onChanged: (v) {
-                  onAddUser?.call(
-                    addUserEmailController.text,
-                    addUserNameController.text,
-                    addUserPasswordController.text,
-                    addUserPhoneController.text,
-                    userRole.value!,
-                    _addUserSuperior,
-                    addFirstNameController.text,
-                    addLastNameController.text,
-                    _addUserAvatarBytes,
-                    _addUserAvatarFile,
-                  );
+                  _valuesChanged();
                 },
                 keyboardType: TextInputType.visiblePassword,
                 validator: (v) => AppValidators.customPasswordValidator(v,
@@ -400,18 +386,8 @@ class UserForm extends StatelessWidget {
                     logger.e(
                         "before value: ${value?.name} __userRole: ${userRole.value?.name}");
                     userRole.value = value;
-                    onAddUser?.call(
-                      addUserEmailController.text,
-                      addUserNameController.text,
-                      addUserPasswordController.text,
-                      addUserPhoneController.text,
-                      userRole.value!,
-                      _addUserSuperior,
-                      addFirstNameController.text,
-                      addLastNameController.text,
-                      _addUserAvatarBytes,
-                      _addUserAvatarFile,
-                    );
+                    _valuesChanged();
+
                     logger.e(
                         "after value: ${value?.name} __userRole: ${userRole.value?.name}");
                   },
@@ -476,18 +452,7 @@ class UserForm extends StatelessWidget {
                   onChanged: (value) {
                     logger.d("superior value: ${value?.email}");
                     _addUserSuperior = value;
-                    onAddUser?.call(
-                      addUserEmailController.text,
-                      addUserNameController.text,
-                      addUserPasswordController.text,
-                      addUserPhoneController.text,
-                      userRole.value!,
-                      _addUserSuperior,
-                      addFirstNameController.text,
-                      addLastNameController.text,
-                      _addUserAvatarBytes,
-                      _addUserAvatarFile,
-                    );
+                    _valuesChanged();
                   },
                   selectedOptionBuilder: (context, value) => Container(
                     constraints: BoxConstraints(

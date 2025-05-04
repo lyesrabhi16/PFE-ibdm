@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
 import 'package:ibdm/common/widgets/radial_meter.dart';
 import 'package:ibdm/common/widgets/temp_gauge.dart';
@@ -32,7 +33,7 @@ class _UtilitePageState extends State<UtilitePage> {
   BuildContext get getContext => _getContext!.call()!;
   ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
 
-  late FeedMetaData feedMetaData;
+  FeedMetaData? feedMetaData;
 
   final Rx<DateTime> utiliteStartDate = DateTime.now().obs;
 
@@ -49,7 +50,7 @@ class _UtilitePageState extends State<UtilitePage> {
   int? minute;
   int? second;
 
-  late Utilite utilite;
+  Utilite? utilite;
 
   final RxBool loaded = false.obs;
   final RxBool refresh = false.obs;
@@ -75,13 +76,18 @@ class _UtilitePageState extends State<UtilitePage> {
               printMessage("loading because of loaded value");
               load();
               logger.e("loading because of loaded value");
-              return Center(
-                child: CircularProgressIndicator(),
+              return CircularProgressIndicatorWithText(
+                text: strings.value.loading,
               );
             }
 
             if (refresh.value) {
               refresh.value = false;
+            }
+            if (feedMetaData == null) {
+              return CircularProgressIndicatorWithText(
+                text: strings.value.loading,
+              );
             }
             try {
               return _build();
@@ -90,8 +96,8 @@ class _UtilitePageState extends State<UtilitePage> {
               UtilitePage.channel?.sink.close();
               UtilitePage.stream = null;
               load();
-              return Center(
-                child: CircularProgressIndicator(),
+              return CircularProgressIndicatorWithText(
+                text: strings.value.loading,
               );
             }
           },
@@ -100,7 +106,16 @@ class _UtilitePageState extends State<UtilitePage> {
     );
   }
 
+  bool loading = false;
+  int counter = 0;
+  int blocked = 0;
   Future<void> load() async {
+    counter++;
+    if (loading) {
+      blocked++;
+      return;
+    }
+    loading = true;
     final strings = getTranslations(context);
     printMessage("load...");
 
@@ -130,9 +145,9 @@ class _UtilitePageState extends State<UtilitePage> {
           if (retries > 0) {
             printMessage("retrying in 1 second");
             retries--;
-            Future.delayed(Duration(seconds: 1), load);
-          } else {
-            retries = 3;
+            if (retries > 0) {
+              Future.delayed(Duration(seconds: 3), load);
+            }
           }
           Toasts.showErrorToastNotification(
             context: context,
@@ -146,6 +161,7 @@ class _UtilitePageState extends State<UtilitePage> {
       printMessage("loading faild: $e");
     } finally {
       loaded.value = true;
+      loading = false;
     }
   }
 
@@ -181,8 +197,8 @@ class _UtilitePageState extends State<UtilitePage> {
                   //printMessage("snapshot: $snapshot");
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     printMessage("waiting for connection");
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return CircularProgressIndicatorWithText(
+                      text: strings.value.waitingForConnection,
                     );
                   }
                   if (!snapshot.hasData ||
@@ -198,28 +214,28 @@ class _UtilitePageState extends State<UtilitePage> {
                       logger.e("reopening channel...");
                       Future.delayed(Duration(seconds: 1), load);
                     }
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return CircularProgressIndicatorWithText(
+                      text: strings.value.reconnecting,
                     );
                   }
                   final data = JsonCodec().decode(snapshot.data);
                   if (data["data"] == null || data["data"].isEmpty) {
                     logger.e("data is null");
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return CircularProgressIndicatorWithText(
+                      text: strings.value.waitingForValidData,
                     );
                   }
                   if (isLive.value) {
                     utilite = Utilite.fromJson(data["data"]["utilite"]);
 
                     Future.delayed(Duration(microseconds: 100),
-                        () => utiliteEndDate.value = utilite.date);
-                    year = utilite.date.year;
-                    month = utilite.date.month;
-                    day = utilite.date.day;
-                    hour = utilite.date.hour;
-                    minute = utilite.date.minute;
-                    second = utilite.date.second;
+                        () => utiliteEndDate.value = utilite!.date);
+                    year = utilite!.date.year;
+                    month = utilite!.date.month;
+                    day = utilite!.date.day;
+                    hour = utilite!.date.hour;
+                    minute = utilite!.date.minute;
+                    second = utilite!.date.second;
                   }
                   return Container(
                       constraints: BoxConstraints(
@@ -241,8 +257,8 @@ class _UtilitePageState extends State<UtilitePage> {
                               children: [
                                 TempGauge(
                                   title: "Temperature Trane",
-                                  value1: utilite.utKrTt ?? 0,
-                                  value2: utilite.utSidTt ?? 0,
+                                  value1: utilite!.utKrTt ?? 0,
+                                  value2: utilite!.utSidTt ?? 0,
                                   start: 0,
                                   end: 10,
                                   dangerTempHigh: 5,
@@ -252,8 +268,8 @@ class _UtilitePageState extends State<UtilitePage> {
                                 ).marginAll(AppSizes.lg),
                                 TempGauge(
                                   title: "Temperature Compresseur",
-                                  value1: utilite.utKrTc ?? 0,
-                                  value2: utilite.utSidTc ?? 0,
+                                  value1: utilite!.utKrTc ?? 0,
+                                  value2: utilite!.utSidTc ?? 0,
                                   start: 0,
                                   end: 40,
                                   dangerTempHigh: 35,
@@ -268,8 +284,8 @@ class _UtilitePageState extends State<UtilitePage> {
                               direction: Axis.horizontal,
                               children: [
                                 RadialMeter(
-                                  value1: utilite.utKrP7 ?? 0,
-                                  value2: utilite.utSidP7 ?? 0,
+                                  value1: utilite!.utKrP7 ?? 0,
+                                  value2: utilite!.utSidP7 ?? 0,
                                   max: 10,
                                   danger: 6.5,
                                   title: "Pression 7",
@@ -279,8 +295,8 @@ class _UtilitePageState extends State<UtilitePage> {
                                   value2Label: "Zone Sidel",
                                 ).marginAll(AppSizes.lg),
                                 RadialMeter(
-                                  value1: utilite.utKrP40 ?? 0,
-                                  value2: utilite.utSidP40 ?? 0,
+                                  value1: utilite!.utKrP40 ?? 0,
+                                  value2: utilite!.utSidP40 ?? 0,
                                   max: 40,
                                   steps: 5,
                                   danger: 26,
@@ -291,8 +307,8 @@ class _UtilitePageState extends State<UtilitePage> {
                                   value2Label: "Zone Sidel",
                                 ).marginAll(AppSizes.lg),
                                 RadialMeter(
-                                  value1: utilite.utKrPn2 ?? 0,
-                                  value2: utilite.utSidPn2 ?? 0,
+                                  value1: utilite!.utKrPn2 ?? 0,
+                                  value2: utilite!.utSidPn2 ?? 0,
                                   max: 10,
                                   danger: 6.5,
                                   title: "Pression Azote",
@@ -302,8 +318,8 @@ class _UtilitePageState extends State<UtilitePage> {
                                   value2Label: "Zone Sidel",
                                 ).marginAll(AppSizes.lg),
                                 RadialMeter(
-                                  value1: utilite.utKrPv ?? 0,
-                                  value2: utilite.utSidPv ?? 0,
+                                  value1: utilite!.utKrPv ?? 0,
+                                  value2: utilite!.utSidPv ?? 0,
                                   max: 10,
                                   danger: 6.5,
                                   title: "Pression Chaudiere",
@@ -313,8 +329,8 @@ class _UtilitePageState extends State<UtilitePage> {
                                   value2Label: "Zone Sidel",
                                 ).marginAll(AppSizes.lg),
                                 RadialMeter(
-                                  value1: utilite.utKrPg ?? 0,
-                                  value2: utilite.utSidPg ?? 0,
+                                  value1: utilite!.utKrPg ?? 0,
+                                  value2: utilite!.utSidPg ?? 0,
                                   max: 300,
                                   steps: 50,
                                   danger: 250,
@@ -379,7 +395,7 @@ class _UtilitePageState extends State<UtilitePage> {
       });
       return null;
     } finally {
-      utiliteEndDate.value = utilite.date;
+      utiliteEndDate.value = utilite!.date;
       refresh.value = !refresh.value;
     }
   }
@@ -388,8 +404,8 @@ class _UtilitePageState extends State<UtilitePage> {
     return Obx(() {
       return LiveDataTopActionBar(
         isLive: isLive,
-        startDate: feedMetaData.startDate,
-        endDate: feedMetaData.endDate,
+        startDate: feedMetaData!.startDate,
+        endDate: feedMetaData!.endDate,
         selectedDate: utiliteEndDate.value,
         searchPressed: (dt) {
           year = dt.year;
