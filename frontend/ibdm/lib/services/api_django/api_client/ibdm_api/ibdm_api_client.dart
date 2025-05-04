@@ -12,10 +12,14 @@ import '../models/alert_email.dart';
 import '../models/alert_email_request.dart';
 import '../models/co2_ifruit.dart';
 import '../models/co2_ifruit_consommation.dart';
+import '../models/co2_multi_meta_consommations.dart';
 import '../models/debit.dart';
 import '../models/email_schedule.dart';
 import '../models/email_schedule_request.dart';
 import '../models/feed_meta_data.dart';
+import '../models/fetch_type.dart';
+import '../models/filtration_meta_consommation.dart';
+import '../models/filtration_multi_meta_consommations.dart';
 import '../models/format.dart';
 import '../models/get_subordinate_and_superior_id_response.dart';
 import '../models/group.dart';
@@ -262,6 +266,28 @@ abstract class IbdmApiClient {
     @Path('id') required int id,
   });
 
+  /// get filtration consommation.
+  ///
+  /// getFiltrationConsommation.
+  @GET('/api/v1/filtration/consommation')
+  Future<FiltrationMetaConsommation> getFiltrationConsommation({
+    @Query('from_year') required int fromYear,
+    @Query('to_year') required int toYear,
+    @Query('from_day') int? fromDay,
+    @Query('from_month') int? fromMonth,
+    @Query('to_day') int? toDay,
+    @Query('to_month') int? toMonth,
+  });
+
+  /// get filtration consommation between dates.
+  ///
+  /// getFiltrationConsommationBetweenDates.
+  @GET('/api/v1/filtration/consommation/list')
+  Future<FiltrationMultiMetaConsommations> getFiltrationConsommationBetweenDates({
+    @Query('end_date') required String endDate,
+    @Query('start_date') required String startDate,
+  });
+
   /// [enablePagination] - Enable or disable pagination.
   ///
   /// [page] - Page number.
@@ -292,6 +318,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -340,6 +367,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -385,6 +413,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -430,6 +459,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -475,6 +505,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -833,6 +864,15 @@ abstract class IbdmApiClient {
     @Query('to_month') int? toMonth,
   });
 
+  /// get co2 consommation between dates.
+  ///
+  /// getCo2ConsommationBetweenDates.
+  @GET('/api/v1/utilite/co2_ifruit/consommation/list')
+  Future<Co2MultiMetaConsommations> getCo2ConsommationBetweenDates({
+    @Query('end_date') required String endDate,
+    @Query('start_date') required String startDate,
+  });
+
   /// get all the co2 values between two dates.
   ///
   /// [enablePagination] - Enable or disable pagination.
@@ -845,6 +885,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });
@@ -896,6 +937,7 @@ abstract class IbdmApiClient {
     @Query('end_date') required String endDate,
     @Query('start_date') required String startDate,
     @Query('enable_pagination') bool? enablePagination,
+    @Query('fetch_type') FetchType? fetchType,
     @Query('page') int? page,
     @Query('per_page') int? perPage,
   });

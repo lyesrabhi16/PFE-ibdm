@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/app_line_chart.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/cuve.dart';
 import 'package:ibdm/common/widgets/cuve_with_radial_meter.dart';
@@ -539,7 +540,7 @@ class _CO2PageState extends State<CO2Page> {
                     ShadTableCell(
                       alignment: Alignment.center,
                       child: Text(
-                          "${((d.value ?? 0) as double).toStringAsFixed(2)} M3"),
+                          "${((d.value ?? 0) as double).toStringAsFixed(2)} KG"),
                     ),
                   ],
                 ),
@@ -660,7 +661,7 @@ class _CO2PageState extends State<CO2Page> {
   _getTopActionsBar() {
     final strings = getTranslations(context).obs;
     return Obx(() {
-      logger.e("selected: ${co2EndDate.value}");
+      //logger.e("selected: ${co2EndDate.value}");
       return LiveDataTopActionBar(
         isLive: isLive,
         startDate: feedMetaData!.startDate,
@@ -674,6 +675,55 @@ class _CO2PageState extends State<CO2Page> {
           minute = dt.minute;
           second = dt.second;
           _getCO2Data();
+        },
+        afterDataDisplayWidgets: [
+          ShadButton(
+            icon: Icon(LucideIcons.clipboardList),
+            onPressed: () => _openConsommationDialog(),
+            child: Text(strings.value.consommation),
+          )
+        ],
+        graphPressed: () {
+          showShadDialog(
+            context: context,
+            builder: (context) => ShadDialog(
+              constraints: BoxConstraints(
+                minWidth: min(context.width, 600),
+                maxWidth: min(context.width, 800),
+                minHeight: min(context.height, 600),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          )).marginAll(AppSizes.md),
+                  AppLineChart(
+                    graphTypes: [
+                      GraphType(
+                        name: "Niveau",
+                        getGraphData: getNiveauGraphData,
+                        ySuffix: " KG",
+                      ),
+                      GraphType(
+                        name: "Pression",
+                        getGraphData: getPressionGraphData,
+                        ySuffix: " Bars",
+                      ),
+                      GraphType(
+                        name: "Consommation",
+                        supportsFetchType: false,
+                        getGraphData: getConsommationGraphData,
+                        ySuffix: " KG",
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
         },
         listPressed: () {
           showShadDialog(
@@ -721,6 +771,258 @@ class _CO2PageState extends State<CO2Page> {
         },
       );
     });
+  }
+
+  Future<Map> getConsommationGraphData(
+      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
+    final strings = getTranslations(getContext);
+    Map data = {
+      "182": [],
+      "1833": [],
+      "CAN35": [],
+      "KRV40": [],
+      "ENTREE": [],
+    };
+
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getCo2ConsommationBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+    );
+    for (var e in res.consommations) {
+      if (data.containsKey("182")) {
+        data["182"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.utCo2V182 ?? 0,
+        });
+      }
+      if (data.containsKey("1833")) {
+        data["1833"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.utCo2V1833 ?? 0,
+        });
+      }
+      if (data.containsKey("CAN35")) {
+        data["CAN35"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.utCo2Vcan35 ?? 0,
+        });
+      }
+      if (data.containsKey("KRV40")) {
+        data["KRV40"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.utCo2Vkrv40 ?? 0,
+        });
+      }
+      if (data.containsKey("ENTREE")) {
+        data["ENTREE"].add({
+          "x": e.date.millisecondsSinceEpoch,
+          "y": e.utCo2Ve ?? 0,
+        });
+      }
+    }
+    return data;
+  }
+
+  _openConsommationDialog() async {
+    final strings = getTranslations(getContext).obs;
+    Co2IfruitConsommation? cons;
+    final now = DateTime.now();
+    final toDate = DateTime(
+      year ?? now.year,
+      month ?? now.month,
+      day ?? now.day,
+    );
+    final fromDate = toDate;
+    final Rx<DateTimeRange> _selectedDateRange = DateTimeRange(
+      start: fromDate,
+      end: toDate,
+    ).obs;
+
+    final Rx<bool> _dataLoaded = false.obs;
+    final Rx<bool> _failed = false.obs;
+    int retries = 3;
+    _getConsData() async {
+      _dataLoaded.value = false;
+
+      try {
+        cons = await (await ApiClientInstance.getApiClient())
+            .getCo2IfruitConsommation(
+          fromYear: _selectedDateRange.value.start.previousDay.year,
+          fromMonth: _selectedDateRange.value.start.previousDay.month,
+          fromDay: _selectedDateRange.value.start.previousDay.day,
+          toYear: _selectedDateRange.value.end.year,
+          toMonth: _selectedDateRange.value.end.month,
+          toDay: _selectedDateRange.value.end.day,
+        );
+        _failed.value = false;
+        _dataLoaded.value = true;
+      } catch (e) {
+        if (retries > 0) {
+          retries--;
+          _getConsData();
+        } else {
+          retries = 3;
+
+          _failed.value = true;
+          _dataLoaded.value = true;
+          Toasts.showErrorToast(
+            context: getContext,
+            message: strings.value.failedToGetInventory,
+          );
+        }
+      }
+    }
+
+    return showShadDialog(
+      context: getContext,
+      builder: (context) => ShadDialog(
+        title: Text(
+          strings.value.consommation,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        description: Text(strings.value.consommationDescription),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                ShadDatePicker.range(
+                  onRangeChanged: (value) => {
+                    _selectedDateRange.value = DateTimeRange(
+                      start: value?.start ?? _selectedDateRange.value.start,
+                      end: value?.end ?? value!.start!,
+                    ),
+                  },
+                  closeOnSelection: false,
+                  closeOnTapOutside: true,
+                  selectableDayPredicate: (day) =>
+                      day.isSameDayOrGreatier(co2StartDate.value) &&
+                      day.isSameDayOrLower(co2EndDate.value),
+                  allowDeselection: false,
+                  formatDateRange: (dateRange) =>
+                      "${dateRange.start != null ? DateFormat("dd/MM/yyyy").format(dateRange.start!) : ''}${dateRange.end != null ? ' - ${DateFormat("dd/MM/yyyy").format(dateRange.end!)}' : ''}",
+                  selected: ShadDateTimeRange(
+                    start: _selectedDateRange.value.start,
+                    end: _selectedDateRange.value.end,
+                  ),
+                  initialMonth: _selectedDateRange.value.start,
+                  fromMonth: co2StartDate.value,
+                  toMonth: co2EndDate.value,
+                ),
+                ShadButton(
+                  icon: Icon(LucideIcons.search),
+                  onPressed: () {
+                    _getConsData();
+                  },
+                  child: Text(strings.value.find),
+                ),
+              ],
+            ),
+            Obx(() {
+              if (!_dataLoaded.value) {
+                _getConsData();
+                return SizedBox(
+                    height: 600,
+                    child: CircularProgressIndicatorWithText(
+                      text: strings.value.loading,
+                    ));
+              }
+              if (_failed.value) {
+                return Text(strings.value.failedToGetInventory);
+              }
+              return Column(
+                children: [
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: context.width,
+                        minHeight: 300,
+                        maxHeight: 680,
+                      ),
+                      child: ShadTable.list(
+                        columnSpanExtent: (t) => FixedTableSpanExtent(
+                            [0, 1].contains(t)
+                                ? 150
+                                : context.width - (150 * 2)),
+                        header: [
+                          ShadTableCell.header(child: Text(strings.value.type)),
+                          ShadTableCell.header(child: Text(strings.value.name)),
+                          ShadTableCell.header(
+                              child: Text(strings.value.value)),
+                        ],
+                        children: [
+                          for (var r in [
+                            DataRepresentation(
+                                name: "",
+                                code: "",
+                                source: {},
+                                extra: {"type": "entree"}),
+                            DataRepresentation(
+                                name: "Entree",
+                                code: "ut_co2_ve",
+                                source: cons?.toJson()),
+                            DataRepresentation(
+                                name: "",
+                                code: "",
+                                source: {},
+                                extra: {"type": "consommation"}),
+                            DataRepresentation(
+                              name: "182",
+                              code: "ut_co2_v182",
+                              source: cons?.toJson(),
+                            ),
+                            DataRepresentation(
+                              name: "1833",
+                              code: "ut_co2_v1833",
+                              source: cons?.toJson(),
+                            ),
+                            DataRepresentation(
+                              name: "CAN35",
+                              code: "ut_co2_vcan35",
+                              source: cons?.toJson(),
+                            ),
+                            DataRepresentation(
+                              name: "KRV40",
+                              code: "ut_co2_vkrv40",
+                              source: cons?.toJson(),
+                            ),
+                          ])
+                            [
+                              ShadTableCell(
+                                child: Text(
+                                  r.extra != null &&
+                                          r.extra!.containsKey("type")
+                                      ? r.extra!["type"].toString().capitalize!
+                                      : "",
+                                  softWrap: false,
+                                ),
+                              ),
+                              ShadTableCell(
+                                child: Text(
+                                  r.name,
+                                  softWrap: false,
+                                ),
+                              ),
+                              ShadTableCell(
+                                child: Text(
+                                  (r.value ?? "").toString(),
+                                  softWrap: false,
+                                ),
+                              ),
+                            ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            })
+          ],
+        ),
+      ),
+    );
   }
 
   void onTapListItem(DataRepresentation<dynamic> d) {
@@ -799,5 +1101,79 @@ class _CO2PageState extends State<CO2Page> {
                 ]));
       },
     );
+  }
+
+  Future<Map> getNiveauGraphData(
+      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
+    final strings = getTranslations(getContext);
+    Map data = {
+      "MGI": [],
+      "CEVITAL": [],
+      "N2": [],
+    };
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getCo2BetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (var e in res.data) {
+      data["MGI"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.utCo2Vc1 ?? 0,
+      });
+      data["CEVITAL"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.utCo2Vc2 ?? 0,
+      });
+      data["N2"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.utN2Vn2 ?? 0,
+      });
+    }
+    return data;
+  }
+
+  Future<Map> getPressionGraphData(
+      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
+    final strings = getTranslations(getContext);
+    Map data = {
+      "MGI": [],
+      "CEVITAL": [],
+      "N2": [],
+      "NOURISSE": [],
+      "SOUDE": [],
+    };
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getCo2BetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (var e in res.data) {
+      data["MGI"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.utCo2Pc1 ?? 0,
+      });
+      data["CEVITAL"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.utCo2Pc2 ?? 0,
+      });
+      data["N2"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.utN2Pn2 ?? 0,
+      });
+      data["NOURISSE"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.utCo2Pn ?? 0,
+      });
+      data["SOUDE"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.utSoude ?? 0,
+      });
+    }
+    return data;
   }
 }

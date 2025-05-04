@@ -11,6 +11,7 @@ export 'models/alert_enum.dart';
 export 'models/alert_type_enum.dart';
 export 'models/co2_ifruit.dart';
 export 'models/co2_ifruit_consommation.dart';
+export 'models/co2_multi_meta_consommations.dart';
 export 'models/code_enum.dart';
 export 'models/database_storage_info.dart';
 export 'models/databases.dart';
@@ -22,6 +23,9 @@ export 'models/email_schedule.dart';
 export 'models/email_schedule_request.dart';
 export 'models/error_response.dart';
 export 'models/feed_meta_data.dart';
+export 'models/filtration_consommation.dart';
+export 'models/filtration_meta_consommation.dart';
+export 'models/filtration_multi_meta_consommations.dart';
 export 'models/get_subordinate_and_superior_id_response.dart';
 export 'models/group.dart';
 export 'models/group_request.dart';
@@ -85,6 +89,7 @@ export 'models/format.dart';
 export 'models/lang.dart';
 export 'models/interval.dart';
 export 'models/rapport.dart';
+export 'models/fetch_type.dart';
 // Root client
 export 'api_client.dart';
 

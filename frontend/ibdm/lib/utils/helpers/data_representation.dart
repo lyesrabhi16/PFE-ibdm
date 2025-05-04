@@ -4,6 +4,7 @@ class DataRepresentation<T> {
   final String name;
   final String code;
   final IconData? icon;
+  final Map? extra = {};
   Map<String, T>? source;
   final T Function(dynamic value)? transform;
   final dynamic Function(Map<String, T> sourceObject)? toValue;
@@ -14,7 +15,12 @@ class DataRepresentation<T> {
     this.transform,
     this.toValue,
     this.icon,
-  });
+    Map? extra,
+  }) {
+    if (extra != null) {
+      this.extra!.addEntries(extra.entries);
+    }
+  }
   get value {
     if (source == null) {
       return null;

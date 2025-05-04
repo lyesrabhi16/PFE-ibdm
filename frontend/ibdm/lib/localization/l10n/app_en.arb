@@ -842,5 +842,11 @@
     "failedToGetDebitData": "Failed to get debit data",
     "failedToGetPresCondData": "Failed to get pres cond data",
     "value": "Value",
-    "visualize" : "Visualize"
+    "visualize" : "Visualize",
+    "week": "Week",
+    "precision": "Precision",
+    "type": "Type",
+    "consommationDescription": "show the consommation in a range of dates.",
+    "previousDay": "Previous Day",
+    "sinceFirstOfMonth": "Since First of Month"
 }
