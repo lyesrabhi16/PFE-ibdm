@@ -6,6 +6,7 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/models/login_request_request.dart';
 import 'package:ibdm/services/toasts.dart';
+import 'package:ibdm/utils/constants/error_codes.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
@@ -116,28 +117,35 @@ class LoginActions {
             errorToastMessage = strings.cancelMessage;
             break;
           default:
-            errorToastMessage = strings.unknownError;
+            logger.e("error code: ${e.response?.data["code"]} ");
+            switch (e.response?.data["code"]) {
+              case ErrorCodes.INVALID_CREDENTIALS:
+                errorToastMessage = strings.invalidEmailOrPassword;
+                break;
+              default:
+                errorToastMessage = strings.unknownError;
+            }
         }
+        logger.e("errorToastMessage: ${errorToastMessage}");
 
-        if (e.response != null) {
-          errorToastMessage = e.response?.data['message'];
-        }
-        if (context.mounted) {
+        if (Get.context != null && Get.context!.mounted) {
           Toasts.showErrorToastNotification(
-              context: context,
-              message: errorToastMessage,
-              title: strings.loginFailed);
+            context: Get.context!,
+            message: errorToastMessage,
+            title: strings.loginFailed,
+          );
         }
       } else {
         printMessage("Login Failed uncaught exception: $e");
         logger.f("Login Failed uncaught exception: $e");
 
         // show uncaught error toast
-        if (context.mounted) {
+        if (Get.context != null && Get.context!.mounted) {
           Toasts.showErrorToastNotification(
-              context: context,
-              message: strings.unknownError,
-              title: strings.connectionFailed);
+            context: Get.context!,
+            message: strings.unknownError,
+            title: strings.connectionFailed,
+          );
         }
       }
     }

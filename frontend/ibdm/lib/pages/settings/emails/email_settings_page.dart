@@ -43,33 +43,37 @@ class _EmailSettingsPageState extends State<EmailSettingsPage> {
               height: AppSizes.md,
             ),
             Expanded(
-              child: Wrap(
-                children: [
-                  SettingCard(
-                    icon: Icons.email,
-                    title: strings.value.emailSchedules,
-                    subtitle: strings.value.emailSchedulesDescription,
-                    onTap: () => {
-                      Get.toNamed(Routes.emailSchedules),
-                    },
-                  ).withPermission(Permissions.viewEmailSchedules),
-                  SettingCard(
-                    icon: Icons.email,
-                    title: strings.value.emailAlerts,
-                    subtitle: strings.value.emailAlertsDescription,
-                    onTap: () => {
-                      Get.toNamed(Routes.emailAlerts),
-                    },
-                  ).withPermission(Permissions.viewEmailAlerts),
-                  SettingCard(
-                    icon: Icons.email,
-                    title: strings.value.emailSents,
-                    subtitle: strings.value.emailSentsDescription,
-                    onTap: () => {
-                      Get.toNamed(Routes.emailSent),
-                    },
-                  ).withPermission(Permissions.viewEmailsSent),
-                ].nonNulls.toList(),
+              child: SingleChildScrollView(
+                child: Obx(() {
+                  return Column(
+                    children: [
+                      SettingCard(
+                        icon: Icons.email,
+                        title: strings.value.emailSchedules,
+                        subtitle: strings.value.emailSchedulesDescription,
+                        onTap: () => {
+                          Get.toNamed(Routes.emailSchedules),
+                        },
+                      ).withPermission(Permissions.viewEmailSchedules),
+                      SettingCard(
+                        icon: Icons.email,
+                        title: strings.value.emailAlerts,
+                        subtitle: strings.value.emailAlertsDescription,
+                        onTap: () => {
+                          Get.toNamed(Routes.emailAlerts),
+                        },
+                      ).withPermission(Permissions.viewEmailAlerts),
+                      SettingCard(
+                        icon: Icons.email,
+                        title: strings.value.emailSents,
+                        subtitle: strings.value.emailSentsDescription,
+                        onTap: () => {
+                          Get.toNamed(Routes.emailSent),
+                        },
+                      ).withPermission(Permissions.viewEmailsSent),
+                    ].nonNulls.toList(),
+                  );
+                }),
               ),
             ),
           ],

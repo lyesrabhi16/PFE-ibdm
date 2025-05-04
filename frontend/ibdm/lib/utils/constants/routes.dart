@@ -7,12 +7,14 @@ import 'package:ibdm/pages/co2/co2.dart';
 import 'package:ibdm/pages/filtration.dart/filtration.dart';
 import 'package:ibdm/pages/no_permissions.dart';
 import 'package:ibdm/pages/not_found.dart';
+import 'package:ibdm/pages/server-status/server_status.dart';
 import 'package:ibdm/pages/settings/about_page.dart';
 import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/login/login_page.dart';
 import 'package:ibdm/common/middlewares/protected_route_middleware.dart';
 import 'package:ibdm/pages/settings/emails/email_alerts_page.dart';
 import 'package:ibdm/pages/settings/emails/email_schedules_page.dart';
+import 'package:ibdm/pages/settings/server_settings/server_settings.dart';
 import 'package:ibdm/pages/settings/settings.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
 import 'package:ibdm/pages/users.dart';
@@ -44,6 +46,8 @@ class Routes {
   static const String help = '/settings/help';
   static const String utilite = '/utilite';
   static const String co2 = '/co2';
+  static const String serverStatus = "/server-status";
+  static const String serverSettings = "/settings/server";
   static const String noPermissions = "/no-permissions";
   static const String notFound = "/404";
 
@@ -85,6 +89,12 @@ class Routes {
           page: routePages[Routes.co2]!,
         ).withPermission(Permissions.viewCo2Page),
         Destination(
+          title: "Server Status",
+          icon: LucideIcons.server,
+          route: Routes.serverStatus,
+          page: routePages[Routes.serverStatus]!,
+        ).withPermission(Permissions.viewServerStatusPage),
+        Destination(
           title: "Settings",
           icon: Icons.settings,
           route: Routes.settings,
@@ -93,6 +103,7 @@ class Routes {
       ].nonNulls.toList();
 
   static final customRoutes = {
+    serverSettings: Routes.serverSettings,
     emailSettings: settings,
     emailSchedules: settings,
     emailAlerts: settings,
@@ -140,6 +151,12 @@ class Routes {
     ),
     Routes.co2: RoutePermissions(
       requiredPermissions: [Permissions.viewCo2Page],
+    ),
+    Routes.serverStatus: RoutePermissions(
+      requiredPermissions: [Permissions.viewServerStatusPage],
+    ),
+    Routes.serverSettings: RoutePermissions(
+      requiredPermissions: [Permissions.viewServerSettingsPage],
     ),
   };
   static final routePages = {
@@ -200,6 +217,24 @@ class Routes {
       middlewares: [
         ProtectedRouteMiddleware(
           routePermissions: routePermissions[Routes.siroperie],
+        )
+      ],
+    ),
+    Routes.serverStatus: GetPage(
+      name: Routes.serverStatus,
+      page: () => ServerStatusPage(),
+      middlewares: [
+        ProtectedRouteMiddleware(
+          routePermissions: routePermissions[Routes.serverStatus],
+        )
+      ],
+    ),
+    Routes.serverSettings: GetPage(
+      name: Routes.serverSettings,
+      page: () => ServerSettingsPage(),
+      middlewares: [
+        ProtectedRouteMiddleware(
+          routePermissions: routePermissions[Routes.serverSettings],
         )
       ],
     ),

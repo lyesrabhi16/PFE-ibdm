@@ -6,7 +6,9 @@ import 'package:get/get.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/cuve.dart';
+import 'package:ibdm/common/widgets/data_list.dart';
 import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
@@ -47,7 +49,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
     super.deactivate();
   }
 
-  late FeedMetaData feedMetaData;
+  FeedMetaData? feedMetaData;
 
   final Rx<bool> loaded = false.obs;
 
@@ -140,7 +142,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
       loaded.value = true;
       return null;
     } finally {
-      sucre_end_date.value = sucre.date;
+      sucre_end_date.value = sucre!.date;
       refresh.value = !refresh.value;
       Future.delayed(Durations.long2, () {
         toastification.dismissById(toast.id);
@@ -148,7 +150,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
     }
   }
 
-  late Sucre sucre;
+  Sucre? sucre;
 
   Rx<bool> refresh = false.obs;
 
@@ -161,17 +163,28 @@ class _SiroperiePageState extends State<SiroperiePage> {
     return AppCustomContainer(
       child: Obx(
         () {
+          if (retries == 0) {
+            return Center(
+              child: Text(strings.value.failedToConnectToSiroperieBroadcast(0)),
+            );
+          }
           printMessage("loaded: ${loaded.value}");
           if (!loaded.value) {
             printMessage("loading because of loaded value");
             _load();
             logger.e("loading because of loaded value");
-            return Center(
-              child: CircularProgressIndicator(),
+            return CircularProgressIndicatorWithText(
+              text: strings.value.loading,
             );
           }
           if (refresh.value) {
             refresh.value = false;
+          }
+
+          if (feedMetaData == null) {
+            return CircularProgressIndicatorWithText(
+              text: strings.value.loading,
+            );
           }
 
           return Center(
@@ -224,54 +237,64 @@ class _SiroperiePageState extends State<SiroperiePage> {
                             _load();
                           }
                           logger.e("loading inside of stream builder");
-                          return Center(
-                            child: CircularProgressIndicator(),
+                          return CircularProgressIndicatorWithText(
+                            text: strings.value.loading,
                           );
                         }
                         if (isLive.value) {
                           sucre = Sucre.fromJson(
                               JsonCodec().decode(snapshot.data)["data"]);
                           Future.delayed(Duration(microseconds: 100),
-                              () => sucre_end_date.value = sucre.date);
-                          year = sucre.date.year;
-                          month = sucre.date.month;
-                          day = sucre.date.day;
-                          hour = sucre.date.hour;
-                          minute = sucre.date.minute;
-                          second = sucre.date.second;
+                              () => sucre_end_date.value = sucre!.date);
+                          year = sucre!.date.year;
+                          month = sucre!.date.month;
+                          day = sucre!.date.day;
+                          hour = sucre!.date.hour;
+                          minute = sucre!.date.minute;
+                          second = sucre!.date.second;
                         }
 
-                        T02_value =
-                            sucre.aT02 != null ? sucre.aT02! * 100 / 140000 : 0;
-                        T03_value =
-                            sucre.aT03 != null ? sucre.aT03! * 100 / 140000 : 0;
-                        T04_value =
-                            sucre.aT04 != null ? sucre.aT04! * 100 / 140000 : 0;
-                        T05_value =
-                            sucre.aT05 != null ? sucre.aT05! * 100 / 60000 : 0;
-                        T06_value =
-                            sucre.aT06 != null ? sucre.aT06! * 100 / 60000 : 0;
-                        TS21_value =
-                            sucre.tS21 != null ? sucre.tS21! * 100 / 60000 : 0;
-                        TS22_value =
-                            sucre.tS22 != null ? sucre.tS22! * 100 / 60000 : 0;
-                        TS23_value =
-                            sucre.tS23 != null ? sucre.tS23! * 100 / 60000 : 0;
-                        TS24_value =
-                            sucre.tS24 != null ? sucre.tS24! * 100 / 60000 : 0;
-                        TS25_value =
-                            sucre.tS25 != null ? sucre.tS25! * 100 / 60000 : 0;
+                        T02_value = sucre!.aT02 != null
+                            ? sucre!.aT02! * 100 / 140000
+                            : 0;
+                        T03_value = sucre!.aT03 != null
+                            ? sucre!.aT03! * 100 / 140000
+                            : 0;
+                        T04_value = sucre!.aT04 != null
+                            ? sucre!.aT04! * 100 / 140000
+                            : 0;
+                        T05_value = sucre!.aT05 != null
+                            ? sucre!.aT05! * 100 / 60000
+                            : 0;
+                        T06_value = sucre!.aT06 != null
+                            ? sucre!.aT06! * 100 / 60000
+                            : 0;
+                        TS21_value = sucre!.tS21 != null
+                            ? sucre!.tS21! * 100 / 60000
+                            : 0;
+                        TS22_value = sucre!.tS22 != null
+                            ? sucre!.tS22! * 100 / 60000
+                            : 0;
+                        TS23_value = sucre!.tS23 != null
+                            ? sucre!.tS23! * 100 / 60000
+                            : 0;
+                        TS24_value = sucre!.tS24 != null
+                            ? sucre!.tS24! * 100 / 60000
+                            : 0;
+                        TS25_value = sucre!.tS25 != null
+                            ? sucre!.tS25! * 100 / 60000
+                            : 0;
 
-                        sommeTetraL = (sucre.tS21 ?? 0) +
-                            (sucre.tS22 ?? 0) +
-                            (sucre.tS23 ?? 0) +
-                            (sucre.tS24 ?? 0) +
-                            (sucre.tS25 ?? 0);
-                        sommeAdueL = (sucre.aT02 ?? 0) +
-                            (sucre.aT03 ?? 0) +
-                            (sucre.aT04 ?? 0) +
-                            (sucre.aT05 ?? 0) +
-                            (sucre.aT06 ?? 0);
+                        sommeTetraL = (sucre!.tS21 ?? 0) +
+                            (sucre!.tS22 ?? 0) +
+                            (sucre!.tS23 ?? 0) +
+                            (sucre!.tS24 ?? 0) +
+                            (sucre!.tS25 ?? 0);
+                        sommeAdueL = (sucre!.aT02 ?? 0) +
+                            (sucre!.aT03 ?? 0) +
+                            (sucre!.aT04 ?? 0) +
+                            (sucre!.aT05 ?? 0) +
+                            (sucre!.aT06 ?? 0);
                         return Container(
                           color: colorScheme.surfaceContainer,
                           width: context.width,
@@ -302,37 +325,37 @@ class _SiroperiePageState extends State<SiroperiePage> {
                                         Cuve(
                                           title: "TS21",
                                           value: TS21_value,
-                                          niveau1: sucre.tS21 ?? 0,
+                                          niveau1: sucre!.tS21 ?? 0,
                                           niveau2: convertSugarLToKG(
-                                              sucre.tS21 ?? 0),
+                                              sucre!.tS21 ?? 0),
                                         ),
                                         Cuve(
                                           title: "TS22",
                                           value: TS22_value,
-                                          niveau1: sucre.tS22 ?? 0,
+                                          niveau1: sucre!.tS22 ?? 0,
                                           niveau2: convertSugarLToKG(
-                                              sucre.tS22 ?? 0),
+                                              sucre!.tS22 ?? 0),
                                         ),
                                         Cuve(
                                           title: "TS23",
                                           value: TS23_value,
-                                          niveau1: sucre.tS23 ?? 0,
+                                          niveau1: sucre!.tS23 ?? 0,
                                           niveau2: convertSugarLToKG(
-                                              sucre.tS23 ?? 0),
+                                              sucre!.tS23 ?? 0),
                                         ),
                                         Cuve(
                                           title: "TS24",
                                           value: TS24_value,
-                                          niveau1: sucre.tS24 ?? 0,
+                                          niveau1: sucre!.tS24 ?? 0,
                                           niveau2: convertSugarLToKG(
-                                              sucre.tS24 ?? 0),
+                                              sucre!.tS24 ?? 0),
                                         ),
                                         Cuve(
                                           title: "TS25",
                                           value: TS25_value,
-                                          niveau1: sucre.tS25 ?? 0,
+                                          niveau1: sucre!.tS25 ?? 0,
                                           niveau2: convertSugarLToKG(
-                                              sucre.tS25 ?? 0),
+                                              sucre!.tS25 ?? 0),
                                         ),
                                       ],
                                     ),
@@ -365,37 +388,37 @@ class _SiroperiePageState extends State<SiroperiePage> {
                                           Cuve(
                                             title: "T02",
                                             value: T02_value,
-                                            niveau1: sucre.aT02 ?? 0,
+                                            niveau1: sucre!.aT02 ?? 0,
                                             niveau2: convertSugarLToKG(
-                                                sucre.aT02 ?? 0),
+                                                sucre!.aT02 ?? 0),
                                           ),
                                           Cuve(
                                             title: "T03",
                                             value: T03_value,
-                                            niveau1: sucre.aT03 ?? 0,
+                                            niveau1: sucre!.aT03 ?? 0,
                                             niveau2: convertSugarLToKG(
-                                                sucre.aT03 ?? 0),
+                                                sucre!.aT03 ?? 0),
                                           ),
                                           Cuve(
                                             title: "T04",
                                             value: T04_value,
-                                            niveau1: sucre.aT04 ?? 0,
+                                            niveau1: sucre!.aT04 ?? 0,
                                             niveau2: convertSugarLToKG(
-                                                sucre.aT04 ?? 0),
+                                                sucre!.aT04 ?? 0),
                                           ),
                                           Cuve(
                                             title: "T05",
                                             value: T05_value,
-                                            niveau1: sucre.aT05 ?? 0,
+                                            niveau1: sucre!.aT05 ?? 0,
                                             niveau2: convertSugarLToKG(
-                                                sucre.aT05 ?? 0),
+                                                sucre!.aT05 ?? 0),
                                           ),
                                           Cuve(
                                             title: "T06",
                                             value: T06_value,
-                                            niveau1: sucre.aT06 ?? 0,
+                                            niveau1: sucre!.aT06 ?? 0,
                                             niveau2: convertSugarLToKG(
-                                                sucre.aT06 ?? 0),
+                                                sucre!.aT06 ?? 0),
                                           ),
                                         ],
                                       ),
@@ -429,7 +452,16 @@ class _SiroperiePageState extends State<SiroperiePage> {
     );
   }
 
+  bool loading = false;
+  int counter = 0;
+  int blocked = 0;
   _load() async {
+    counter++;
+    if (loading) {
+      blocked++;
+      return;
+    }
+    loading = true;
     final strings = getTranslations(context);
     printMessage("siroperie page loading");
     loaded.value = false;
@@ -455,11 +487,11 @@ class _SiroperiePageState extends State<SiroperiePage> {
         logger.e(
             "Error connecting to sucre broadcast${retries > 0 ? ',retrying' : ''}");
         if (retries > 0) {
-          printMessage("retrying in 1 second");
+          printMessage("retrying in 3 second");
           retries--;
-          Future.delayed(Duration(seconds: 1), _load);
-        } else {
-          retries = 3;
+          if (retries > 0) {
+            Future.delayed(Duration(seconds: 3), _load);
+          }
         }
         Toasts.showErrorToastNotification(
             context: context,
@@ -467,14 +499,16 @@ class _SiroperiePageState extends State<SiroperiePage> {
       }
     }
     loaded.value = true;
+    loading = false;
+    logger.e("counter: $counter blocked: $blocked");
   }
 
   _getTopActionsBar() {
     final strings = getTranslations(getContext).obs;
     return LiveDataTopActionBar(
       isLive: isLive,
-      startDate: feedMetaData.startDate,
-      endDate: feedMetaData.endDate,
+      startDate: feedMetaData!.startDate,
+      endDate: feedMetaData!.endDate,
       selectedDate: sucre_end_date.value,
       searchPressed: (dt) {
         year = dt.year;
@@ -485,9 +519,27 @@ class _SiroperiePageState extends State<SiroperiePage> {
         second = dt.second;
         _getSucreData();
       },
+      listPressed: () {
+        showShadDialog(
+          context: context,
+          builder: (context) {
+            return ShadDialog(
+              child: DataList(
+                getData: (start, end) async {
+                  try {
+                    final api = await ApiClientInstance.getApiClient();
+                  } catch (e) {}
+                  return [];
+                },
+              ),
+            );
+          },
+        );
+      },
       afterDataDisplayWidgets: [
         // inventory button
         ShadButton(
+          icon: Icon(LucideIcons.clipboardList),
           onPressed: () => _openInventoryDialog(),
           child: Text(strings.value.inventory),
         )
@@ -711,11 +763,10 @@ class _SiroperiePageState extends State<SiroperiePage> {
               if (!_dataLoaded.value) {
                 _getSucreData();
                 return SizedBox(
-                  height: 600,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
+                    height: 600,
+                    child: CircularProgressIndicatorWithText(
+                      text: strings.value.loading,
+                    ));
               }
               if (_failed.value) {
                 return Text(strings.value.failedToGetInventory);

@@ -7,6 +7,8 @@ class AppSizes {
   static const double xl = 32.0;
 
   static const double borderRadius = 10.0;
+
+  static const double heightOffset = 56.0;
 }
 
 class ScreenSizes {

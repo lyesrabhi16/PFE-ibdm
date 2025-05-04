@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/common/widgets/alert_email_form.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/divider_with_text.dart';
 import 'package:ibdm/common/widgets/email_schedule_form.dart';
 import 'package:ibdm/services/api/api_client.dart';
@@ -116,9 +117,7 @@ class _SentEmailFormState extends State<SentEmailForm> {
         load();
         return SizedBox(
           height: AppSizes.lg * 10,
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: CircularProgressIndicatorWithText(text: strings.value.loading),
         );
       }
 

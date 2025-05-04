@@ -3,15 +3,17 @@ import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/loading_page_controller.dart';
 import 'package:ibdm/common/controllers/permissions_controller.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 
 class LoadingPage extends StatefulWidget {
-  LoadingPage({super.key});
+  const LoadingPage({super.key, this.load = true});
 
   @override
   State<LoadingPage> createState() => _LoadingPageState();
   static bool inProgress = false;
+  final bool load;
 }
 
 class _LoadingPageState extends State<LoadingPage> {
@@ -50,23 +52,32 @@ class _LoadingPageState extends State<LoadingPage> {
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
-    logger.e("BEGIN LOADING");
+    logger.e("load: ${widget.load}");
+    if (widget.load) {
+      logger.e("BEGIN LOADING");
+      LoadingPage.inProgress = true;
+      _roles_loaded = false;
+      userController.getRoles(context).then((value) {
+        logger.e("Roles loaded: ${userController.roles.length}");
 
-    _roles_loaded = false;
-    userController.getRoles(context).then((value) {
-      logger.e("Roles loaded: ${userController.roles.length}");
-
-      _roles_loaded = true;
-      _loadFinished();
-    });
-
-    if (!permissionsController.permissions_loading) {
-      _permissions_loaded = false;
-      permissionsController.loadPermissions().then((value) {
-        logger.e("Permissions loaded: ${permissionsController.ready}");
-        _permissions_loaded = true;
+        _roles_loaded = true;
         _loadFinished();
       });
+      logger.e("check permissions");
+      if (!permissionsController.permissions_loading) {
+        logger.e("get permissions");
+        _permissions_loaded = false;
+        permissionsController.loadPermissions().then((value) {
+          logger.e("RECEIVED PERMISSIONS");
+          if (permissionsController.ready.value) {
+            logger.e("PERMISSIONS ARE LOADED");
+            _permissions_loaded = true;
+            _loadFinished();
+          } else {
+            logger.e("NOT READY");
+          }
+        });
+      }
     }
 
     return Obx(
@@ -92,7 +103,11 @@ class _LoadingPageState extends State<LoadingPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const CircularProgressIndicator(),
+                    CircularProgressIndicatorWithText(
+                      text: widget.load
+                          ? strings.value.loading
+                          : strings.value.waiting,
+                    ),
                   ],
                 ),
               ),

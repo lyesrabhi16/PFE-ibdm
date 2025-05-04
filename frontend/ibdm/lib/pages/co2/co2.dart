@@ -1,16 +1,15 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/cuve.dart';
 import 'package:ibdm/common/widgets/cuve_with_radial_meter.dart';
 import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
 import 'package:ibdm/common/widgets/radial_meter.dart';
-import 'package:ibdm/common/widgets/temp_gauge.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
@@ -40,7 +39,7 @@ class _CO2PageState extends State<CO2Page> {
   BuildContext get getContext => _getContext!.call()!;
   ColorScheme get colorScheme => Theme.of(getContext).colorScheme;
 
-  late FeedMetaData feedMetaData;
+  FeedMetaData? feedMetaData;
 
   final Rx<DateTime> co2StartDate = DateTime.now().obs;
 
@@ -57,7 +56,7 @@ class _CO2PageState extends State<CO2Page> {
   int? minute;
   int? second;
 
-  late Co2Ifruit co2_ifruit;
+  Co2Ifruit? co2_ifruit;
   final RxBool loaded = false.obs;
   final RxBool refresh = false.obs;
 
@@ -99,13 +98,18 @@ class _CO2PageState extends State<CO2Page> {
               printMessage("loading because of loaded value");
               load();
               logger.e("loading because of loaded value");
-              return Center(
-                child: CircularProgressIndicator(),
+              return CircularProgressIndicatorWithText(
+                text: strings.value.loading,
               );
             }
 
             if (refresh.value) {
               refresh.value = false;
+            }
+            if (feedMetaData == null) {
+              return CircularProgressIndicatorWithText(
+                text: strings.value.loading,
+              );
             }
             try {
               return _build();
@@ -114,8 +118,8 @@ class _CO2PageState extends State<CO2Page> {
               CO2Page.channel?.sink.close();
               CO2Page.stream = null;
               load();
-              return Center(
-                child: CircularProgressIndicator(),
+              return CircularProgressIndicatorWithText(
+                text: strings.value.loading,
               );
             }
           },
@@ -165,7 +169,16 @@ class _CO2PageState extends State<CO2Page> {
     }
   }
 
+  bool loading = false;
+  int counter = 0;
+  int blocked = 0;
   Future<void> load() async {
+    counter++;
+    if (loading) {
+      blocked++;
+      return;
+    }
+    loading = true;
     final strings = getTranslations(context);
     printMessage("load...");
 
@@ -185,8 +198,8 @@ class _CO2PageState extends State<CO2Page> {
             CO2Page.channel!.ready,
           ]);
           feedMetaData = results[0] as FeedMetaData;
-          co2StartDate.value = feedMetaData.startDate;
-          co2EndDate.value = feedMetaData.endDate;
+          co2StartDate.value = feedMetaData!.startDate;
+          co2EndDate.value = feedMetaData!.endDate;
           printMessage("CO2 broadcast ready");
           CO2Page.stream = CO2Page.channel!.stream.asBroadcastStream();
           loaded.value = true;
@@ -196,11 +209,11 @@ class _CO2PageState extends State<CO2Page> {
           logger.e(
               "Error connecting to CO2 broadcast${retries > 0 ? ',retrying' : ''}");
           if (retries > 0) {
-            printMessage("retrying in 1 second");
+            printMessage("retrying in 3 second");
             retries--;
-            Future.delayed(Duration(seconds: 1), load);
-          } else {
-            retries = 3;
+            if (retries > 0) {
+              Future.delayed(Duration(seconds: 3), load);
+            }
           }
           Toasts.showErrorToastNotification(
             context: context,
@@ -209,11 +222,12 @@ class _CO2PageState extends State<CO2Page> {
         }
       } else {
         printMessage("Not Loading because Stream is null");
-        loaded.value = false;
       }
     } catch (e) {
       printMessage("loading faild: $e");
+    } finally {
       loaded.value = true;
+      loading = false;
     }
   }
 
@@ -249,8 +263,8 @@ class _CO2PageState extends State<CO2Page> {
                   //printMessage("snapshot: $snapshot");
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     printMessage("waiting for connection");
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return CircularProgressIndicatorWithText(
+                      text: strings.value.waitingForConnection,
                     );
                   }
                   if (!snapshot.hasData ||
@@ -266,43 +280,45 @@ class _CO2PageState extends State<CO2Page> {
                       logger.e("reopening channel...");
                       Future.delayed(Duration(seconds: 1), load);
                     }
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return CircularProgressIndicatorWithText(
+                      text: strings.value.reconnecting,
                     );
                   }
                   final data = JsonCodec().decode(snapshot.data);
                   if (data["data"] == null || data["data"].isEmpty) {
                     logger.e("data is null");
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return CircularProgressIndicatorWithText(
+                      text: strings.value.waitingForValidData,
                     );
                   }
                   if (isLive.value) {
                     co2_ifruit = Co2Ifruit.fromJson(data["data"]["co2_ifruit"]);
                     _registerData(data["data"]["co2_ifruit"]);
                     Future.delayed(Duration(microseconds: 100),
-                        () => co2EndDate.value = co2_ifruit.date);
-                    year = co2_ifruit.date.year;
-                    month = co2_ifruit.date.month;
-                    day = co2_ifruit.date.day;
-                    hour = co2_ifruit.date.hour;
-                    minute = co2_ifruit.date.minute;
-                    second = co2_ifruit.date.second;
+                        () => co2EndDate.value = co2_ifruit!.date);
+                    year = co2_ifruit!.date.year;
+                    month = co2_ifruit!.date.month;
+                    day = co2_ifruit!.date.day;
+                    hour = co2_ifruit!.date.hour;
+                    minute = co2_ifruit!.date.minute;
+                    second = co2_ifruit!.date.second;
                   }
 
                   final CUVE_CO2_MGI_VALUE =
-                      (co2_ifruit.utCo2Vc1 ?? 0) * 100 / 36000;
-                  final PRESSION_CO2_MGI_VALUE = (co2_ifruit.utCo2Pc1 ?? 0);
+                      (co2_ifruit!.utCo2Vc1 ?? 0) * 100 / 36000;
+                  final PRESSION_CO2_MGI_VALUE = (co2_ifruit!.utCo2Pc1 ?? 0);
 
                   final CUVE_CO2_CEVITAL_VALUE =
-                      (co2_ifruit.utCo2Vc2 ?? 0) * 100 / 60000;
-                  final PRESSION_CO2_CEVITAL_VALUE = (co2_ifruit.utCo2Pc2 ?? 0);
+                      (co2_ifruit!.utCo2Vc2 ?? 0) * 100 / 60000;
+                  final PRESSION_CO2_CEVITAL_VALUE =
+                      (co2_ifruit!.utCo2Pc2 ?? 0);
 
-                  final CUVE_N2_VALUE = (co2_ifruit.utN2Vn2 ?? 0) * 100 / 10000;
-                  final PRESSION_N2_VALUE = (co2_ifruit.utN2Vn2 ?? 0);
+                  final CUVE_N2_VALUE =
+                      (co2_ifruit!.utN2Vn2 ?? 0) * 100 / 10000;
+                  final PRESSION_N2_VALUE = (co2_ifruit!.utN2Vn2 ?? 0);
 
-                  final PRESSION_SOUDE_VALUE = (co2_ifruit.utSoude ?? 0);
-                  final PRESSION_NOURISSE_VALUE = (co2_ifruit.utCo2Pn ?? 0);
+                  final PRESSION_SOUDE_VALUE = (co2_ifruit!.utSoude ?? 0);
+                  final PRESSION_NOURISSE_VALUE = (co2_ifruit!.utCo2Pn ?? 0);
 
                   return Container(
                       constraints: BoxConstraints(
@@ -347,7 +363,8 @@ class _CO2PageState extends State<CO2Page> {
                                         children: [
                                           CuveWithRadialMeter(
                                             cuve: Cuve(
-                                              niveau1: co2_ifruit.utCo2Vc1 ?? 0,
+                                              niveau1:
+                                                  co2_ifruit!.utCo2Vc1 ?? 0,
                                               value: CUVE_CO2_MGI_VALUE,
                                               title: "",
                                               innerTitle: "CO2 MGI",
@@ -369,7 +386,8 @@ class _CO2PageState extends State<CO2Page> {
                                           ),
                                           CuveWithRadialMeter(
                                             cuve: Cuve(
-                                              niveau1: co2_ifruit.utCo2Vc2 ?? 0,
+                                              niveau1:
+                                                  co2_ifruit!.utCo2Vc2 ?? 0,
                                               value: CUVE_CO2_CEVITAL_VALUE,
                                               title: "",
                                               innerTitle: "CO2 CEVITAL",
@@ -392,7 +410,7 @@ class _CO2PageState extends State<CO2Page> {
                                           ),
                                           CuveWithRadialMeter(
                                             cuve: Cuve(
-                                              niveau1: co2_ifruit.utN2Vn2 ?? 0,
+                                              niveau1: co2_ifruit!.utN2Vn2 ?? 0,
                                               value: CUVE_N2_VALUE,
                                               title: "",
                                               innerTitle: "N2",
@@ -632,9 +650,9 @@ class _CO2PageState extends State<CO2Page> {
       });
       return null;
     } finally {
-      co2EndDate.value = co2_ifruit.date;
+      co2EndDate.value = co2_ifruit!.date;
       refresh.value = !refresh.value;
-      logger.e("Set end Date $co2EndDate ${co2_ifruit.date}");
+      logger.e("Set end Date $co2EndDate ${co2_ifruit!.date}");
     }
   }
 
@@ -643,8 +661,8 @@ class _CO2PageState extends State<CO2Page> {
       logger.e("selected: ${co2EndDate.value}");
       return LiveDataTopActionBar(
         isLive: isLive,
-        startDate: feedMetaData.startDate,
-        endDate: feedMetaData.endDate,
+        startDate: feedMetaData!.startDate,
+        endDate: feedMetaData!.endDate,
         selectedDate: co2EndDate.value,
         searchPressed: (dt) {
           year = dt.year;
