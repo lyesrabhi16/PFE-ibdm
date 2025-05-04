@@ -9,6 +9,7 @@ import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/cuve.dart';
 import 'package:ibdm/common/widgets/cuve_with_radial_meter.dart';
 import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
+import 'package:ibdm/common/widgets/multiple_data_lists.dart';
 import 'package:ibdm/common/widgets/radial_meter.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
@@ -537,8 +538,8 @@ class _CO2PageState extends State<CO2Page> {
                     ShadTableCell(child: Text(d.name.toUpperCase())),
                     ShadTableCell(
                       alignment: Alignment.center,
-                      child:
-                          Text(((d.value ?? 0) as double).toStringAsFixed(2)),
+                      child: Text(
+                          "${((d.value ?? 0) as double).toStringAsFixed(2)} M3"),
                     ),
                   ],
                 ),
@@ -595,8 +596,8 @@ class _CO2PageState extends State<CO2Page> {
                     ShadTableCell(child: Text(d.name.toUpperCase())),
                     ShadTableCell(
                       alignment: Alignment.center,
-                      child:
-                          Text((((d.value ?? 0) as double).toStringAsFixed(2))),
+                      child: Text(
+                          ("${((d.value ?? 0) as double).toStringAsFixed(2)} M3")),
                     ),
                   ],
                 ),
@@ -657,13 +658,14 @@ class _CO2PageState extends State<CO2Page> {
   }
 
   _getTopActionsBar() {
+    final strings = getTranslations(context).obs;
     return Obx(() {
       logger.e("selected: ${co2EndDate.value}");
       return LiveDataTopActionBar(
         isLive: isLive,
         startDate: feedMetaData!.startDate,
         endDate: feedMetaData!.endDate,
-        selectedDate: co2EndDate.value,
+        selectedDate: isLive.value ? co2EndDate.value : co2_ifruit!.date,
         searchPressed: (dt) {
           year = dt.year;
           month = dt.month;
@@ -673,7 +675,129 @@ class _CO2PageState extends State<CO2Page> {
           second = dt.second;
           _getCO2Data();
         },
+        listPressed: () {
+          showShadDialog(
+            context: context,
+            builder: (context) {
+              return ShadDialog(
+                constraints: BoxConstraints(
+                  minWidth: min(context.width, 600),
+                  maxWidth: min(context.width, 800),
+                ),
+                child: MultipleDataLists(
+                  tabs: [
+                    DataListTab(
+                      name: strings.value.co2,
+                      onTap: showDataDialog,
+                      getData: (start, end, page) async {
+                        final api = await ApiClientInstance.getApiClient();
+                        final res = await api.getCo2BetweenDates(
+                          startDate: start.toIso8601String(),
+                          endDate: end.toIso8601String(),
+                          page: page,
+                          perPage: 100,
+                        );
+                        final List<DataRepresentation> list = [];
+                        for (var s in res.data) {
+                          list.add(DataRepresentation(
+                              name: strings.value.date,
+                              code: "date",
+                              source: s.toJson(),
+                              transform: (dateString) {
+                                final date = DateTime.parse(dateString);
+                                return "${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year.toString().padLeft(2, "0")}   ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}:${date.second.toString().padLeft(2, "0")}.${date.millisecond}";
+                              }));
+                        }
+                        final json_data = res.toJson();
+                        json_data["data"] = list;
+                        return json_data;
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       );
     });
+  }
+
+  void onTapListItem(DataRepresentation<dynamic> d) {
+    Navigator.of(context).pop();
+
+    logger.e("showing before: $year $month $day $hour $minute $second");
+
+    co2_ifruit = Co2Ifruit.fromJson(d.source!);
+
+    year = co2_ifruit!.date.year;
+    month = co2_ifruit!.date.month;
+    day = co2_ifruit!.date.day;
+    hour = co2_ifruit!.date.hour;
+    minute = co2_ifruit!.date.minute;
+    second = co2_ifruit!.date.second;
+    logger.e("showing: $year $month $day $hour $minute $second");
+    isLive.trigger(false);
+  }
+
+  void showDataDialog(DataRepresentation<dynamic> d) {
+    final strings = getTranslations(context);
+    showShadDialog(
+      context: context,
+      builder: (context) {
+        return ShadDialog(
+            constraints: BoxConstraints(
+              minWidth: min(context.width, 800),
+              maxWidth: min(context.width, 800),
+              minHeight: 400,
+              maxHeight: 600,
+            ),
+            actions: [
+              ShadButton.ghost(
+                child: Text(strings.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              ShadButton(
+                child: Text(strings.visualize),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onTapListItem(d);
+                },
+              ),
+            ],
+            child: ShadTable.list(
+                columnSpanExtent: (i) =>
+                    FixedTableSpanExtent(min(context.width, 400)),
+                header: [
+                  ShadTableCell.header(
+                      child: Text(
+                    strings.name,
+                  )),
+                  ShadTableCell.header(
+                      child: Text(
+                    strings.value,
+                  )),
+                ],
+                children: [
+                  for (var e in d.source!.entries)
+                    [
+                      ShadTableCell(
+                        child: Text(
+                          e.key.toUpperCase(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      ShadTableCell(
+                        child: Text(
+                          e.value.toString(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      )
+                    ]
+                ]));
+      },
+    );
   }
 }

@@ -280,6 +280,22 @@ abstract class IbdmApiClient {
     @Path('date') required DateTime date,
   });
 
+  /// get all the debit values between two dates.
+  ///
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/filtration/debit/list')
+  Future<PaginatedDebitList> getDebitsBetweenDates({
+    @Query('end_date') required String endDate,
+    @Query('start_date') required String startDate,
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
   /// getDebitAtSpecificTime
   @GET('/api/v1/filtration/debit/specific')
   Future<Debit> getDebitAtSpecificTime({
@@ -312,6 +328,22 @@ abstract class IbdmApiClient {
     @Path('date') required DateTime date,
   });
 
+  /// get all the niveau values between two dates.
+  ///
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/filtration/niveau/list')
+  Future<PaginatedNiveauList> getNiveauxBetweenDates({
+    @Query('end_date') required String endDate,
+    @Query('start_date') required String startDate,
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
   /// getNiveauAtSpecificTime
   @GET('/api/v1/filtration/niveau/specific')
   Future<Niveau> getNiveauAtSpecificTime({
@@ -339,6 +371,22 @@ abstract class IbdmApiClient {
   @GET('/api/v1/filtration/pres-cond/{date}/')
   Future<PresCond> getPresCond({
     @Path('date') required DateTime date,
+  });
+
+  /// get all the pres_cond values between two dates.
+  ///
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/filtration/pres-cond/list')
+  Future<PaginatedPresCondList> getPresCondsBetweenDates({
+    @Query('end_date') required String endDate,
+    @Query('start_date') required String startDate,
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
   });
 
   /// getPresCondAtSpecificTime
@@ -370,6 +418,22 @@ abstract class IbdmApiClient {
     @Path('date') required DateTime date,
   });
 
+  /// get all the volume values between two dates.
+  ///
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/filtration/volume/list')
+  Future<PaginatedVolumeList> getVolumesBetweenDates({
+    @Query('end_date') required String endDate,
+    @Query('start_date') required String startDate,
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
   /// getVolumeAtSpecificTime
   @GET('/api/v1/filtration/volume/specific')
   Future<Volume> getVolumeAtSpecificTime({
@@ -397,6 +461,22 @@ abstract class IbdmApiClient {
   @GET('/api/v1/siroperie/sucre/{date}/')
   Future<Sucre> getSucre({
     @Path('date') required DateTime date,
+  });
+
+  /// Get all the sucres between two dates.
+  ///
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/siroperie/sucre/list')
+  Future<PaginatedSucreList> getSucresBetweenDates({
+    @Query('end_date') required String endDate,
+    @Query('start_date') required String startDate,
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
   });
 
   @GET('/api/v1/siroperie/sucre/meta')
@@ -753,6 +833,22 @@ abstract class IbdmApiClient {
     @Query('to_month') int? toMonth,
   });
 
+  /// get all the co2 values between two dates.
+  ///
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/utilite/co2_ifruit/list')
+  Future<PaginatedCo2IfruitList> getCo2BetweenDates({
+    @Query('end_date') required String endDate,
+    @Query('start_date') required String startDate,
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+  });
+
   /// get Co2_Ifruit at specific time.
   ///
   /// getCo2IfruitAtSpecificTime.
@@ -786,6 +882,22 @@ abstract class IbdmApiClient {
   @GET('/api/v1/utilite/utilite/{date}/')
   Future<Utilite> getUtilite({
     @Path('date') required DateTime date,
+  });
+
+  /// get all the utilite values between two dates.
+  ///
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  @GET('/api/v1/utilite/utilite/list')
+  Future<PaginatedUtiliteList> getUtiliteBetweenDates({
+    @Query('end_date') required String endDate,
+    @Query('start_date') required String startDate,
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
   });
 
   /// get utilite at specific time.

@@ -9,13 +9,13 @@ part 'standard_database_conf.g.dart';
 @JsonSerializable()
 class StandardDatabaseConf {
   const StandardDatabaseConf({
-    required this.engine,
-    required this.name,
-    required this.user,
-    required this.password,
-    required this.host,
-    required this.port,
-    required this.options,
+    this.engine,
+    this.name,
+    this.user,
+    this.password,
+    this.host,
+    this.port,
+    this.options,
   });
   
   factory StandardDatabaseConf.fromJson(Map<String, Object?> json) => _$StandardDatabaseConfFromJson(json);

@@ -42,7 +42,7 @@ class CustomPagination(PageNumberPagination):
                 "previous_url": self.get_previous_link(),
                 "total_pages": self.page.paginator.num_pages,
                 "total_results": self.page.paginator.count,
-                "per_page": self.page_size,
+                "per_page": self.get_page_size(self.request),
                 "current_page": self.page.number,
                 "data": data,
             }

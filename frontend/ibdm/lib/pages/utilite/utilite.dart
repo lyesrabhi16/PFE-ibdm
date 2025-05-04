@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
+import 'package:ibdm/common/widgets/data_list.dart';
 import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
+import 'package:ibdm/common/widgets/multiple_data_lists.dart';
 import 'package:ibdm/common/widgets/radial_meter.dart';
 import 'package:ibdm/common/widgets/temp_gauge.dart';
 import 'package:ibdm/config/api.config.dart';
@@ -13,8 +16,10 @@ import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/helpers/data_representation.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -401,12 +406,13 @@ class _UtilitePageState extends State<UtilitePage> {
   }
 
   _getTopActionsBar() {
+    final strings = getTranslations(context).obs;
     return Obx(() {
       return LiveDataTopActionBar(
         isLive: isLive,
         startDate: feedMetaData!.startDate,
         endDate: feedMetaData!.endDate,
-        selectedDate: utiliteEndDate.value,
+        selectedDate: isLive.value ? utiliteEndDate.value : utilite!.date,
         searchPressed: (dt) {
           year = dt.year;
           month = dt.month;
@@ -416,7 +422,129 @@ class _UtilitePageState extends State<UtilitePage> {
           second = dt.second;
           _getUtiliteData();
         },
+        listPressed: () {
+          showShadDialog(
+            context: context,
+            builder: (context) {
+              return ShadDialog(
+                constraints: BoxConstraints(
+                  minWidth: min(context.width, 600),
+                  maxWidth: min(context.width, 800),
+                ),
+                child: MultipleDataLists(
+                  tabs: [
+                    DataListTab(
+                      name: strings.value.utilite,
+                      onTap: showDataDialog,
+                      getData: (start, end, page) async {
+                        final api = await ApiClientInstance.getApiClient();
+                        final res = await api.getUtiliteBetweenDates(
+                          startDate: start.toIso8601String(),
+                          endDate: end.toIso8601String(),
+                          page: page,
+                          perPage: 100,
+                        );
+                        final List<DataRepresentation> list = [];
+                        for (var s in res.data) {
+                          list.add(DataRepresentation(
+                              name: strings.value.date,
+                              code: "date",
+                              source: s.toJson(),
+                              transform: (dateString) {
+                                final date = DateTime.parse(dateString);
+                                return "${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year.toString().padLeft(2, "0")}   ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}:${date.second.toString().padLeft(2, "0")}.${date.millisecond}";
+                              }));
+                        }
+                        final json_data = res.toJson();
+                        json_data["data"] = list;
+                        return json_data;
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       );
     });
+  }
+
+  void onTapListItem(DataRepresentation<dynamic> d) {
+    Navigator.of(context).pop();
+
+    logger.e("showing before: $year $month $day $hour $minute $second");
+
+    utilite = Utilite.fromJson(d.source!);
+
+    year = utilite!.date.year;
+    month = utilite!.date.month;
+    day = utilite!.date.day;
+    hour = utilite!.date.hour;
+    minute = utilite!.date.minute;
+    second = utilite!.date.second;
+    logger.e("showing: $year $month $day $hour $minute $second");
+    isLive.trigger(false);
+  }
+
+  void showDataDialog(DataRepresentation<dynamic> d) {
+    final strings = getTranslations(context);
+    showShadDialog(
+      context: context,
+      builder: (context) {
+        return ShadDialog(
+            constraints: BoxConstraints(
+              minWidth: min(context.width, 800),
+              maxWidth: min(context.width, 800),
+              minHeight: 400,
+              maxHeight: 600,
+            ),
+            actions: [
+              ShadButton.ghost(
+                child: Text(strings.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              ShadButton(
+                child: Text(strings.visualize),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onTapListItem(d);
+                },
+              ),
+            ],
+            child: ShadTable.list(
+                columnSpanExtent: (i) =>
+                    FixedTableSpanExtent(min(context.width, 400)),
+                header: [
+                  ShadTableCell.header(
+                      child: Text(
+                    strings.name,
+                  )),
+                  ShadTableCell.header(
+                      child: Text(
+                    strings.value,
+                  )),
+                ],
+                children: [
+                  for (var e in d.source!.entries)
+                    [
+                      ShadTableCell(
+                        child: Text(
+                          e.key.toUpperCase(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      ShadTableCell(
+                        child: Text(
+                          e.value.toString(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      )
+                    ]
+                ]));
+      },
+    );
   }
 }
