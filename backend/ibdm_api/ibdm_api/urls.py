@@ -43,6 +43,7 @@ urlpatterns = [
     path("server-config", getServerConfig),
     path("server-config/set", setServerConfig),
 
+
     path("app/", index),
     re_path(r"app/login.*$", redirect_home),
     re_path(r"^app/siroperie.*$", redirect_home),
@@ -50,6 +51,7 @@ urlpatterns = [
     re_path(r"^app/settings.*$", redirect_home),
     re_path(r"^app/utilite.*$", redirect_home),
     re_path(r"^app/server-status.*$", redirect_home),
+    re_path(r"^app/reports.*$", redirect_home),
 
 
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),

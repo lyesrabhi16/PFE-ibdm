@@ -848,5 +848,45 @@
     "type": "Type",
     "consommationDescription": "show the consommation in a range of dates.",
     "previousDay": "Previous Day",
-    "sinceFirstOfMonth": "Since First of Month"
+    "sinceFirstOfMonth": "Since First of Month",
+    "reports": "Reports",
+    "sucreReports": "Sugar Reports",
+    "co2Reports": "CO2 Reports",
+    "utiliteReports": "Utilite Reports",
+    "filtrationReports": "Filtration Reports",
+    "generateReport": "Generate Report",
+    "generateReportDescription": "Generate a report for a specific date",
+    "viewReport": "Report: {rapport}",
+    "@viewReport": {
+        "placeholders": {
+            "rapport": {
+                "type": "String"
+            }
+        }
+    },
+    "viewReportDescription": "View the report of {date}",
+    "@viewReportDescription": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "loadingReports": "Loading Reports...",
+    "failedToLoadReports": "Failed to load reports",
+    "sortReports": "Sort Reports",
+    "filterReports": "Filter Reports",
+    "hasSynthese": "Has Synthese",
+    "getIntervalName": "{interval, select, jour {Day} semaine {Week} mois {Month} manual {Manual} other {Interval}}",
+	"@getIntervalName": {
+		"placeholders": {
+			"interval": {
+				"type": "String"
+			}
+		}
+	},
+    "withSynthese": "With Synthese",
+    "withoutSynthese": "Without Synthese",
+    "failedToGenerateReport": "Failed to generate report",
+    "generate": "Generate"
 }

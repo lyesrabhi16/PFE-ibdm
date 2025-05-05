@@ -823,15 +823,14 @@ class _SiroperiePageState extends State<SiroperiePage> {
                       SizedBox(width: AppSizes.lg),
                       Text(
                         " ${(sucreTotalKG).toStringAsFixed(2)} KG",
-                        style: Theme.of(getContext)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(
-                              color: (sommeTetraKG + sommeAdueKG) < (84000 * 3)
-                                  ? errorColor
-                                  : successColor,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style:
+                            Theme.of(getContext).textTheme.titleLarge?.copyWith(
+                                  color: (sommeTetraKG + sommeAdueKG) <
+                                          (convertSugarLToKG(84000))
+                                      ? errorColor
+                                      : successColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                       ),
                     ].nonNulls.toList(),
                   ),
@@ -881,7 +880,9 @@ class _SiroperiePageState extends State<SiroperiePage> {
               " ${sommeTetraKG.toStringAsFixed(2)} KG",
               softWrap: false,
               style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
-                    color: sommeTetraKG < 30000 * 3 ? errorColor : successColor,
+                    color: sommeTetraKG < convertSugarLToKG(30000)
+                        ? errorColor
+                        : successColor,
                     fontStyle: FontStyle.italic,
                   ),
             ),
@@ -924,7 +925,9 @@ class _SiroperiePageState extends State<SiroperiePage> {
             " ${sommeAdueKG.toStringAsFixed(2)} KG",
             softWrap: false,
             style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
-                  color: sommeAdueKG < 54000 * 3 ? errorColor : successColor,
+                  color: sommeAdueKG < convertSugarLToKG(54000)
+                      ? errorColor
+                      : successColor,
                   fontStyle: FontStyle.italic,
                 ),
           ),

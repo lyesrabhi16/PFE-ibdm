@@ -44,6 +44,7 @@ export 'models/paginated_group_list.dart';
 export 'models/paginated_niveau_list.dart';
 export 'models/paginated_permission_list.dart';
 export 'models/paginated_pres_cond_list.dart';
+export 'models/paginated_report_list.dart';
 export 'models/paginated_role_list.dart';
 export 'models/paginated_sent_email_list.dart';
 export 'models/paginated_subordinate_and_superior_list.dart';
@@ -64,6 +65,7 @@ export 'models/pres_cond.dart';
 export 'models/rapport_enum.dart';
 export 'models/redis_database.dart';
 export 'models/redis_info.dart';
+export 'models/report.dart';
 export 'models/role.dart';
 export 'models/role_request.dart';
 export 'models/sent_alert_email.dart';
@@ -90,6 +92,8 @@ export 'models/lang.dart';
 export 'models/interval.dart';
 export 'models/rapport.dart';
 export 'models/fetch_type.dart';
+export 'models/report_type.dart';
+export 'models/reports_type.dart';
 // Root client
 export 'api_client.dart';
 

@@ -10,7 +10,8 @@ from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 from rest_framework.request import Request
 from users.models import SubordinateAndSuperior
 from api_v1.serializers import ErrorResponseSerializer
-from .models import Role, User
+from .models import Role
+from django.contrib.auth import get_user_model
 from .serializers import (
     GroupSerializer,
     RoleSerializer,
@@ -23,6 +24,9 @@ from .serializers import (
 from rest_framework.decorators import api_view, permission_classes
 from logs.logging import logger as logging
 from rest_framework import serializers
+
+User = get_user_model()
+
 @with_operation_ids(
     on_list="getUsers",
     on_create="addUser",

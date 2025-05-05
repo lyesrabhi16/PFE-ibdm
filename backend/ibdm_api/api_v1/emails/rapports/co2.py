@@ -14,11 +14,11 @@ def loadCo2(date):
     co2_cons_list.append(co2_cons)
 
 
-def rapport_co2(email):
+def rapport_co2(interval=None, render_to_HTML_string=True, date=None, force_recreate_excel_file=False):
     global co2_cons_list
 
-    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-    co2 = get_midnight_value(Co2Ifruit)
+    today = (datetime.now() if date is None else date).replace(hour=0, minute=0, second=0, microsecond=0)
+    co2 = get_midnight_value(Co2Ifruit, date)
     co2_cons = get_co2_consommation(from_date=today - timedelta(days=1), to_date=today)
     co2_cons_list = []
     threads = []
@@ -47,7 +47,6 @@ def rapport_co2(email):
     if (co2 is None):
         return "les données de co2 ne sont pas disponible pour le "+today.strftime("%Y-%m-%d")
 
-    interval = email.interval if email.interval != "manual" else f"{email.interval_manual} jours"
     data = {
         "date": co2.date.strftime("%Y-%m-%d"),
         "rapport_name": "CO2",
@@ -245,8 +244,8 @@ def rapport_co2(email):
         ],
     }
 
-    filename = generateExcelReport(data, f"co2/CO2 - {co2.date.strftime('%Y-%m-%d')}", f"CO2-{co2.date.strftime('%Y-%m-%d')}")
+    filename = generateExcelReport(data, f"co2/CO2 - {co2.date.strftime('%Y-%m-%d')}", f"CO2-{co2.date.strftime('%Y-%m-%d')}", force=force_recreate_excel_file)
     return (render_to_string(
         template_name="emails/rapport.html",
         context=data
-    ), filename, f"Rapport : CO2 - {co2.date.strftime('%Y-%m-%d')}")
+    ) if render_to_HTML_string else data, filename, f"Rapport : CO2 - {co2.date.strftime('%Y-%m-%d')}")

@@ -38,6 +38,7 @@ import '../models/paginated_group_list.dart';
 import '../models/paginated_niveau_list.dart';
 import '../models/paginated_permission_list.dart';
 import '../models/paginated_pres_cond_list.dart';
+import '../models/paginated_report_list.dart';
 import '../models/paginated_role_list.dart';
 import '../models/paginated_sent_email_list.dart';
 import '../models/paginated_subordinate_and_superior_list.dart';
@@ -56,6 +57,9 @@ import '../models/permission_request.dart';
 import '../models/possible_monitor_values_alert_emails.dart';
 import '../models/pres_cond.dart';
 import '../models/rapport.dart';
+import '../models/report.dart';
+import '../models/report_type.dart';
+import '../models/reports_type.dart';
 import '../models/role.dart';
 import '../models/role_request.dart';
 import '../models/sent_email.dart';
@@ -473,6 +477,50 @@ abstract class IbdmApiClient {
     @Query('minute') int? minute,
     @Query('month') int? month,
     @Query('second') int? second,
+  });
+
+  /// Generate a report.
+  ///
+  /// Generate a report based on the provided date.
+  ///
+  /// [date] - Date for the report.
+  ///
+  /// [reportType] - Type of report to generate.
+  @GET('/api/v1/reports/generate')
+  Future<Report> generateReport({
+    @Query('date') required String date,
+    @Query('report_type') required ReportType reportType,
+  });
+
+  /// Get reports.
+  ///
+  /// List all reports with optional filtering and ordering.
+  ///
+  /// [enablePagination] - Enable or disable pagination.
+  ///
+  /// [hasSynthese] - Filter reports by presence of Synthese field (true/false).
+  ///
+  /// [interval] - Filter reports by specific interval value.
+  ///
+  /// [ordering] - Field to order results by (prefix with '-' for descending order) Date.
+  ///
+  /// [page] - Page number.
+  ///
+  /// [perPage] - Number of results per page.
+  ///
+  /// [reportsType] - Type of reports to fetch.
+  ///
+  /// [search] - Search term to filter reports.
+  @GET('/api/v1/reports/list')
+  Future<PaginatedReportList> getReports({
+    @Query('enable_pagination') bool? enablePagination,
+    @Query('has_synthese') bool? hasSynthese,
+    @Query('interval') String? interval,
+    @Query('ordering') String? ordering,
+    @Query('page') int? page,
+    @Query('per_page') int? perPage,
+    @Query('reports_type') ReportsType? reportsType,
+    @Query('search') String? search,
   });
 
   /// [enablePagination] - Enable or disable pagination.

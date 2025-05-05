@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/app_line_chart.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
-import 'package:ibdm/common/widgets/data_list.dart';
 import 'package:ibdm/common/widgets/live_data_top_action_bar.dart';
 import 'package:ibdm/common/widgets/multiple_data_lists.dart';
 import 'package:ibdm/common/widgets/radial_meter.dart';

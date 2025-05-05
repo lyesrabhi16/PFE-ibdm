@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
+import 'package:ibdm/common/widgets/page_navigation.dart';
 import 'package:ibdm/common/widgets/setting_card.dart';
-import 'package:ibdm/pages/settings/emails/email_alerts_page.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/data_representation.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
-import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:widget_arrows/widget_arrows.dart';

@@ -18,6 +18,7 @@ class UserManager(BaseUserManager):
             user.set_password(password)
         user.save()
         user.is_admin = user.role.is_admin
+        user.is_staff = user.is_admin
         user.groups.add(user.role.group)
         user.user_permissions.set(user_permissions)
         user.save()
@@ -30,6 +31,7 @@ class UserManager(BaseUserManager):
         if not password:
             raise ValueError("Users must have a password")
         user_permissions = extra_fields.pop("user_permissions", [])
+        user_permissions.append(Permission.objects.get(codename="can_view_settings_page"))
         user = User(
             email=self.normalize_email(email),
             role=role,
@@ -37,7 +39,10 @@ class UserManager(BaseUserManager):
         )
         user.set_password(password)
         user.save()
+        
         user.is_admin = role.is_admin
+        user.is_staff = user.is_admin
+
         user.groups.add(role.group)
         user.user_permissions.set(user_permissions)
         user.save()
@@ -53,12 +58,13 @@ class UserManager(BaseUserManager):
         )
         user.set_password(password)
 
-        user.is_admin = role.is_admin
+        user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
 
         user.save()
         user.groups.add(group)
+        user.save()
         return user
 
 class Role(models.Model):
@@ -157,5 +163,9 @@ class User(AbstractBaseUser, PermissionsMixin):
             ("can_view_co2_page", "Can view co2 page"),
             ("can_view_server_settings_page", "Can view server settings page"),
             ("can_view_server_status_page", "Can view server status page"),
+            ("can_view_sucre_reports_page", "Can view sucre reports page"),
+            ("can_view_filtration_reports_page", "Can view filtration reports page"),
+            ("can_view_utilite_reports_page", "Can view utilite reports page"),
+            ("can_view_co2_reports_page", "Can view co2 reports page"),
         ]
     
