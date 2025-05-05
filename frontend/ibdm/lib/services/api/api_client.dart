@@ -494,6 +494,7 @@ class EnumFixInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     printMessage("EnumFixInterceptor: Start");
+    checkEnumFromQuery(options, "report_type", ReportType.values);
     if (options.data is FormData) {
       checkEnumFromForm(options, "monitored_value", AlertEnum.values);
       checkEnumFromForm(options, "rapport", RapportEnum.values);
@@ -520,6 +521,7 @@ class EnumFixInterceptor extends Interceptor {
     if (r is RapportEnum) return r.name;
     if (r is AlertEnum) return r.name;
     if (r is IntervalEnum) return r.name;
+    if (r is ReportType) return r.name;
     throw ("EnumFixInterceptor: Type not found");
   }
 
@@ -527,7 +529,25 @@ class EnumFixInterceptor extends Interceptor {
     if (r is RapportEnum) return r.json;
     if (r is AlertEnum) return r.json;
     if (r is IntervalEnum) return r.json;
+    if (r is ReportType) return r.json;
     throw ("EnumFixInterceptor: Type not found");
+  }
+
+  void checkEnumFromQuery(
+      RequestOptions options, String fieldName, List values) {
+    if (options.queryParameters.containsKey(fieldName)) {
+      printMessage("EnumFixInterceptor: request has $fieldName field");
+      dynamic v = null;
+      for (dynamic item in values) {
+        if (getTypeSafeName(item) == options.queryParameters[fieldName]) {
+          v = getTypeSafeJson(item);
+          break;
+        }
+      }
+      if (v != null) {
+        options.queryParameters[fieldName] = v;
+      }
+    }
   }
 
   void checkEnumFromForm(

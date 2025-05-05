@@ -71,5 +71,4 @@
         "$ref": "#/components/schemas/MonitorTypeEnum",
         "nullable": true
     }
-    
 }

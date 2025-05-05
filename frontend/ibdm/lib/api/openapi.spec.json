@@ -1240,6 +1240,124 @@
                 }
             }
         },
+        "/api/v1/filtration/consommation": {
+            "get": {
+                "operationId": "getFiltrationConsommation",
+                "description": "getFiltrationConsommation",
+                "summary": "get filtration consommation",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "from_day",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "from_month",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "from_year",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "to_day",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "to_month",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "to_year",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FiltrationMetaConsommation"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/filtration/consommation/list": {
+            "get": {
+                "operationId": "getFiltrationConsommationBetweenDates",
+                "description": "getFiltrationConsommationBetweenDates",
+                "summary": "get filtration consommation between dates",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "end_date",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "start_date",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Filtration"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FiltrationMultiMetaConsommations"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/filtration/debit/": {
             "get": {
                 "operationId": "getDebits",
@@ -1352,6 +1470,23 @@
                             "type": "string"
                         },
                         "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "fetch_type",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "all",
+                                "days",
+                                "hours",
+                                "minutes",
+                                "months",
+                                "seconds",
+                                "weeks",
+                                "years"
+                            ]
+                        }
                     },
                     {
                         "name": "page",
@@ -1612,6 +1747,23 @@
                         "required": true
                     },
                     {
+                        "in": "query",
+                        "name": "fetch_type",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "all",
+                                "days",
+                                "hours",
+                                "minutes",
+                                "months",
+                                "seconds",
+                                "weeks",
+                                "years"
+                            ]
+                        }
+                    },
+                    {
                         "name": "page",
                         "in": "query",
                         "description": "Page number",
@@ -1843,6 +1995,23 @@
                             "type": "string"
                         },
                         "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "fetch_type",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "all",
+                                "days",
+                                "hours",
+                                "minutes",
+                                "months",
+                                "seconds",
+                                "weeks",
+                                "years"
+                            ]
+                        }
                     },
                     {
                         "name": "page",
@@ -2078,6 +2247,23 @@
                         "required": true
                     },
                     {
+                        "in": "query",
+                        "name": "fetch_type",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "all",
+                                "days",
+                                "hours",
+                                "minutes",
+                                "months",
+                                "seconds",
+                                "weeks",
+                                "years"
+                            ]
+                        }
+                    },
+                    {
                         "name": "page",
                         "in": "query",
                         "description": "Page number",
@@ -2189,6 +2375,181 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/Volume"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/reports/generate": {
+            "get": {
+                "operationId": "generateReport",
+                "description": "Generate a report based on the provided date",
+                "summary": "Generate a report",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "date",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Date for the report",
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "report_type",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "co2_ifruit",
+                                "filtration",
+                                "inventaire-sucre",
+                                "utilite"
+                            ]
+                        },
+                        "description": "Type of report to generate",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Report"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/reports/list": {
+            "get": {
+                "operationId": "getReports",
+                "description": "List all reports with optional filtering and ordering",
+                "summary": "Get reports",
+                "parameters": [
+                    {
+                        "name": "enable_pagination",
+                        "in": "query",
+                        "description": "Enable or disable pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "has_synthese",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "Filter reports by presence of Synthese field (true/false)"
+                    },
+                    {
+                        "in": "query",
+                        "name": "interval",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter reports by specific interval value"
+                    },
+                    {
+                        "in": "query",
+                        "name": "ordering",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Field to order results by (prefix with '-' for descending order) Date"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "reports_type",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Filtration",
+                                "co2",
+                                "sucre",
+                                "utilite"
+                            ]
+                        },
+                        "description": "Type of reports to fetch"
+                    },
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Search term to filter reports"
+                    }
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedReportList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         },
@@ -2309,6 +2670,23 @@
                             "type": "string"
                         },
                         "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "fetch_type",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "all",
+                                "days",
+                                "hours",
+                                "minutes",
+                                "months",
+                                "seconds",
+                                "weeks",
+                                "years"
+                            ]
+                        }
                     },
                     {
                         "name": "page",
@@ -3962,6 +4340,51 @@
                 }
             }
         },
+        "/api/v1/utilite/co2_ifruit/consommation/list": {
+            "get": {
+                "operationId": "getCo2ConsommationBetweenDates",
+                "description": "getCo2ConsommationBetweenDates",
+                "summary": "get co2 consommation between dates",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "end_date",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "start_date",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Utilite"
+                ],
+                "security": [
+                    {
+                        "MySessionAuthentication": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Co2MultiMetaConsommations"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/utilite/co2_ifruit/list": {
             "get": {
                 "operationId": "getCO2BetweenDates",
@@ -3983,6 +4406,23 @@
                             "type": "string"
                         },
                         "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "fetch_type",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "all",
+                                "days",
+                                "hours",
+                                "minutes",
+                                "months",
+                                "seconds",
+                                "weeks",
+                                "years"
+                            ]
+                        }
                     },
                     {
                         "name": "page",
@@ -4243,6 +4683,23 @@
                             "type": "string"
                         },
                         "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "fetch_type",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "all",
+                                "days",
+                                "hours",
+                                "minutes",
+                                "months",
+                                "seconds",
+                                "weeks",
+                                "years"
+                            ]
+                        }
                     },
                     {
                         "name": "page",
@@ -4772,11 +5229,11 @@
                     "utilite.ut_sid_tt",
                     "utilite.ut_sid_tc",
                     "sucre.total.tetra",
-                    "sucre.total.adue",
-                    "sucre.total"
+                    "sucre.total",
+                    "sucre.total.adue"
                 ],
                 "type": "string",
-                "description": "* `sucre.t_s21` - sucre.t_s21\n* `sucre.t_s22` - sucre.t_s22\n* `sucre.t_s23` - sucre.t_s23\n* `sucre.t_s24` - sucre.t_s24\n* `sucre.t_s25` - sucre.t_s25\n* `sucre.a_t02` - sucre.a_t02\n* `sucre.a_t03` - sucre.a_t03\n* `sucre.a_t04` - sucre.a_t04\n* `sucre.a_t05` - sucre.a_t05\n* `sucre.a_t06` - sucre.a_t06\n* `niveau.niv_f1` - niveau.niv_f2\n* `niveau.niv_uf1` - niveau.niv_uf1\n* `niveau.niv_uf2` - niveau.niv_uf2\n* `niveau.niv_os1` - niveau.niv_os1\n* `niveau.niv_os2` - niveau.niv_os2\n* `niveau.niv_os3` - niveau.niv_os3\n* `niveau.niv_os4` - niveau.niv_os4\n* `niveau.niv_os5` - niveau.niv_os5\n* `niveau.niv_os6` - niveau.niv_os6\n* `niveau.niv_os7` - niveau.niv_os7\n* `debit.d_F1` - debit.d_F1\n* `debit.d_uf1` - debit.d_uf1\n* `debit.d_uf2` - debit.d_uf2\n* `debit.d_uf3` - debit.d_uf3\n* `debit.d_uf4` - debit.d_uf4\n* `debit.d_uf5` - debit.d_uf5\n* `debit.d_uf6` - debit.d_uf6\n* `debit.d_os1` - debit.d_os1\n* `debit.d_os2` - debit.d_os2\n* `debit.d_os3` - debit.d_os3\n* `debit.d_os4` - debit.d_os4\n* `debit.d_os5` - debit.d_os5\n* `debit.d_os6` - debit.d_os6\n* `debit.d_os7` - debit.d_os7\n* `debit.d_os8` - debit.d_os8\n* `debit.d_os9` - debit.d_os9\n* `Pres_Cond.p_uf` - Pres_Cond.p_uf\n* `Pres_Cond.p_uf4` - Pres_Cond.p_uf4\n* `Pres_Cond.p_uf6` - Pres_Cond.p_uf6\n* `Pres_Cond.p_os1` - Pres_Cond.p_os1\n* `Pres_Cond.p_os2` - Pres_Cond.p_os2\n* `Pres_Cond.p_os3` - Pres_Cond.p_os3\n* `Pres_Cond.p_os4` - Pres_Cond.p_os4\n* `Pres_Cond.p_os5` - Pres_Cond.p_os5\n* `Pres_Cond.p_os6` - Pres_Cond.p_os6\n* `Pres_Cond.p_os7` - Pres_Cond.p_os7\n* `Pres_Cond.p_os71` - Pres_Cond.p_os71\n* `Pres_Cond.p_os8` - Pres_Cond.p_os8\n* `Pres_Cond.p_os9` - Pres_Cond.p_os9\n* `Pres_Cond.p_ose1` - Pres_Cond.p_ose1\n* `Pres_Cond.p_ose2` - Pres_Cond.p_ose2\n* `Pres_Cond.p_conc` - Pres_Cond.p_conc\n* `Pres_Cond.c_uf` - Pres_Cond.c_uf\n* `Pres_Cond.c_os1` - Pres_Cond.c_os1\n* `Pres_Cond.c_os2` - Pres_Cond.c_os2\n* `Pres_Cond.c_os3` - Pres_Cond.c_os3\n* `Pres_Cond.c_os4` - Pres_Cond.c_os4\n* `Pres_Cond.c_os5` - Pres_Cond.c_os5\n* `Pres_Cond.c_os6` - Pres_Cond.c_os6\n* `Pres_Cond.c_os7` - Pres_Cond.c_os7\n* `Pres_Cond.c_os8` - Pres_Cond.c_os8\n* `Pres_Cond.c_os9` - Pres_Cond.c_os9\n* `Pres_Cond.c_ose` - Pres_Cond.c_ose\n* `volume.vol_for` - volume.vol_for\n* `volume.vol_uf1` - volume.vol_uf1\n* `volume.vol_uf2` - volume.vol_uf2\n* `volume.vol_uf3` - volume.vol_uf3\n* `volume.vol_uf4` - volume.vol_uf4\n* `volume.vol_uf5` - volume.vol_uf5\n* `volume.vol_uf6` - volume.vol_uf6\n* `volume.vol_os1` - volume.vol_os1\n* `volume.vol_os2` - volume.vol_os2\n* `volume.vol_os3` - volume.vol_os3\n* `volume.vol_os4` - volume.vol_os4\n* `volume.vol_os5` - volume.vol_os5\n* `volume.vol_os6` - volume.vol_os6\n* `volume.vol_os7` - volume.vol_os7\n* `volume.vol_os8` - volume.vol_os8\n* `volume.vol_os9` - volume.vol_os9\n* `co2_ifruit.ut_co2_vc1` - co2_ifruit.ut_co2_vc1\n* `co2_ifruit.ut_co2_vc2` - co2_ifruit.ut_co2_vc2\n* `co2_ifruit.ut_co2_de` - co2_ifruit.ut_co2_de\n* `co2_ifruit.ut_co2_ve` - co2_ifruit.ut_co2_ve\n* `co2_ifruit.ut_co2_pc1` - co2_ifruit.ut_co2_pc1\n* `co2_ifruit.ut_co2_pc2` - co2_ifruit.ut_co2_pc2\n* `co2_ifruit.ut_co2_pn` - co2_ifruit.ut_co2_pn\n* `co2_ifruit.ut_co2_d182` - co2_ifruit.ut_co2_d182\n* `co2_ifruit.ut_co2_d1833` - co2_ifruit.ut_co2_d1833\n* `co2_ifruit.ut_co2_dcan35` - co2_ifruit.ut_co2_dcan35\n* `co2_ifruit.ut_co2_dkrv40` - co2_ifruit.ut_co2_dkrv40\n* `co2_ifruit.ut_co2_dcan2` - co2_ifruit.ut_co2_dcan2\n* `co2_ifruit.ut_co2_dcm16` - co2_ifruit.ut_co2_dcm16\n* `co2_ifruit.ut_co2_v182` - co2_ifruit.ut_co2_v182\n* `co2_ifruit.ut_co2_v1833` - co2_ifruit.ut_co2_v1833\n* `co2_ifruit.ut_co2_vcan35` - co2_ifruit.ut_co2_vcan35\n* `co2_ifruit.ut_co2_vkrv40` - co2_ifruit.ut_co2_vkrv40\n* `co2_ifruit.ut_co2_vcan2` - co2_ifruit.ut_co2_vcan2\n* `co2_ifruit.ut_co2_vcm16` - co2_ifruit.ut_co2_vcm16\n* `co2_ifruit.ut_co2_p182` - co2_ifruit.ut_co2_p182\n* `co2_ifruit.ut_co2_p1833` - co2_ifruit.ut_co2_p1833\n* `co2_ifruit.ut_co2_pcan35` - co2_ifruit.ut_co2_pcan35\n* `co2_ifruit.ut_co2_pkrv40` - co2_ifruit.ut_co2_pkrv40\n* `co2_ifruit.ut_co2_pcan2` - co2_ifruit.ut_co2_pcan2\n* `co2_ifruit.ut_co2_pcm16` - co2_ifruit.ut_co2_pcm16\n* `co2_ifruit.ut_n2_vn2` - co2_ifruit.ut_n2_vn2\n* `co2_ifruit.ut_n2_pn2` - co2_ifruit.ut_n2_pn2\n* `co2_ifruit.ut_soude` - co2_ifruit.ut_soude\n* `utilite.ut_kr_p7` - utilite.ut_kr_p7\n* `utilite.ut_kr_pn2` - utilite.ut_kr_pn2\n* `utilite.ut_kr_p40` - utilite.ut_kr_p40\n* `utilite.ut_kr_pv` - utilite.ut_kr_pv\n* `utilite.ut_kr_pg` - utilite.ut_kr_pg\n* `utilite.ut_kr_tt` - utilite.ut_kr_tt\n* `utilite.ut_kr_tc` - utilite.ut_kr_tc\n* `utilite.ut_sid_p7` - utilite.ut_sid_p7\n* `utilite.ut_sid_pn2` - utilite.ut_sid_pn2\n* `utilite.ut_sid_p40` - utilite.ut_sid_p40\n* `utilite.ut_sid_pv` - utilite.ut_sid_pv\n* `utilite.ut_sid_pg` - utilite.ut_sid_pg\n* `utilite.ut_sid_tt` - utilite.ut_sid_tt\n* `utilite.ut_sid_tc` - utilite.ut_sid_tc\n* `sucre.total.tetra` - sucre.total.tetra\n* `sucre.total.adue` - sucre.total.adue\n* `sucre.total` - sucre.total"
+                "description": "* `sucre.t_s21` - sucre.t_s21\n* `sucre.t_s22` - sucre.t_s22\n* `sucre.t_s23` - sucre.t_s23\n* `sucre.t_s24` - sucre.t_s24\n* `sucre.t_s25` - sucre.t_s25\n* `sucre.a_t02` - sucre.a_t02\n* `sucre.a_t03` - sucre.a_t03\n* `sucre.a_t04` - sucre.a_t04\n* `sucre.a_t05` - sucre.a_t05\n* `sucre.a_t06` - sucre.a_t06\n* `niveau.niv_f1` - niveau.niv_f2\n* `niveau.niv_uf1` - niveau.niv_uf1\n* `niveau.niv_uf2` - niveau.niv_uf2\n* `niveau.niv_os1` - niveau.niv_os1\n* `niveau.niv_os2` - niveau.niv_os2\n* `niveau.niv_os3` - niveau.niv_os3\n* `niveau.niv_os4` - niveau.niv_os4\n* `niveau.niv_os5` - niveau.niv_os5\n* `niveau.niv_os6` - niveau.niv_os6\n* `niveau.niv_os7` - niveau.niv_os7\n* `debit.d_F1` - debit.d_F1\n* `debit.d_uf1` - debit.d_uf1\n* `debit.d_uf2` - debit.d_uf2\n* `debit.d_uf3` - debit.d_uf3\n* `debit.d_uf4` - debit.d_uf4\n* `debit.d_uf5` - debit.d_uf5\n* `debit.d_uf6` - debit.d_uf6\n* `debit.d_os1` - debit.d_os1\n* `debit.d_os2` - debit.d_os2\n* `debit.d_os3` - debit.d_os3\n* `debit.d_os4` - debit.d_os4\n* `debit.d_os5` - debit.d_os5\n* `debit.d_os6` - debit.d_os6\n* `debit.d_os7` - debit.d_os7\n* `debit.d_os8` - debit.d_os8\n* `debit.d_os9` - debit.d_os9\n* `Pres_Cond.p_uf` - Pres_Cond.p_uf\n* `Pres_Cond.p_uf4` - Pres_Cond.p_uf4\n* `Pres_Cond.p_uf6` - Pres_Cond.p_uf6\n* `Pres_Cond.p_os1` - Pres_Cond.p_os1\n* `Pres_Cond.p_os2` - Pres_Cond.p_os2\n* `Pres_Cond.p_os3` - Pres_Cond.p_os3\n* `Pres_Cond.p_os4` - Pres_Cond.p_os4\n* `Pres_Cond.p_os5` - Pres_Cond.p_os5\n* `Pres_Cond.p_os6` - Pres_Cond.p_os6\n* `Pres_Cond.p_os7` - Pres_Cond.p_os7\n* `Pres_Cond.p_os71` - Pres_Cond.p_os71\n* `Pres_Cond.p_os8` - Pres_Cond.p_os8\n* `Pres_Cond.p_os9` - Pres_Cond.p_os9\n* `Pres_Cond.p_ose1` - Pres_Cond.p_ose1\n* `Pres_Cond.p_ose2` - Pres_Cond.p_ose2\n* `Pres_Cond.p_conc` - Pres_Cond.p_conc\n* `Pres_Cond.c_uf` - Pres_Cond.c_uf\n* `Pres_Cond.c_os1` - Pres_Cond.c_os1\n* `Pres_Cond.c_os2` - Pres_Cond.c_os2\n* `Pres_Cond.c_os3` - Pres_Cond.c_os3\n* `Pres_Cond.c_os4` - Pres_Cond.c_os4\n* `Pres_Cond.c_os5` - Pres_Cond.c_os5\n* `Pres_Cond.c_os6` - Pres_Cond.c_os6\n* `Pres_Cond.c_os7` - Pres_Cond.c_os7\n* `Pres_Cond.c_os8` - Pres_Cond.c_os8\n* `Pres_Cond.c_os9` - Pres_Cond.c_os9\n* `Pres_Cond.c_ose` - Pres_Cond.c_ose\n* `volume.vol_for` - volume.vol_for\n* `volume.vol_uf1` - volume.vol_uf1\n* `volume.vol_uf2` - volume.vol_uf2\n* `volume.vol_uf3` - volume.vol_uf3\n* `volume.vol_uf4` - volume.vol_uf4\n* `volume.vol_uf5` - volume.vol_uf5\n* `volume.vol_uf6` - volume.vol_uf6\n* `volume.vol_os1` - volume.vol_os1\n* `volume.vol_os2` - volume.vol_os2\n* `volume.vol_os3` - volume.vol_os3\n* `volume.vol_os4` - volume.vol_os4\n* `volume.vol_os5` - volume.vol_os5\n* `volume.vol_os6` - volume.vol_os6\n* `volume.vol_os7` - volume.vol_os7\n* `volume.vol_os8` - volume.vol_os8\n* `volume.vol_os9` - volume.vol_os9\n* `co2_ifruit.ut_co2_vc1` - co2_ifruit.ut_co2_vc1\n* `co2_ifruit.ut_co2_vc2` - co2_ifruit.ut_co2_vc2\n* `co2_ifruit.ut_co2_de` - co2_ifruit.ut_co2_de\n* `co2_ifruit.ut_co2_ve` - co2_ifruit.ut_co2_ve\n* `co2_ifruit.ut_co2_pc1` - co2_ifruit.ut_co2_pc1\n* `co2_ifruit.ut_co2_pc2` - co2_ifruit.ut_co2_pc2\n* `co2_ifruit.ut_co2_pn` - co2_ifruit.ut_co2_pn\n* `co2_ifruit.ut_co2_d182` - co2_ifruit.ut_co2_d182\n* `co2_ifruit.ut_co2_d1833` - co2_ifruit.ut_co2_d1833\n* `co2_ifruit.ut_co2_dcan35` - co2_ifruit.ut_co2_dcan35\n* `co2_ifruit.ut_co2_dkrv40` - co2_ifruit.ut_co2_dkrv40\n* `co2_ifruit.ut_co2_dcan2` - co2_ifruit.ut_co2_dcan2\n* `co2_ifruit.ut_co2_dcm16` - co2_ifruit.ut_co2_dcm16\n* `co2_ifruit.ut_co2_v182` - co2_ifruit.ut_co2_v182\n* `co2_ifruit.ut_co2_v1833` - co2_ifruit.ut_co2_v1833\n* `co2_ifruit.ut_co2_vcan35` - co2_ifruit.ut_co2_vcan35\n* `co2_ifruit.ut_co2_vkrv40` - co2_ifruit.ut_co2_vkrv40\n* `co2_ifruit.ut_co2_vcan2` - co2_ifruit.ut_co2_vcan2\n* `co2_ifruit.ut_co2_vcm16` - co2_ifruit.ut_co2_vcm16\n* `co2_ifruit.ut_co2_p182` - co2_ifruit.ut_co2_p182\n* `co2_ifruit.ut_co2_p1833` - co2_ifruit.ut_co2_p1833\n* `co2_ifruit.ut_co2_pcan35` - co2_ifruit.ut_co2_pcan35\n* `co2_ifruit.ut_co2_pkrv40` - co2_ifruit.ut_co2_pkrv40\n* `co2_ifruit.ut_co2_pcan2` - co2_ifruit.ut_co2_pcan2\n* `co2_ifruit.ut_co2_pcm16` - co2_ifruit.ut_co2_pcm16\n* `co2_ifruit.ut_n2_vn2` - co2_ifruit.ut_n2_vn2\n* `co2_ifruit.ut_n2_pn2` - co2_ifruit.ut_n2_pn2\n* `co2_ifruit.ut_soude` - co2_ifruit.ut_soude\n* `utilite.ut_kr_p7` - utilite.ut_kr_p7\n* `utilite.ut_kr_pn2` - utilite.ut_kr_pn2\n* `utilite.ut_kr_p40` - utilite.ut_kr_p40\n* `utilite.ut_kr_pv` - utilite.ut_kr_pv\n* `utilite.ut_kr_pg` - utilite.ut_kr_pg\n* `utilite.ut_kr_tt` - utilite.ut_kr_tt\n* `utilite.ut_kr_tc` - utilite.ut_kr_tc\n* `utilite.ut_sid_p7` - utilite.ut_sid_p7\n* `utilite.ut_sid_pn2` - utilite.ut_sid_pn2\n* `utilite.ut_sid_p40` - utilite.ut_sid_p40\n* `utilite.ut_sid_pv` - utilite.ut_sid_pv\n* `utilite.ut_sid_pg` - utilite.ut_sid_pg\n* `utilite.ut_sid_tt` - utilite.ut_sid_tt\n* `utilite.ut_sid_tc` - utilite.ut_sid_tc\n* `sucre.total.tetra` - sucre.total.tetra\n* `sucre.total` - sucre.total\n* `sucre.total.adue` - sucre.total.adue"
             },
             "AlertTypeEnum": {
                 "enum": [
@@ -5102,6 +5559,30 @@
                     "from_value",
                     "to_date",
                     "to_value"
+                ]
+            },
+            "Co2MultiMetaConsommations": {
+                "type": "object",
+                "properties": {
+                    "from_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "to_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "consommations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Co2IfruitConsommation"
+                        }
+                    }
+                },
+                "required": [
+                    "consommations",
+                    "from_date",
+                    "to_date"
                 ]
             },
             "CodeEnum": {
@@ -5469,6 +5950,88 @@
                 "required": [
                     "end_date",
                     "start_date"
+                ]
+            },
+            "FiltrationConsommation": {
+                "type": "object",
+                "properties": {
+                    "forage": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "eau_brute": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "hytec": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "osmotec": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "osmosee": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "contre_lavage": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                },
+                "required": [
+                    "contre_lavage",
+                    "eau_brute",
+                    "forage",
+                    "hytec",
+                    "osmosee",
+                    "osmotec"
+                ]
+            },
+            "FiltrationMetaConsommation": {
+                "type": "object",
+                "properties": {
+                    "from_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "to_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "consommation": {
+                        "$ref": "#/components/schemas/FiltrationConsommation"
+                    }
+                },
+                "required": [
+                    "consommation",
+                    "from_date",
+                    "to_date"
+                ]
+            },
+            "FiltrationMultiMetaConsommations": {
+                "type": "object",
+                "properties": {
+                    "from_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "to_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "consommations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FiltrationMetaConsommation"
+                        }
+                    }
+                },
+                "required": [
+                    "consommations",
+                    "from_date",
+                    "to_date"
                 ]
             },
             "GetSubordinateAndSuperiorIdResponse": {
@@ -5954,6 +6517,45 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/PresCond"
+                        }
+                    }
+                }
+            },
+            "PaginatedReportList": {
+                "type": "object",
+                "properties": {
+                    "next_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=2"
+                    },
+                    "previous_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://example.com/api/v1/users/?page=1"
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total_results": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Report"
                         }
                     }
                 }
@@ -6723,6 +7325,45 @@
                     "total_memory",
                     "uptime_in_seconds",
                     "used_memory"
+                ]
+            },
+            "Report": {
+                "type": "object",
+                "properties": {
+                    "Rapport": {
+                        "type": "string"
+                    },
+                    "Date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "Interval": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "col_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    },
+                    "synthese": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "Date",
+                    "Rapport",
+                    "col_names",
+                    "data"
                 ]
             },
             "Role": {

@@ -8,41 +8,34 @@ from filtration.models import Debit, Niveau, PresCond, Volume
 import threading
 
 from api_v1.utils import get_midnight_value, get_value_at, print_log
+from filtration.utils import calculate_consommation_filtration
 
-
-volume_list : List[Volume] = []
 
 niveau : Niveau|None = None
 volume : Volume|None = None
 debit  : Debit|None= None
 pres_cond : PresCond|None = None
 
-dates = []
 
-def loadNiveau():
+def loadNiveau(date=None):
     global niveau
-
-    niveau = get_midnight_value(Niveau)
+    niveau = get_midnight_value(Niveau, date)
 
 def loadVolume(date=None):
     global volume
-    if date is None:
-        volume = get_midnight_value(Volume)
-    else:
-        v = get_value_at(Volume, date)
-        volume_list.append(v)
+    volume = get_midnight_value(Volume, date)
         
-def loadDebit():
+def loadDebit(date=None):
     global debit
-    debit = get_midnight_value(Debit)
+    debit = get_midnight_value(Debit, date)
 
-def loadPresCond():
+def loadPresCond(date=None):
     global pres_cond
-    pres_cond = get_midnight_value(PresCond)
+    pres_cond = get_midnight_value(PresCond, date)
 
 
 
-def rapport_filtration(email):
+def rapport_filtration(interval = None, render_to_HTML_string=True, date=None, force_recreate_excel_file=False):
     global niveau
     global volume
     global debit
@@ -53,38 +46,32 @@ def rapport_filtration(email):
     volume_list = []
     dates = []
     now = datetime.now()
-    threads = []
-    for i in range(1, now.day):
-        date = datetime(now.year, now.month, i)
-        thread = threading.Thread(target=loadVolume, args=(date,))
-        threads.append(thread)
-        thread.start()
-
-    thread_n = threading.Thread(target=loadNiveau)
-    thread_v = threading.Thread(target=loadVolume)
-    thread_d = threading.Thread(target=loadDebit)
-    thread_p = threading.Thread(target=loadPresCond)
+    _date = now if date is None else date
+    
+    thread_n = threading.Thread(target=loadNiveau, args=(_date,))
+    thread_v = threading.Thread(target=loadVolume, args=(_date,))
+    thread_d = threading.Thread(target=loadDebit, args=(_date,))
+    thread_p = threading.Thread(target=loadPresCond, args=(_date,))
     
     thread_n.start()
     thread_v.start()
     thread_d.start()
     thread_p.start()
     print_log("FILTRATION", "threads started")
-    for thread in threads:
-        thread.join()
+    
     thread_n.join()
     thread_v.join()
     thread_d.join()
     thread_p.join()
     print_log("FILTRATION", "threads finished")
+    
     if (niveau is None or volume is None or debit is None or pres_cond is None):
-        return "les données nécessaire ne sont pas disponible pour le "+now.strftime("%Y-%m-%d")
+        return "les données nécessaire ne sont pas disponible pour le "+_date.strftime("%Y-%m-%d")
 
-    interval = email.interval if email.interval != "manual" else f"{email.interval_manual} jours"
 
     def calculateCond():
         if (niveau is None or volume is None or debit is None or pres_cond is None):
-            raise ValueError("les données nécessaire ne sont pas disponible pour le "+now.strftime("%Y-%m-%d"))
+            raise ValueError("les données nécessaire ne sont pas disponible pour le "+_date.strftime("%Y-%m-%d"))
          
         d_os1 = debit.d_os1 or 0
         d_os2 = debit.d_os2 or 0
@@ -122,7 +109,7 @@ def rapport_filtration(email):
     FILL_OS7 = (niveau.niv_os7 or 0) * 100 / 10
     # conductivité
     cond_calculer = calculateCond()
-    # consomlation
+    # consommation
     volume_total_eau_brute = (volume.vol_uf1 or 0) + (volume.vol_uf2 or 0) + (volume.vol_uf3 or 0) + (volume.vol_uf4 or 0) + (volume.vol_uf5 or 0) + (volume.vol_uf6 or 0)
     volume_total_hytec = (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
     volume_total_osmotec = (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
@@ -130,27 +117,15 @@ def rapport_filtration(email):
     value_contre_lavage = (volume.vol_con_lav or 0)
 
     # consomation depuis le 1er forage
-    cons_depuis_1er_forage = 0
-    cons_depuis_1er_volume_total_eau_brute = 0
-    cons_depuis_1er_volume_total_hytec = 0
-    cons_depuis_1er_volume_total_osmotec = 0
-    cons_depuis_1er_volume_total_osmosee = 0
-    cons_contre_lavage_depuis_1er = 0 # TODO: set this to the correct value
+    le_1er = _date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    cons_depuis_1er  = calculate_consommation_filtration(le_1er, _date)
+    cons_depuis_1er_forage = cons_depuis_1er["forage"]
+    cons_depuis_1er_volume_total_eau_brute = cons_depuis_1er["eau_brute"]
+    cons_depuis_1er_volume_total_hytec = cons_depuis_1er["hytec"]
+    cons_depuis_1er_volume_total_osmotec = cons_depuis_1er["osmotec"]
+    cons_depuis_1er_volume_total_osmosee = cons_depuis_1er["osmosee"]
+    cons_contre_lavage_depuis_1er = cons_depuis_1er["contre_lavage"]
     
-    volume_list.append(volume)
-    for volume in volume_list:
-        cons_depuis_1er_forage += volume.vol_for
-        cons_depuis_1er_volume_total_eau_brute += (volume.vol_uf1 or 0) + (volume.vol_uf2 or 0) + (volume.vol_uf3 or 0) + (volume.vol_uf4 or 0) + (volume.vol_uf5 or 0) + (volume.vol_uf6 or 0)
-        cons_depuis_1er_volume_total_hytec += (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
-        cons_depuis_1er_volume_total_osmotec += (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
-        cons_contre_lavage_depuis_1er += (volume.vol_con_lav or 0)
-        
-        _volume_total_hytec = (volume.vol_os1 or 0) + (volume.vol_os2 or 0) + (volume.vol_os3 or 0)
-        _volume_total_osmotec = (volume.vol_os4 or 0) + (volume.vol_os5 or 0) + (volume.vol_os6 or 0) + (volume.vol_os7 or 0) + (volume.vol_os8 or 0) + (volume.vol_os9 or 0)
-    
-        cons_depuis_1er_volume_total_osmosee += _volume_total_hytec + _volume_total_osmotec
-        
-
     data = {
         "date": niveau.date.strftime("%Y-%m-%d"),
         "rapport_name": "Filtration",
@@ -453,10 +428,10 @@ def rapport_filtration(email):
         ],
     }
 
-    filename = generateExcelReport(data, f"Filtration/Filtration - {niveau.date.strftime('%Y-%m-%d')}", f"Filtration-{niveau.date.strftime('%Y-%m-%d')}")
+    filename = generateExcelReport(data, f"Filtration/Filtration - {niveau.date.strftime('%Y-%m-%d')}", f"Filtration-{niveau.date.strftime('%Y-%m-%d')}", force=force_recreate_excel_file)
     print_log("FILTRATION", "page generated")
     
     return (render_to_string(
         template_name="emails/rapport.html",
         context=data
-    ), filename, f"Rapport : Filtration - {niveau.date.strftime('%Y-%m-%d')}")
+    ) if render_to_HTML_string else data, filename, f"Rapport : Filtration - {niveau.date.strftime('%Y-%m-%d')}")

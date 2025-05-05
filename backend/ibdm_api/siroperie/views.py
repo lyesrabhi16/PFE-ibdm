@@ -1,16 +1,18 @@
 from datetime import datetime
 from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import viewsets, generics
+from rest_framework import viewsets
 from rest_framework import permissions
-from api_v1.utils import get_value_at, with_operation_ids, get_values_within
+from api_v1.utils import get_value_at, with_operation_ids, filter_by_fetch_type
 from siroperie.models import Sucre
 from siroperie.serializers import SucreSerializer
-from api_v1.serializers import FeedMetaDataSerializer, StartEndDatesSerializer
+from api_v1.serializers import FeedMetaDataSerializer
 from rest_framework.decorators import api_view, permission_classes
-from api_v1.constants import ErrorCodes
 from django.utils.dateparse import parse_datetime
-from django.conf import settings
+
+
+
+
 @extend_schema(tags=["Sucre"])
 @with_operation_ids(
     on_list="getSucreList",
@@ -135,6 +137,13 @@ def getSucreMetaData(request):
                 type=str,
                 location="query",
             ),
+            OpenApiParameter(
+                name="fetch_type",
+                required=False,
+                type=str,
+                enum=["all", "seconds", "minutes", "hours", "days", "weeks", "months", "years"],
+                location="query",
+            ),
         ],
     )
 
@@ -147,8 +156,14 @@ class SucreListView(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
 
-        start_date = self.request.query_params.get("start_date")
-        end_date = self.request.query_params.get("end_date")
+        self.start_date = self.request.query_params.get("start_date")
+        self.end_date = self.request.query_params.get("end_date")
+        self.fetch_type = self.request.query_params.get("fetch_type", "all") 
+        
+        start_date = self.start_date
+        end_date = self.end_date
+        fetch_type = self.fetch_type
+        
         if start_date and end_date:
             try:
                 start_date = parse_datetime(start_date)
@@ -156,10 +171,13 @@ class SucreListView(viewsets.ReadOnlyModelViewSet):
             except ValueError:
                 return Sucre.objects.none()
             
-            queryset = Sucre.objects.filter(date__range=[start_date, end_date]).order_by("-date")
-            return queryset
+            new_queryset = filter_by_fetch_type(Sucre, start_date, end_date, fetch_type)
+            
+            return new_queryset
+
         return Sucre.objects.none()
 
+    
     def get_paginated_response(self, data):
         response = super().get_paginated_response(data)
         response.data["meta"] = {
@@ -167,5 +185,3 @@ class SucreListView(viewsets.ReadOnlyModelViewSet):
             "end_date": self.request.query_params.get("end_date"),
         }
         return response
-
-    

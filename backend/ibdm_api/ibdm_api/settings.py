@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "crispy_forms",
+    "colorfield",
     # "djoser",
     "drf_spectacular",
     "drf_spectacular_sidecar",
@@ -82,6 +83,7 @@ INSTALLED_APPS = [
     "emails",
     "filtration",
     "utilite",
+    "reports"
 ]
 
 MIDDLEWARE = [
@@ -386,9 +388,9 @@ LOGGING = None if not Env.LOG_TO_FILES else {
             'filename': os.path.join(LOG_DIR, 'http.log'),
             'formatter': 'verbose',
         },
-        "file_daphne":{
+        "file_server":{
             'class': "logging.FileHandler",
-            'filename': os.path.join(LOG_DIR, 'daphne.log'),
+            'filename': os.path.join(LOG_DIR, 'server.log'),
             'formatter': 'verbose',
         },
         "file_monitors":{
@@ -421,18 +423,6 @@ LOGGING = None if not Env.LOG_TO_FILES else {
             'level': 'DEBUG',
             'propagate': True,
         },
-        'daphne': {
-            'handlers': [
-                "file_daphne"
-                        ],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'daphne.request': {
-            'level': 'DEBUG',
-            'handlers': ['file_http'],
-            'propagate': True,
-        }
     },
     'filters': {
         'debug_filter': {

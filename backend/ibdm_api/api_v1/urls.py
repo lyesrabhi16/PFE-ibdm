@@ -8,6 +8,7 @@ urlpatterns = [
     path("siroperie/", include("siroperie.urls"), name="siroperie"),
     path("emails/", include("emails.urls"), name="emails"),
     path("filtration/", include("filtration.urls"), name="filtration"),
-    path("utilite/", include("utilite.urls"), name="utilite")
+    path("utilite/", include("utilite.urls"), name="utilite"),
+    path("reports/", include("reports.urls"), name="reports"),
 
 ]

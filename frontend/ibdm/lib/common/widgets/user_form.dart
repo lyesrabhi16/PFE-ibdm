@@ -81,9 +81,7 @@ class UserForm extends StatelessWidget {
 
   final Rx<bool> _loadedSuperiorInitialValue = false.obs;
 
-  User? _superiorInitialValue;
-
-  Role? get _addUserRole => getInitialRoleValue();
+  Role? _addUserRole;
 
   final Rx<bool> _searchAddUserSuperior = false.obs;
 
@@ -170,11 +168,15 @@ class UserForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
     logger.d("building user form");
+    _addUserRole = getInitialRoleValue();
     final userRole = (role ?? _addUserRole).obs;
     _load(context);
     return Obx(() {
+      _addUserRole = userRole.value;
       if (!_loaded.value) {
-        return CircularProgressIndicatorWithText(text: strings.value.loading,);
+        return CircularProgressIndicatorWithText(
+          text: strings.value.loading,
+        );
       }
       logger
           .e("User: $user ${user?.avatarUrl} ${_addUserAvatarSelected.value}");
@@ -188,6 +190,7 @@ class UserForm extends StatelessWidget {
             logger.e("role is null in user form on changed");
             return;
           }
+          _addUserRole = userRole.value;
           printMessage("_addUserSuperior: $_addUserSuperior");
           _valuesChanged();
         },
@@ -386,6 +389,7 @@ class UserForm extends StatelessWidget {
                     logger.e(
                         "before value: ${value?.name} __userRole: ${userRole.value?.name}");
                     userRole.value = value;
+                    _addUserRole = value;
                     _valuesChanged();
 
                     logger.e(
@@ -428,7 +432,7 @@ class UserForm extends StatelessWidget {
                   minWidth: context.width,
                 ),
                 child: ShadSelectFormField<User>.withSearch(
-                  initialValue: _superiorInitialValue,
+                  initialValue: _addUserSuperior,
                   enabled: editable,
                   label: Text(strings.value.superior),
                   validator: (value) =>
@@ -498,16 +502,16 @@ class UserForm extends StatelessWidget {
   Future<void> getInitialValueOfSuperior() async {
     _loadedSuperiorInitialValue.value = false;
     if (user == null) {
-      _superiorInitialValue = userController.user;
+      _addUserSuperior = userController.user;
       return;
     }
 
     if (user!.superiors.isEmpty) {
-      _superiorInitialValue = null;
+      _addUserSuperior = null;
       return;
     }
 
-    _superiorInitialValue = await (await ApiClientInstance.getApiClient())
+    _addUserSuperior = await (await ApiClientInstance.getApiClient())
         .getUser(id: user!.superiors.first.userId);
 
     _loadedSuperiorInitialValue.value = true;

@@ -7,6 +7,11 @@ import 'package:ibdm/pages/co2/co2.dart';
 import 'package:ibdm/pages/filtration/filtration.dart';
 import 'package:ibdm/pages/no_permissions.dart';
 import 'package:ibdm/pages/not_found.dart';
+import 'package:ibdm/pages/reports/co2_reports_page.dart';
+import 'package:ibdm/pages/reports/filtration_reports_page.dart';
+import 'package:ibdm/pages/reports/reports_page.dart';
+import 'package:ibdm/pages/reports/sucre_reports_page.dart';
+import 'package:ibdm/pages/reports/utilite_reports_page.dart';
 import 'package:ibdm/pages/server-status/server_status.dart';
 import 'package:ibdm/pages/settings/about_page.dart';
 import 'package:ibdm/pages/home.dart';
@@ -50,6 +55,11 @@ class Routes {
   static const String serverSettings = "/settings/server";
   static const String noPermissions = "/no-permissions";
   static const String notFound = "/404";
+  static const String reports = "/reports";
+  static const String sucreReports = "/reports/sucre";
+  static const String filtrationReports = "/reports/emails";
+  static const String utiliteReports = "/reports/utilite";
+  static const String co2Reports = "/reports/co2";
 
   static List<Destination> get destinations => [
         Destination(
@@ -72,7 +82,7 @@ class Routes {
         ).withPermission(Permissions.viewSiroperiePage),
         Destination(
           title: "Filtration",
-          icon: Icons.battery_full_outlined,
+          icon: Icons.battery_full_rounded,
           route: Routes.filtration,
           page: routePages[Routes.filtration]!,
         ).withPermission(Permissions.viewFiltrationPage),
@@ -88,6 +98,17 @@ class Routes {
           route: Routes.co2,
           page: routePages[Routes.co2]!,
         ).withPermission(Permissions.viewCo2Page),
+        Destination(
+          title: "Rapports",
+          icon: LucideIcons.fileText,
+          route: Routes.reports,
+          page: routePages[Routes.reports]!,
+        ).withAnyPermissionOf([
+          Permissions.viewSucreReportsPage,
+          Permissions.viewFiltrationReportsPage,
+          Permissions.viewUtiliteReportsPage,
+          Permissions.viewCo2ReportsPage,
+        ]),
         Destination(
           title: "Server Status",
           icon: LucideIcons.server,
@@ -110,6 +131,10 @@ class Routes {
     emailSent: settings,
     about: settings,
     help: settings,
+    sucreReports: reports,
+    filtrationReports: reports,
+    utiliteReports: reports,
+    co2Reports: reports,
   };
   static final routePermissions = {
     Routes.home: RoutePermissions(),
@@ -157,6 +182,26 @@ class Routes {
     ),
     Routes.serverSettings: RoutePermissions(
       requiredPermissions: [Permissions.viewServerSettingsPage],
+    ),
+    Routes.reports: RoutePermissions(
+      anyOfPermissions: [
+        Permissions.viewSucreReportsPage,
+        Permissions.viewFiltrationReportsPage,
+        Permissions.viewUtiliteReportsPage,
+        Permissions.viewCo2ReportsPage,
+      ],
+    ),
+    Routes.sucreReports: RoutePermissions(
+      requiredPermissions: [Permissions.viewSucreReportsPage],
+    ),
+    Routes.filtrationReports: RoutePermissions(
+      requiredPermissions: [Permissions.viewFiltrationReportsPage],
+    ),
+    Routes.utiliteReports: RoutePermissions(
+      requiredPermissions: [Permissions.viewUtiliteReportsPage],
+    ),
+    Routes.co2Reports: RoutePermissions(
+      requiredPermissions: [Permissions.viewCo2ReportsPage],
     ),
   };
   static final routePages = {
@@ -288,6 +333,46 @@ class Routes {
     Routes.notFound: GetPage(
       name: Routes.notFound,
       page: () => NotFoundPage(),
+    ),
+    Routes.reports: GetPage(
+      name: Routes.reports,
+      page: () => ReportsPage(),
+      middlewares: [
+        ProtectedRouteMiddleware(
+            routePermissions: routePermissions[Routes.reports])
+      ],
+    ),
+    Routes.sucreReports: GetPage(
+      name: Routes.sucreReports,
+      page: () => SucreReportsPage(),
+      middlewares: [
+        ProtectedRouteMiddleware(
+            routePermissions: routePermissions[Routes.sucreReports])
+      ],
+    ),
+    Routes.filtrationReports: GetPage(
+      name: Routes.filtrationReports,
+      page: () => FiltrationReportsPage(),
+      middlewares: [
+        ProtectedRouteMiddleware(
+            routePermissions: routePermissions[Routes.filtrationReports])
+      ],
+    ),
+    Routes.utiliteReports: GetPage(
+      name: Routes.utiliteReports,
+      page: () => UtiliteReportsPage(),
+      middlewares: [
+        ProtectedRouteMiddleware(
+            routePermissions: routePermissions[Routes.utiliteReports])
+      ],
+    ),
+    Routes.co2Reports: GetPage(
+      name: Routes.co2Reports,
+      page: () => Co2ReportsPage(),
+      middlewares: [
+        ProtectedRouteMiddleware(
+            routePermissions: routePermissions[Routes.co2Reports])
+      ],
     ),
   };
 

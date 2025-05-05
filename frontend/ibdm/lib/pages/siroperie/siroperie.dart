@@ -1,12 +1,16 @@
+// ignore_for_file: unused_import
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/app_line_chart.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/cuve.dart';
 import 'package:ibdm/common/widgets/data_list.dart';
@@ -16,6 +20,7 @@ import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
+import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/data_representation.dart';
@@ -221,7 +226,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
                     child: StreamBuilder(
                       stream: SiroperiePage.stream,
                       builder: (context, snapshot) {
-                        printMessage("snapshot: $snapshot");
+                        //printMessage("snapshot: $snapshot");
                         if (isLive.value &&
                             (snapshot == null ||
                                 snapshot.connectionState ==
@@ -529,7 +534,7 @@ class _SiroperiePageState extends State<SiroperiePage> {
   _getTopActionsBar() {
     final strings = getTranslations(getContext).obs;
     return Obx(() {
-      logger.e("sucre_end_date: ${sucre_end_date.value}");
+      //logger.e("sucre_end_date: ${sucre_end_date.value}");
       return LiveDataTopActionBar(
         isLive: isLive,
         startDate: feedMetaData!.startDate,
@@ -543,6 +548,44 @@ class _SiroperiePageState extends State<SiroperiePage> {
           minute = dt.minute;
           second = dt.second;
           _getSucreData();
+        },
+        graphPressed: () {
+          showShadDialog(
+            context: context,
+            builder: (context) => ShadDialog(
+              constraints: BoxConstraints(
+                minWidth: min(context.width, 600),
+                maxWidth: min(context.width, 800),
+                minHeight: min(context.height, 600),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          )).marginAll(AppSizes.md),
+                  AppLineChart(
+                    graphTypes: [
+                      GraphType(
+                        name: "TOTAL",
+                        getGraphData: getTotalGraphData,
+                      ),
+                      GraphType(
+                        name: "TETRA",
+                        getGraphData: getTetraGraphData,
+                      ),
+                      GraphType(
+                        name: "ADUE",
+                        getGraphData: getAdueGraphData,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
         },
         listPressed: () {
           showShadDialog(
@@ -599,6 +642,125 @@ class _SiroperiePageState extends State<SiroperiePage> {
     });
   }
 
+  Future<Map> getTotalGraphData(
+      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
+    final strings = getTranslations(getContext);
+    Map data = {
+      "Tetra": [],
+      "Adue": [],
+    };
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getSucresBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (Sucre e in res.data) {
+      data["Tetra"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": (e.tS21 ?? 0) +
+            (e.tS22 ?? 0) +
+            (e.tS23 ?? 0) +
+            (e.tS24 ?? 0) +
+            (e.tS25 ?? 0),
+      });
+      data["Adue"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": (e.aT02 ?? 0) +
+            (e.aT03 ?? 0) +
+            (e.aT04 ?? 0) +
+            (e.aT05 ?? 0) +
+            (e.aT06 ?? 0),
+      });
+    }
+    return data;
+  }
+
+  Future<Map> getTetraGraphData(
+      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
+    final strings = getTranslations(getContext);
+    Map data = {
+      "TS21": [],
+      "TS22": [],
+      "TS23": [],
+      "TS24": [],
+      "TS25": [],
+    };
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getSucresBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (Sucre e in res.data) {
+      data["TS21"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.tS21 ?? 0,
+      });
+      data["TS22"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.tS22 ?? 0,
+      });
+      data["TS23"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.tS23 ?? 0,
+      });
+      data["TS24"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.tS24 ?? 0,
+      });
+      data["TS25"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.tS25 ?? 0,
+      });
+    }
+    return data;
+  }
+
+  Future<Map> getAdueGraphData(
+      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
+    final strings = getTranslations(getContext);
+    Map data = {
+      "T02": [],
+      "T03": [],
+      "T04": [],
+      "T05": [],
+      "T06": [],
+    };
+    final api = await ApiClientInstance.getApiClient();
+    final res = await api.getSucresBetweenDates(
+      startDate: startDate.toIso8601String(),
+      endDate: endDate.toIso8601String(),
+      enablePagination: false,
+      fetchType: fetchType,
+    );
+    for (Sucre e in res.data) {
+      data["T02"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.aT02 ?? 0,
+      });
+      data["T03"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.aT03 ?? 0,
+      });
+      data["T04"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.aT04 ?? 0,
+      });
+      data["T05"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.aT05 ?? 0,
+      });
+      data["T06"].add({
+        "x": e.date.millisecondsSinceEpoch,
+        "y": e.aT06 ?? 0,
+      });
+    }
+    return data;
+  }
+
   void onTapListItem(DataRepresentation<dynamic> d) {
     Navigator.of(context).pop();
     logger.e("showing: $year $month $day $hour $minute $second");
@@ -622,8 +784,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
         }
         final sucreTotalL = sommeTetraL + sommeAdueL;
         final sucreTotalKG = sommeTetraKG + sommeAdueKG;
-        logger.e("sucreTotal L: $sucreTotalL");
-        logger.e("sucreTotal KG: $sucreTotalKG");
+        //logger.e("sucreTotal L: $sucreTotalL");
+        //logger.e("sucreTotal KG: $sucreTotalKG");
 
         return Padding(
           padding: EdgeInsets.all(AppSizes.sm),
@@ -661,15 +823,14 @@ class _SiroperiePageState extends State<SiroperiePage> {
                       SizedBox(width: AppSizes.lg),
                       Text(
                         " ${(sucreTotalKG).toStringAsFixed(2)} KG",
-                        style: Theme.of(getContext)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(
-                              color: (sommeTetraKG + sommeAdueKG) < (84000 * 3)
-                                  ? errorColor
-                                  : successColor,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style:
+                            Theme.of(getContext).textTheme.titleLarge?.copyWith(
+                                  color: (sommeTetraKG + sommeAdueKG) <
+                                          (convertSugarLToKG(84000))
+                                      ? errorColor
+                                      : successColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                       ),
                     ].nonNulls.toList(),
                   ),
@@ -719,7 +880,9 @@ class _SiroperiePageState extends State<SiroperiePage> {
               " ${sommeTetraKG.toStringAsFixed(2)} KG",
               softWrap: false,
               style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
-                    color: sommeTetraKG < 30000 * 3 ? errorColor : successColor,
+                    color: sommeTetraKG < convertSugarLToKG(30000)
+                        ? errorColor
+                        : successColor,
                     fontStyle: FontStyle.italic,
                   ),
             ),
@@ -762,7 +925,9 @@ class _SiroperiePageState extends State<SiroperiePage> {
             " ${sommeAdueKG.toStringAsFixed(2)} KG",
             softWrap: false,
             style: Theme.of(getContext).textTheme.titleMedium?.copyWith(
-                  color: sommeAdueKG < 54000 * 3 ? errorColor : successColor,
+                  color: sommeAdueKG < convertSugarLToKG(54000)
+                      ? errorColor
+                      : successColor,
                   fontStyle: FontStyle.italic,
                 ),
           ),
