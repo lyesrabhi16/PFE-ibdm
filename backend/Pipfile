@@ -26,6 +26,7 @@ psutil = "*"
 cryptography = "*"
 django = {extras = ["argon2"], version = "*"}
 hypercorn = "*"
+django-colorfield = "*"
 
 [requires]
 python_version = "3.12.9"
