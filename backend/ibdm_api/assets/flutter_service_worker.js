@@ -124,24 +124,15 @@ const RESOURCES = {"assets/AssetManifest.bin": "78de34e2045dd716c8274cecbdd0d1d1
 "canvaskit/skwasm_st.js.symbols": "c7e7aac7cd8b612defd62b43e3050bdd",
 "canvaskit/skwasm_st.wasm": "56c3973560dfcbf28ce47cebe40f3206",
 "favicon.png": "a32e9cc5a15248fd736b2f0094c90b76",
-<<<<<<< HEAD
-"flutter.js": "4b2350e14c6650ba82871f60906437ea",
-"flutter_bootstrap.js": "921b2dc55ebdfb886c321014a6c8d545",
-=======
 "flutter.js": "76f08d47ff9f5715220992f993002504",
-"flutter_bootstrap.js": "9a2109c0db68eb26bc8f972306527c75",
->>>>>>> 4c75e9b211fd96bc6e43ffbd652115c439c5dd4a
+"flutter_bootstrap.js": "470d9f678ec7e8ac8e0be741fbd49892",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
 "index.html": "36922976cc4eed23cb8aa28b29e34527",
 "/": "36922976cc4eed23cb8aa28b29e34527",
-<<<<<<< HEAD
-"main.dart.js": "5a2f953ed713ede2fc9ff3aeabb35903",
-=======
-"main.dart.js": "8c5dfe1accf440c0abbf849ffb1aabed",
->>>>>>> 4c75e9b211fd96bc6e43ffbd652115c439c5dd4a
+"main.dart.js": "75fb43bbcf11986498e50bcff1001efc",
 "manifest.json": "8106d1314fda3f7d6f5105afc01a5d0e",
 "splash/img/branding-1x.png": "14285ca56c13939f812f877eefa9276d",
 "splash/img/branding-2x.png": "f75f93069efee2189a28f465d7ec3bf0",
