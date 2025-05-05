@@ -5,14 +5,13 @@ from api_v1.utils import get_midnight_value
 from utilite.models import Utilite
 from django.template.loader import render_to_string
 
-def rapport_utilite(email):
-    now = datetime.now()
-    utilite = get_midnight_value(Utilite)
+def rapport_utilite(interval=None, render_to_HTML_string=True, date=None, force_recreate_excel_file=False):
+    now = datetime.now() if date is None else date
+    utilite = get_midnight_value(Utilite, date)
 
     if (utilite is None):
         return "les données d'utilité ne sont pas disponible pour le "+now.strftime("%Y-%m-%d")
 
-    interval = email.interval if email.interval != "manual" else f"{email.interval_manual} jours"
     data = {
         "date": utilite.date.strftime("%Y-%m-%d"),
         "rapport_name": "Utilite",
@@ -151,8 +150,8 @@ def rapport_utilite(email):
         ],
     }
 
-    filename = generateExcelReport(data, f"Utilite/Utilite - {utilite.date.strftime('%Y-%m-%d')}", f"Utilite-{utilite.date.strftime('%Y-%m-%d')}")
+    filename = generateExcelReport(data, f"Utilite/Utilite - {utilite.date.strftime('%Y-%m-%d')}", f"Utilite-{utilite.date.strftime('%Y-%m-%d')}", force=force_recreate_excel_file)
     return (render_to_string(
         template_name="emails/rapport.html",
         context=data
-    ), filename, f"Rapport : Utilité - {utilite.date.strftime('%Y-%m-%d')}")
+    ) if render_to_HTML_string else data, filename, f"Rapport : Utilité - {utilite.date.strftime('%Y-%m-%d')}")

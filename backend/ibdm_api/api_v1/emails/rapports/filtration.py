@@ -17,25 +17,25 @@ debit  : Debit|None= None
 pres_cond : PresCond|None = None
 
 
-def loadNiveau():
+def loadNiveau(date=None):
     global niveau
-    niveau = get_midnight_value(Niveau)
+    niveau = get_midnight_value(Niveau, date)
 
-def loadVolume():
+def loadVolume(date=None):
     global volume
-    volume = get_midnight_value(Volume)
+    volume = get_midnight_value(Volume, date)
         
-def loadDebit():
+def loadDebit(date=None):
     global debit
-    debit = get_midnight_value(Debit)
+    debit = get_midnight_value(Debit, date)
 
-def loadPresCond():
+def loadPresCond(date=None):
     global pres_cond
-    pres_cond = get_midnight_value(PresCond)
+    pres_cond = get_midnight_value(PresCond, date)
 
 
 
-def rapport_filtration(email):
+def rapport_filtration(interval = None, render_to_HTML_string=True, date=None, force_recreate_excel_file=False):
     global niveau
     global volume
     global debit
@@ -46,11 +46,12 @@ def rapport_filtration(email):
     volume_list = []
     dates = []
     now = datetime.now()
+    _date = now if date is None else date
     
-    thread_n = threading.Thread(target=loadNiveau)
-    thread_v = threading.Thread(target=loadVolume)
-    thread_d = threading.Thread(target=loadDebit)
-    thread_p = threading.Thread(target=loadPresCond)
+    thread_n = threading.Thread(target=loadNiveau, args=(_date,))
+    thread_v = threading.Thread(target=loadVolume, args=(_date,))
+    thread_d = threading.Thread(target=loadDebit, args=(_date,))
+    thread_p = threading.Thread(target=loadPresCond, args=(_date,))
     
     thread_n.start()
     thread_v.start()
@@ -65,13 +66,12 @@ def rapport_filtration(email):
     print_log("FILTRATION", "threads finished")
     
     if (niveau is None or volume is None or debit is None or pres_cond is None):
-        return "les données nécessaire ne sont pas disponible pour le "+now.strftime("%Y-%m-%d")
+        return "les données nécessaire ne sont pas disponible pour le "+_date.strftime("%Y-%m-%d")
 
-    interval = email.interval if email.interval != "manual" else f"{email.interval_manual} jours"
 
     def calculateCond():
         if (niveau is None or volume is None or debit is None or pres_cond is None):
-            raise ValueError("les données nécessaire ne sont pas disponible pour le "+now.strftime("%Y-%m-%d"))
+            raise ValueError("les données nécessaire ne sont pas disponible pour le "+_date.strftime("%Y-%m-%d"))
          
         d_os1 = debit.d_os1 or 0
         d_os2 = debit.d_os2 or 0
@@ -117,9 +117,8 @@ def rapport_filtration(email):
     value_contre_lavage = (volume.vol_con_lav or 0)
 
     # consomation depuis le 1er forage
-    le_1er = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    now = datetime.now()
-    cons_depuis_1er  = calculate_consommation_filtration(le_1er, now)
+    le_1er = _date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    cons_depuis_1er  = calculate_consommation_filtration(le_1er, _date)
     cons_depuis_1er_forage = cons_depuis_1er["forage"]
     cons_depuis_1er_volume_total_eau_brute = cons_depuis_1er["eau_brute"]
     cons_depuis_1er_volume_total_hytec = cons_depuis_1er["hytec"]
@@ -429,10 +428,10 @@ def rapport_filtration(email):
         ],
     }
 
-    filename = generateExcelReport(data, f"Filtration/Filtration - {niveau.date.strftime('%Y-%m-%d')}", f"Filtration-{niveau.date.strftime('%Y-%m-%d')}")
+    filename = generateExcelReport(data, f"Filtration/Filtration - {niveau.date.strftime('%Y-%m-%d')}", f"Filtration-{niveau.date.strftime('%Y-%m-%d')}", force=force_recreate_excel_file)
     print_log("FILTRATION", "page generated")
     
     return (render_to_string(
         template_name="emails/rapport.html",
         context=data
-    ), filename, f"Rapport : Filtration - {niveau.date.strftime('%Y-%m-%d')}")
+    ) if render_to_HTML_string else data, filename, f"Rapport : Filtration - {niveau.date.strftime('%Y-%m-%d')}")

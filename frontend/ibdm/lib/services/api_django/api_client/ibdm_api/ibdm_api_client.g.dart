@@ -1361,6 +1361,85 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
+  Future<Report> generateReport({
+    required String date,
+    required ReportType reportType,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'date': date,
+      r'report_type': reportType.name,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Report>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/reports/generate',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Report _value;
+    try {
+      _value = Report.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PaginatedReportList> getReports({
+    bool? enablePagination,
+    bool? hasSynthese,
+    String? interval,
+    String? ordering,
+    int? page,
+    int? perPage,
+    ReportsType? reportsType,
+    String? search,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'has_synthese': hasSynthese,
+      r'interval': interval,
+      r'ordering': ordering,
+      r'page': page,
+      r'per_page': perPage,
+      r'reports_type': reportsType?.name,
+      r'search': search,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedReportList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/reports/list',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedReportList _value;
+    try {
+      _value = PaginatedReportList.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<PaginatedSucreList> getSucreList({
     bool? enablePagination,
     int? page,

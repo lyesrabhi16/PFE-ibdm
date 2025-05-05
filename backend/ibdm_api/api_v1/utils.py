@@ -12,6 +12,15 @@ from django.db.models import Q
 from concurrent.futures import ThreadPoolExecutor
 
 
+def ensurePathExists(path:str):
+    _path = os.path.split(path)[0]
+    if os.path.exists(_path):
+        return
+
+    # create it otherwise
+    os.makedirs(_path, exist_ok=True)
+    return
+
 
 def getServerStatusFromFile():
     status_file = settings.STATUS_FILE_PATH
@@ -57,10 +66,10 @@ def get_value_at(model, date):
         date__lt=next_second
     ).first()
 
-def get_midnight_value(model):
-    now = datetime.now()
+def get_midnight_value(model, date=None):
+    date = datetime.now() if date is None else date
     # Get today at midnight
-    today_midnight = now.replace(hour=0, minute=0, second=0)
+    today_midnight = date.replace(hour=0, minute=0, second=0)
     # Get today at 00:01
     next_minute = today_midnight.replace(minute=1)
 
@@ -112,7 +121,7 @@ def with_operation_ids(
             WrappedReadOnlyModelViewClass.__doc__ = cls.__doc__
             WrappedReadOnlyModelViewClass.__module__ = cls.__module__
             return WrappedReadOnlyModelViewClass
-        elif  issubclass(cls, viewsets.ModelViewSet):
+        elif  issubclass(cls, viewsets.ModelViewSet) or issubclass(cls, viewsets.ViewSet):
             class WrappedModelViewSetClass(cls):
                 # Optionally, override methods if needed
                 
@@ -150,13 +159,12 @@ def with_operation_ids(
                 def destroy(self, request, *args, **kwargs):
                     return super().destroy(request, *args, **kwargs)
                 
-            
             WrappedModelViewSetClass.__name__ = cls.__name__
             WrappedModelViewSetClass.__doc__ = cls.__doc__
             WrappedModelViewSetClass.__module__ = cls.__module__
             return WrappedModelViewSetClass
         else:
-            raise ValueError("This decorator only works with classes that inherit from viewsets.ModelViewSet or viewsets.ReadOnlyModelViewSet")
+            raise ValueError("This decorator only works with classes that inherit from viewsets.ViewSet, viewsets.ModelViewSet or viewsets.ReadOnlyModelViewSet")
     return decorator
 
 
@@ -198,7 +206,7 @@ def filter_by_fetch_type(model, start_date, end_date,fetch_type):
             with ThreadPoolExecutor() as executor:
                 def process_chunk(chunk, chunk_index):
                     query = Q()
-                    print("chunk", len(chunk), chunk_index, "/", all_chunks)
+                    #print("chunk", len(chunk), chunk_index, "/", all_chunks)
                     for date in chunk:
                         if customQ is not None:
                             query |= customQ(date, fetch_type)
@@ -212,7 +220,7 @@ def filter_by_fetch_type(model, start_date, end_date,fetch_type):
                         if normalized_date not in date_dict:
                             date_dict[normalized_date] = date
                     
-                    print("chunk", chunk_index, "size: ", _dates.count(),"normalized possible_dates size: ", len(date_dict))
+                    #print("chunk", chunk_index, "size: ", _dates.count(),"normalized possible_dates size: ", len(date_dict))
                     return date_dict.values()
 
                 for chunk in chunked_dates:
@@ -220,8 +228,8 @@ def filter_by_fetch_type(model, start_date, end_date,fetch_type):
                     threads.append(executor.submit(process_chunk, chunk, current_chunk))
                 for future in threads:
                     all_possible_dates.update(future.result())
-            print("all_possible_dates size: ", len(all_possible_dates))
-            print("all_possible_dates gathered, took: ", (datetime.now() - start).total_seconds())
+            #print("all_possible_dates size: ", len(all_possible_dates))
+            #print("all_possible_dates gathered, took: ", (datetime.now() - start).total_seconds())
 
             return all_possible_dates
 
@@ -238,10 +246,10 @@ def filter_by_fetch_type(model, start_date, end_date,fetch_type):
             "months": 2592000,
             "years": 31536000
         }
-        print("fetch_type", fetch_type)
+        #print("fetch_type", fetch_type)
         threshold = thresholds.get(fetch_type)
         if threshold is None:
-            print("Invalid fetch_type provided.")
+            #print("Invalid fetch_type provided.")
             return model.objects.none()
         
         if fetch_type == "all":
@@ -260,7 +268,7 @@ def filter_by_fetch_type(model, start_date, end_date,fetch_type):
         seen_dates = set()
         with ThreadPoolExecutor() as executor:
             def process_chunk(chunk, dates, values, seen_dates, fetch_type):
-                    print(f"chunk {len(chunk)} {dates.index(chunk) + 1}/{len(dates)} range: {chunk[0]} - {chunk[-1]}")
+                    #print(f"chunk {len(chunk)} {dates.index(chunk) + 1}/{len(dates)} range: {chunk[0]} - {chunk[-1]}")
                     q = Q()
                     for date in chunk:
                         match fetch_type:
@@ -300,13 +308,13 @@ def filter_by_fetch_type(model, start_date, end_date,fetch_type):
 
                         q |= Q(date__range=(start_date, end_date))
                     queryset = model.objects.filter(q).distinct().order_by("-date")
-                    print("queryset", queryset.count())
+                    #print("queryset", queryset.count())
                     for record in queryset:
                         normalized_date = normalize_date(record.date, fetch_type)
                         if normalized_date not in seen_dates:
                             seen_dates.add(normalized_date)
                             values.append(record)
-                    print("done")
+                    #print("done")
             
             futures = []
             for chunk in dates:
@@ -315,12 +323,12 @@ def filter_by_fetch_type(model, start_date, end_date,fetch_type):
             for future in futures:
                 future.result()
 
-        print("values", len(values))
+        #print("values", len(values))
         # Get final queryset with unique normalized dates
         #final_queryset = Sucre.objects.filter(date__in=values).order_by("-date")
         
-        print(f"Results: {len(values)}")
-        print(f"Took: {(datetime.now() - start).total_seconds()}")
+        #print(f"Results: {len(values)}")
+        #print(f"Took: {(datetime.now() - start).total_seconds()}")
         
         return sorted(values, key=lambda x: x.date, reverse=True)
     

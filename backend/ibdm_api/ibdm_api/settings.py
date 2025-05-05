@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     "emails",
     "filtration",
     "utilite",
+    "reports"
 ]
 
 MIDDLEWARE = [

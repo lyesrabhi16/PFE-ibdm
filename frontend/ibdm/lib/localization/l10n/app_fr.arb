@@ -849,5 +849,46 @@
 	"type": "Type",
 	"consommationDescription": "afficher la consommation sur une plage de dates.",
 	"previousDay": "Jour Précédent",
-	"sinceFirstOfMonth": "Depuis le 1er du mois"
+	"sinceFirstOfMonth": "Depuis le 1er du mois",
+	"reports": "Rapports",
+	"sucreReports": "Rapports de Sucre (Inventaire du Sucre)",
+	"co2Reports": "Rapports de CO2",
+	"utiliteReports": "Rapports d'Utilite",
+	"filtrationReports": "Rapports de Filtration",
+	"generateReport": "Générer un Rapport",
+	"generateReportDescription": "Générer un rapport pour une période spécifique.",
+	"viewReport": "Rapport: {rapport}",
+	"@viewReport": {
+		"placeholders": {
+			"rapport": {
+				"type": "String"
+			}
+		}
+	},
+	"viewReportDescription": "Voir le rapport du {date}.",
+	"@viewReportDescription": {
+		"placeholders": {
+			"date": {
+				"type": "String"
+			}
+		}
+	},
+	"loadingReports": "Chargement des Rapports...",
+	"failedToLoadReports": "Échec du chargement des rapports",
+	"sortReports": "Trier les Rapports",
+	"filterReports": "Filtrer les Rapports",
+	"hasSynthese": "Avec Synthese",
+	"getIntervalName": "{interval, select, jour {Jour} semaine {Semaine} mois {Mois} manual {Manual} other {Intervalle}}",
+	"@getIntervalName": {
+		"placeholders": {
+			"interval": {
+				"type": "String"
+			}
+		}
+	},
+	"withSynthese": "Avec Synthese",
+	"withoutSynthese": "Sans Synthese",
+	"failedToGenerateReport": "Échec de la génération du rapport",
+	"generate": "Générer"
+
 }
