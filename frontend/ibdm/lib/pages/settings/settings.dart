@@ -24,6 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final strings = getTranslations(context).obs;
+    final colorScheme = Theme.of(context).colorScheme;
     final localeController = Get.find<LocaleController>();
 
     return AppCustomContainer(
@@ -50,6 +51,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     SettingCard(
                       icon: Icons.email,
                       title: strings.value.email,
+                      trailing: Icon(Icons.arrow_forward_ios_rounded,
+                          color: colorScheme.primary),
                       onTap: () => Get.toNamed(Routes.emailSettings),
                     ).withAnyPermissionOf([
                       Permissions.viewEmailAlerts,
@@ -86,16 +89,22 @@ class _SettingsPageState extends State<SettingsPage> {
                     SettingCard(
                       icon: Icons.help,
                       title: strings.value.helpAssistance,
+                      trailing: Icon(Icons.arrow_forward_ios_rounded,
+                          color: colorScheme.primary),
                       onTap: () => Get.toNamed(Routes.help),
                     ),
                     SettingCard(
                       icon: Icons.info,
                       title: strings.value.about,
+                      trailing: Icon(Icons.arrow_forward_ios_rounded,
+                          color: colorScheme.primary),
                       onTap: () => Get.toNamed(Routes.about),
                     ),
                     SettingCard(
                       icon: Icons.settings,
                       title: strings.value.serverSettings,
+                      trailing: Icon(Icons.arrow_forward_ios_rounded,
+                          color: colorScheme.primary),
                       onTap: () => Get.toNamed(Routes.serverSettings),
                     ).withPermission(Permissions.viewServerSettingsPage),
                   ].nonNulls.toList(),

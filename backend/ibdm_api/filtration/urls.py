@@ -1,7 +1,11 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from filtration.views import DebitViewSet, NiveauViewSet, PresCondViewSet, VolumeViewSet, getDebitAtSpecificTime, getFiltrationMetaData, getNiveauAtSpecificTime, getPresCondAtSpecificTime, getVolumeAtSpecificTime, NiveauListView, DebitListView, PresCondListView, VolumeListView
+from filtration.views import (  
+                                DebitViewSet, NiveauViewSet, PresCondViewSet, VolumeViewSet, getDebitAtSpecificTime, 
+                                getFiltrationMetaData, getNiveauAtSpecificTime, getPresCondAtSpecificTime, getVolumeAtSpecificTime, NiveauListView, 
+                                DebitListView, PresCondListView, VolumeListView, getFiltrationConsommation, getFiltrationConsommationBetweenDates
+                            )
 
 router = routers.DefaultRouter()
 
@@ -24,4 +28,6 @@ urlpatterns = [
     path("debit/list", DebitListView.as_view({"get": "list"}), name="debit-start-end-list"),
     path("pres-cond/list", PresCondListView.as_view({"get": "list"}), name="pres-cond-start-end-list"),
     path("volume/list", VolumeListView.as_view({"get": "list"}), name="volume-start-end-list"),
+    path("consommation/list", getFiltrationConsommationBetweenDates, name="filtration-consommation-start-end-list"),
+    path("consommation", getFiltrationConsommation, name="getFiltrationConsommationData"),
 ]

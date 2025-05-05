@@ -1,23 +1,88 @@
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
+from openpyxl import load_workbook
 import os
+import json
 
 from ibdm_api.settings import BASE_DIR
 from logs.logging import logger as logging
-def ensurePathExists(path:str):
-    _path = path.split("/")
-    _path.pop()
-    _path = "/".join(_path)
+from .utils import ensurePathExists
 
-    if os.path.exists(_path):
-        return
+def get_dict_from_excel_report(file_path):
+    """
+    Function to read JSON data from an Excel report.
+    """
+    ensurePathExists(file_path)
+    # Example implementation
+    try:
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError(f"File {file_path} not found.")
+        # Load Excel workbook
+        wb = load_workbook(file_path)
 
-    # create it otherwise
-    os.makedirs(_path, exist_ok=True)
-    return
+        # Choose a specific sheet
+        sheet = wb[wb.sheetnames[0]]
 
-    
+        # Find the number of rows and columns in the sheet
+        rows = sheet.max_row
+        columns = sheet.max_column
+
+        # List to store all rows as dictionaries
+        lst = {}
+        # extract header info
+        for i in range(1, 4):
+            lst[sheet.cell(row=i, column=1).value] = sheet.cell(row=i, column=2).value
+
+        # skip 1 empty row
+        # extract data col names
+        col_names = []
+        for i in range(1, columns + 1):
+            col_names.append(sheet.cell(row=5, column=i).value)
+        lst["col_names"] = col_names
+        data = []
+        # extract data until next empty row
+        last_data_row = 0
+        for i in range(6, rows + 1):
+            # check if row is empty
+            empty = True
+            for j in range(1, columns + 1):
+                if sheet.cell(row=i, column=j).value is not None:
+                    empty = False
+                    break
+            if empty:
+                last_data_row = i - 1
+                break
+
+            # extract data
+            row_data = {}
+            row_danger = False
+            row_highlight = False
+            for j in range(1, columns + 1):
+                row_data[col_names[j - 1]] = sheet.cell(row=i, column=j).value
+                # check if row is highlighted
+                if sheet.cell(row=i, column=j).fill.start_color.rgb == "00F3F3F3":
+                    row_highlight = True
+                # check if row is danger
+                if sheet.cell(row=i, column=j).font.color and sheet.cell(row=i, column=1).font.color.rgb == "00FF0000":
+                    row_danger = True
+            row_data["danger"] = row_danger
+            row_data["highlight"] = row_highlight
+            data.append(row_data)
+        
+        lst["data"] = data
+
+        # extract possible Synthèse
+        if sheet.cell(row=last_data_row + 3, column=1).value is not None:
+            lst["synthese"] = sheet.cell(row=last_data_row + 3, column=1).value
+            
+        
+        return lst
+    except Exception as e:
+        print("Error reading JSON from Excel report:", e)
+        return None
+
+
 def generateExcelReport(
     data,
     filename,

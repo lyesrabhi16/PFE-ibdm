@@ -12,4 +12,9 @@ class Permissions {
   static const viewCo2Page = "can_view_co2_page";
   static const viewServerStatusPage = "can_view_server_status_page";
   static const viewServerSettingsPage = "can_view_server_settings_page";
+  static const viewSucreReportsPage = "can_view_sucre_reports_page";
+  static const viewFiltrationReportsPage = "can_view_filtration_reports_page";
+  static const viewUtiliteReportsPage = "can_view_utilite_reports_page";
+  static const viewCo2ReportsPage = "can_view_co2_reports_page";
+  
 }

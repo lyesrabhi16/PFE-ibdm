@@ -15,15 +15,16 @@ from api_v1.emails.rapports.co2 import rapport_co2
 
 
 def getHtmlMessage(email: EmailSchedule):
+    interval = email.interval if email.interval != "manual" else f"{email.interval_manual} jours"
     match (email.rapport):
         case "inventaire-sucre":
-            return rapport_inventaire_sucre(email)
+            return rapport_inventaire_sucre(interval)
         case "utilite":
-            return rapport_utilite(email)
+            return rapport_utilite(interval)
         case "filtration":
-            return rapport_filtration(email)
+            return rapport_filtration(interval)
         case "co2_ifruit":
-            return rapport_co2(email)
+            return rapport_co2(interval)
         case _:
             raise ValueError(f"emailScheduler# rapport {email.rapport} not found")
 

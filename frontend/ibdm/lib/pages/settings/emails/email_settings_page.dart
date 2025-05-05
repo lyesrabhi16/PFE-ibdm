@@ -51,6 +51,8 @@ class _EmailSettingsPageState extends State<EmailSettingsPage> {
                         icon: Icons.email,
                         title: strings.value.emailSchedules,
                         subtitle: strings.value.emailSchedulesDescription,
+                        trailing: Icon(Icons.arrow_forward_ios_rounded,
+                            color: colorScheme.primary),
                         onTap: () => {
                           Get.toNamed(Routes.emailSchedules),
                         },
@@ -59,6 +61,8 @@ class _EmailSettingsPageState extends State<EmailSettingsPage> {
                         icon: Icons.email,
                         title: strings.value.emailAlerts,
                         subtitle: strings.value.emailAlertsDescription,
+                        trailing: Icon(Icons.arrow_forward_ios_rounded,
+                            color: colorScheme.primary),
                         onTap: () => {
                           Get.toNamed(Routes.emailAlerts),
                         },
@@ -67,6 +71,8 @@ class _EmailSettingsPageState extends State<EmailSettingsPage> {
                         icon: Icons.email,
                         title: strings.value.emailSents,
                         subtitle: strings.value.emailSentsDescription,
+                        trailing: Icon(Icons.arrow_forward_ios_rounded,
+                            color: colorScheme.primary),
                         onTap: () => {
                           Get.toNamed(Routes.emailSent),
                         },

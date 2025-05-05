@@ -6,9 +6,9 @@ from api_v1.utils import get_midnight_value
 from siroperie.models import Sucre
 from django.template.loader import render_to_string
 
-def rapport_inventaire_sucre(email):
+def rapport_inventaire_sucre(interval=None, render_to_HTML_string=True, date=None, force_recreate_excel_file=False):
     now = datetime.now()
-    sucre = get_midnight_value(Sucre)
+    sucre = get_midnight_value(Sucre, date=date) # if date is None it will use the current date
 
     if (sucre is None):
         return "les données de sucre ne sont pas disponible pour le "+now.strftime("%Y-%m-%d")
@@ -16,7 +16,6 @@ def rapport_inventaire_sucre(email):
     total_tetra = (sucre.t_s21 or 0) + (sucre.t_s22 or 0) + (sucre.t_s23 or 0) + (sucre.t_s24 or 0) + (sucre.t_s25 or 0)
     total_adue = (sucre.a_t02 or 0) + (sucre.a_t03 or 0) + (sucre.a_t04 or 0) + (sucre.a_t05 or 0) + (sucre.a_t06 or 0)
     a_commander = math.floor((840000 - (total_tetra + total_adue)) / 20000)
-    interval = email.interval if email.interval != "manual" else f"{email.interval_manual} jours"
     data = {
         "date": sucre.date.strftime("%Y-%m-%d"),
         "rapport_name": "Inventaire Du Sucre",
@@ -147,8 +146,9 @@ def rapport_inventaire_sucre(email):
         ],
     }
 
-    filename = generateExcelReport(data, f"sucre/Inventaire Du Sucre - {sucre.date.strftime('%Y-%m-%d')}", f"Inventaire-Du-Sucre-{sucre.date.strftime('%Y-%m-%d')}")
-    return (render_to_string(
+    filename = generateExcelReport(data, f"sucre/Inventaire Du Sucre - {sucre.date.strftime('%Y-%m-%d')}", f"Inventaire-Du-Sucre-{sucre.date.strftime('%Y-%m-%d')}", force=force_recreate_excel_file)
+    return (
+    render_to_string(
         template_name="emails/rapport.html",
         context=data
-    ), filename, f"Rapport : Inventaire Du Sucre - {sucre.date.strftime('%Y-%m-%d')}")
+    ) if render_to_HTML_string else data, filename, f"Rapport : Inventaire Du Sucre - {sucre.date.strftime('%Y-%m-%d')}")

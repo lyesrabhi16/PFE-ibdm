@@ -670,6 +670,82 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
+  Future<FiltrationMetaConsommation> getFiltrationConsommation({
+    required int fromYear,
+    required int toYear,
+    int? fromDay,
+    int? fromMonth,
+    int? toDay,
+    int? toMonth,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'from_year': fromYear,
+      r'to_year': toYear,
+      r'from_day': fromDay,
+      r'from_month': fromMonth,
+      r'to_day': toDay,
+      r'to_month': toMonth,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<FiltrationMetaConsommation>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/consommation',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late FiltrationMetaConsommation _value;
+    try {
+      _value = FiltrationMetaConsommation.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<FiltrationMultiMetaConsommations>
+      getFiltrationConsommationBetweenDates({
+    required String endDate,
+    required String startDate,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'end_date': endDate,
+      r'start_date': startDate,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<FiltrationMultiMetaConsommations>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/filtration/consommation/list',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late FiltrationMultiMetaConsommations _value;
+    try {
+      _value = FiltrationMultiMetaConsommations.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<PaginatedDebitList> getDebits({
     bool? enablePagination,
     int? page,
@@ -737,6 +813,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -745,6 +822,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -909,6 +987,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -917,6 +996,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -1054,6 +1134,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -1062,6 +1143,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -1199,6 +1281,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -1207,6 +1290,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -1269,6 +1353,85 @@ class _IbdmApiClient implements IbdmApiClient {
     late Volume _value;
     try {
       _value = Volume.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<Report> generateReport({
+    required String date,
+    required ReportType reportType,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'date': date,
+      r'report_type': reportType.name,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Report>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/reports/generate',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Report _value;
+    try {
+      _value = Report.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PaginatedReportList> getReports({
+    bool? enablePagination,
+    bool? hasSynthese,
+    String? interval,
+    String? ordering,
+    int? page,
+    int? perPage,
+    ReportsType? reportsType,
+    String? search,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'enable_pagination': enablePagination,
+      r'has_synthese': hasSynthese,
+      r'interval': interval,
+      r'ordering': ordering,
+      r'page': page,
+      r'per_page': perPage,
+      r'reports_type': reportsType?.name,
+      r'search': search,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PaginatedReportList>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/reports/list',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaginatedReportList _value;
+    try {
+      _value = PaginatedReportList.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -1344,6 +1507,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -1352,6 +1516,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -2641,10 +2806,44 @@ class _IbdmApiClient implements IbdmApiClient {
   }
 
   @override
+  Future<Co2MultiMetaConsommations> getCo2ConsommationBetweenDates({
+    required String endDate,
+    required String startDate,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'end_date': endDate,
+      r'start_date': startDate,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<Co2MultiMetaConsommations>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/utilite/co2_ifruit/consommation/list',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Co2MultiMetaConsommations _value;
+    try {
+      _value = Co2MultiMetaConsommations.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<PaginatedCo2IfruitList> getCo2BetweenDates({
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -2653,6 +2852,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
@@ -2817,6 +3017,7 @@ class _IbdmApiClient implements IbdmApiClient {
     required String endDate,
     required String startDate,
     bool? enablePagination,
+    FetchType? fetchType,
     int? page,
     int? perPage,
   }) async {
@@ -2825,6 +3026,7 @@ class _IbdmApiClient implements IbdmApiClient {
       r'end_date': endDate,
       r'start_date': startDate,
       r'enable_pagination': enablePagination,
+      r'fetch_type': fetchType?.name,
       r'page': page,
       r'per_page': perPage,
     };
