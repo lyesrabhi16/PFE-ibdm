@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
+import 'package:ibdm/utils/helpers/screen.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -13,73 +16,68 @@ class AboutPage extends StatefulWidget {
 class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
-    final bool isDarkMode = Get.isDarkMode;
     final strings = getTranslations(context).obs;
 
     return AppCustomContainer(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+      child: Obx(() {
+        if (!_isHeightEnough()) {
+          return SingleChildScrollView(
+            child: _build(context, strings),
+          );
+        }
+        return _build(context, strings);
+      }),
+    );
+  }
+
+  Column _build(BuildContext context, Rx<AppLocalizations> strings) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        // Logos
+        Stack(
+          alignment: Alignment.topCenter,
           children: [
-            // Logos
-            Stack(
-              alignment: Alignment.topCenter,
+            Column(
               children: [
-                Column(
-                  children: [
-                    Image.asset('assets/images/logo.png', height: 100),
-                    const SizedBox(height: 10),
-                    Image.asset('assets/images/ifruit_logo.png', height: 50),
-                  ],
-                ),
+                Image.asset('assets/images/logo.png', height: 100),
+                const SizedBox(height: 10),
+                Image.asset('assets/images/ifruit_logo.png', height: 50),
               ],
-            ),
-            const SizedBox(height: 20),
-
-            // Description
-            _buildCard(
-              icon: Icons.info,
-              title: strings.value.aProposIBDM,
-              content: strings.value.aProposIBDMDescription,
-              isDarkMode: isDarkMode,
-            ),
-
-            const SizedBox(height: 20),
-            
-            // Contact
-            _buildCard(
-              icon: Icons.contact_mail,
-              title: strings.value.contactezNous,
-              contentWidget: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const _ContactItem(
-                      icon: Icons.phone, text: "+213 123 456 789"),
-                  const _ContactItem(icon: Icons.email, text: "ifri@ifri.dz"),
-                  const _ContactItem(icon: Icons.web, text: "www.ifri.dz"),
-                  _ContactItem(
-                      icon: Icons.location_on, text: strings.value.adresse),
-                ],
-              ),
-              isDarkMode: isDarkMode,
-            ),
-
-            const SizedBox(height: 20),
-            
-            // Footer
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              color: Colors.lightBlueAccent,
-              child: Text(
-                strings.value.createdBy,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-              ),
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 20),
+
+        // Description
+        Expanded(
+          child: SingleChildScrollView(
+            child: _content(),
+          ),
+        ).removeWhen(!_isHeightEnough()),
+        _content().removeWhen(_isHeightEnough()),
+        const SizedBox(height: 20),
+
+        //const Spacer(),
+
+        // Footer
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(10),
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
+          child: Text(
+            strings.value.createdBy,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
+          ),
+        ),
+      ].nonNulls.toList(),
     );
   }
 
@@ -128,6 +126,45 @@ class _AboutPageState extends State<AboutPage> {
         ),
       ),
     );
+  }
+
+  Widget _content() {
+    final strings = getTranslations(context).obs;
+    final bool isDarkMode = Get.isDarkMode;
+
+    return Column(
+      children: [
+        _buildCard(
+          icon: Icons.info,
+          title: strings.value.aProposIBDM,
+          content: strings.value.aProposIBDMDescription,
+          isDarkMode: isDarkMode,
+        ),
+
+        const SizedBox(height: 20),
+
+        // Contact
+        _buildCard(
+          icon: Icons.contact_mail,
+          title: strings.value.contactezNous,
+          contentWidget: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _ContactItem(icon: Icons.phone, text: "+213 123 456 789"),
+              const _ContactItem(icon: Icons.email, text: "ifri@ifri.dz"),
+              const _ContactItem(icon: Icons.web, text: "www.ifri.dz"),
+              _ContactItem(
+                  icon: Icons.location_on, text: strings.value.adresse),
+            ],
+          ),
+          isDarkMode: isDarkMode,
+        ),
+      ],
+    );
+  }
+
+  bool _isHeightEnough() {
+    return context.height >= 826;
   }
 }
 
