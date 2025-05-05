@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "crispy_forms",
+    "colorfield",
     # "djoser",
     "drf_spectacular",
     "drf_spectacular_sidecar",

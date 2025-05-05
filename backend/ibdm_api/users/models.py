@@ -1,17 +1,27 @@
-from typing import Any
+from enum import unique
+from tokenize import group
+from typing import Any, Iterable
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Group, Permission, PermissionsMixin
 from django.db import models
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from drf_spectacular.types import OpenApiTypes
 from django.core.exceptions import ValidationError
+from colorfield.fields import ColorField
 # Create your models here.
 
 class UserManager(BaseUserManager):
     
     def update_user(self, id, password=None, **extra_fields):
+        #print("Updating user with ID:", id)
         user_permissions = extra_fields.pop("user_permissions", [])
+        groups = extra_fields.pop("groups", [])
 
         user = User.objects.get(pk=id)
+        #print("removing original user role group from his groups")
+        #print("group to be removed:", user.role.group)
+        groups = set(filter(lambda x: x.name != user.role.group.name, groups))
+        #print("new groups:", groups)
+
         for key, value in extra_fields.items():
             setattr(user, key, value)
         if password: 
@@ -19,33 +29,43 @@ class UserManager(BaseUserManager):
         user.save()
         user.is_admin = user.role.is_admin
         user.is_staff = user.is_admin
-        user.groups.add(user.role.group)
+        groups = {*groups, user.role.group}
+        #print("Groups to be set:", groups)
+        user.groups.set(groups)
+        #print("User permissions to be set:", user_permissions)
         user.user_permissions.set(user_permissions)
+        #print("Saving user")
         user.save()
+        #print("User updated:", user.email)
         return user
     
     
     def create_user(self, email, password, role, **extra_fields):
+        #print("Creating user with role:", role)
         if not email:
             raise ValueError("Users must have an email address")
         if not password:
             raise ValueError("Users must have a password")
         user_permissions = extra_fields.pop("user_permissions", [])
         user_permissions.append(Permission.objects.get(codename="can_view_settings_page"))
+        #print("init user")
         user = User(
             email=self.normalize_email(email),
             role=role,
             **extra_fields
         )
+        #print("set user password")
         user.set_password(password)
+        #print("save user without permissions")
         user.save()
-        
+        #print("set user permissions")
         user.is_admin = role.is_admin
         user.is_staff = user.is_admin
-
+        #print("set user groups")
         user.groups.add(role.group)
         user.user_permissions.set(user_permissions)
         user.save()
+        #print("User created:", user.email)
         return user
 
     def create_superuser(self, email, password):
@@ -66,10 +86,20 @@ class UserManager(BaseUserManager):
         user.groups.add(group)
         user.save()
         return user
-
+    
+    # Add save_m2m method for compatibility with forms
+    def save_m2m(self, *args, **kwargs):
+        """
+        This method is required for compatibility with forms that handle M2M fields
+        """
+        # No-op since we handle M2M in create/update methods
+        #print("Saving M2M relationships")
+        #print("Args:", args)
+        #print("Kwargs:", kwargs)
+        pass
 class Role(models.Model):
     group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name="role", unique=True)
-    color = models.CharField(max_length=7, default="#000000")
+    color = ColorField(max_length=7, default="#000000")
     managed_roles = models.ManyToManyField("Role", blank=True)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -84,6 +114,34 @@ class Role(models.Model):
     @extend_schema_field(OpenApiTypes.STR)
     def group__name(self):
         return self.group.name
+    def save(self, *args, **kwargs):
+        role = super().save(*args, **kwargs)
+        #print("saved role:", self)
+
+        admin_system_group = Group.objects.get_or_create(name="ADMIN_SYSTEM")[0]
+        admin_system_role = Role.objects.get_or_create(group=admin_system_group, is_admin=True)[0]
+        
+        if self == admin_system_role:
+            if not self.is_admin:
+                self.is_admin = True
+                self.save()
+            if not self.managed_roles.filter(pk=self.pk).exists():
+                self.managed_roles.set({
+                    *self.managed_roles.all(),
+                    self
+                })
+                self.save()
+
+        if self != admin_system_role:
+            admin_system_role.managed_roles.set({
+                *admin_system_role.managed_roles.all(),
+                self
+            })
+            admin_system_role.save()
+            #print("added role to admin_system managed roles")
+
+        return role
+    
 
 
 
@@ -93,6 +151,8 @@ class SubordinateAndSuperior(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = ("superior", "subordinate")
     def __str__(self):
         return f"{self.superior.email} {self.superior.role} is superior to {self.subordinate.email} {self.subordinate.role}"
 
@@ -111,8 +171,11 @@ class SubordinateAndSuperior(models.Model):
             except SubordinateAndSuperior.DoesNotExist:
                 break
     def save(self, *args, **kwargs):
+        #print("Saving SubordinateAndSuperior instance")
         self._check()
+        #print("Checks passed")
         super().save(*args, **kwargs)
+        #print("SubordinateAndSuperior instance saved")
 
 class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=50, blank=True)
