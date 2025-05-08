@@ -69,7 +69,7 @@ class ApiClientInstance {
       // trust CA on Android app (android only)
       if (defaultTargetPlatform == TargetPlatform.android) {
         // get CA certificate
-        ByteData caCert = await rootBundle.load('assets/certificates/myCA.pem');
+        ByteData caCert = await rootBundle.load('assets/certificates/CA.pem');
         // trust CA
         dio.httpClientAdapter = IOHttpClientAdapter(createHttpClient: () {
           SecurityContext sc = SecurityContext();

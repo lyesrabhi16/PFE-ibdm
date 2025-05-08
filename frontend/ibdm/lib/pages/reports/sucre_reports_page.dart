@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
-import 'package:ibdm/common/widgets/alert_email_form.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/divider_with_text.dart';
@@ -12,7 +11,7 @@ import 'package:ibdm/common/widgets/page_navigation.dart';
 import 'package:ibdm/common/widgets/per_page_input.dart';
 import 'package:ibdm/common/widgets/scrollable_shad_sheet_container.dart';
 import 'package:ibdm/common/widgets/setting_card.dart';
-import 'package:ibdm/pages/settings/emails/actions.dart';
+import 'package:ibdm/pages/reports/reports_page.dart';
 import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
@@ -22,7 +21,6 @@ import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:toastification/toastification.dart';
 
 class SucreReportsPage extends StatefulWidget {
   const SucreReportsPage({super.key});
@@ -62,8 +60,6 @@ class _SucreReportsPageState extends State<SucreReportsPage> {
 
   static final _filtersPopoverController = ShadPopoverController();
   static final _filtersActive = false.obs;
-
-  final GlobalKey<ShadFormState> _formKey = GlobalKey<ShadFormState>();
 
   static final _perPageFormKey = GlobalKey<FormState>();
 
@@ -338,7 +334,7 @@ class _SucreReportsPageState extends State<SucreReportsPage> {
                   selectableDayPredicate: (day) =>
                       day.isSameDayOrLower(DateTime.now()),
                   allowDeselection: false,
-                  formatDate: (date) => DateFormat("dd/MM/yyyy").format(date),
+                  formatDate: (date) => DateFormat("dd-MM-yyyy").format(date),
                   selected: _selectedDate.value,
                   initialMonth: _selectedDate.value,
                 ),
@@ -366,7 +362,7 @@ class _SucreReportsPageState extends State<SucreReportsPage> {
               if (_failed.value) {
                 return Text(strings.value.failedToGenerateReport);
               }
-              return _reportData(report!);
+              return reportData(context, report!);
             })
           ],
         ),
@@ -893,98 +889,10 @@ class _SucreReportsPageState extends State<SucreReportsPage> {
     return reports.map((report) {
       return SettingCard(
         icon: LucideIcons.fileText,
-        onTap: () => _showViewReportDialog(report),
+        onTap: () => showViewReportDialog(context, report),
         title:
-            "${report.rapport} - ${DateFormat('dd/MM/yyyy').format(report.date)}",
+            "${report.rapport} - ${DateFormat('dd-MM-yyyy').format(report.date)}",
       );
     }).toList();
-  }
-
-  void _showViewReportDialog(
-    Report report,
-  ) {
-    final strings = getTranslations(context).obs;
-    final formattedReportDate = DateFormat('dd/MM/yyyy').format(report.date);
-
-    showShadDialog(
-      context: context,
-      builder: (context) {
-        return ShadDialog(
-          title: Text(strings.value.viewReport(report.rapport),
-              style: Theme.of(context).textTheme.headlineMedium),
-          description: Text(
-              strings.value.viewReportDescription(formattedReportDate),
-              style: Theme.of(context).textTheme.bodyMedium),
-          actions: [
-            ShadButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(strings.value.close),
-            ),
-          ],
-          constraints: BoxConstraints(
-            minWidth: min(context.width, 600),
-            maxWidth: min(context.width, 600),
-            minHeight: 600,
-          ),
-          child: Container(
-            child: _reportData(report),
-          ),
-        );
-      },
-    );
-  }
-
-  Column _reportData(Report report) {
-    logger.e("Report: ${report.toJson()}");
-    return Column(
-      children: [
-        Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: context.width,
-              minHeight: 300,
-              maxHeight: 680,
-            ),
-            child: ShadTable.list(
-              columnSpanExtent: (c) => FixedSpanExtent(min(
-                    context.width,
-                    600,
-                  ) /
-                  report.colNames.length),
-              header: [
-                for (var c in report.colNames)
-                  ShadTableCell.header(child: Text(c)),
-              ],
-              rowSpanBackgroundDecoration: (c) => SpanDecoration(
-                color: report.data[max(c - 1, 0)]?["highlight"] == true
-                    ? Theme.of(context).colorScheme.surfaceContainerLow
-                    : Colors.transparent,
-              ),
-              children: [
-                for (var r in report.data)
-                  [
-                    for (var c in report.colNames)
-                      ShadTableCell(
-                        child: Text(
-                          r![c].toString(),
-                          softWrap: false,
-                          style: TextStyle(
-                            color: r["danger"] == true
-                                ? errorColor
-                                : r["highlight"] == true
-                                    ? successColor
-                                    : Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                      ),
-                  ],
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }

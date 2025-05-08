@@ -888,5 +888,8 @@
     "withSynthese": "With Synthese",
     "withoutSynthese": "Without Synthese",
     "failedToGenerateReport": "Failed to generate report",
-    "generate": "Generate"
+    "generate": "Generate",
+    "todaysReports": "Today's Reports",
+    "errorLoadingReports": "Error loading reports",
+    "synthese": "Synthese"
 }

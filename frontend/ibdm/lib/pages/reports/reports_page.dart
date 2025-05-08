@@ -1,9 +1,15 @@
+import 'dart:math';
+
+import 'package:elegant_notification/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
+import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/common/widgets/setting_card.dart';
+import 'package:ibdm/services/api/api_client.dart';
+import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
@@ -30,17 +36,17 @@ class _ReportsPageState extends State<ReportsPage> {
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.sm),
         child: Obx(() {
-          return Column(
-            children: [
-              Text(
-                strings.value.reports,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(height: AppSizes.sm),
-              Expanded(
-                child: ListView(
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Text(
+                  strings.value.reports,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: AppSizes.sm),
+                Column(
                   children: [
                     SettingCard(
                       icon: LucideIcons.boxes,
@@ -72,11 +78,182 @@ class _ReportsPageState extends State<ReportsPage> {
                     ).withPermission(Permissions.viewCo2ReportsPage),
                   ].nonNulls.toList(),
                 ),
-              ),
-            ],
+                SizedBox(height: AppSizes.xl),
+                Column(children: [
+                  Text(
+                    strings.value.todaysReports,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: AppSizes.lg),
+                  FutureBuilder<List<Widget>>(
+                      future: Future.sync(_getTodaysReports),
+                      builder: (_, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicatorWithText(
+                              text: strings.value.loadingReports);
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text(strings.value.errorLoadingReports),
+                          );
+                        }
+                        return Column(children: [
+                          ...snapshot.data!,
+                        ]);
+                      }),
+                ])
+              ],
+            ),
           );
         }),
       ),
     );
   }
+
+  Future<List<Widget>> _getTodaysReports() async {
+    final api = await ApiClientInstance.getApiClient();
+    final reports = await Future.wait([
+      api.generateReport(
+        date: DateTime.now().toIso8601String(),
+        reportType: ReportType.inventaireSucre,
+      ),
+      api.generateReport(
+        date: DateTime.now().toIso8601String(),
+        reportType: ReportType.filtration,
+      ),
+      api.generateReport(
+        date: DateTime.now().toIso8601String(),
+        reportType: ReportType.utilite,
+      ),
+      api.generateReport(
+        date: DateTime.now().toIso8601String(),
+        reportType: ReportType.co2Ifruit,
+      ),
+    ]);
+
+    return reports
+        .map((report) => SettingCard(
+              icon: switch (report.rapport.toLowerCase()) {
+                'inventaire du sucre' => LucideIcons.boxes,
+                'filtration' => Icons.battery_full_rounded,
+                'utilite' => LucideIcons.gauge,
+                'co2' => LucideIcons.cloud,
+                _ => Icons.error,
+              },
+              title: report.rapport,
+              subtitle: DateFormat("dd-MM-yyyy").format(report.date),
+              onTap: () {
+                showViewReportDialog(context, report);
+              },
+            ))
+        .toList();
+  }
+}
+
+void showViewReportDialog(
+  BuildContext context,
+  Report report,
+) {
+  final strings = getTranslations(context).obs;
+  final formattedReportDate = DateFormat('dd/MM/yyyy').format(report.date);
+
+  showShadDialog(
+    context: context,
+    builder: (context) {
+      return ShadDialog(
+        title: Text(strings.value.viewReport(report.rapport),
+            style: Theme.of(context).textTheme.headlineMedium),
+        description: Text(
+            strings.value.viewReportDescription(formattedReportDate),
+            style: Theme.of(context).textTheme.bodyMedium),
+        actions: [
+          ShadButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(strings.value.close),
+          ),
+        ],
+        constraints: BoxConstraints(
+          minWidth: min(context.width, 600),
+          maxWidth: min(context.width, 600),
+          minHeight: 600,
+        ),
+        child: Container(
+          child: reportData(context, report),
+        ),
+      );
+    },
+  );
+}
+
+Column reportData(BuildContext context, Report report) {
+  final strings = getTranslations(context).obs;
+
+  return Column(
+    children: [
+      Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: context.width,
+            minHeight: 300,
+            maxHeight: 680,
+          ),
+          child: ShadTable.list(
+            columnSpanExtent: (c) => FixedSpanExtent(min(
+                  context.width,
+                  600,
+                ) /
+                report.colNames.length),
+            header: [
+              for (var c in report.colNames)
+                ShadTableCell.header(child: Text(c)),
+            ],
+            rowSpanBackgroundDecoration: (c) => SpanDecoration(
+              color: report.data[max(c - 1, 0)]["highlight"] == true
+                  ? Theme.of(context).colorScheme.surfaceContainerLow
+                  : Colors.transparent,
+            ),
+            children: [
+              for (var r in report.data)
+                [
+                  for (var c in report.colNames)
+                    ShadTableCell(
+                      child: Text(
+                        r[c] ?? "",
+                        softWrap: false,
+                        style: TextStyle(
+                          color: r["danger"] == true
+                              ? errorColor
+                              : r["highlight"] == true
+                                  ? successColor
+                                  : Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                ],
+            ],
+          ),
+        ),
+      ),
+      if (report.synthese != null) ...[
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        Text(strings.value.synthese),
+        SizedBox(
+          height: AppSizes.sm,
+        ),
+        Text(
+          report.synthese!,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+        )
+      ]
+    ],
+  );
 }
