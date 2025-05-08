@@ -31,6 +31,7 @@ def index(request):
 def getCA(request):
     ca = os.path.join(BASE_DIR,"certs","ibdmCA.crt")
     if not os.path.exists(ca):
+        print(f"CA file not found: {ca}")
         logging.error(f"CA file not found: {ca}")
         return HttpResponse(status=404)
     return HttpResponse(

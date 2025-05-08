@@ -889,6 +889,9 @@
 	"withSynthese": "Avec Synthese",
 	"withoutSynthese": "Sans Synthese",
 	"failedToGenerateReport": "Échec de la génération du rapport",
-	"generate": "Générer"
+	"generate": "Générer",
+	"todaysReports": "Rapports d'Aujourd'hui",
+	"errorLoadingReports": "Erreur lors du chargement des rapports",
+	"synthese": "Synthese"
 
 }
