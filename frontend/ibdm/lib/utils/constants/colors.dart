@@ -24,6 +24,18 @@ class AppColors {
   static const Color grey = Color(0xFF9E9E9E);
   static const Color lightGrey = Color(0xFFE0E0E0);
 
+  static Color invertColorIfNeeded(Color color) {
+    // Calculate the luminance to determine if it's a dark color
+    double luminance =
+        (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
+
+    // If it's too dark, return a lighter version
+    return luminance < 0.5 && Get.isDarkMode
+        ? Color.fromARGB(color.a.toInt(), 255 - color.r.toInt(),
+            255 - color.g.toInt(), 255 - color.b.toInt())
+        : color; // Keep it unchanged if it's already bright enough
+  }
+
   static Color getColorFromString(String input,
       {Color backgroundColor = Colors.white}) {
     final int hash = input.hashCode;
@@ -50,7 +62,7 @@ class AppColors {
 
   static Color getRoleColorWithRole(Role role) {
     int colorValue = int.parse("FF${role.color.split("#")[1]}", radix: 16);
-    return Color(colorValue);
+    return invertColorIfNeeded(Color(colorValue));
   }
 
   static Color getRoleColorWithRoleValue(String role) {
@@ -58,6 +70,7 @@ class AppColors {
     Role? roleObj = userController.roles.firstWhereOrNull(
       (element) => element.name == role,
     );
-    return roleObj != null ? getRoleColorWithRole(roleObj) : Colors.grey;
+    return invertColorIfNeeded(
+        roleObj != null ? getRoleColorWithRole(roleObj) : Colors.grey);
   }
 }

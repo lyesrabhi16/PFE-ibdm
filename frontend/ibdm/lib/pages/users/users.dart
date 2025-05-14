@@ -29,6 +29,7 @@ import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:ibdm/utils/helpers/user_helpers.dart';
+import 'package:ibdm/utils/sorter.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:universal_io/io.dart';
@@ -1174,7 +1175,9 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   Future<dynamic> _showAddUserDialog(BuildContext context) {
-    _loadSuperiorsOptions(context);
+    loadSuperiorsOptions(context,
+        ResultSuperiorOptions: _addUserSuperiorOptions,
+        loadedUserSuperiorOptions: _loadedAddUserSuperiorOptions);
     final strings = getTranslations(context).obs;
 
     return showShadDialog(
@@ -1405,124 +1408,11 @@ class _UsersPageState extends State<UsersPage> {
     }).toList();
   }
 
-  void _loadSuperiorsOptions(BuildContext context) async {
-    _loadedAddUserSuperiorOptions.value = false;
-    final strings = getTranslations(context).obs;
-    final UserController userController = Get.find();
-    final me =
-        "${userController.user!.username.isEmpty ? userController.user!.email : userController.user!.username}(${strings.value.me})";
-    List<ShadOption<User>> options = [
-      ShadOption(
-        value: userController.user!,
-        child: Text(
-          me,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.getRoleColorWithRoleValue(
-                    userController.user!.role),
-              ),
-        ),
-      ),
-    ];
-
-    try {
-      if (userController.user!.role == "ADMIN_SYSTEM") {
-        final api = await ApiClientInstance.getApiClient();
-        final res = await api.getUsers(
-          enablePagination: false,
-        );
-
-        for (User user in res.data) {
-          logger.e("sup user id: ${user.userId}");
-          user.userId != userController.user!.userId
-              ? {
-                  options.add(
-                    ShadOption(
-                        value: user,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Text(getUserName(user, orEmail: true)),
-                            SizedBox(width: AppSizes.md),
-                            Text(
-                              user.role,
-                              style: Theme.of(Get.context!)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: AppColors.getRoleColorWithRoleValue(
-                                        user.role),
-                                  ),
-                            )
-                          ],
-                        )),
-                  ),
-                  logger.e("added user:${user.userId}"),
-                }
-              : logger.e(
-                  "skipping ${user.userId} because ${user.userId} ${userController.user!.userId} ${user.userId != userController.user!.userId}");
-        }
-        _addUserSuperiorOptions.value = options;
-        logger.e("superior options in func: $options ${res.data}");
-        _loadedAddUserSuperiorOptions.value = true;
-        return;
-      }
-      traverseSubordinatesTree(
-          User user, Function(User user) onUserFound) async {
-        if (user.subordinates.isNotEmpty) {
-          for (var user in user.subordinates) {
-            final subUser = await (await ApiClientInstance.getApiClient())
-                .getUser(id: user.userId);
-            onUserFound(subUser);
-            traverseSubordinatesTree(subUser, onUserFound);
-          }
-        }
-      }
-
-      await traverseSubordinatesTree(
-        userController.user!,
-        (user) => user.userId != userController.user!.userId
-            ? options.add(
-                ShadOption(
-                    value: user,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Text(getUserName(user, orEmail: true)),
-                        SizedBox(width: AppSizes.md),
-                        Text(
-                          user.role,
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppColors.getRoleColorWithRoleValue(
-                                        user.role),
-                                  ),
-                        )
-                      ],
-                    )),
-              )
-            : {},
-      );
-
-      _addUserSuperiorOptions.value = options;
-      _loadedAddUserSuperiorOptions.value = true;
-      return;
-    } catch (e) {
-      logger.e("failed to get users: $e");
-      if (Get.context != null && Get.context!.mounted) {
-        Toasts.showErrorToastNotification(
-            context: Get.context!,
-            message: strings.value.failedToGetUsersMessage,
-            title: strings.value.errorFailedToGetUsers);
-      }
-      _addUserSuperiorOptions.value = [];
-      _loadedAddUserSuperiorOptions.value = true;
-      return;
-    }
-  }
-
   Future _showEditUserDialog(BuildContext context, User user) async {
     final strings = getTranslations(context).obs;
-    _loadSuperiorsOptions(context);
+    loadSuperiorsOptions(context,
+        ResultSuperiorOptions: _addUserSuperiorOptions,
+        loadedUserSuperiorOptions: _loadedAddUserSuperiorOptions);
     logger.d("showing edit dialog");
     User newUser = User(
       userId: user.userId,
@@ -2064,24 +1954,5 @@ class _UsersPageState extends State<UsersPage> {
 
   _getColumnSpacing(BuildContext context) {
     return isSmallScreen(context) ? AppSizes.sm : AppSizes.md;
-  }
-}
-
-class Sorter {
-  final bool isSelected;
-  final String orderingValue;
-
-  Sorter({required this.isSelected, required this.orderingValue});
-}
-
-extension DataColumnremoveWhen on DataColumn2 {
-  DataColumn2? removeWhen(bool condition) {
-    return condition ? null : this;
-  }
-}
-
-extension DataCellremoveWhen on DataCell {
-  DataCell? removeWhen(bool condition) {
-    return condition ? null : this;
   }
 }

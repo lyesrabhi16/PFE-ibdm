@@ -23,6 +23,7 @@ import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/graphs.dart';
 import 'package:ibdm/utils/helpers/data_representation.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
@@ -570,15 +571,15 @@ class _SiroperiePageState extends State<SiroperiePage> {
                     graphTypes: [
                       GraphType(
                         name: "TOTAL",
-                        getGraphData: getTotalGraphData,
+                        getGraphData: Graphs.getSucreTotalGraphData,
                       ),
                       GraphType(
                         name: "TETRA",
-                        getGraphData: getTetraGraphData,
+                        getGraphData: Graphs.getSucreTetraGraphData,
                       ),
                       GraphType(
                         name: "ADUE",
-                        getGraphData: getAdueGraphData,
+                        getGraphData: Graphs.getSucreAdueGraphData,
                       ),
                     ],
                   ),
@@ -640,125 +641,6 @@ class _SiroperiePageState extends State<SiroperiePage> {
         ],
       );
     });
-  }
-
-  Future<Map> getTotalGraphData(
-      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
-    final strings = getTranslations(getContext);
-    Map data = {
-      "Tetra": [],
-      "Adue": [],
-    };
-    final api = await ApiClientInstance.getApiClient();
-    final res = await api.getSucresBetweenDates(
-      startDate: startDate.toIso8601String(),
-      endDate: endDate.toIso8601String(),
-      enablePagination: false,
-      fetchType: fetchType,
-    );
-    for (Sucre e in res.data) {
-      data["Tetra"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": (e.tS21 ?? 0) +
-            (e.tS22 ?? 0) +
-            (e.tS23 ?? 0) +
-            (e.tS24 ?? 0) +
-            (e.tS25 ?? 0),
-      });
-      data["Adue"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": (e.aT02 ?? 0) +
-            (e.aT03 ?? 0) +
-            (e.aT04 ?? 0) +
-            (e.aT05 ?? 0) +
-            (e.aT06 ?? 0),
-      });
-    }
-    return data;
-  }
-
-  Future<Map> getTetraGraphData(
-      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
-    final strings = getTranslations(getContext);
-    Map data = {
-      "TS21": [],
-      "TS22": [],
-      "TS23": [],
-      "TS24": [],
-      "TS25": [],
-    };
-    final api = await ApiClientInstance.getApiClient();
-    final res = await api.getSucresBetweenDates(
-      startDate: startDate.toIso8601String(),
-      endDate: endDate.toIso8601String(),
-      enablePagination: false,
-      fetchType: fetchType,
-    );
-    for (Sucre e in res.data) {
-      data["TS21"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.tS21 ?? 0,
-      });
-      data["TS22"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.tS22 ?? 0,
-      });
-      data["TS23"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.tS23 ?? 0,
-      });
-      data["TS24"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.tS24 ?? 0,
-      });
-      data["TS25"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.tS25 ?? 0,
-      });
-    }
-    return data;
-  }
-
-  Future<Map> getAdueGraphData(
-      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
-    final strings = getTranslations(getContext);
-    Map data = {
-      "T02": [],
-      "T03": [],
-      "T04": [],
-      "T05": [],
-      "T06": [],
-    };
-    final api = await ApiClientInstance.getApiClient();
-    final res = await api.getSucresBetweenDates(
-      startDate: startDate.toIso8601String(),
-      endDate: endDate.toIso8601String(),
-      enablePagination: false,
-      fetchType: fetchType,
-    );
-    for (Sucre e in res.data) {
-      data["T02"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.aT02 ?? 0,
-      });
-      data["T03"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.aT03 ?? 0,
-      });
-      data["T04"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.aT04 ?? 0,
-      });
-      data["T05"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.aT05 ?? 0,
-      });
-      data["T06"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.aT06 ?? 0,
-      });
-    }
-    return data;
   }
 
   void onTapListItem(DataRepresentation<dynamic> d) {

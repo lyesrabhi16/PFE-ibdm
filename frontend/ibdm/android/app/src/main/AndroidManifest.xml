@@ -5,6 +5,13 @@
         android:icon="@drawable/logo"
         android:networkSecurityConfig="@xml/network_security_config"
         >
+        <provider
+            android:name="com.superlist.super_native_extensions.DataProvider"
+            android:authorities="com.ifruit.ibdm.SuperClipboardDataProvider"
+            android:exported="true"
+            android:grantUriPermissions="true" >
+        </provider>
+
         <meta-data 
             android:name="io.flutter.network-policy"
             android:resource="@xml/network_security_config"

@@ -4,7 +4,7 @@ import 'package:ibdm/utils/constants/sizes.dart';
 class SettingCard extends StatelessWidget {
   const SettingCard({
     super.key,
-    required this.icon,
+    this.icon,
     required this.title,
     this.subtitle,
     this.trailing,
@@ -12,7 +12,7 @@ class SettingCard extends StatelessWidget {
     this.titleTextStyle,
   });
 
-  final IconData icon;
+  final IconData? icon;
   final String title;
   final String? subtitle;
   final Widget? trailing;
@@ -30,7 +30,7 @@ class SettingCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
         child: ListTile(
-          leading: Icon(icon, color: Colors.blueAccent),
+          leading: icon != null ? Icon(icon, color: Colors.blueAccent) : null,
           title: Text(
             title,
             style: titleTextStyle,

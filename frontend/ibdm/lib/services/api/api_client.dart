@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:get/get.dart' as g;
+import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:path_provider/path_provider.dart';
-
+import 'package:super_clipboard/super_clipboard.dart';
 // import 'package:dio/browser.dart'; //! fails on non-web platforms
 import 'package:dio/dio.dart'
     show
@@ -18,7 +20,13 @@ import 'package:dio/dio.dart'
         ResponseType;
 import 'package:dio_cookie_manager/dio_cookie_manager.dart' show CookieManager;
 import 'package:flutter/services.dart'
-    show ByteData, TargetPlatform, Uint8List, rootBundle;
+    show
+        ByteData,
+        Clipboard,
+        ClipboardData,
+        TargetPlatform,
+        Uint8List,
+        rootBundle;
 import 'package:dio/io.dart' show IOHttpClientAdapter;
 import 'package:flutter/foundation.dart'
     show ByteData, TargetPlatform, Uint8List, defaultTargetPlatform, kIsWeb;
@@ -141,57 +149,51 @@ extension DownloadFile on IbdmApiClient {
     required BuildContext context,
     required String url,
     required String fileName,
+    String? type,
   }) async {
     String filePath = "";
+    String message = "";
+    final strings = getTranslations(context);
 
     if (kIsWeb) {
       // Gestion pour le Web
       final anchorElement = uhtml.AnchorElement(href: url)
         ..download = url
         ..click();
-      filePath = "Téléchargé via le navigateur";
+      message = strings.downloadedWithBrowser;
     } else {
       try {
+        logger.e("Downloading file: $url");
         // Gestion pour Windows & iOS & Android
-        Directory directory;
-        if (Platform.isIOS) {
-          directory = await getApplicationDocumentsDirectory();
-        } else if (Platform.isWindows) {
-          directory =
-              await getDownloadsDirectory() ?? await getTemporaryDirectory();
-        } else if (Platform.isAndroid) {
-          directory = await getExternalStorageDirectory() ??
-              await getTemporaryDirectory();
-        } else {
-          throw Exception("Plateforme non supportée !");
-        }
+        String? downloadDirectory =
+            (await getDownloadsDirectory() ?? await getTemporaryDirectory())
+                .path;
 
-        filePath = "${directory.path}/$fileName";
+        filePath = "$downloadDirectory/$fileName";
+        logger.e("File path: $filePath");
         Dio dio = Dio();
         // download file
         await dio.download(url, filePath);
-        // Open File after download
-        if (Platform.isWindows) {
-          Process.run('explorer.exe', [directory.path]);
-        } else if (Platform.isAndroid) {
-          OpenFilex.open(filePath);
-        } else if (Platform.isIOS) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text("Fichier enregistré dans : ${directory.path}")),
-          );
+        OpenFilex.open(filePath, type: type);
+        final clipboard = SystemClipboard.instance;
+        if (clipboard == null) {
+          return; // Clipboard API is not supported on this platform.
         }
+        final item = DataWriterItem();
+        item.add(Formats.fileUri(Uri.file(filePath)));
+        await clipboard.write([item]);
+        Clipboard.setData(ClipboardData(text: filePath));
+        message = strings.downloadedFilePathCopiedToClipboard;
       } catch (e) {
-        filePath = "Erreur de téléchargement : $e";
+        message = strings.downloadFailed;
       }
     }
 
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Fichier téléchargé : $filePath"),
-          duration: Duration(seconds: 4),
-        ),
+      g.Get.snackbar(
+        strings.downloadCertificate,
+        message,
+        duration: Duration(seconds: 4),
       );
     }
   }
@@ -200,19 +202,12 @@ extension DownloadFile on IbdmApiClient {
 extension DownloadCertificate on IbdmApiClient {
   void downloadCertificate(BuildContext context) async {
     final api = await ApiClientInstance.getApiClient();
-    if (kIsWeb) {
-      if (context.mounted) {
-        await api.downloadFile(
-            context: context, url: ApiConfig.ca_url, fileName: "ibdm_ca.crt");
-      }
-    } else {
-      if (context.mounted) {
-        await api.downloadFile(
+    if (context.mounted) {
+      await api.downloadFile(
           context: context,
           url: ApiConfig.ca_url,
           fileName: "ibdm_ca.crt",
-        );
-      }
+          type: "application/x-x509-ca-cert");
     }
   }
 }

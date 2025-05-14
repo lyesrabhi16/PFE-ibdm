@@ -17,6 +17,7 @@ class GraphType {
   final String name;
   final String ySuffix;
   final bool supportsFetchType;
+  late final Map graphData;
   final Future<Map> Function(DateTime start, DateTime end, FetchType? fetchType)
       getGraphData;
 
@@ -25,15 +26,22 @@ class GraphType {
     required this.getGraphData,
     this.ySuffix = " L",
     this.supportsFetchType = true,
-  });
+    Map? graphData,
+  }) {
+    this.graphData = graphData ?? {};
+  }
 }
 
 class AppLineChart extends StatelessWidget {
   final List<GraphType> graphTypes;
+  final bool isLive;
+  final DateTime? liveDate;
 
   AppLineChart({
     super.key,
     required this.graphTypes,
+    this.isLive = false,
+    this.liveDate,
   });
 
   DateTime startDate = DateTime.now().copyWith(
@@ -56,7 +64,7 @@ class AppLineChart extends StatelessWidget {
   double? minY;
   double? maxY;
 
-  final RxBool graphLoaded = false.obs;
+  late final RxBool graphLoaded;
   final Map graphData = {};
 
   int skip = 0;
@@ -72,12 +80,16 @@ class AppLineChart extends StatelessWidget {
     graphType.value = graphTypes.first;
     _getContext = () => context;
     final strings = getTranslations(context).obs;
-
+    graphLoaded = RxBool(isLive);
+    if (isLive) {
+      graphData.clear();
+      graphData.addEntries(graphType.value!.graphData.entries);
+    }
     return Obx(() {
       fetchType = graphType.value!.supportsFetchType
           ? fetchType ?? FetchType.hours
           : null;
-      if (graphData.isEmpty && !graphLoaded.value) {
+      if (graphData.isEmpty && !graphLoaded.value && !isLive) {
         lastReqId = getUniqueId();
         _getGraphData(reqId: lastReqId!);
       }
@@ -89,45 +101,21 @@ class AppLineChart extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                ShadSelect<GraphType>(
-                  onChanged: (value) {
-                    graphType.value = value!;
-                    fetchType =
-                        graphType.value!.supportsFetchType ? fetchType : null;
-                  },
-                  allowDeselection: false,
-                  initialValue: graphType.value!,
-                  options: [
-                    for (var e in graphTypes)
-                      ShadOption(
-                        value: e,
-                        child: Text(e.name.capitalize!),
-                      ),
-                  ],
-                  selectedOptionBuilder: (context, value) {
-                    return Text(
-                      "${strings.value.type} : ${value.name.capitalize!}",
-                      style:
-                          Theme.of(context).textTheme.titleMedium?.copyWith(),
-                    );
-                  },
-                ),
-                if (graphType.value!.supportsFetchType)
-                  ShadSelect<FetchType>(
-                    enabled: graphType.value!.supportsFetchType,
-                    placeholder: Text(strings.value.precision),
+            if (!isLive) ...[
+              Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  ShadSelect<GraphType>(
                     onChanged: (value) {
-                      fetchType = value!;
+                      graphType.value = value!;
+                      fetchType =
+                          graphType.value!.supportsFetchType ? fetchType : null;
                     },
                     allowDeselection: false,
-                    initialValue: fetchType,
+                    initialValue: graphType.value!,
                     options: [
-                      for (var e in FetchType.values
-                          .where((e) => e != FetchType.$unknown))
+                      for (var e in graphTypes)
                         ShadOption(
                           value: e,
                           child: Text(e.name.capitalize!),
@@ -135,74 +123,103 @@ class AppLineChart extends StatelessWidget {
                     ],
                     selectedOptionBuilder: (context, value) {
                       return Text(
-                        "${strings.value.precision} : ${value.name.capitalize!}",
+                        "${strings.value.type} : ${value.name.capitalize!}",
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(),
                       );
                     },
                   ),
-                ShadDatePicker.range(
-                  onRangeChanged: (value) {
-                    startDate = value!.start!.copyWith(
-                      hour: 0,
-                      minute: 0,
-                      second: 0,
-                      millisecond: 0,
-                      microsecond: 0,
-                    );
-                    endDate = value.end?.copyWith(
-                          hour: 23,
-                          minute: 59,
-                          second: 59,
-                          millisecond: 999,
-                          microsecond: 999,
-                        ) ??
-                        value.start!.copyWith(
-                          hour: 23,
-                          minute: 59,
-                          second: 59,
-                          millisecond: 999,
-                          microsecond: 999,
+                  if (graphType.value!.supportsFetchType)
+                    ShadSelect<FetchType>(
+                      enabled: graphType.value!.supportsFetchType,
+                      placeholder: Text(strings.value.precision),
+                      onChanged: (value) {
+                        fetchType = value!;
+                      },
+                      allowDeselection: false,
+                      initialValue: fetchType,
+                      options: [
+                        for (var e in FetchType.values
+                            .where((e) => e != FetchType.$unknown))
+                          ShadOption(
+                            value: e,
+                            child: Text(e.name.capitalize!),
+                          ),
+                      ],
+                      selectedOptionBuilder: (context, value) {
+                        return Text(
+                          "${strings.value.precision} : ${value.name.capitalize!}",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(),
                         );
-                    //print("getGraphData: $value");
-                  },
-                  closeOnSelection: false,
-                  closeOnTapOutside: true,
-                  formatDateRange: (dateRange) =>
-                      dateTimeRangeToString(dateRange.start, dateRange.end),
-                  selectableDayPredicate: (day) => true,
-                  allowDeselection: false,
-                  selected: ShadDateTimeRange(
-                    start: startDate,
-                    end: endDate,
+                      },
+                    ),
+                  ShadDatePicker.range(
+                    onRangeChanged: (value) {
+                      startDate = value!.start!.copyWith(
+                        hour: 0,
+                        minute: 0,
+                        second: 0,
+                        millisecond: 0,
+                        microsecond: 0,
+                      );
+                      endDate = value.end?.copyWith(
+                            hour: 23,
+                            minute: 59,
+                            second: 59,
+                            millisecond: 999,
+                            microsecond: 999,
+                          ) ??
+                          value.start!.copyWith(
+                            hour: 23,
+                            minute: 59,
+                            second: 59,
+                            millisecond: 999,
+                            microsecond: 999,
+                          );
+                      //print("getGraphData: $value");
+                    },
+                    closeOnSelection: false,
+                    closeOnTapOutside: true,
+                    formatDateRange: (dateRange) =>
+                        dateTimeRangeToString(dateRange.start, dateRange.end),
+                    selectableDayPredicate: (day) => true,
+                    allowDeselection: false,
+                    selected: ShadDateTimeRange(
+                      start: startDate,
+                      end: endDate,
+                    ),
                   ),
-                ),
-                ShadButton(
-                  child: Text(strings.value.find),
-                  onPressed: () {
-                    lastReqId = getUniqueId();
-                    _getGraphData(reqId: lastReqId!);
-                  },
-                ),
-              ],
-            ),
+                  ShadButton(
+                    child: Text(strings.value.find),
+                    onPressed: () {
+                      lastReqId = getUniqueId();
+                      _getGraphData(reqId: lastReqId!);
+                    },
+                  ),
+                ],
+              ),
+            ],
             SizedBox(height: AppSizes.md),
             DividerWithText(
-                text:
-                    "${graphType.value!.name.toUpperCase()} ${dateTimeRangeToString(
-              startDate,
-              endDate,
-              includeTime: graphType.value!.supportsFetchType
-                  ? [
-                      FetchType.days,
-                      FetchType.weeks,
-                      FetchType.months,
-                      FetchType.years,
-                    ].contains(fetchType)
-                      ? false
-                      : true
-                  : false,
-            )} "),
+                text: isLive
+                    ? DateFormat("dd-MM-yyyy HH:mm:ss").format(liveDate!)
+                    : "${graphType.value!.name.toUpperCase()} ${dateTimeRangeToString(
+                        startDate,
+                        endDate,
+                        includeTime: graphType.value!.supportsFetchType
+                            ? [
+                                FetchType.days,
+                                FetchType.weeks,
+                                FetchType.months,
+                                FetchType.years,
+                              ].contains(fetchType)
+                                ? false
+                                : true
+                            : false,
+                      )} "),
             SizedBox(height: AppSizes.sm),
             Wrap(
               alignment: WrapAlignment.start,
@@ -261,11 +278,16 @@ class AppLineChart extends StatelessWidget {
                           if (e.value.isEmpty) {
                             continue;
                           }
-                          first ??= e.value.first["x"].toDouble();
-                          last ??= e.value.last["x"].toDouble();
-                          minY ??= e.value.first["y"].toDouble();
-                          maxY ??= e.value.last["y"].toDouble();
 
+                          try {
+                            first ??= e.value.first["x"].toDouble();
+                            last ??= e.value.last["x"].toDouble();
+                            minY ??= e.value.first["y"].toDouble();
+                            maxY ??= e.value.last["y"].toDouble();
+                          } catch (err) {
+                            /* logger.e(
+                                "${e.key} e.value.first ${e.value.first} e.value.last ${e.value.last}"); */
+                          }
                           if (first! > e.value.first["x"].toDouble()) {
                             first = e.value.first["x"].toDouble();
                           }
@@ -285,7 +307,7 @@ class AppLineChart extends StatelessWidget {
                                 FlSpot(d["x"].toDouble(), d["y"].toDouble()));
                           }
                         }
-                        logger.e("spots: $spots");
+                        //logger.e("spots: $spots");
 
                         final shownXTitles = <String>[];
                         final shownXValues = <double>[];
@@ -315,12 +337,12 @@ class AppLineChart extends StatelessWidget {
                                 touchTooltipData: LineTouchTooltipData(
                                   fitInsideHorizontally: true,
                                   fitInsideVertically: true,
+                                  showOnTopOfTheChartBoxArea: false,
                                   getTooltipColor: (value) {
                                     return Theme.of(context)
                                         .colorScheme
                                         .surfaceContainerLowest;
                                   },
-                                  showOnTopOfTheChartBoxArea: true,
                                   getTooltipItems: (touchedSpots) {
                                     return touchedSpots.map((touchedSpot) {
                                       final x =
@@ -644,8 +666,8 @@ class AppLineChart extends StatelessWidget {
       numberToSkip = (numberOfPoints / maxDisplayable).floor();
     }
 
-    logger.e(
-        "interval: ${intervalByFetchTime[_fetchType]! * numberToSkip}, skip: $numberToSkip");
+    //logger.e(
+    //    "interval: ${intervalByFetchTime[_fetchType]! * numberToSkip}, skip: $numberToSkip");
     return intervalByFetchTime[_fetchType]! * numberToSkip;
   }
 

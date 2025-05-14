@@ -22,10 +22,11 @@ import 'package:ibdm/pages/settings/emails/email_schedules_page.dart';
 import 'package:ibdm/pages/settings/server_settings/server_settings.dart';
 import 'package:ibdm/pages/settings/settings.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
-import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/pages/settings/emails/email_settings_page.dart';
 import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
 import 'package:ibdm/pages/settings/help_page.dart';
+import 'package:ibdm/pages/users/profile_page.dart';
+import 'package:ibdm/pages/users/users.dart';
 import 'package:ibdm/pages/utilite/utilite.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
@@ -60,6 +61,7 @@ class Routes {
   static const String filtrationReports = "/reports/emails";
   static const String utiliteReports = "/reports/utilite";
   static const String co2Reports = "/reports/co2";
+  static const String profile = "/profile";
 
   static List<Destination> get destinations => [
         Destination(
@@ -139,6 +141,7 @@ class Routes {
   static final routePermissions = {
     Routes.home: RoutePermissions(),
     Routes.login: RoutePermissions(),
+    Routes.profile: RoutePermissions(),
     Routes.emailSettings: RoutePermissions(
       anyOfPermissions: [
         Permissions.viewEmailAlerts,
@@ -208,6 +211,11 @@ class Routes {
     Routes.home: GetPage(
       name: Routes.home,
       page: () => Home(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
+    Routes.profile: GetPage(
+      name: Routes.profile,
+      page: () => ProfilePage(),
       middlewares: [ProtectedRouteMiddleware()],
     ),
     Routes.login: GetPage(

@@ -891,5 +891,24 @@
     "generate": "Generate",
     "todaysReports": "Today's Reports",
     "errorLoadingReports": "Error loading reports",
-    "synthese": "Synthese"
+    "synthese": "Synthese",
+    "downloadCertificate": "Download Certificate",
+    "downloadingCertificateMessage": "Downloading Certificate...",
+    "downloadFailed": "Download Failed",
+    "fileDownloadedTo": "File downloaded to: {path}",
+    "@fileDownloadedTo": {
+        "placeholders": {
+            "path": {
+                "type": "String"
+            }
+        }
+    },
+    "downloadedWithBrowser": "Downloaded with browser",
+    "downloadedFilePathCopiedToClipboard": "Downloaded file path copied to clipboard",
+    "profile": "Profile",
+    "noSuperior": "No Superior",
+    "welcomeBack": "Welcome Back",
+    "pression": "Pressure",
+    "conductivity": "Conductivity",
+    "temperature": "Temperature"
 }
