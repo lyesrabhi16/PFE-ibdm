@@ -73,4 +73,3 @@ class CustomUserAdmin(UserAdmin):
 # Register your models here.
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Role)
-admin.site.register(Permission)

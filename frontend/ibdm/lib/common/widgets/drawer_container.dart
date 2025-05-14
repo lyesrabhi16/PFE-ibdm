@@ -27,7 +27,8 @@ class DrawerContainer extends StatelessWidget {
           icon: dest.icon,
           text: dest.title,
           active: (() {
-            return Get.currentRoute == dest.route;
+            return dest.route == Get.currentRoute ||
+                dest.route == Routes.customRoutes[Get.currentRoute];
           })(),
           onTap: () {
             Navigator.of(context).pop();

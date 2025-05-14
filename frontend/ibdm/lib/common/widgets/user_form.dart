@@ -36,9 +36,13 @@ class UserForm extends StatelessWidget {
     required this.addFirstNameController,
     required this.addLastNameController,
     this.onAddUser,
+    this.showRole = true,
+    this.showSuperior = true,
   });
   final User? user;
   static final UserController userController = Get.find();
+  final bool showRole;
+  final bool showSuperior;
   final Function(
     String email,
     String username,
@@ -374,46 +378,48 @@ class UserForm extends StatelessWidget {
               ),
               SizedBox(height: AppSizes.sm),
               // role
-              Container(
-                constraints: BoxConstraints(
-                  minWidth: context.width,
-                ),
-                child: ShadSelectFormField<Role>(
-                  initialValue: userRole.value,
-                  enabled: editable,
-                  validator: (v) =>
-                      AppValidators.roleSelectionValidator(v?.name),
-                  options: getRoleOptions(context),
-                  label: Text(strings.value.role),
-                  onChanged: (value) {
-                    logger.e(
-                        "before value: ${value?.name} __userRole: ${userRole.value?.name}");
-                    userRole.value = value;
-                    _addUserRole = value;
-                    _valuesChanged();
+              if (showRole)
+                Container(
+                  constraints: BoxConstraints(
+                    minWidth: context.width,
+                  ),
+                  child: ShadSelectFormField<Role>(
+                    initialValue: userRole.value,
+                    enabled: editable,
+                    validator: (v) =>
+                        AppValidators.roleSelectionValidator(v?.name),
+                    options: getRoleOptions(context),
+                    label: Text(strings.value.role),
+                    onChanged: (value) {
+                      logger.e(
+                          "before value: ${value?.name} __userRole: ${userRole.value?.name}");
+                      userRole.value = value;
+                      _addUserRole = value;
+                      _valuesChanged();
 
-                    logger.e(
-                        "after value: ${value?.name} __userRole: ${userRole.value?.name}");
-                  },
-                  selectedOptionBuilder: (context, value) {
-                    return Container(
-                      constraints: BoxConstraints(
-                        minWidth: context.width,
-                      ),
-                      child: Text(
-                          strings.value.selectedRole(value.name.toUpperCase()),
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleSmall
-                              ?.copyWith(
-                                color: AppColors.getRoleColorWithRole(value),
-                              )),
-                    );
-                  },
-                  placeholder: Text(strings.value.role),
-                  shrinkWrap: false,
+                      logger.e(
+                          "after value: ${value?.name} __userRole: ${userRole.value?.name}");
+                    },
+                    selectedOptionBuilder: (context, value) {
+                      return Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
+                        ),
+                        child: Text(
+                            strings.value
+                                .selectedRole(value.name.toUpperCase()),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  color: AppColors.getRoleColorWithRole(value),
+                                )),
+                      );
+                    },
+                    placeholder: Text(strings.value.role),
+                    shrinkWrap: false,
+                  ),
                 ),
-              ),
               SizedBox(height: AppSizes.sm),
               // phone number
               ShadInputFormField(
@@ -427,70 +433,74 @@ class UserForm extends StatelessWidget {
 
               SizedBox(height: AppSizes.sm),
               // superior
-              Container(
-                constraints: BoxConstraints(
-                  minWidth: context.width,
-                ),
-                child: ShadSelectFormField<User>.withSearch(
-                  initialValue: _addUserSuperior,
-                  enabled: editable,
-                  label: Text(strings.value.superior),
-                  validator: (value) =>
-                      AppValidators.superiorSelectionValidator(
-                    user?.userId.toString(),
-                    value?.userId.toString(),
-                    _addUserSuperiorOptions.map((o) => o.value).toList(),
+              if (showSuperior)
+                Container(
+                  constraints: BoxConstraints(
+                    minWidth: context.width,
                   ),
-                  allowDeselection: true,
-                  options: _searchAddUserSuperior.value
-                      ? _searchAddUserSuperiorOptions
-                      : _addUserSuperiorOptions,
-                  placeholder: Container(
+                  child: ShadSelectFormField<User>.withSearch(
+                    initialValue: _addUserSuperior,
+                    enabled: editable,
+                    label: Text(strings.value.superior),
+                    validator: (value) =>
+                        AppValidators.superiorSelectionValidator(
+                      user?.userId.toString(),
+                      value?.userId.toString(),
+                      _addUserSuperiorOptions.map((o) => o.value).toList(),
+                    ),
+                    allowDeselection: true,
+                    options: _searchAddUserSuperior.value
+                        ? _searchAddUserSuperiorOptions
+                        : _addUserSuperiorOptions,
+                    placeholder: Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
+                        ),
+                        child: Text(!editable
+                            ? strings.value.noSuperior
+                            : strings.value.selectASuperior)),
+                    anchor: ShadAnchorAuto(
+                      preferBelow: false,
+                    ),
+                    onChanged: (value) {
+                      logger.d("superior value: ${value?.email}");
+                      _addUserSuperior = value;
+                      _valuesChanged();
+                    },
+                    selectedOptionBuilder: (context, value) => Container(
                       constraints: BoxConstraints(
                         minWidth: context.width,
                       ),
-                      child: Text(strings.value.selectASuperior)),
-                  anchor: ShadAnchorAuto(
-                    preferBelow: false,
-                  ),
-                  onChanged: (value) {
-                    logger.d("superior value: ${value?.email}");
-                    _addUserSuperior = value;
-                    _valuesChanged();
-                  },
-                  selectedOptionBuilder: (context, value) => Container(
-                    constraints: BoxConstraints(
-                      minWidth: context.width,
+                      child: Text(
+                          strings.value.selectedSuperior(
+                              "${value.role} ${getUserName(value)}"),
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    color: AppColors.getRoleColorWithRoleValue(
+                                        value.role),
+                                  )),
                     ),
-                    child: Text(
-                        strings.value.selectedSuperior(
-                            "${value.role} ${getUserName(value)}"),
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: AppColors.getRoleColorWithRoleValue(
-                                  value.role),
-                            )),
+                    onSearchChanged: (value) {
+                      if (value.isNotEmpty) {
+                        _searchAddUserSuperior.value =
+                            false; // turn it off to trigger update later
+                        _searchAddUserSuperiorOptions.clear();
+                        _searchAddUserSuperiorOptions
+                            .addAll(_addUserSuperiorOptions.where((o) {
+                          if (o.value.username.contains(value)) {
+                            return true;
+                          }
+                          return o.value.email.contains(value);
+                        }));
+                        _searchAddUserSuperior.value =
+                            true; // turning it back on to trigger update
+                      } else {
+                        _searchAddUserSuperior.value = false;
+                        _searchAddUserSuperiorOptions.clear();
+                      }
+                    },
                   ),
-                  onSearchChanged: (value) {
-                    if (value.isNotEmpty) {
-                      _searchAddUserSuperior.value =
-                          false; // turn it off to trigger update later
-                      _searchAddUserSuperiorOptions.clear();
-                      _searchAddUserSuperiorOptions
-                          .addAll(_addUserSuperiorOptions.where((o) {
-                        if (o.value.username.contains(value)) {
-                          return true;
-                        }
-                        return o.value.email.contains(value);
-                      }));
-                      _searchAddUserSuperior.value =
-                          true; // turning it back on to trigger update
-                    } else {
-                      _searchAddUserSuperior.value = false;
-                      _searchAddUserSuperiorOptions.clear();
-                    }
-                  },
                 ),
-              ),
               SizedBox(height: AppSizes.md),
             ],
           ),

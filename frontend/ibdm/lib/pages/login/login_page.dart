@@ -80,6 +80,12 @@ class _LoginPageState extends State<LoginPage> {
 
   downloadCertificate() async {
     final strings = getTranslations(context);
+    Get.snackbar(
+      strings.downloadCertificate,
+      strings.downloadingCertificateMessage,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+
     try {
       final api = await ApiClientInstance.getApiClient();
       api.downloadCertificate(context);

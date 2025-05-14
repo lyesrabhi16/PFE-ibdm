@@ -10,6 +10,7 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/initial_binding.dart';
 import 'package:ibdm/pages/co2/co2.dart';
 import 'package:ibdm/pages/filtration/filtration.dart';
+import 'package:ibdm/pages/home.dart';
 import 'package:ibdm/pages/server-status/server_status.dart';
 import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
@@ -67,6 +68,11 @@ class MyApp extends StatelessWidget {
               if (!Routes.routePages.keys.contains(routing?.current)) {
                 Get.toNamed(Routes.notFound);
                 return;
+              }
+
+              if ((routing?.current != Routes.home)) {
+                logger.e("closing home channels");
+                Home.closeChannels();
               }
 
               if ((routing?.current != Routes.siroperie) &&

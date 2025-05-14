@@ -88,7 +88,7 @@ class _ReportsPageState extends State<ReportsPage> {
                   ),
                   const SizedBox(height: AppSizes.lg),
                   FutureBuilder<List<Widget>>(
-                      future: Future.sync(_getTodaysReports),
+                      future: Future.sync(() => getTodaysReports(context)),
                       builder: (_, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -112,45 +112,45 @@ class _ReportsPageState extends State<ReportsPage> {
       ),
     );
   }
+}
 
-  Future<List<Widget>> _getTodaysReports() async {
-    final api = await ApiClientInstance.getApiClient();
-    final reports = await Future.wait([
-      api.generateReport(
-        date: DateTime.now().toIso8601String(),
-        reportType: ReportType.inventaireSucre,
-      ),
-      api.generateReport(
-        date: DateTime.now().toIso8601String(),
-        reportType: ReportType.filtration,
-      ),
-      api.generateReport(
-        date: DateTime.now().toIso8601String(),
-        reportType: ReportType.utilite,
-      ),
-      api.generateReport(
-        date: DateTime.now().toIso8601String(),
-        reportType: ReportType.co2Ifruit,
-      ),
-    ]);
+Future<List<Widget>> getTodaysReports(BuildContext context) async {
+  final api = await ApiClientInstance.getApiClient();
+  final reports = await Future.wait([
+    api.generateReport(
+      date: DateTime.now().toIso8601String(),
+      reportType: ReportType.inventaireSucre,
+    ),
+    api.generateReport(
+      date: DateTime.now().toIso8601String(),
+      reportType: ReportType.filtration,
+    ),
+    api.generateReport(
+      date: DateTime.now().toIso8601String(),
+      reportType: ReportType.utilite,
+    ),
+    api.generateReport(
+      date: DateTime.now().toIso8601String(),
+      reportType: ReportType.co2Ifruit,
+    ),
+  ]);
 
-    return reports
-        .map((report) => SettingCard(
-              icon: switch (report.rapport.toLowerCase()) {
-                'inventaire du sucre' => LucideIcons.boxes,
-                'filtration' => Icons.battery_full_rounded,
-                'utilite' => LucideIcons.gauge,
-                'co2' => LucideIcons.cloud,
-                _ => Icons.error,
-              },
-              title: report.rapport,
-              subtitle: DateFormat("dd-MM-yyyy").format(report.date),
-              onTap: () {
-                showViewReportDialog(context, report);
-              },
-            ))
-        .toList();
-  }
+  return reports
+      .map((report) => SettingCard(
+            icon: switch (report.rapport.toLowerCase()) {
+              'inventaire du sucre' => LucideIcons.boxes,
+              'filtration' => Icons.battery_full_rounded,
+              'utilite' => LucideIcons.gauge,
+              'co2' => LucideIcons.cloud,
+              _ => Icons.error,
+            },
+            title: report.rapport,
+            subtitle: DateFormat("dd-MM-yyyy").format(report.date),
+            onTap: () {
+              showViewReportDialog(context, report);
+            },
+          ))
+      .toList();
 }
 
 void showViewReportDialog(

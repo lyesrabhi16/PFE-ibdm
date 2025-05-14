@@ -892,6 +892,24 @@
 	"generate": "Générer",
 	"todaysReports": "Rapports d'Aujourd'hui",
 	"errorLoadingReports": "Erreur lors du chargement des rapports",
-	"synthese": "Synthese"
-
+	"synthese": "Synthese",
+	"downloadCertificate": "Télécharger le Certificat",
+	"downloadingCertificateMessage": "Téléchargement du certificat...",
+	"downloadFailed": "Échec du téléchargement",
+	"fileDownloadedTo": "Fichier téléchargé à : {path}",
+    "@fileDownloadedTo": {
+        "placeholders": {
+            "path": {
+                "type": "String"
+            }
+        }
+    },
+	"downloadedWithBrowser": "Téléchargé avec le navigateur",
+	"downloadedFilePathCopiedToClipboard": "Le chemin du fichier téléchargé a été copié dans le presse-papiers",
+	"profile": "Profil",
+	"noSuperior": "Pas de Supérieur",
+	"welcomeBack": "Bienvenue",
+	"pression": "Pression",
+	"conductivity": "Conductivité",
+	"temperature": "Température"
 }

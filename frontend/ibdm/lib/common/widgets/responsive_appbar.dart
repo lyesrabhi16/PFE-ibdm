@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/user_helpers.dart';
@@ -30,6 +31,7 @@ class ResponsiveAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
   final _popoverController = ShadPopoverController();
   final RxBool _logoutHover = false.obs;
+  final RxBool _profileHover = false.obs;
   @override
   Widget build(BuildContext context) {
     bool isSmallScreen = MediaQuery.of(context).size.width < 600;
@@ -96,6 +98,48 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                     return ListView(
                       shrinkWrap: true,
                       children: [
+                        MouseRegion(
+                          onEnter: (event) => _profileHover.value = true,
+                          onExit: (event) => _profileHover.value = false,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: _profileHover.value
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer
+                                  : null,
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.borderRadius),
+                            ),
+                            child: ListTile(
+                              leading: const Icon(Icons.person, size: 18),
+                              iconColor: !_profileHover.value
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer
+                                  : Theme.of(context).colorScheme.onSurface,
+                              title: Text(
+                                strings.value.profile,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: !_profileHover.value
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                    ),
+                              ),
+                              onTap: () {
+                                Get.toNamed(Routes.profile);
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: AppSizes.sm),
                         MouseRegion(
                           onEnter: (event) => _logoutHover.value = true,
                           onExit: (event) => _logoutHover.value = false,

@@ -16,7 +16,6 @@ import 'package:ibdm/common/widgets/per_page_input.dart';
 import 'package:ibdm/common/widgets/scrollable_shad_sheet_container.dart';
 import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/pages/settings/emails/actions.dart';
-import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
@@ -26,6 +25,7 @@ import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
+import 'package:ibdm/utils/sorter.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 
