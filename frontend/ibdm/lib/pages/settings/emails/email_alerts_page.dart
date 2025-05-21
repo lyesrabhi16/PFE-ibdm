@@ -1,9 +1,7 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/alert_email_form.dart';
@@ -14,16 +12,15 @@ import 'package:ibdm/common/widgets/icon_with_label_button.dart';
 import 'package:ibdm/common/widgets/page_navigation.dart';
 import 'package:ibdm/common/widgets/per_page_input.dart';
 import 'package:ibdm/common/widgets/scrollable_shad_sheet_container.dart';
-import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/pages/settings/emails/actions.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/helpers/common_heplers.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
-import 'package:ibdm/utils/helpers/page_index.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:ibdm/utils/sorter.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -352,16 +349,10 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             ),
             ShadButton(
               onPressed: () {
-                if (_formKey.currentState != null &&
-                    !_formKey.currentState!.validate()) {
-                  logger.e("Form is not valid");
-                  Toasts.showErrorToastNotification(
-                      context: Get.overlayContext!,
-                      message: strings.value.pleaseFixErrorsInTheForm);
-                  return;
-                }
                 EmailActions.addAlert(
                   context,
+                  getUniqueId(),
+                  formState: _formKey.currentState,
                   monitoredValue: _addAlertMonitoredValue!,
                   monitorType: _addAlertMonitorType,
                   customMessage: _addAlertCustomMessage,
@@ -562,17 +553,10 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                       icon: Icon(Icons.edit),
                       child: Text(strings.value.save),
                       onPressed: () {
-                        if (_formKey.currentState != null &&
-                            !_formKey.currentState!.validate()) {
-                          logger.e("Form is not valid");
-                          Toasts.showErrorToastNotification(
-                              context: Get.overlayContext!,
-                              message: strings.value.pleaseFixErrorsInTheForm);
-                          return;
-                        }
-
                         EmailActions.saveAlert(
                           context,
+                          getUniqueId(),
+                          formState: _formKey.currentState,
                           alertId: alert.id,
                           customMessage: _saveAlertCustomMessage,
                           dangerAlertInterval: _saveAlertDangerAlertInterval,
@@ -618,17 +602,10 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                               icon: Icon(Icons.edit),
                               child: Text(strings.value.save),
                               onPressed: () {
-                                if (_formKey.currentState != null &&
-                                    !_formKey.currentState!.validate()) {
-                                  logger.e("Form is not valid");
-                                  Toasts.showErrorToastNotification(
-                                      context: Get.overlayContext!,
-                                      message: strings
-                                          .value.pleaseFixErrorsInTheForm);
-                                  return;
-                                }
                                 EmailActions.saveAlert(
                                   context,
+                                  getUniqueId(),
+                                  formState: _formKey.currentState,
                                   alertId: alert.id,
                                   customMessage: _saveAlertCustomMessage,
                                   dangerAlertInterval:
