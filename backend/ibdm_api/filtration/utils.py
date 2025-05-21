@@ -7,7 +7,8 @@ from api_v1.utils import get_value_at
 def calculate_consommation_filtration(from_date, to_date):
     def loadVolume(date, volume_list):
         v = get_value_at(Volume, date)
-        volume_list.append(v)
+        if v is not None:
+            volume_list.append(v)
 
     volume_list = []
     threads = []

@@ -87,13 +87,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       },
                     ),
                     SettingCard(
-                      icon: Icons.help,
-                      title: strings.value.helpAssistance,
-                      trailing: Icon(Icons.arrow_forward_ios_rounded,
-                          color: colorScheme.primary),
-                      onTap: () => Get.toNamed(Routes.help),
-                    ),
-                    SettingCard(
                       icon: Icons.info,
                       title: strings.value.about,
                       trailing: Icon(Icons.arrow_forward_ios_rounded,

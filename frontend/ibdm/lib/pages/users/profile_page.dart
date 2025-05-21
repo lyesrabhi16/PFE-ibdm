@@ -196,6 +196,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 email: superior!.email,
                                                 superiors: superior!.superiors,
                                                 username: superior!.username,
+                                                role: superior!.role,
                                               )
                                             ]
                                           : userController.user!.superiors,

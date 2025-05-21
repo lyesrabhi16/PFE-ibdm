@@ -71,3 +71,26 @@ extension RbacDestinationExtensions on Destination {
         : null;
   }
 }
+
+extension RbacObjectExtensions on Object {
+  Object? withPermission(String permission) {
+    PermissionsController permissionsController =
+        Get.find<PermissionsController>();
+    if (permissionsController.ready.value == false) {
+      return null;
+    }
+    return permissionsController.hasPerm(permission) ? this : null;
+  }
+
+  Object? withAnyPermissionOf(List<String> permissions) {
+    PermissionsController permissionsController =
+        Get.find<PermissionsController>();
+    if (permissionsController.ready.value == false) {
+      return null;
+    }
+    return permissions
+            .any((permission) => permissionsController.hasPerm(permission))
+        ? this
+        : null;
+  }
+}

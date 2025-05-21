@@ -601,7 +601,7 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                             modifyConfig("REDIS_DB",
                                                 newDatabase.toJson());
                                           },
-                                          name: config.value!.redisDB.name ??
+                                          name: config.value!.redisDB?.name ??
                                               "Redis",
                                         ),
                                       for (var db
@@ -786,7 +786,7 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
       return MapEntry(e.key, e.value.toJson());
     }));
     newConfig["EMAIL_PROVIDERS"] = emailProviders;
-    newConfig["REDIS_DB"] = config.value?.redisDB.toJson();
+    newConfig["REDIS_DB"] = config.value?.redisDB?.toJson();
 
     newConfig[s] = value;
 
@@ -811,7 +811,7 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
       jsonConfig["EMAIL_PROVIDERS"] = Map.fromEntries(config
           .value!.emailProviders!.entries
           .map((e) => MapEntry(e.key, e.value.toJson())));
-      jsonConfig["REDIS_DB"] = config.value?.redisDB.toJson();
+      jsonConfig["REDIS_DB"] = config.value?.redisDB?.toJson();
       if (secretKey != null) {
         jsonConfig["SECRET_KEY"] = secretKey;
       }

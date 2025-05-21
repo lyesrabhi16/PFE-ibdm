@@ -168,9 +168,13 @@ const _$AlertEnumEnumMap = {
   AlertEnum.undefined118: 'utilite.ut_sid_pg',
   AlertEnum.undefined119: 'utilite.ut_sid_tt',
   AlertEnum.undefined120: 'utilite.ut_sid_tc',
-  AlertEnum.undefined121: 'sucre.total.tetra',
-  AlertEnum.undefined122: 'sucre.total',
+  AlertEnum.undefined121: 'sucre.total',
+  AlertEnum.undefined122: 'sucre.stopped',
   AlertEnum.undefined123: 'sucre.total.adue',
+  AlertEnum.undefined124: 'sucre.total.tetra',
+  AlertEnum.undefined125: 'co2_ifruit.stopped',
+  AlertEnum.undefined126: 'filtration.stopped',
+  AlertEnum.undefined127: 'utilite.stopped',
   AlertEnum.$unknown: r'$unknown',
 };
 

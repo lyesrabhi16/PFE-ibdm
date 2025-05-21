@@ -17,6 +17,13 @@ class GraphType {
   final String name;
   final String ySuffix;
   final bool supportsFetchType;
+  final bool includesX;
+  final bool includesY;
+  final bool includesXMax;
+  final bool includesXMin;
+  final bool includesYMax;
+  final bool includesYMin;
+
   late final Map graphData;
   final Future<Map> Function(DateTime start, DateTime end, FetchType? fetchType)
       getGraphData;
@@ -27,6 +34,12 @@ class GraphType {
     this.ySuffix = " L",
     this.supportsFetchType = true,
     Map? graphData,
+    this.includesX = true,
+    this.includesY = true,
+    this.includesXMax = false,
+    this.includesXMin = false,
+    this.includesYMax = false,
+    this.includesYMin = false,
   }) {
     this.graphData = graphData ?? {};
   }
@@ -48,23 +61,20 @@ class ChartTooltipData {
   });
 }
 
-class AppLineChart extends StatefulWidget {
+class AppLineChart extends StatelessWidget {
   final List<GraphType> graphTypes;
   final bool isLive;
   final DateTime? liveDate;
+  final double height;
 
-  const AppLineChart({
+  AppLineChart({
     super.key,
     required this.graphTypes,
     this.isLive = false,
     this.liveDate,
+    this.height = 600,
   });
 
-  @override
-  State<AppLineChart> createState() => _AppLineChartState();
-}
-
-class _AppLineChartState extends State<AppLineChart> {
   final GlobalKey _chartKey = GlobalKey();
   DateTime startDate = DateTime.now().copyWith(
     hour: 0,
@@ -99,37 +109,24 @@ class _AppLineChartState extends State<AppLineChart> {
   final OverlayPortalController _tooltipController = OverlayPortalController();
 
   @override
-  void initState() {
-    super.initState();
-    graphType = Rx<GraphType?>(
-        widget.graphTypes.isEmpty ? null : widget.graphTypes.first);
-    graphLoaded = RxBool(widget.isLive);
-    if (widget.isLive && graphType.value != null) {
+  Widget build(BuildContext context) {
+    printMessage("Building AppLineChart");
+    if (graphTypes.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    graphType = Rx<GraphType?>(graphTypes.isEmpty ? null : graphTypes.first);
+    graphLoaded = RxBool(isLive);
+    if (isLive && graphType.value != null) {
       graphData.clear();
       graphData.addEntries(graphType.value!.graphData.entries);
     }
-  }
-
-  @override
-  void dispose() {
-    tooltipNotifier.dispose();
-    tooltipPositionNotifier.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.graphTypes.isEmpty) {
-      return const SizedBox.shrink();
-    }
 
     final strings = getTranslations(context).obs;
-
     return Obx(() {
       fetchType = graphType.value!.supportsFetchType
           ? fetchType ?? FetchType.hours
           : null;
-      if (graphData.isEmpty && !graphLoaded.value && !widget.isLive) {
+      if (graphData.isEmpty && !graphLoaded.value && !isLive) {
         lastReqId = getUniqueId();
         _getGraphData(reqId: lastReqId!);
       }
@@ -139,7 +136,7 @@ class _AppLineChartState extends State<AppLineChart> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            if (!widget.isLive) ...[
+            if (!isLive) ...[
               Wrap(
                 alignment: WrapAlignment.center,
                 crossAxisAlignment: WrapCrossAlignment.center,
@@ -153,7 +150,7 @@ class _AppLineChartState extends State<AppLineChart> {
                     allowDeselection: false,
                     initialValue: graphType.value!,
                     options: [
-                      for (var e in widget.graphTypes)
+                      for (var e in graphTypes)
                         ShadOption(
                           value: e,
                           child: Text(e.name.capitalize!),
@@ -241,8 +238,8 @@ class _AppLineChartState extends State<AppLineChart> {
             ],
             SizedBox(height: AppSizes.md),
             DividerWithText(
-                text: widget.isLive
-                    ? DateFormat("dd-MM-yyyy HH:mm:ss").format(widget.liveDate!)
+                text: isLive
+                    ? DateFormat("dd-MM-yyyy HH:mm:ss").format(liveDate!)
                     : "${graphType.value!.name.toUpperCase()} ${dateTimeRangeToString(
                         startDate,
                         endDate,
@@ -290,14 +287,14 @@ class _AppLineChartState extends State<AppLineChart> {
             SizedBox(height: AppSizes.sm),
             !graphLoaded.value
                 ? SizedBox(
-                    height: 600,
+                    height: height,
                     child: CircularProgressIndicatorWithText(
                       text: strings.value.loading,
                     ),
                   )
                 : graphData.isEmpty
                     ? SizedBox(
-                        height: 600,
+                        height: height,
                         child: Center(
                           child: Text(strings.value.dataNotFound),
                         ),
@@ -354,354 +351,364 @@ class _AppLineChartState extends State<AppLineChart> {
     final shownXValues = <double>[];
     double width = context.width;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        width = constraints.maxWidth;
+    return SizedBox(
+      height: height,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          width = constraints.maxWidth;
 
-        return Builder(builder: (context) {
-          return OverlayPortal(
-            controller: _tooltipController,
-            overlayChildBuilder: (context) {
-              return Stack(
-                children: [
-                  ValueListenableBuilder<Offset?>(
-                    valueListenable: tooltipPositionNotifier,
-                    builder: (context, position, child) {
-                      if (position == null) return const SizedBox.shrink();
+          return Builder(builder: (context) {
+            return OverlayPortal(
+              controller: _tooltipController,
+              overlayChildBuilder: (context) {
+                return Stack(
+                  children: [
+                    ValueListenableBuilder<Offset?>(
+                      valueListenable: tooltipPositionNotifier,
+                      builder: (context, position, child) {
+                        if (position == null) return const SizedBox.shrink();
 
-                      return Positioned(
-                        left: position.dx,
-                        top: position.dy,
-                        child: Material(
-                          elevation: 8,
-                          borderRadius: BorderRadius.circular(8),
-                          child: child!,
-                        ),
-                      );
-                    },
-                    child: ValueListenableBuilder<List<ChartTooltipData>?>(
-                      valueListenable: tooltipNotifier,
-                      builder: (context, tooltipData, _) {
-                        if (tooltipData == null || tooltipData.isEmpty) {
-                          return const SizedBox.shrink();
-                        }
-
-                        return Material(
-                          elevation: 4,
-                          borderRadius: BorderRadius.circular(8),
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerLowest,
-                          child: Padding(
-                            padding: const EdgeInsets.all(AppSizes.sm),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ...tooltipData.map((data) => Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Container(
-                                              width: 12,
-                                              height: 12,
-                                              decoration: BoxDecoration(
-                                                color: data.color,
-                                                shape: BoxShape.circle,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              '${data.title}: ${data.value}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: data.color,
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
-                                        if (tooltipData.indexOf(data) ==
-                                            tooltipData.length - 1) ...[
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            data.date,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall,
-                                          ),
-                                          Text(
-                                            data.time,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall,
-                                          ),
-                                        ],
-                                      ],
-                                    )),
-                              ],
-                            ),
+                        return Positioned(
+                          left: position.dx,
+                          top: position.dy,
+                          child: Material(
+                            elevation: 8,
+                            borderRadius: BorderRadius.circular(8),
+                            child: child!,
                           ),
                         );
                       },
-                    ),
-                  ),
-                ],
-              );
-            },
-            child: Builder(builder: (context) {
-              return SizedBox(
-                width: context.width,
-                height: context.height / 2,
-                child: GestureDetector(
-                  onTapDown: (_) {
-                    _hideTooltip();
-                  },
-                  onPanStart: (_) {
-                    _hideTooltip();
-                  },
-                  child: Builder(builder: (context) {
-                    return MouseRegion(
-                      onExit: (event) => _hideTooltip(),
-                      child: KeyedSubtree(
-                        key: _chartKey,
-                        child: LineChart(
-                          LineChartData(
-                            gridData: FlGridData(
-                              verticalInterval: getInterval(
-                                startDate: startDate,
-                                endDate: endDate,
-                                fetchType: fetchType,
-                                width: width,
-                              ),
-                              getDrawingHorizontalLine: (value) {
-                                return FlLine(
-                                  color: AppColors.black.withAlpha(20),
-                                );
-                              },
-                              getDrawingVerticalLine: (value) {
-                                return FlLine(
-                                  color: AppColors.black.withAlpha(20),
-                                );
-                              },
-                            ),
-                            lineTouchData: LineTouchData(
-                              enabled: true,
-                              touchTooltipData: LineTouchTooltipData(
-                                getTooltipColor: (v) => Colors.transparent,
-                                tooltipPadding: EdgeInsets.zero,
-                                tooltipMargin: 0,
-                                getTooltipItems: (v) => [
-                                  for (var item in v)
-                                    LineTooltipItem("", TextStyle())
-                                ],
-                              ),
-                              touchCallback: (FlTouchEvent event,
-                                  LineTouchResponse? touchResponse) async {
-                                final touchedSpots = touchResponse?.lineBarSpots!;
-                                final localPosition =
-                                    (event as dynamic).localPosition;
-                      
-                                if ([
-                                      FlTouchEvent,
-                                      FlPanDownEvent,
-                                      FlTapDownEvent,
-                                      FlPanStartEvent,
-                                      FlPointerEnterEvent,
-                                      FlPointerHoverEvent,
-                                      FlTapUpEvent,
-                                      FlPanEndEvent,
-                                      FlPanUpdateEvent,
-                                    ].contains(event.runtimeType) &&
-                                    touchedSpots != null) {
-                                  logger.e("show tooltip");
-                                  // Get the correct context for the chart widget
-                                  final chartContext = _chartKey.currentContext;
-                                  if (chartContext != null) {
-                                    _showTooltip(chartContext, touchedSpots,
-                                        localPosition);
-                                  }
-                                  return;
-                                }
-                      
-                                _hideTooltip();
-                                return;
-                              },
-                            ),
-                            titlesData: FlTitlesData(
-                              topTitles: const AxisTitles(
-                                sideTitles: SideTitles(showTitles: false),
-                              ),
-                              rightTitles: const AxisTitles(
-                                sideTitles: SideTitles(showTitles: false),
-                              ),
-                              leftTitles: AxisTitles(
-                                drawBelowEverything: true,
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  maxIncluded: false,
-                                  minIncluded: false,
-                                  reservedSize: 100,
-                                  getTitlesWidget: (value, meta) {
-                                    return Text(NumberFormat.compactCurrency(
-                                      decimalDigits: 2,
-                                      locale: "fr",
-                                      symbol: ySuffix,
-                                    ).format(value));
-                                  },
-                                ),
-                              ),
-                              bottomTitles: AxisTitles(
-                                drawBelowEverything: true,
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  minIncluded: false,
-                                  maxIncluded: false,
-                                  interval: getInterval(
-                                    startDate: startDate,
-                                    endDate: endDate,
-                                    fetchType: fetchType,
-                                    width: width,
-                                  ),
-                                  reservedSize: 100,
-                                  getTitlesWidget: (value, meta) {
-                                    width = meta.parentAxisSize;
-                                    final date =
-                                        DateTime.fromMillisecondsSinceEpoch(
-                                      value.toInt(),
-                                    );
-                                    if (shownXValues.isNotEmpty) {
-                                      final _date = switch (fetchType) {
-                                        FetchType.hours => DateTime(date.year,
-                                            date.month, date.day, date.hour),
-                                        FetchType.days => DateTime(
-                                            date.year, date.month, date.day),
-                                        FetchType.weeks => DateTime(
-                                            date.year, date.month, date.day),
-                                        FetchType.months =>
-                                          DateTime(date.year, date.month),
-                                        FetchType.years => DateTime(date.year),
-                                        _ => DateTime(date.year, date.month,
-                                            date.day, date.hour, date.minute),
-                                      };
-                                      final dateDiff = _date
-                                          .difference(
-                                              DateTime.fromMicrosecondsSinceEpoch(
-                                                  shownXValues.last.toInt()))
-                                          .inMilliseconds;
-                      
-                                      if (dateDiff <=
-                                          (getInterval(
-                                            startDate: startDate,
-                                            endDate: endDate,
-                                            fetchType: fetchType,
-                                            width: width,
-                                          ))) {
-                                        return const SizedBox.shrink();
-                                      }
-                                    }
-                      
-                                    String formattedDate = switch (fetchType) {
-                                      FetchType.hours => DateFormat(
-                                              endDate.day == startDate.day
-                                                  ? "HH:mm"
-                                                  : "dd/MM/yyyy HH:mm")
-                                          .format(date),
-                                      FetchType.days =>
-                                        DateFormat("dd/MM/yyyy").format(date),
-                                      FetchType.weeks => getWeek(date),
-                                      FetchType.months => getMonth(date),
-                                      FetchType.years => date.year.toString(),
-                                      _ => DateFormat(endDate.day == startDate.day
-                                              ? "HH:mm"
-                                              : "dd/MM/yyyy HH:mm")
-                                          .format(date),
-                                    };
-                                    if (!(shownXTitles.lastOrNull ==
-                                        formattedDate)) {
-                                      shownXTitles.add(formattedDate);
-                                      shownXValues.add(value);
-                                    } else {
-                                      return const SizedBox.shrink();
-                                    }
-                                    return Container(
-                                      child: RotatedBox(
-                                        quarterTurns: 1,
-                                        child: Center(
-                                          child: FittedBox(
-                                            child: Text(
-                                              formattedDate,
+                      child: ValueListenableBuilder<List<ChartTooltipData>?>(
+                        valueListenable: tooltipNotifier,
+                        builder: (context, tooltipData, _) {
+                          if (tooltipData == null || tooltipData.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+
+                          return Material(
+                            elevation: 4,
+                            borderRadius: BorderRadius.circular(8),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerLowest,
+                            child: Padding(
+                              padding: const EdgeInsets.all(AppSizes.sm),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ...tooltipData.map((data) => Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 12,
+                                                height: 12,
+                                                decoration: BoxDecoration(
+                                                  color: data.color,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                '${data.title}: ${data.value}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: data.color,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                          if (tooltipData.indexOf(data) ==
+                                              tooltipData.length - 1) ...[
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              data.date,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .titleMedium
-                                                  ?.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                              textAlign: TextAlign.center,
-                                              softWrap: false,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                                                  .bodySmall,
+                                            ),
+                                            Text(
+                                              data.time,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ],
+                                        ],
+                                      )),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+              child: Builder(builder: (context) {
+                return SizedBox(
+                  width: context.width,
+                  height: context.height / 2,
+                  child: GestureDetector(
+                    onTapDown: (_) {
+                      _hideTooltip();
+                    },
+                    onPanStart: (_) {
+                      _hideTooltip();
+                    },
+                    child: Builder(builder: (context) {
+                      return MouseRegion(
+                        onExit: (event) => _hideTooltip(),
+                        child: KeyedSubtree(
+                          key: _chartKey,
+                          child: LineChart(
+                            LineChartData(
+                              gridData: FlGridData(
+                                verticalInterval: getInterval(
+                                  startDate: startDate,
+                                  endDate: endDate,
+                                  fetchType: fetchType,
+                                  width: width,
+                                ),
+                                getDrawingHorizontalLine: (value) {
+                                  return FlLine(
+                                    color: AppColors.black.withAlpha(20),
+                                  );
+                                },
+                                getDrawingVerticalLine: (value) {
+                                  return FlLine(
+                                    color: AppColors.black.withAlpha(20),
+                                  );
+                                },
+                              ),
+                              lineTouchData: LineTouchData(
+                                enabled: true,
+                                touchTooltipData: LineTouchTooltipData(
+                                  getTooltipColor: (v) => Colors.transparent,
+                                  tooltipPadding: EdgeInsets.zero,
+                                  tooltipMargin: 0,
+                                  getTooltipItems: (v) => [
+                                    for (var item in v)
+                                      LineTooltipItem("", TextStyle())
+                                  ],
+                                ),
+                                touchCallback: (FlTouchEvent event,
+                                    LineTouchResponse? touchResponse) async {
+                                  final touchedSpots =
+                                      touchResponse?.lineBarSpots!;
+                                  final localPosition =
+                                      (event as dynamic).localPosition;
+
+                                  if ([
+                                        FlTouchEvent,
+                                        FlPanDownEvent,
+                                        FlTapDownEvent,
+                                        FlPanStartEvent,
+                                        FlPointerEnterEvent,
+                                        FlPointerHoverEvent,
+                                        FlTapUpEvent,
+                                        FlPanEndEvent,
+                                        FlPanUpdateEvent,
+                                      ].contains(event.runtimeType) &&
+                                      touchedSpots != null) {
+                                    logger.e("show tooltip");
+                                    // Get the correct context for the chart widget
+                                    final chartContext =
+                                        _chartKey.currentContext;
+                                    if (chartContext != null) {
+                                      _showTooltip(chartContext, touchedSpots,
+                                          localPosition);
+                                    }
+                                    return;
+                                  }
+
+                                  _hideTooltip();
+                                  return;
+                                },
+                              ),
+                              titlesData: FlTitlesData(
+                                topTitles: const AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false),
+                                ),
+                                rightTitles: const AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false),
+                                ),
+                                leftTitles: AxisTitles(
+                                  drawBelowEverything: true,
+                                  sideTitles: SideTitles(
+                                    showTitles: graphType.value!.includesY,
+                                    maxIncluded: graphType.value!.includesYMax,
+                                    minIncluded: graphType.value!.includesYMin,
+                                    reservedSize: 100,
+                                    getTitlesWidget: (value, meta) {
+                                      return Text(NumberFormat.compactCurrency(
+                                        decimalDigits: 2,
+                                        locale: "fr",
+                                        symbol: ySuffix,
+                                      ).format(value));
+                                    },
+                                  ),
+                                ),
+                                bottomTitles: AxisTitles(
+                                  drawBelowEverything: true,
+                                  sideTitles: SideTitles(
+                                    showTitles: graphType.value!.includesX,
+                                    maxIncluded: graphType.value!.includesXMax,
+                                    minIncluded: graphType.value!.includesXMin,
+                                    interval: getInterval(
+                                      startDate: startDate,
+                                      endDate: endDate,
+                                      fetchType: fetchType,
+                                      width: width,
+                                    ),
+                                    reservedSize: 100,
+                                    getTitlesWidget: (value, meta) {
+                                      width = meta.parentAxisSize;
+                                      final date =
+                                          DateTime.fromMillisecondsSinceEpoch(
+                                        value.toInt(),
+                                      );
+                                      if (shownXValues.isNotEmpty) {
+                                        final _date = switch (fetchType) {
+                                          FetchType.hours => DateTime(date.year,
+                                              date.month, date.day, date.hour),
+                                          FetchType.days => DateTime(
+                                              date.year, date.month, date.day),
+                                          FetchType.weeks => DateTime(
+                                              date.year, date.month, date.day),
+                                          FetchType.months =>
+                                            DateTime(date.year, date.month),
+                                          FetchType.years =>
+                                            DateTime(date.year),
+                                          _ => DateTime(date.year, date.month,
+                                              date.day, date.hour, date.minute),
+                                        };
+                                        final dateDiff = _date
+                                            .difference(DateTime
+                                                .fromMicrosecondsSinceEpoch(
+                                                    shownXValues.last.toInt()))
+                                            .inMilliseconds;
+
+                                        if (dateDiff <=
+                                            (getInterval(
+                                              startDate: startDate,
+                                              endDate: endDate,
+                                              fetchType: fetchType,
+                                              width: width,
+                                            ))) {
+                                          return const SizedBox.shrink();
+                                        }
+                                      }
+
+                                      String formattedDate =
+                                          switch (fetchType) {
+                                        FetchType.hours => DateFormat(
+                                                endDate.day == startDate.day
+                                                    ? "HH:mm"
+                                                    : "dd/MM/yyyy HH:mm")
+                                            .format(date),
+                                        FetchType.days =>
+                                          DateFormat("dd/MM/yyyy").format(date),
+                                        FetchType.weeks => getWeek(date),
+                                        FetchType.months => getMonth(date),
+                                        FetchType.years => date.year.toString(),
+                                        _ => DateFormat(
+                                                endDate.day == startDate.day
+                                                    ? "HH:mm"
+                                                    : "dd/MM/yyyy HH:mm")
+                                            .format(date),
+                                      };
+                                      if (!(shownXTitles.lastOrNull ==
+                                          formattedDate)) {
+                                        shownXTitles.add(formattedDate);
+                                        shownXValues.add(value);
+                                      } else {
+                                        return const SizedBox.shrink();
+                                      }
+                                      return Container(
+                                        child: RotatedBox(
+                                          quarterTurns: 1,
+                                          child: Center(
+                                            child: FittedBox(
+                                              child: Text(
+                                                formattedDate,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                textAlign: TextAlign.center,
+                                                softWrap: false,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                            borderData: FlBorderData(
-                              show: true,
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: AppColors.black.withAlpha(100),
-                                  width: 2,
-                                ),
-                                left: BorderSide(
-                                  color: AppColors.black.withAlpha(100),
-                                  width: 2,
-                                ),
-                                right: BorderSide.none,
-                                top: BorderSide.none,
-                              ),
-                            ),
-                            lineBarsData: [
-                              for (var e in graphData.entries)
-                                LineChartBarData(
-                                  spots: spots[e.key] ?? [],
-                                  isCurved: true,
-                                  barWidth: 2,
-                                  dotData: const FlDotData(show: false),
-                                  color: AppColors.getColorFromString(
-                                    e.key,
-                                    backgroundColor: getBackgroundColor(),
+                                      );
+                                    },
                                   ),
-                                  curveSmoothness: 0.5,
-                                  preventCurveOverShooting: true,
-                                  belowBarData: BarAreaData(
-                                    show: true,
+                                ),
+                              ),
+                              borderData: FlBorderData(
+                                show: true,
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: AppColors.black.withAlpha(100),
+                                    width: 2,
+                                  ),
+                                  left: BorderSide(
+                                    color: AppColors.black.withAlpha(100),
+                                    width: 2,
+                                  ),
+                                  right: BorderSide.none,
+                                  top: BorderSide.none,
+                                ),
+                              ),
+                              lineBarsData: [
+                                for (var e in graphData.entries)
+                                  LineChartBarData(
+                                    spots: spots[e.key] ?? [],
+                                    isCurved: true,
+                                    barWidth: 2,
+                                    dotData: const FlDotData(show: false),
                                     color: AppColors.getColorFromString(
                                       e.key,
                                       backgroundColor: getBackgroundColor(),
-                                    ).withAlpha(50),
+                                    ),
+                                    curveSmoothness: 0.5,
+                                    preventCurveOverShooting: true,
+                                    belowBarData: BarAreaData(
+                                      show: true,
+                                      color: AppColors.getColorFromString(
+                                        e.key,
+                                        backgroundColor: getBackgroundColor(),
+                                      ).withAlpha(50),
+                                    ),
                                   ),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-                ),
-              );
-            }),
-          );
-        });
-      },
+                      );
+                    }),
+                  ),
+                );
+              }),
+            );
+          });
+        },
+      ),
     );
   }
 
@@ -774,7 +781,7 @@ class _AppLineChartState extends State<AppLineChart> {
   }
 
   void _hideTooltip() {
-    debugPrint('Hiding tooltip');
+    printMessage('Hiding tooltip');
     _tooltipController.hide();
     tooltipNotifier.value = null;
     tooltipPositionNotifier.value = null;
@@ -796,8 +803,8 @@ class _AppLineChartState extends State<AppLineChart> {
       logger.e(e);
       if (reqId == lastReqId) {
         Toasts.showErrorToast(
-          context: context,
-          message: getTranslations(context).failedToLoadData,
+          context: Get.context!,
+          message: getTranslations(Get.context!).failedToLoadData,
         );
       }
     }
@@ -807,13 +814,13 @@ class _AppLineChartState extends State<AppLineChart> {
   }
 
   String getWeek(DateTime date) {
-    final strings = getTranslations(context);
+    final strings = getTranslations(Get.context!);
     final weekNumber = date.weekNumber;
     return "${strings.week} $weekNumber";
   }
 
   String getMonth(DateTime date) {
-    final strings = getTranslations(context);
+    final strings = getTranslations(Get.context!);
     final month = switch (date.month) {
       1 => strings.january,
       2 => strings.february,
@@ -876,6 +883,6 @@ class _AppLineChartState extends State<AppLineChart> {
   }
 
   getBackgroundColor() {
-    return Theme.of(context).colorScheme.surfaceContainer;
+    return Theme.of(Get.context!).colorScheme.surfaceContainer;
   }
 }

@@ -398,11 +398,13 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               _addAlertDangerAlertInterval = dangerAlertInterval;
               _addAlertDangerPoint = dangerPoint;
               _addAlertEnabled = enabled;
+              print("monitoredValue : $monitoredValue");
               _addAlertMonitoredValue = monitoredValue;
+              print("monitorType : $monitorType");
               _addAlertMonitorType = monitorType;
               _addAlertRoles = roles;
               _addAlertUsers = users;
-              _formKey.currentState!.validate();
+              _formKey.currentState?.validate();
               _addAlertWarningAlertInterval = warningAlertInterval;
               _addAlertWarningPoint = warningPoint;
             },
@@ -420,7 +422,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
       context: context,
       builder: (context) {
         return ShadDialog(
-          title: Text("${strings.value.alers}: ${alert.monitoredValue.json} ",
+          title: Text("${strings.value.alerts}: ${alert.monitoredValue.json} ",
               style: Theme.of(context).textTheme.headlineMedium),
           description: Text(
               strings.value.viewAlertSettingsOf(alert.monitoredValue.json!),

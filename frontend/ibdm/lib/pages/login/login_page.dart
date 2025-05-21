@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return SafeArea(
       child: Scaffold(
-        body: isSmallScreen(context)
+        body: isAtMostSmallScreen(context)
             ? SmallLoginPage()
             : NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) => [

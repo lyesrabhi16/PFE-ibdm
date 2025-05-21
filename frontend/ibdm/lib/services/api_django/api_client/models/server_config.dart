@@ -44,7 +44,7 @@ class ServerConfig {
   @JsonKey(name: 'SERVER_DB_CONNECTION_CHECK_TIMEOUT')
   final int? serverDBConnectionCheckTimeout;
   @JsonKey(name: 'REDIS_DB')
-  final StandardDatabaseConf redisDB;
+  final StandardDatabaseConf? redisDB;
   @JsonKey(name: 'DATABASES')
   final Map<String, StandardDatabaseConf>? databases;
   @JsonKey(name: 'EMAIL_PROVIDERS')
