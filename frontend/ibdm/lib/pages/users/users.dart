@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:data_table_2/data_table_2.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
@@ -24,6 +23,7 @@ import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/error_codes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/helpers/common_heplers.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
@@ -94,7 +94,6 @@ class UsersPage extends StatefulWidget {
 class _UsersPageState extends State<UsersPage> {
   final Rx<bool> _loaded = false.obs;
   final Rx<bool> _loadedUsers = false.obs;
-
   final Rx<bool> _loadedAddUserSuperiorOptions = false.obs;
 
   final RxList<ShadOption<User>> _addUserSuperiorOptions =
@@ -117,6 +116,8 @@ class _UsersPageState extends State<UsersPage> {
     "name": Sorter(isSelected: false, orderingValue: "-username"),
     "role": Sorter(isSelected: false, orderingValue: "-role"),
   }.obs;
+
+  String? executionId;
 
   int? nbrTotalUsers;
 
@@ -1188,7 +1189,7 @@ class _UsersPageState extends State<UsersPage> {
         actions: [
           ShadButton(
             child: Text(strings.value.addUser),
-            onPressed: () => _onAddUserPressed(context),
+            onPressed: () => _onAddUserPressed(context, getUniqueId()),
           )
         ],
         child: Obx(
@@ -1240,172 +1241,180 @@ class _UsersPageState extends State<UsersPage> {
 
   List<DataRow> _getRows(BuildContext context) {
     final strings = getTranslations(context).obs;
-    return usersData.map((user) {
-      if (_hovered[user.userId] == null) {
-        _hovered[user.userId] = false;
-      }
-      final actionsController = ShadPopoverController();
-      return DataRow2(
-        color: _getRowColor(context, user),
-        onDoubleTap: () => _showViewUserDialog(context, user),
-        cells: [
-          DataCell(
-            Text(
-              (usersData.indexOf(user) + 1).toString(),
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ).removeWhen(isAtMostSmallScreen(context)),
-          DataCell(
-            Center(
-              child: Padding(
-                padding: EdgeInsets.all(AppSizes.sm),
-                child: Avatar(user: user),
-              ),
-            ),
-          ).removeWhen(isAtMostSmallScreen(context)),
-          DataCell(
-            Text(
-              "${user.userId}",
-              style: Theme.of(context).textTheme.bodyMedium,
-              softWrap: false,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ).removeWhen(isAtMostMediumScreen(context)),
-          DataCell(
-            Text(
-              user.email,
-              style: Theme.of(context).textTheme.bodyMedium,
-              softWrap: false,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          DataCell(
-            Text(
-              getUserName(user, orEmail: false),
-              style: Theme.of(context).textTheme.bodyMedium,
-              softWrap: false,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ).removeWhen(isAtMostMediumScreen(context)),
-          DataCell(
-            MouseRegion(
-              onEnter: (p) => _hovered[user.userId] = true,
-              onExit: (p) => _hovered[user.userId] = false,
-              child: Text(
-                user.role.toUpperCase(),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: _hovered[user.userId] == true
-                          ? null
-                          : AppColors.getRoleColorWithRoleValue(user.role),
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                    ),
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
-          DataCell(
-            FittedBox(
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      _showViewUserDialog(context, user);
-                    },
-                    icon: Icon(Icons.remove_red_eye_rounded),
-                  ).removeWhen(isAtMostMediumScreen(context)),
-                  IconButton(
-                    onPressed: () {
-                      _showEditUserDialog(context, user);
-                    },
-                    icon: Icon(Icons.edit),
-                  ).removeWhen(isAtMostSmallScreen(context)),
-                  IconButton(
-                    onPressed: () {
-                      UsersPage.selectedUsers.add(user);
-                      _onDeleteButtonClick(context);
-                    },
-                    icon: Icon(Icons.delete),
-                  ).removeWhen(isAtMostMediumScreen(context)),
-                  ShadPopover(
-                    padding: EdgeInsets.zero,
-                    decoration: ShadDecoration(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
-                        border: ShadBorder.all(
-                          width: 0,
-                          radius: BorderRadius.circular(AppSizes.borderRadius),
-                        )),
-                    popover: (context) => SizedBox(
-                      width: AppSizes.lg * 5,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconWithLabelButton(
-                            icon: Icons.remove_red_eye_rounded,
-                            text: strings.value.view,
-                            onTap: () => {
-                              _showViewUserDialog(context, user),
-                              actionsController.toggle(),
-                            },
-                          ),
-                          IconWithLabelButton(
-                            icon: Icons.edit,
-                            onTap: () {
-                              _showEditUserDialog(context, user);
-                              actionsController.toggle();
-                            },
-                            text: strings.value.edit,
-                          ).removeWhen(isAtLeastMediumScreen(context)),
-                          IconWithLabelButton(
-                            icon: Icons.delete,
-                            text: strings.value.delete,
-                            onTap: () {
-                              UsersPage.selectedUsers.add(user);
-                              _onDeleteButtonClick(
-                                context,
-                                onDeleteConfirmed: () {
-                                  actionsController.toggle();
-                                  ShadToaster.of(context).hide();
-                                },
-                              );
-                            },
-                            activeColor: errorColor,
-                          ),
-                        ].nonNulls.toList(),
-                      ),
-                    ),
-                    controller: actionsController,
-                    child: IconButton(
-                      onPressed: () {
-                        actionsController.toggle();
-                      },
-                      icon: Icon(
-                        LucideIcons.ellipsisVertical,
-                        applyTextScaling: true,
-                      ),
-                    ),
-                  ).removeWhen(isAtLeastLargeScreen(context)),
-                ].nonNulls.toList(),
-              ),
-            ),
-          ),
-        ].nonNulls.toList(),
-        selected: UsersPage.selectedUsers.contains(user),
-        onSelectChanged: (value) {
-          if (UsersPage.selectedUsers.contains(user)) {
-            logger.d("unselected ${user.userId}: $value");
-            UsersPage.selectedUsers.remove(user);
-          } else {
-            logger.d("selected ${user.userId}: $value");
-            UsersPage.selectedUsers.add(user);
+    final userController = Get.find<UserController>();
+    return usersData
+        .map((user) {
+          if (user.userId == userController.user!.userId) {
+            return null;
           }
-        },
-      );
-    }).toList();
+          if (_hovered[user.userId] == null) {
+            _hovered[user.userId] = false;
+          }
+          final actionsController = ShadPopoverController();
+          return DataRow2(
+            color: _getRowColor(context, user),
+            onDoubleTap: () => _showViewUserDialog(context, user),
+            cells: [
+              DataCell(
+                Text(
+                  (usersData.indexOf(user) + 1).toString(),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ).removeWhen(isAtMostSmallScreen(context)),
+              DataCell(
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(AppSizes.sm),
+                    child: Avatar(user: user),
+                  ),
+                ),
+              ).removeWhen(isAtMostSmallScreen(context)),
+              DataCell(
+                Text(
+                  "${user.userId}",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ).removeWhen(isAtMostMediumScreen(context)),
+              DataCell(
+                Text(
+                  user.email,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              DataCell(
+                Text(
+                  getUserName(user, orEmail: false),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ).removeWhen(isAtMostMediumScreen(context)),
+              DataCell(
+                MouseRegion(
+                  onEnter: (p) => _hovered[user.userId] = true,
+                  onExit: (p) => _hovered[user.userId] = false,
+                  child: Text(
+                    user.role.toUpperCase(),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: _hovered[user.userId] == true
+                              ? null
+                              : AppColors.getRoleColorWithRoleValue(user.role),
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                        ),
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              DataCell(
+                FittedBox(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          _showViewUserDialog(context, user);
+                        },
+                        icon: Icon(Icons.remove_red_eye_rounded),
+                      ).removeWhen(isAtMostMediumScreen(context)),
+                      IconButton(
+                        onPressed: () {
+                          _showEditUserDialog(context, user);
+                        },
+                        icon: Icon(Icons.edit),
+                      ).removeWhen(isAtMostSmallScreen(context)),
+                      IconButton(
+                        onPressed: () {
+                          UsersPage.selectedUsers.add(user);
+                          _onDeleteButtonClick(context);
+                        },
+                        icon: Icon(Icons.delete),
+                      ).removeWhen(isAtMostMediumScreen(context)),
+                      ShadPopover(
+                        padding: EdgeInsets.zero,
+                        decoration: ShadDecoration(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
+                            border: ShadBorder.all(
+                              width: 0,
+                              radius:
+                                  BorderRadius.circular(AppSizes.borderRadius),
+                            )),
+                        popover: (context) => SizedBox(
+                          width: AppSizes.lg * 5,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconWithLabelButton(
+                                icon: Icons.remove_red_eye_rounded,
+                                text: strings.value.view,
+                                onTap: () => {
+                                  _showViewUserDialog(context, user),
+                                  actionsController.toggle(),
+                                },
+                              ),
+                              IconWithLabelButton(
+                                icon: Icons.edit,
+                                onTap: () {
+                                  _showEditUserDialog(context, user);
+                                  actionsController.toggle();
+                                },
+                                text: strings.value.edit,
+                              ).removeWhen(isAtLeastMediumScreen(context)),
+                              IconWithLabelButton(
+                                icon: Icons.delete,
+                                text: strings.value.delete,
+                                onTap: () {
+                                  UsersPage.selectedUsers.add(user);
+                                  _onDeleteButtonClick(
+                                    context,
+                                    onDeleteConfirmed: () {
+                                      actionsController.toggle();
+                                      ShadToaster.of(context).hide();
+                                    },
+                                  );
+                                },
+                                activeColor: errorColor,
+                              ),
+                            ].nonNulls.toList(),
+                          ),
+                        ),
+                        controller: actionsController,
+                        child: IconButton(
+                          onPressed: () {
+                            actionsController.toggle();
+                          },
+                          icon: Icon(
+                            LucideIcons.ellipsisVertical,
+                            applyTextScaling: true,
+                          ),
+                        ),
+                      ).removeWhen(isAtLeastLargeScreen(context)),
+                    ].nonNulls.toList(),
+                  ),
+                ),
+              ),
+            ].nonNulls.toList(),
+            selected: UsersPage.selectedUsers.contains(user),
+            onSelectChanged: (value) {
+              if (UsersPage.selectedUsers.contains(user)) {
+                logger.d("unselected ${user.userId}: $value");
+                UsersPage.selectedUsers.remove(user);
+              } else {
+                logger.d("selected ${user.userId}: $value");
+                UsersPage.selectedUsers.add(user);
+              }
+            },
+          );
+        })
+        .nonNulls
+        .toList();
   }
 
   Future _showEditUserDialog(BuildContext context, User user) async {
@@ -1486,6 +1495,7 @@ class _UsersPageState extends State<UsersPage> {
                     child: Text(strings.value.save),
                     onPressed: () {
                       onSaveButtonPressed(
+                        getUniqueId(),
                         context: context,
                         user: newUser,
                         password: (password != null) && (password!.isNotEmpty)
@@ -1525,6 +1535,7 @@ class _UsersPageState extends State<UsersPage> {
                             child: Text(strings.value.save),
                             onPressed: () {
                               onSaveButtonPressed(
+                                getUniqueId(),
                                 context: context,
                                 user: newUser,
                                 password:
@@ -1759,11 +1770,18 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  void _onAddUserPressed(BuildContext context) async {
+  void _onAddUserPressed(BuildContext context, String id) async {
+    executionId ??= id;
+    if (id != executionId) {
+      return;
+    }
+
     final strings = getTranslations(context).obs;
+
     if (!UsersPage.formKeyAddUser.currentState!.validate()) {
       Toasts.showErrorToastNotification(
           context: context, message: strings.value.pleaseFixErrorsInTheForm);
+      executionId = null;
       return;
     }
     Rx<FutureState> loadingToastState = FutureState.loading.obs;
@@ -1802,7 +1820,7 @@ class _UsersPageState extends State<UsersPage> {
           username: UsersPage.addUserNameController.text,
         );
       }
-
+      logger.e("passed the add user");
       if (UsersPage.addUserSuperior != null) {
         await api.addSubordinateAndSuperior(
           body: SubordinateAndSuperiorRequest(
@@ -1819,21 +1837,30 @@ class _UsersPageState extends State<UsersPage> {
       Future.delayed(
           Duration(seconds: 1), () => Toastification().dismissById(toast.id));
       // reload users list
-      _loadUsers(context);
+      _loadUsers(context, page: currentPage ?? 1);
+      executionId = null;
     } catch (e) {
+      executionId = null;
       logger.e("failed to add user: $e");
       if (e is dio.DioException) {
         for (var item in (e.response?.data as Map).entries) {
-          final errors = item.value as List;
           final translatedErrors = [];
-          for (var error in errors) {
-            final tErr = switch (error) {
-              ErrorCodes.USER_WITH_EMAIL_EXISTS =>
-                strings.value.userWithThisEmailAlreadyExists,
-              _ => error,
-            };
-            translatedErrors.add(tErr);
+          if (item.value is List) {
+            final errors = item.value as List;
+            for (var error in errors) {
+              final tErr = switch (error) {
+                ErrorCodes.USER_WITH_EMAIL_EXISTS =>
+                  strings.value.userWithThisEmailAlreadyExists,
+                _ => error,
+              };
+              translatedErrors.add(tErr);
+            }
           }
+
+          if (item.value is String) {
+            translatedErrors.add(item.value);
+          }
+
           String message = translatedErrors.join(", ");
 
           String key = item.key;
@@ -1852,17 +1879,23 @@ class _UsersPageState extends State<UsersPage> {
     }
   }
 
-  Future<void> onSaveButtonPressed({
+  Future<void> onSaveButtonPressed(
+    String id, {
     required BuildContext context,
     required User user,
     Uint8List? userAvatarBytes,
     File? userAvatarFile,
     String? password,
   }) async {
+    executionId ??= id;
+    if (id != executionId) {
+      return;
+    }
     final strings = getTranslations(context).obs;
     if (!UsersPage.formKeyAddUser.currentState!.validate()) {
       Toasts.showErrorToastNotification(
           context: context, message: strings.value.pleaseFixErrorsInTheForm);
+      executionId = null;
       return;
     }
     Rx<FutureState> loadingToastState = FutureState.loading.obs;
@@ -1941,8 +1974,11 @@ class _UsersPageState extends State<UsersPage> {
       Future.delayed(
           Duration(seconds: 1), () => Toastification().dismissById(toast.id));
       // reload users list
-      _loadUsers(context);
+      _loadUsers(context, page: currentPage ?? 1);
+      executionId = null;
     } catch (e) {
+      executionId = null;
+
       logger.e("failed to add user: $e");
       // show error toast
       loadingToastState.value = FutureState.error;

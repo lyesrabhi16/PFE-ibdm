@@ -112,13 +112,19 @@ class _ProfilePageState extends State<ProfilePage> {
                             text: strings.value.loading,
                           );
                         }
+                        logger.f(
+                            "superior options: ${addUserSuperiorOptions.length}");
                         return Column(
                           children: [
                             UserForm(
                               editable: _editable.value,
                               showPlaceHolders: false,
-                              showRole: !_editable.value,
-                              showSuperior: !_editable.value,
+                              showRole:
+                                  userController.user!.role == "ADMIN_SYSTEM" ||
+                                      !_editable.value,
+                              showSuperior:
+                                  userController.user!.role == "ADMIN_SYSTEM" ||
+                                      !_editable.value,
                               role: role,
                               user: userController.user,
                               formKeyAddUser: formKeyAddUser,

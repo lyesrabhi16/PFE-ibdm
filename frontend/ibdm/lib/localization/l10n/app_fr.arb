@@ -5,7 +5,7 @@
     "@homePageWelcomeMessage": {
         "description": "Message de bienvenue sur la page d'accueil"
     },
-    "login": "Connexion",
+    "login": "Connecter",
     "@login": {
         "description": "Texte du bouton de connexion"
     },
@@ -65,7 +65,7 @@
     "@loginSuccess": {
         "description": "Message de succès de la connexion"
     },
-    "logout": "Déconnexion",
+    "logout": "Déconnecter",
     "@logout": {
         "description": "Texte du bouton de déconnexion"
     },
@@ -539,9 +539,9 @@
     "@about": {
         "description": "Titre de la section à propos"
     },
-    "emailSchedules": "Programmations d'emails",
+    "emailSchedules": "Email Cycliques",
     "@emailSchedules": {
-        "description": "Titre de la section programmations d'emails"
+        "description": "Titre de la section d'emails cycliques"
     },
     "emailSents": "Emails envoyés",
     "@emailSents": {
@@ -549,7 +549,7 @@
     },
     "emailSchedulesDescription": "Emails envoyés à intervalles définis",
     "@emailSchedulesDescription": {
-        "description": "Description de la section programmations d'emails"
+        "description": "Description de la section d'emails cycliques"
     },
     "emailSentsDescription": "Emails envoyés aux utilisateurs",
     "@emailSentsDescription": {
@@ -587,9 +587,9 @@
     "@addAlertEmail": {
         "description": "Texte du bouton ajouter une alerte par email"
     },
-    "addScheduleEmail": "Ajouter une programmation d'email",
+    "addScheduleEmail": "Ajouter un email cyclique",
     "@addScheduleEmail": {
-        "description": "Texte du bouton ajouter une programmation d'email"
+        "description": "Texte du bouton ajouter un email cyclique"
     },
     "edit": "Modifier",
     "@edit": {
@@ -619,33 +619,33 @@
     "@days": {
         "description": "Étiquette des jours"
     },
-    "deletingSchedules": "Suppression des programmations...",
+    "deletingSchedules": "Suppression des emails cycliques...",
     "@deletingSchedules": {
-        "description": "Message de statut de suppression des programmations"
+        "description": "Message de statut de suppression des emails cycliques"
     },
     "deletingAlerts": "Suppression des alertes...",
     "@deletingAlerts": {
         "description": "Message de statut de suppression des alertes"
     },
-    "schedulesDeleted": "Programmations supprimées",
+    "schedulesDeleted": "Emails cycliques supprimées",
     "@schedulesDeleted": {
-        "description": "Message de programmation supprimée"
+        "description": "Message d'email cyclique supprimée"
     },
     "alertsDeleted": "Alertes supprimées",
     "@alertsDeleted": {
         "description": "Message d'alertes supprimées"
     },
-    "failedToDeleteSchedules": "Échec de la suppression des programmations",
+    "failedToDeleteSchedules": "Échec de la suppression des emails cycliques",
     "@failedToDeleteSchedules": {
-        "description": "Message d'échec de la suppression des programmations"
+        "description": "Message d'échec de la suppression des emails cycliques"
     },
     "failedToDeleteAlerts": "Échec de la suppression des alertes",
     "@failedToDeleteAlerts": {
         "description": "Message d'échec de la suppression des alertes"
     },
-    "failedToDeleteScheduleWithId": "Échec de la suppression de la programmation avec l'ID : {id}",
+    "failedToDeleteScheduleWithId": "Échec de la suppression de l'email cyclique avec l'ID : {id}",
     "@failedToDeleteScheduleWithId": {
-        "description": "Message d'échec de la suppression de la programmation avec ID",
+        "description": "Message d'échec de la suppression de l'email cyclique avec ID",
         "placeholders": {
             "id": {
                 "type": "int"
@@ -661,69 +661,69 @@
             }
         }
     },
-    "sortSchedules": "Trier les programmations",
+    "sortSchedules": "Trier les emails cycliques",
     "@sortSchedules": {
-        "description": "Texte du bouton trier les programmations"
+        "description": "Texte du bouton trier les emails cycliques"
     },
     "sortAlerts": "Trier les alertes",
     "@sortAlerts": {
         "description": "Texte du bouton trier les alertes"
     },
-    "filterSchedules": "Filtrer les programmations",
+    "filterSchedules": "Filtrer les emails cycliques",
     "@filterSchedules": {
-        "description": "Texte du bouton filtrer les programmations"
+        "description": "Texte du bouton filtrer les emails cycliques"
     },
     "filterAlerts": "Filtrer les alertes",
     "@filterAlerts": {
         "description": "Texte du bouton filtrer les alertes"
     },
-    "editSchedule": "Modifier la programmation",
+    "editSchedule": "Modifier l'email cyclique",
     "@editSchedule": {
-        "description": "Texte du bouton modifier la programmation"
+        "description": "Texte du bouton modifier l'email cyclique"
     },
     "editAlert": "Modifier l'alerte",
     "@editAlert": {
         "description": "Texte du bouton modifier l'alerte"
     },
-    "editScheduleSettings": "Modifier les paramètres de programmation",
+    "editScheduleSettings": "Modifier les paramètres d'email cyclique",
     "@editScheduleSettings": {
-        "description": "Option de modification des paramètres de programmation"
+        "description": "Option de modification des paramètres d'email cyclique"
     },
     "editAlertSettings": "Modifier les paramètres d'alerte",
     "@editAlertSettings": {
         "description": "Option de modification des paramètres d'alerte"
     },
-    "viewSchedule": "Voir la programmation",
+    "viewSchedule": "Consulter l'email cyclique",
     "@viewSchedule": {
-        "description": "Texte du bouton voir la programmation"
+        "description": "Texte du bouton consulter l'email cyclique"
     },
-    "viewAlert": "Voir l'alerte",
+    "viewAlert": "Consulter l'alerte",
     "@viewAlert": {
-        "description": "Texte du bouton voir l'alerte"
+        "description": "Texte du bouton consulter l'alerte"
     },
-    "view": "Voir",
+    "view": "Consulter",
     "@view": {
-        "description": "Texte du bouton voir"
+        "description": "Texte du bouton consulter"
     },
-    "viewScheduleSettings": "Voir les paramètres de programmation",
+    "viewScheduleSettings": "Voir les paramètres d'email cyclique",
     "@viewScheduleSettings": {
-        "description": "Option de visualisation des paramètres de programmation"
+        "description": "Option de visualisation des paramètres d'email cyclique"
     },
     "viewAlertSettings": "Voir les paramètres d'alerte",
     "@viewAlertSettings": {
         "description": "Option de visualisation des paramètres d'alerte"
     },
-    "addSchedule": "Ajouter une programmation",
+    "addSchedule": "Ajouter un email cyclique",
     "@addSchedule": {
-        "description": "Texte du bouton ajouter une programmation"
+        "description": "Texte du bouton ajouter un email cyclique"
     },
     "addAlert": "Ajouter une alerte",
     "@addAlert": {
         "description": "Texte du bouton ajouter une alerte"
     },
-    "addScheduleSettings": "Ajouter une programmation d'email",
+    "addScheduleSettings": "Ajouter un email cyclique",
     "@addScheduleSettings": {
-        "description": "Option d'ajout d'une programmation d'email"
+        "description": "Option d'ajout d'un email cyclique"
     },
     "addAlertSettings": "Ajouter une alerte par email",
     "@addAlertSettings": {
@@ -733,25 +733,25 @@
     "@unscheduled": {
         "description": "Étiquette de statut non programmé"
     },
-    "deleteSchedules": "Supprimer les programmations",
+    "deleteSchedules": "Supprimer les emails cycliques",
     "@deleteSchedules": {
-        "description": "Texte du bouton supprimer les programmations"
+        "description": "Texte du bouton supprimer les emails cycliques"
     },
     "deleteAlerts": "Supprimer les alertes",
     "@deleteAlerts": {
         "description": "Texte du bouton supprimer les alertes"
     },
-    "selectSchedulesToDelete": "Sélectionner les programmations à supprimer",
+    "selectSchedulesToDelete": "Sélectionner les emails cycliques à supprimer",
     "@selectSchedulesToDelete": {
-        "description": "Invitation à sélectionner les programmations à supprimer"
+        "description": "Invitation à sélectionner les emails cycliques à supprimer"
     },
     "selectAlertsToDelete": "Sélectionner les alertes à supprimer",
     "@selectAlertsToDelete": {
         "description": "Invitation à sélectionner les alertes à supprimer"
     },
-    "confirmSchedulesDeletion": "Êtes-vous sûr de vouloir supprimer {count, plural, one {la programmation} other {les programmations}} ?",
+    "confirmSchedulesDeletion": "Êtes-vous sûr de vouloir supprimer {count, plural, one {l'email cyclique} other {les emails cycliques}} ?",
     "@confirmSchedulesDeletion": {
-        "description": "Message de confirmation pour la suppression des programmations",
+        "description": "Message de confirmation pour la suppression des emails cycliques",
         "placeholders": {
             "count": {
                 "type": "int"
@@ -794,9 +794,9 @@
     "@sendThisAlertToUsers": {
         "description": "Option d'envoi de l'alerte aux utilisateurs"
     },
-    "schedules": "Programmations",
+    "schedules": "Emails Cycliques",
     "@schedules": {
-        "description": "Titre de la section programmations"
+        "description": "Titre de la section emails cycliques"
     },
     "alerts": "Alertes",
     "@alerts": {
@@ -870,37 +870,37 @@
     "@selectInterval": {
         "description": "Invitation à sélectionner un intervalle"
     },
-    "addingSchedule": "Ajout d'une programmation...",
+    "addingSchedule": "Ajout d'un email cyclique...",
     "@addingSchedule": {
-        "description": "Message de statut d'ajout d'une programmation"
+        "description": "Message de statut d'ajout d'un email cyclique"
     },
-    "scheduleAdded": "Programmation ajoutée",
+    "scheduleAdded": "Emails cyclique ajoutée",
     "@scheduleAdded": {
-        "description": "Message de programmation ajoutée"
+        "description": "Message d'email cyclique ajoutée"
     },
-    "failedToAddSchedule": "Échec de l'ajout de la programmation",
+    "failedToAddSchedule": "Échec de l'ajout de l'email cyclique",
     "@failedToAddSchedule": {
-        "description": "Message d'échec de l'ajout de la programmation"
+        "description": "Message d'échec de l'ajout de l'email cyclique"
     },
-    "savingSchedule": "Enregistrement de la programmation...",
+    "savingSchedule": "Enregistrement de l'email cyclique...",
     "@savingSchedule": {
-        "description": "Message de statut d'enregistrement de la programmation"
+        "description": "Message de statut d'enregistrement de l'email cyclique"
     },
-    "scheduleSaved": "Programmation enregistrée",
+    "scheduleSaved": "Emails cyclique enregistrée",
     "@scheduleSaved": {
-        "description": "Message de programmation enregistrée"
+        "description": "Message de email cyclique enregistrée"
     },
-    "failedToSaveSchedule": "Échec de l'enregistrement de la programmation",
+    "failedToSaveSchedule": "Échec de l'enregistrement de l'email cyclique",
     "@failedToSaveSchedule": {
-        "description": "Message d'échec de l'enregistrement de la programmation"
+        "description": "Message d'échec de l'enregistrement de l'email cyclique"
     },
     "sents": "Envoyés",
     "@sents": {
         "description": "Étiquette envoyés"
     },
-    "scheduleSent": "Programmation envoyée",
+    "scheduleSent": "Email cyclique envoyée",
     "@scheduleSent": {
-        "description": "Message de programmation envoyée"
+        "description": "Message d'email cyclique envoyée"
     },
     "alertSent": "Alerte envoyée",
     "@alertSent": {
@@ -939,7 +939,7 @@
     "@receptionist": {
         "description": "Étiquette du rôle réceptionniste"
     },
-    "schedule": "Emails cycliques",
+    "schedule": "Email cyclique",
     "@schedule": {
         "description": "Titre de la section emails cycliques"
     },
@@ -1610,9 +1610,9 @@
     "@loadingAlerts": {
         "description": "Message de statut de chargement des alertes"
     },
-    "loadingSchedules": "Chargement des programmations...",
+    "loadingSchedules": "Chargement des emails cycliques...",
     "@loadingSchedules": {
-        "description": "Message de statut de chargement des programmations"
+        "description": "Message de statut de chargement des emails cycliques"
     },
     "loadingTags": "Chargement des étiquettes...",
     "@loadingTags": {
@@ -1784,7 +1784,7 @@
     "@list": {
         "description": "Étiquette de la vue en liste"
     },
-    "graph": "Graphique",
+    "graph": "Graphe",
     "@graph": {
         "description": "Étiquette de la vue en graphique"
     },
