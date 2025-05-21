@@ -12,6 +12,13 @@ from api_v1.env import Env
 def getValueForCustomExpression(action:str, attrs: list, obj: object) -> float:
     if action == "total":
         return sum((getattr(obj, attr) or 0)  for attr in attrs)
+    if action == "stopped":
+         last5 = getattr(obj, "objects").all().order_by("-date")[:5]
+         first_record_date = last5[0].date
+         for record in last5:
+             if record.date != first_record_date:
+                 return 0
+         return 1
     raise ValueError(f"Unknown Custom Expression action '{action}'")
     
 

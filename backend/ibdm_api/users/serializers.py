@@ -92,6 +92,11 @@ class SubordinateAndSuperiorSerializer(serializers.ModelSerializer):
 class UserSerializerWithSubordinates(serializers.ModelSerializer, SuperiorsAndSubordinatesFieldsSerializerMixin):
     user_id = serializers.IntegerField(source="id", read_only=True)
     subordinates = serializers.SerializerMethodField()
+    role = serializers.SlugRelatedField(
+ slug_field="group__name", queryset=Role.objects.all()
+)
+
+
     class Meta():
         model = User
         fields = [
@@ -99,11 +104,17 @@ class UserSerializerWithSubordinates(serializers.ModelSerializer, SuperiorsAndSu
             "email",
             "username",
             "subordinates",
+            "role",
         ]
         
 class UserSerializerWithSuperiors(serializers.ModelSerializer, SuperiorsAndSubordinatesFieldsSerializerMixin):
     user_id = serializers.IntegerField(source="id", read_only=True)
     superiors = serializers.SerializerMethodField()
+    role = serializers.SlugRelatedField(
+ slug_field="group__name", queryset=Role.objects.all()
+)
+
+
     class Meta():
         model = User
         fields = [
@@ -111,6 +122,7 @@ class UserSerializerWithSuperiors(serializers.ModelSerializer, SuperiorsAndSubor
             "email",
             "username",
             "superiors",
+            "role"
         ]
 
 class UserSerializer(serializers.ModelSerializer, SuperiorsAndSubordinatesFieldsSerializerMixin):

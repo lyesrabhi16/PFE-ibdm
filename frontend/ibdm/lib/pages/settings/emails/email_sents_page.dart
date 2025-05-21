@@ -871,13 +871,13 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
         //       ),
         //   ],
         // ),
-        Text(strings.value.filterbyTypeofEmail,
+        Text(strings.value.filterByTypeOfEmail,
             style: Theme.of(context).textTheme.bodyMedium),
         SizedBox(
           height: AppSizes.sm,
         ),
         DropdownMenu<String>(
-          hintText: strings.value.selectTypeofEmail,
+          hintText: strings.value.selectTypeOfEmail,
           label: Text(strings.value.scheduleEmail),
           controller: emailTypeFilterController,
           width: AppSizes.xl * 8,

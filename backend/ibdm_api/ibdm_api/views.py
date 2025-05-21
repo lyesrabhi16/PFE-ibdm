@@ -25,7 +25,7 @@ def index(request):
     summary="Get the CA certificate",
     operation_id="getCA",
     request=None,
-    responses={(200, "application/x-x509-ca-cert"): OpenApiTypes.BINARY},
+    responses={(200, "application/x-x509-ca-cert"): OpenApiTypes.STR, 404: None},
 )
 @api_view(["GET"])
 def getCA(request):

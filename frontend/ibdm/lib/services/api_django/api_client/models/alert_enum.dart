@@ -125,9 +125,13 @@ import 'package:json_annotation/json_annotation.dart';
 /// * `utilite.ut_sid_pg` - utilite.ut_sid_pg.
 /// * `utilite.ut_sid_tt` - utilite.ut_sid_tt.
 /// * `utilite.ut_sid_tc` - utilite.ut_sid_tc.
-/// * `sucre.total.tetra` - sucre.total.tetra.
 /// * `sucre.total` - sucre.total.
+/// * `sucre.stopped` - sucre.stopped.
 /// * `sucre.total.adue` - sucre.total.adue.
+/// * `sucre.total.tetra` - sucre.total.tetra.
+/// * `co2_ifruit.stopped` - co2_ifruit.stopped.
+/// * `filtration.stopped` - filtration.stopped.
+/// * `utilite.stopped` - utilite.stopped.
 @JsonEnum()
 enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `sucre.t_s21`.
@@ -493,15 +497,27 @@ enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `utilite.ut_sid_tc`.
   @JsonValue('utilite.ut_sid_tc')
   undefined120('utilite.ut_sid_tc'),
-  /// Incorrect name has been replaced. Original name: `sucre.total.tetra`.
-  @JsonValue('sucre.total.tetra')
-  undefined121('sucre.total.tetra'),
   /// Incorrect name has been replaced. Original name: `sucre.total`.
   @JsonValue('sucre.total')
-  undefined122('sucre.total'),
+  undefined121('sucre.total'),
+  /// Incorrect name has been replaced. Original name: `sucre.stopped`.
+  @JsonValue('sucre.stopped')
+  undefined122('sucre.stopped'),
   /// Incorrect name has been replaced. Original name: `sucre.total.adue`.
   @JsonValue('sucre.total.adue')
   undefined123('sucre.total.adue'),
+  /// Incorrect name has been replaced. Original name: `sucre.total.tetra`.
+  @JsonValue('sucre.total.tetra')
+  undefined124('sucre.total.tetra'),
+  /// Incorrect name has been replaced. Original name: `co2_ifruit.stopped`.
+  @JsonValue('co2_ifruit.stopped')
+  undefined125('co2_ifruit.stopped'),
+  /// Incorrect name has been replaced. Original name: `filtration.stopped`.
+  @JsonValue('filtration.stopped')
+  undefined126('filtration.stopped'),
+  /// Incorrect name has been replaced. Original name: `utilite.stopped`.
+  @JsonValue('utilite.stopped')
+  undefined127('utilite.stopped'),
   /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
   $unknown(null);
 

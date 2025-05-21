@@ -4,6 +4,7 @@ import 'package:elegant_notification/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
+import 'package:ibdm/common/controllers/permissions_controller.dart';
 import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
@@ -116,23 +117,29 @@ class _ReportsPageState extends State<ReportsPage> {
 
 Future<List<Widget>> getTodaysReports(BuildContext context) async {
   final api = await ApiClientInstance.getApiClient();
+  final PermissionsController permissionsController =
+      Get.find<PermissionsController>();
   final reports = await Future.wait([
-    api.generateReport(
-      date: DateTime.now().toIso8601String(),
-      reportType: ReportType.inventaireSucre,
-    ),
-    api.generateReport(
-      date: DateTime.now().toIso8601String(),
-      reportType: ReportType.filtration,
-    ),
-    api.generateReport(
-      date: DateTime.now().toIso8601String(),
-      reportType: ReportType.utilite,
-    ),
-    api.generateReport(
-      date: DateTime.now().toIso8601String(),
-      reportType: ReportType.co2Ifruit,
-    ),
+    if (permissionsController.hasPerm(Permissions.viewSucreReportsPage))
+      api.generateReport(
+        date: DateTime.now().toIso8601String(),
+        reportType: ReportType.inventaireSucre,
+      ),
+    if (permissionsController.hasPerm(Permissions.viewFiltrationReportsPage))
+      api.generateReport(
+        date: DateTime.now().toIso8601String(),
+        reportType: ReportType.filtration,
+      ),
+    if (permissionsController.hasPerm(Permissions.viewUtiliteReportsPage))
+      api.generateReport(
+        date: DateTime.now().toIso8601String(),
+        reportType: ReportType.utilite,
+      ),
+    if (permissionsController.hasPerm(Permissions.viewCo2ReportsPage))
+      api.generateReport(
+        date: DateTime.now().toIso8601String(),
+        reportType: ReportType.co2Ifruit,
+      ),
   ]);
 
   return reports

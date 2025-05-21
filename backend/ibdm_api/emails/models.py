@@ -2,6 +2,10 @@ from django.db import models
 
 
 CUSTOM_MONITORED_VALUES = {
+    "sucre.stopped": (),
+    "filtration.stopped": (),
+    "co2_ifruit.stopped": (),
+    "utilite.stopped": (),
     "sucre.total.tetra": (
         "t_s21",
         "t_s22",

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
@@ -60,6 +61,7 @@ class UserForm extends StatelessWidget {
   static final RxList<Role> roles = <Role>[].obs;
   Role? role;
   final bool showPlaceHolders;
+  final RxBool _showPassword = false.obs;
   // add user form
   final GlobalKey<FormState> formKeyAddUser;
   final TextEditingController addUserEmailController;
@@ -321,7 +323,9 @@ class UserForm extends StatelessWidget {
                 enabled: editable,
                 controller: addUserEmailController,
                 keyboardType: TextInputType.emailAddress,
-                validator: FormBuilderValidators.email(),
+                validator: FormBuilderValidators.email(
+                  errorText: strings.value.invalidEmail,
+                ),
                 label: Text(strings.value.email),
                 placeholder: Text("account@exmaple.com"),
               ),
@@ -336,7 +340,19 @@ class UserForm extends StatelessWidget {
                 keyboardType: TextInputType.visiblePassword,
                 validator: (v) => AppValidators.customPasswordValidator(v,
                     optional: isEditing),
-                obscureText: true,
+                obscureText: !_showPassword.value,
+                suffix: IconButton(
+                  icon: Icon(
+                    _showPassword.value ? LucideIcons.eye : LucideIcons.eyeOff,
+                  ),
+                  onPressed: () {
+                    _showPassword.value = !_showPassword.value;
+                  },
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSizes.sm,
+                  vertical: 0,
+                ),
                 label: Text(isEditing
                     ? strings.value.newPassword
                     : strings.value.password),
@@ -348,8 +364,21 @@ class UserForm extends StatelessWidget {
                 enabled: editable,
                 controller: addFirstNameController,
                 keyboardType: TextInputType.name,
-                validator: FormBuilderValidators.firstName(),
+                validator: FormBuilderValidators.firstName(
+                    regex: RegExp("^[a-zA-Z]+( [a-zA-Z]+)*\$"),
+                    errorText: strings.value.invalidFirstName,
+                    checkNullOrEmpty: false),
                 label: Text(strings.value.firstName),
+                inputFormatters: [
+                  TextInputFormatter.withFunction(
+                    (oldValue, newValue) {
+                      return TextEditingValue(
+                        text: newValue.text.capitalize!,
+                        selection: newValue.selection,
+                      );
+                    },
+                  ),
+                ],
                 placeholder: showPlaceHolders ? Text("Lyes") : null,
               ),
               // last_name
@@ -357,8 +386,21 @@ class UserForm extends StatelessWidget {
                 enabled: editable,
                 controller: addLastNameController,
                 keyboardType: TextInputType.name,
-                validator: FormBuilderValidators.lastName(),
+                validator: FormBuilderValidators.lastName(
+                    regex: RegExp("^[a-zA-Z]+( [a-zA-Z]+)*\$"),
+                    errorText: strings.value.invalidLastName,
+                    checkNullOrEmpty: false),
                 label: Text(strings.value.lastName),
+                inputFormatters: [
+                  TextInputFormatter.withFunction(
+                    (oldValue, newValue) {
+                      return TextEditingValue(
+                        text: newValue.text.capitalize!,
+                        selection: newValue.selection,
+                      );
+                    },
+                  ),
+                ],
                 placeholder: showPlaceHolders ? Text("Rabhi") : null,
               ),
               // username
@@ -372,6 +414,8 @@ class UserForm extends StatelessWidget {
                   allowNumbers: true,
                   allowSpace: true,
                   allowUnderscore: true,
+                  errorText: strings.value.invalidField(strings.value.username),
+                  checkNullOrEmpty: false,
                 ),
                 label: Text(strings.value.username),
                 placeholder: showPlaceHolders ? Text("Lyes Rabhi") : null,
@@ -521,8 +565,29 @@ class UserForm extends StatelessWidget {
       return;
     }
 
-    _addUserSuperior = await (await ApiClientInstance.getApiClient())
-        .getUser(id: user!.superiors.first.userId);
+    try {
+      _addUserSuperior = await (await ApiClientInstance.getApiClient())
+          .getUser(id: user!.superiors.first.userId);
+    } catch (e) {
+      logger.e("error getting superior: $e");
+      if (user!.superiors.isNotEmpty) {
+        _addUserSuperior = User(
+          userId: user!.superiors.first.userId,
+          username: user!.superiors.first.username,
+          email: user!.superiors.first.email,
+          role: user!.superiors.first.role,
+          firstName: "",
+          lastName: "",
+          phoneNumber: "",
+          avatarUrl: "",
+          superiors: [],
+          subordinates: [],
+          userPermissions: [],
+        );
+      } else {
+        _addUserSuperior = null;
+      }
+    }
 
     _loadedSuperiorInitialValue.value = true;
   }

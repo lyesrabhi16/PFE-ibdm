@@ -21,8 +21,10 @@ ServerConfig _$ServerConfigFromJson(Map<String, dynamic> json) => ServerConfig(
       logTOFiles: json['LOG_TO_FILES'] as bool?,
       serverDBConnectionCheckTimeout:
           (json['SERVER_DB_CONNECTION_CHECK_TIMEOUT'] as num?)?.toInt(),
-      redisDB: StandardDatabaseConf.fromJson(
-          json['REDIS_DB'] as Map<String, dynamic>),
+      redisDB: json['REDIS_DB'] == null
+          ? null
+          : StandardDatabaseConf.fromJson(
+              json['REDIS_DB'] as Map<String, dynamic>),
       databases: (json['DATABASES'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(
             k, StandardDatabaseConf.fromJson(e as Map<String, dynamic>)),

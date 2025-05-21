@@ -39,7 +39,7 @@ class LoginActions {
     // show loading toast
     final loginInProgressToast = Toasts.showStatefulToast(
       context: context,
-      message: strings.logginIn,
+      message: strings.loggingIn,
       messageSuccess: strings.loginSuccessful,
       messageError: strings.loginFailed,
       state: loginProgress,

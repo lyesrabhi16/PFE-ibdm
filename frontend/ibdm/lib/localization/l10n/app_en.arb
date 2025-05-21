@@ -1,7 +1,6 @@
 {
-    "@@author": "lyes rabhi",
+    "@@author": "Lyes Rabhi",
     "@@locale": "en",
-    
     "homePageWelcomeMessage": "Welcome to the app",
     "@homePageWelcomeMessage": {
         "description": "Welcome message on the home page"
@@ -18,7 +17,7 @@
     "@email": {
         "description": "Email field label"
     },
-    "emailExemple": "account@exmaple.com",
+    "emailExemple": "account@example.com",
     "@emailExemple": {
         "description": "Example email address"
     },
@@ -62,7 +61,7 @@
     "@loginFailed": {
         "description": "Login failed message"
     },
-    "loginSuccess": "Login success",
+    "loginSuccess": "Login successful",
     "@loginSuccess": {
         "description": "Login success message"
     },
@@ -70,7 +69,7 @@
     "@logout": {
         "description": "Logout button text"
     },
-    "logoutSuccess": "Logout success",
+    "logoutSuccess": "Logout successful",
     "@logoutSuccess": {
         "description": "Logout success message"
     },
@@ -82,8 +81,8 @@
     "@pleaseFillInAllFields": {
         "description": "Prompt to fill in all fields"
     },
-    "logginIn": "Logging in...",
-    "@logginIn": {
+    "loggingIn": "Logging in...",
+    "@loggingIn": {
         "description": "Logging in status message"
     },
     "loginSuccessful": "Login successful",
@@ -106,11 +105,11 @@
     "@loginSuccessMessage": {
         "description": "Login success detailed message"
     },
-    "connectionFailedError": "A Connection Error occurred, please check your internet connection and try again",
+    "connectionFailedError": "A connection error occurred, please check your internet connection and try again",
     "@connectionFailedError": {
         "description": "Connection failed error message"
     },
-    "serverError": "A Server Error occurred, please try again later",
+    "serverError": "A server error occurred, please try again later",
     "@serverError": {
         "description": "Server error message"
     },
@@ -122,11 +121,11 @@
     "@noInternetConnectionMessage": {
         "description": "Detailed no internet connection message"
     },
-    "timeOutError": "Request Timed Out, please try again later",
+    "timeOutError": "Request timed out, please try again later",
     "@timeOutError": {
         "description": "Timeout error message"
     },
-    "cancelMessage": "Request Cancelled",
+    "cancelMessage": "Request cancelled",
     "@cancelMessage": {
         "description": "Request cancelled message"
     },
@@ -134,19 +133,19 @@
     "@unknownError": {
         "description": "Unknown error message"
     },
-    "connectionFailed": "Connection Failed",
+    "connectionFailed": "Connection failed",
     "@connectionFailed": {
         "description": "Connection failed message"
     },
-    "accessDenied": "Access Denied",
+    "accessDenied": "Access denied",
     "@accessDenied": {
         "description": "Access denied message"
     },
-    "loginRequired": "You must be Logged In",
+    "loginRequired": "You must be logged in",
     "@loginRequired": {
         "description": "Login required message"
     },
-    "logoutRequired": "You must be Logged Out",
+    "logoutRequired": "You must be logged out",
     "@logoutRequired": {
         "description": "Logout required message"
     },
@@ -178,7 +177,7 @@
     "@filterUser": {
         "description": "Filter users button text"
     },
-    "filterByRole": "Filter by Role",
+    "filterByRole": "Filter by role",
     "@filterByRole": {
         "description": "Filter by role option"
     },
@@ -210,16 +209,19 @@
     "@name": {
         "description": "Name field label"
     },
-    "perPage": "Per Page",
+    "perPage": "Per page",
     "@perPage": {
         "description": "Per page label"
     },
     "yes": "Yes",
+    "@yes": {
+        "description": "Yes option"
+    },
     "no": "No",
-    "num": "no",
     "@no": {
         "description": "No option"
     },
+    "num": "Num",
     "avatar": "Avatar",
     "@avatar": {
         "description": "Avatar field label"
@@ -232,7 +234,7 @@
     "@page": {
         "description": "Page label"
     },
-    "prevPage": "Prev",
+    "prevPage": "Previous",
     "@prevPage": {
         "description": "Previous page button text"
     },
@@ -244,7 +246,7 @@
     "@users": {
         "description": "Users section title"
     },
-    "deleteUser": "Delete Users",
+    "deleteUser": "Delete users",
     "@deleteUser": {
         "description": "Delete users button text"
     },
@@ -258,13 +260,13 @@
     },
     "repFav": "Yes",
     "@repFav": {
-        "description": "Yes option"
+        "description": "Yes option for favorites"
     },
     "repDeFav": "No",
     "@repDeFav": {
-        "description": "No option"
+        "description": "No option for favorites"
     },
-    "pleaseFixErrorsInTheForm": "¨Please fix the errors in the form",
+    "pleaseFixErrorsInTheForm": "Please fix the errors in the form",
     "@pleaseFixErrorsInTheForm": {
         "description": "Prompt to fix errors in the form"
     },
@@ -284,11 +286,11 @@
     "@failedToAddUserMessage": {
         "description": "Failed to add user message"
     },
-    "successAddUserMessage": "User Added Successfully",
+    "successAddUserMessage": "User added successfully",
     "@successAddUserMessage": {
         "description": "User added successfully message"
     },
-    "openingFilePicker": "Opening File Picker...",
+    "openingFilePicker": "Opening file picker...",
     "@openingFilePicker": {
         "description": "Opening file picker status message"
     },
@@ -296,7 +298,7 @@
     "@canceled": {
         "description": "Canceled status message"
     },
-    "fileSelected": "File Selected",
+    "fileSelected": "File selected",
     "@fileSelected": {
         "description": "File selected status message"
     },
@@ -308,7 +310,7 @@
     "@superior": {
         "description": "Superior field label"
     },
-    "selectSuperior": "Select a Superior",
+    "selectSuperior": "Select a superior",
     "@selectSuperior": {
         "description": "Prompt to select a superior"
     },
@@ -336,152 +338,420 @@
     "me": "Me",
     "@me": {
         "description": "Me section title"
-    },"siroperieTitle": "Siroperie",
-	"january": "January",
-	"february": "February",
-	"march": "March",
-	"april": "April",
-	"may": "May",
-	"june": "June",
-	"july": "July",
-	"august": "August",
-	"september": "September",
-	"october": "October",
-	"november": "November",
-	"december": "December",
-	"year": "Year : {year}",
-	"@year": {
-		"placeholders": {
-			"year": {
-				"type": "int",
-				"description": "the year to display",
-				"example": "2025"
-			}
-		}
-	},
-	"month": "Month: {month}",
-	"@month": {
-		"placeholders": {
-			"month": {
-				"type": "String",
-				"description": "the month to display",
-				"example": "july"
-			}
-		}
-	},
-	"day": "Day: {day}",
-	"@day": {
-		"placeholders": {
-			"day": {
-				"type": "String",
-				"description": "the day to display",
-				"example": "17"
-			}
-		}
-	}
-	,
-	"hour": "Hour",
-	"minute": "Minute",
-	"second": "Second",
-    "pick":"Pick",
-	"totalSucre": "Sucre Total :",
-	"totalSucreTetra": "Sucre Total Tetra :",
-	"totalSucreAdue": "Sucre Total Adue:",
-	"sucreTetraTitle": "Sucre Tetra",
-	"sucreAdueTitle": "Sucre Adue",
-	"showLiveData": "show Live Data",
-	"showingLiveData": "showing Live Data",
-	"inventory": "inventory",
-	"inventoryDescription": "show the inventory of a specific day.",
-	"cuve": "cuve",
-	"failedToGetInventory": "Failed to get inventory",
-	"toOrder": "To Order",
-	"tank": "{count, plural, one {Tank} other {Tanks}}",
-	"@tank": {
-		"placeholders": {
-			"count": {
-				"type": "int",
-				"description": "the number of tanks",
-				"example": "5"
-			}
-		}
-	},
-        "filtrationTitle": "Filtration",
-        "eauBrute": "Eau Brute",
-        "eauFiltrer": "Eau Filtrée",
-        "eauOsmose": "Eau Osmosée",
+    },
+    "siroperieTitle": "Syrup Production",
+    "@siroperieTitle": {
+        "description": "Syrup production section title"
+    },
+    "january": "January",
+    "@january": {
+        "description": "Month name for January"
+    },
+    "february": "February",
+    "@february": {
+        "description": "Month name for February"
+    },
+    "march": "March",
+    "@march": {
+        "description": "Month name for March"
+    },
+    "april": "April",
+    "@april": {
+        "description": "Month name for April"
+    },
+    "may": "May",
+    "@may": {
+        "description": "Month name for May"
+    },
+    "june": "June",
+    "@june": {
+        "description": "Month name for June"
+    },
+    "july": "July",
+    "@july": {
+        "description": "Month name for July"
+    },
+    "august": "August",
+    "@august": {
+        "description": "Month name for August"
+    },
+    "september": "September",
+    "@september": {
+        "description": "Month name for September"
+    },
+    "october": "October",
+    "@october": {
+        "description": "Month name for October"
+    },
+    "november": "November",
+    "@november": {
+        "description": "Month name for November"
+    },
+    "december": "December",
+    "@december": {
+        "description": "Month name for December"
+    },
+    "year": "Year: {year}",
+    "@year": {
+        "description": "Year display with placeholder",
+        "placeholders": {
+            "year": {
+                "type": "int",
+                "description": "The year to display",
+                "example": "2025"
+            }
+        }
+    },
+    "month": "Month: {month}",
+    "@month": {
+        "description": "Month display with placeholder",
+        "placeholders": {
+            "month": {
+                "type": "String",
+                "description": "The month to display",
+                "example": "July"
+            }
+        }
+    },
+    "day": "Day: {day}",
+    "@day": {
+        "description": "Day display with placeholder",
+        "placeholders": {
+            "day": {
+                "type": "String",
+                "description": "The day to display",
+                "example": "17"
+            }
+        }
+    },
+    "hour": "Hour",
+    "@hour": {
+        "description": "Hour label"
+    },
+    "minute": "Minute",
+    "@minute": {
+        "description": "Minute label"
+    },
+    "second": "Second",
+    "@second": {
+        "description": "Second label"
+    },
+    "pick": "Pick",
+    "@pick": {
+        "description": "Pick button text"
+    },
+    "totalSucre": "Total Sugar:",
+    "@totalSucre": {
+        "description": "Total sugar label"
+    },
+    "totalSucreTetra": "Total Tetra Sugar:",
+    "@totalSucreTetra": {
+        "description": "Total tetra sugar label"
+    },
+    "totalSucreAdue": "Total Adue Sugar:",
+    "@totalSucreAdue": {
+        "description": "Total adue sugar label"
+    },
+    "sucreTetraTitle": "Tetra Sugar",
+    "@sucreTetraTitle": {
+        "description": "Tetra sugar section title"
+    },
+    "sucreAdueTitle": "Adue Sugar",
+    "@sucreAdueTitle": {
+        "description": "Adue sugar section title"
+    },
+    "showLiveData": "Show live data",
+    "@showLiveData": {
+        "description": "Show live data button text"
+    },
+    "showingLiveData": "Showing live data",
+    "@showingLiveData": {
+        "description": "Showing live data status message"
+    },
+    "inventory": "Inventory",
+    "@inventory": {
+        "description": "Inventory section title"
+    },
+    "inventoryDescription": "Show the inventory of a specific day",
+    "@inventoryDescription": {
+        "description": "Description for inventory section"
+    },
+    "cuve": "Tank",
+    "@cuve": {
+        "description": "Tank label"
+    },
+    "failedToGetInventory": "Failed to get inventory",
+    "@failedToGetInventory": {
+        "description": "Failed to get inventory message"
+    },
+    "toOrder": "To order",
+    "@toOrder": {
+        "description": "To order label"
+    },
+    "tank": "{count, plural, one {Tank} other {Tanks}}",
+    "@tank": {
+        "description": "Tank label with pluralization",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "The number of tanks",
+                "example": "5"
+            }
+        }
+    },
+    "filtrationTitle": "Filtration",
+    "@filtrationTitle": {
+        "description": "Filtration section title"
+    },
+    "eauBrute": "Raw Water",
+    "@eauBrute": {
+        "description": "Raw water label"
+    },
+    "eauFiltrer": "Filtered Water",
+    "@eauFiltrer": {
+        "description": "Filtered water label"
+    },
+    "eauOsmose": "Osmosed Water",
+    "@eauOsmose": {
+        "description": "Osmosed water label"
+    },
     "settings": "Settings",
+    "@settings": {
+        "description": "Settings section title"
+    },
     "lightmode": "Light mode",
+    "@lightmode": {
+        "description": "Light mode option"
+    },
     "darkmode": "Dark mode",
+    "@darkmode": {
+        "description": "Dark mode option"
+    },
     "language": "Language",
+    "@language": {
+        "description": "Language selection label"
+    },
     "helpAssistance": "Help and Assistance",
+    "@helpAssistance": {
+        "description": "Help and assistance section title"
+    },
     "about": "About",
+    "@about": {
+        "description": "About section title"
+    },
     "emailSchedules": "Email Schedules",
+    "@emailSchedules": {
+        "description": "Email schedules section title"
+    },
     "emailSents": "Emails Sent",
+    "@emailSents": {
+        "description": "Emails sent section title"
+    },
     "emailSchedulesDescription": "Emails sent on defined intervals",
-    "emailSentsDescription": "Emails sent to Users",
+    "@emailSchedulesDescription": {
+        "description": "Description for email schedules section"
+    },
+    "emailSentsDescription": "Emails sent to users",
+    "@emailSentsDescription": {
+        "description": "Description for emails sent section"
+    },
     "emailAlerts": "Email Alerts",
-    "emailAlertsDescription": "Emails sent when monitored values hit certain points",
+    "@emailAlerts": {
+        "description": "Email alerts section title"
+    },
+    "emailAlertsDescription": "Emails sent when monitored values reach certain thresholds",
+    "@emailAlertsDescription": {
+        "description": "Description for email alerts section"
+    },
     "monitored": "Monitored",
+    "@monitored": {
+        "description": "Monitored label"
+    },
     "danger": "Danger",
+    "@danger": {
+        "description": "Danger alert level label"
+    },
     "warning": "Warning",
+    "@warning": {
+        "description": "Warning alert level label"
+    },
     "active": "Active",
+    "@active": {
+        "description": "Active status label"
+    },
     "inactive": "Inactive",
-    "addAlertEmail": "Add Alert Email",
-    "addScheduleEmail": "Add Schedule Email",
+    "@inactive": {
+        "description": "Inactive status label"
+    },
+    "addAlertEmail": "Add alert email",
+    "@addAlertEmail": {
+        "description": "Add alert email button text"
+    },
+    "addScheduleEmail": "Add schedule email",
+    "@addScheduleEmail": {
+        "description": "Add schedule email button text"
+    },
     "edit": "Edit",
+    "@edit": {
+        "description": "Edit button text"
+    },
     "save": "Save",
+    "@save": {
+        "description": "Save button text"
+    },
     "rapport": "Report",
+    "@rapport": {
+        "description": "Report label"
+    },
     "interval": "Interval",
+    "@interval": {
+        "description": "Interval label"
+    },
     "tempsEnvoi": "Sending Time",
+    "@tempsEnvoi": {
+        "description": "Sending time label"
+    },
     "nextRunTime": "Next Send",
+    "@nextRunTime": {
+        "description": "Next send label"
+    },
     "days": "Days",
-    "deletingSchedules": "Deleting Schedules...",
-    "deletingAlerts": "Deleting Alerts...",
-    "schedulesDeleted": "Schedules Deleted",
-    "alertsDeleted": "Alerts Deleted",
+    "@days": {
+        "description": "Days label"
+    },
+    "deletingSchedules": "Deleting schedules...",
+    "@deletingSchedules": {
+        "description": "Deleting schedules status message"
+    },
+    "deletingAlerts": "Deleting alerts...",
+    "@deletingAlerts": {
+        "description": "Deleting alerts status message"
+    },
+    "schedulesDeleted": "Schedules deleted",
+    "@schedulesDeleted": {
+        "description": "Schedules deleted message"
+    },
+    "alertsDeleted": "Alerts deleted",
+    "@alertsDeleted": {
+        "description": "Alerts deleted message"
+    },
     "failedToDeleteSchedules": "Failed to delete schedules",
+    "@failedToDeleteSchedules": {
+        "description": "Failed to delete schedules message"
+    },
     "failedToDeleteAlerts": "Failed to delete alerts",
-    "failedToDeleteScheduleWithId": "Failed to delete schedule with id: {id}",
+    "@failedToDeleteAlerts": {
+        "description": "Failed to delete alerts message"
+    },
+    "failedToDeleteScheduleWithId": "Failed to delete schedule with ID: {id}",
     "@failedToDeleteScheduleWithId": {
+        "description": "Failed to delete schedule message with ID",
         "placeholders": {
             "id": {
                 "type": "int"
             }
         }
     },
-    "failedToDeleteAlertWithId": "Failed to delete alert with id: {id}",
+    "failedToDeleteAlertWithId": "Failed to delete alert with ID: {id}",
     "@failedToDeleteAlertWithId": {
+        "description": "Failed to delete alert message with ID",
         "placeholders": {
             "id": {
                 "type": "int"
             }
         }
     },
-    "sortSchedules": "Sort Schedules",
-    "sortAlerts": "Sort Alerts",
-    "filterSchedules": "Filter Schedules",
-    "filterAlerts": "Filter Alerts",
-    "editSchedule": "Edit Schedule",
-    "editAlert": "Edit Alert",
+    "sortSchedules": "Sort schedules",
+    "@sortSchedules": {
+        "description": "Sort schedules button text"
+    },
+    "sortAlerts": "Sort alerts",
+    "@sortAlerts": {
+        "description": "Sort alerts button text"
+    },
+    "filterSchedules": "Filter schedules",
+    "@filterSchedules": {
+        "description": "Filter schedules button text"
+    },
+    "filterAlerts": "Filter alerts",
+    "@filterAlerts": {
+        "description": "Filter alerts button text"
+    },
+    "editSchedule": "Edit schedule",
+    "@editSchedule": {
+        "description": "Edit schedule button text"
+    },
+    "editAlert": "Edit alert",
+    "@editAlert": {
+        "description": "Edit alert button text"
+    },
     "editScheduleSettings": "Edit schedule settings",
+    "@editScheduleSettings": {
+        "description": "Edit schedule settings option"
+    },
     "editAlertSettings": "Edit alert settings",
-    "viewSchedule": "View Schedule",
-    "viewAlert": "View Alert",
+    "@editAlertSettings": {
+        "description": "Edit alert settings option"
+    },
+    "viewSchedule": "View schedule",
+    "@viewSchedule": {
+        "description": "View schedule button text"
+    },
+    "viewAlert": "View alert",
+    "@viewAlert": {
+        "description": "View alert button text"
+    },
     "view": "View",
+    "@view": {
+        "description": "View button text"
+    },
     "viewScheduleSettings": "View schedule settings",
+    "@viewScheduleSettings": {
+        "description": "View schedule settings option"
+    },
     "viewAlertSettings": "View alert settings",
-    "addSchedule": "Add Schedule",
-    "addAlert": "Add Alert",
+    "@viewAlertSettings": {
+        "description": "View alert settings option"
+    },
+    "addSchedule": "Add schedule",
+    "@addSchedule": {
+        "description": "Add schedule button text"
+    },
+    "addAlert": "Add alert",
+    "@addAlert": {
+        "description": "Add alert button text"
+    },
     "addScheduleSettings": "Add one email schedule",
-    "addAlertSettings": "Add  one email alert",
+    "@addScheduleSettings": {
+        "description": "Add one email schedule option"
+    },
+    "addAlertSettings": "Add one email alert",
+    "@addAlertSettings": {
+        "description": "Add one email alert option"
+    },
     "unscheduled": "Unscheduled",
-    "deleteSchedules": "Delete Schedules",
-    "deleteAlerts": "Delete Alerts",
+    "@unscheduled": {
+        "description": "Unscheduled status label"
+    },
+    "deleteSchedules": "Delete schedules",
+    "@deleteSchedules": {
+        "description": "Delete schedules button text"
+    },
+    "deleteAlerts": "Delete alerts",
+    "@deleteAlerts": {
+        "description": "Delete alerts button text"
+    },
     "selectSchedulesToDelete": "Select schedules to delete",
+    "@selectSchedulesToDelete": {
+        "description": "Prompt to select schedules to delete"
+    },
     "selectAlertsToDelete": "Select alerts to delete",
-    "confirmSchedulesDeletion": "Are you sure you want to delete {count} {count, plural, one {schedule} other {schedules}}?",
+    "@selectAlertsToDelete": {
+        "description": "Prompt to select alerts to delete"
+    },
+    "confirmSchedulesDeletion": "Are you sure you want to delete {count, plural, one {schedule} other {schedules}}?",
     "@confirmSchedulesDeletion": {
+        "description": "Confirmation message for deleting schedules",
         "placeholders": {
             "count": {
                 "type": "int"
@@ -489,47 +759,164 @@
         }
     },
     "selectAReport": "Select a report",
+    "@selectAReport": {
+        "description": "Prompt to select a report"
+    },
     "selectAnInterval": "Select an interval",
-    "intervalManualLabel": "Manual Interval (in days)",
+    "@selectAnInterval": {
+        "description": "Prompt to select an interval"
+    },
+    "intervalManualLabel": "Manual interval (in days)",
+    "@intervalManualLabel": {
+        "description": "Manual interval label in days"
+    },
     "scheduleManually": "Schedule the next run manually",
+    "@scheduleManually": {
+        "description": "Schedule the next run manually option"
+    },
     "roles": "Roles",
-    "selectRoles": "Select Roles",
-    "selectUsers": "Select Users",
-    "sendThisAlertToRoles": "Send This alert to Roles",
-    "sendThisAlertToUsers": "Send This alert to Users",
+    "@roles": {
+        "description": "Roles section title"
+    },
+    "selectRoles": "Select roles",
+    "@selectRoles": {
+        "description": "Prompt to select roles"
+    },
+    "selectUsers": "Select users",
+    "@selectUsers": {
+        "description": "Prompt to select users"
+    },
+    "sendThisAlertToRoles": "Send this alert to roles",
+    "@sendThisAlertToRoles": {
+        "description": "Option to send alert to roles"
+    },
+    "sendThisAlertToUsers": "Send this alert to users",
+    "@sendThisAlertToUsers": {
+        "description": "Option to send alert to users"
+    },
     "schedules": "Schedules",
+    "@schedules": {
+        "description": "Schedules section title"
+    },
     "alerts": "Alerts",
+    "@alerts": {
+        "description": "Alerts section title"
+    },
     "addANewScheduleEmail": "Add a new schedule email",
+    "@addANewScheduleEmail": {
+        "description": "Add a new schedule email button text"
+    },
     "addANewAlertEmail": "Add a new alert email",
+    "@addANewAlertEmail": {
+        "description": "Add a new alert email button text"
+    },
     "editScheduleEmail": "Edit schedule email",
+    "@editScheduleEmail": {
+        "description": "Edit schedule email button text"
+    },
     "editAlertEmail": "Edit alert email",
+    "@editAlertEmail": {
+        "description": "Edit alert email button text"
+    },
     "viewScheduleEmail": "View schedule email",
+    "@viewScheduleEmail": {
+        "description": "View schedule email button text"
+    },
     "viewAlertEmail": "View alert email",
+    "@viewAlertEmail": {
+        "description": "View alert email button text"
+    },
     "add": "Add",
-    "nextRunTimeDate": "Next Send Date",
-    "nextRunTimeTime": "Next Send Time",
-    "filterByInterval": "filter By interval",
-    "filterByMonitoredValueTag": "filter By Monitored Value Tag",
-    "filterByActivationState": "filter By Activation State",
-    "selectActivationState": "Select Activation State",
-    "activationState": "Activation State",
+    "@add": {
+        "description": "Add button text"
+    },
+    "nextRunTimeDate": "Next send date",
+    "@nextRunTimeDate": {
+        "description": "Next send date label"
+    },
+    "nextRunTimeTime": "Next send time",
+    "@nextRunTimeTime": {
+        "description": "Next send time label"
+    },
+    "filterByInterval": "Filter by interval",
+    "@filterByInterval": {
+        "description": "Filter by interval option"
+    },
+    "filterByMonitoredValueTag": "Filter by monitored value tag",
+    "@filterByMonitoredValueTag": {
+        "description": "Filter by monitored value tag option"
+    },
+    "filterByActivationState": "Filter by activation state",
+    "@filterByActivationState": {
+        "description": "Filter by activation state option"
+    },
+    "selectActivationState": "Select activation state",
+    "@selectActivationState": {
+        "description": "Prompt to select activation state"
+    },
+    "activationState": "Activation state",
+    "@activationState": {
+        "description": "Activation state label"
+    },
     "tag": "Tag",
-    "filterByRapport": "filter By rapport",
-    "selectInterval": "Select Interval",
-    "addingSchedule": "Add Schedule...",
-    "scheduleAdded": "Schedule Added",
-    "failedToAddSchedule": "Failed to add Schedule",
-    "savingSchedule": "Save Schedule...",
-    "scheduleSaved": "Schedule Saved",
-    "failedToSaveSchedule": "Failed to save Schedule",
+    "@tag": {
+        "description": "Tag label"
+    },
+    "filterByRapport": "Filter by report",
+    "@filterByRapport": {
+        "description": "Filter by report option"
+    },
+    "selectInterval": "Select interval",
+    "@selectInterval": {
+        "description": "Prompt to select interval"
+    },
+    "addingSchedule": "Adding schedule...",
+    "@addingSchedule": {
+        "description": "Adding schedule status message"
+    },
+    "scheduleAdded": "Schedule added",
+    "@scheduleAdded": {
+        "description": "Schedule added message"
+    },
+    "failedToAddSchedule": "Failed to add schedule",
+    "@failedToAddSchedule": {
+        "description": "Failed to add schedule message"
+    },
+    "savingSchedule": "Saving schedule...",
+    "@savingSchedule": {
+        "description": "Saving schedule status message"
+    },
+    "scheduleSaved": "Schedule saved",
+    "@scheduleSaved": {
+        "description": "Schedule saved message"
+    },
+    "failedToSaveSchedule": "Failed to save schedule",
+    "@failedToSaveSchedule": {
+        "description": "Failed to save schedule message"
+    },
     "sents": "Sent",
-    "scheduleSent": "Schedule Sent",
-    "alertSent": "Alert Sent",
-    "deletEmailSents": "Delete Email Sents",
-    "selectEmailSentsToDelete": "Select Email Sents To Delete",
+    "@sents": {
+        "description": "Sent label"
+    },
+    "scheduleSent": "Schedule sent",
+    "@scheduleSent": {
+        "description": "Schedule sent message"
+    },
+    "alertSent": "Alert sent",
+    "@alertSent": {
+        "description": "Alert sent message"
+    },
+    "deleteEmailSents": "Delete email sents",
+    "@deleteEmailSents": {
+        "description": "Delete email sents button text"
+    },
+    "selectEmailSentsToDelete": "Select email sents to delete",
+    "@selectEmailSentsToDelete": {
+        "description": "Prompt to select email sents to delete"
+    },
     "delete_sents": "Are you sure you want to delete {count, plural, one {sent} other {sents}}?",
     "@delete_sents": {
-        "description": "Confirmation message for deleting sents",
+        "description": "Confirmation message for deleting sent emails",
         "placeholders": {
             "count": {
                 "type": "int"
@@ -537,99 +924,349 @@
         }
     },
     "refresh": "Refresh",
-    "failedToLoadSents": "Failed to load sents",
-	"tempEnvoi": "Temp D'Envoi",
+    "@refresh": {
+        "description": "Refresh button text"
+    },
+    "failedToLoadSents": "Failed to load sent emails",
+    "@failedToLoadSents": {
+        "description": "Failed to load sent emails message"
+    },
+    "tempEnvoi": "Sending time",
+    "@tempEnvoi": {
+        "description": "Sending time label"
+    },
     "receptionist": "Receptionist",
-	"schedule": "Emails Cyclique",
-	"alers": "Alert",
-    "unknown": "unknown",
-    "deletingSents": "deleting Sents...",
-    "sentsDeleted": "Sents Deleted.",
-    "deletEmailSent": "Failed To delete Sent/Sents",
-    "filterEmailsSent": "Filter Emails Sent",
-    "filterbySendingtime": "Filter by Sending time",
-    "selectSendingtime": "Select Sending time" ,
-    "time": "Time",
-    "filterbyTypeofEmail": "Fliter by Type of Email",
-    "selectTypeofEmail": "Select Type of Email",
-    "scheduleEmail": "Schedule Email",
-    "sortSents": "Sort Sents",
-    "order": "Order",
-    "asc": "asc",
-    "desc": "desc",
-    "details": "Details",
-    "user": "User",
-    "editUser": "Edit User",
-    "viewUserDetails": "View User Details",
-    "hashedValue": "Hached Value",
-    "addingUser": "Adding User...",
-    "failedToAddUser": "Failed to add User",
-    "userAddedSuccessfully": "User Added Successfully",
-    "savingUser": "Saving User...",
-    "failedToSaveUser": "Failed to save User",
-    "userSavedSuccessfully": "User Saved Successfully",
-    "emails": "Emails",
-    "description": "Description",
+    "@receptionist": {
+        "description": "Receptionist role label"
+    },
+    "schedule": "Cyclic Emails",
+    "@schedule": {
+        "description": "Cyclic emails section title"
+    },
     "alert": "Alert",
+    "@alert": {
+        "description": "Alert label"
+    },
+    "unknown": "Unknown",
+    "@unknown": {
+        "description": "Unknown status label"
+    },
+    "deletingSents": "Deleting sent emails...",
+    "@deletingSents": {
+        "description": "Deleting sent emails status message"
+    },
+    "sentsDeleted": "Sent emails deleted",
+    "@sentsDeleted": {
+        "description": "Sent emails deleted message"
+    },
+    "deleteEmailSent": "Failed to delete sent email(s)",
+    "@deleteEmailSent": {
+        "description": "Failed to delete sent email(s) message"
+    },
+    "filterEmailsSent": "Filter emails sent",
+    "@filterEmailsSent": {
+        "description": "Filter emails sent button text"
+    },
+    "filterBySendingTime": "Filter by sending time",
+    "@filterBySendingTime": {
+        "description": "Filter by sending time option"
+    },
+    "selectSendingTime": "Select sending time",
+    "@selectSendingTime": {
+        "description": "Prompt to select sending time"
+    },
+    "time": "Time",
+    "@time": {
+        "description": "Time label"
+    },
+    "filterByTypeOfEmail": "Filter by type of email",
+    "@filterByTypeOfEmail": {
+        "description": "Filter by type of email option"
+    },
+    "selectTypeOfEmail": "Select type of email",
+    "@selectTypeOfEmail": {
+        "description": "Prompt to select type of email"
+    },
+    "scheduleEmail": "Schedule email",
+    "@scheduleEmail": {
+        "description": "Schedule email label"
+    },
+    "sortSents": "Sort sent emails",
+    "@sortSents": {
+        "description": "Sort sent emails button text"
+    },
+    "order": "Order",
+    "@order": {
+        "description": "Order label"
+    },
+    "asc": "Ascending",
+    "@asc": {
+        "description": "Ascending order option"
+    },
+    "desc": "Descending",
+    "@desc": {
+        "description": "Descending order option"
+    },
+    "details": "Details",
+    "@details": {
+        "description": "Details label"
+    },
+    "user": "User",
+    "@user": {
+        "description": "User label"
+    },
+    "editUser": "Edit user",
+    "@editUser": {
+        "description": "Edit user button text"
+    },
+    "viewUserDetails": "View user details",
+    "@viewUserDetails": {
+        "description": "View user details button text"
+    },
+    "hashedValue": "Hashed value",
+    "@hashedValue": {
+        "description": "Hashed value label"
+    },
+    "addingUser": "Adding user...",
+    "@addingUser": {
+        "description": "Adding user status message"
+    },
+    "failedToAddUser": "Failed to add user",
+    "@failedToAddUser": {
+        "description": "Failed to add user message"
+    },
+    "userAddedSuccessfully": "User added successfully",
+    "@userAddedSuccessfully": {
+        "description": "User added successfully message"
+    },
+    "savingUser": "Saving user...",
+    "@savingUser": {
+        "description": "Saving user status message"
+    },
+    "failedToSaveUser": "Failed to save user",
+    "@failedToSaveUser": {
+        "description": "Failed to save user message"
+    },
+    "userSavedSuccessfully": "User saved successfully",
+    "@userSavedSuccessfully": {
+        "description": "User saved successfully message"
+    },
+    "emails": "Emails",
+    "@emails": {
+        "description": "Emails section title"
+    },
+    "description": "Description",
+    "@description": {
+        "description": "Description label"
+    },
     "sent": "Sent",
-    "sentAt": "Sent At",
+    "@sent": {
+        "description": "Sent status label"
+    },
+    "sentAt": "Sent at",
+    "@sentAt": {
+        "description": "Sent at label"
+    },
     "newEmailSent": "A new email was sent",
+    "@newEmailSent": {
+        "description": "New email sent message"
+    },
     "welcome": "Welcome",
-    "dataFound": "Data Found",
-    "retrievingData": "Retrieving Data...",
+    "@welcome": {
+        "description": "Welcome message"
+    },
+    "dataFound": "Data found",
+    "@dataFound": {
+        "description": "Data found message"
+    },
+    "retrievingData": "Retrieving data...",
+    "@retrievingData": {
+        "description": "Retrieving data status message"
+    },
     "dataNotFound": "Data not found",
+    "@dataNotFound": {
+        "description": "Data not found message"
+    },
     "failedToLoadData": "Failed to load data",
-    "utiliteTitle": "Utilite",
-    "sendingEmail": "Sending Email...",
-    "emailSent": "Email Sent",
-    "failedToSendEmail": "Failed to send Email",
+    "@failedToLoadData": {
+        "description": "Failed to load data message"
+    },
+    "utiliteTitle": "Utilities",
+    "@utiliteTitle": {
+        "description": "Utilities section title"
+    },
+    "sendingEmail": "Sending email...",
+    "@sendingEmail": {
+        "description": "Sending email status message"
+    },
+    "emailSent": "Email sent",
+    "@emailSent": {
+        "description": "Email sent message"
+    },
+    "failedToSendEmail": "Failed to send email",
+    "@failedToSendEmail": {
+        "description": "Failed to send email message"
+    },
     "find": "Find",
-    "failedToLoadUsers": "Failed to load Users",
-    "monitoredValue": "Monitored Value",
+    "@find": {
+        "description": "Find button text"
+    },
+    "failedToLoadUsers": "Failed to load users",
+    "@failedToLoadUsers": {
+        "description": "Failed to load users message"
+    },
+    "monitoredValue": "Monitored value",
+    "@monitoredValue": {
+        "description": "Monitored value label"
+    },
     "selectAValueToMonitor": "Select a value to monitor",
-    "requiredField": "Field is Required",
-    "monitorType": "Monitor Type",
+    "@selectAValueToMonitor": {
+        "description": "Prompt to select a value to monitor"
+    },
+    "requiredField": "Field is required",
+    "@requiredField": {
+        "description": "Error message for required field"
+    },
+    "monitorType": "Monitor type",
+    "@monitorType": {
+        "description": "Monitor type label"
+    },
     "selectAMonitorType": "Select a monitor type",
+    "@selectAMonitorType": {
+        "description": "Prompt to select a monitor type"
+    },
     "enterAValidInteger": "Enter a valid integer",
-    "dangerPoint": "Danger Point",
-    "warningPoint":"Warning Point",
-    "dangerAlertIntervalInDays": "Danger Alert Interval (In Days)",
-    "warningAlertIntervalInDays": "Warning Alert Interval (In Days)",
-    "customMessage": "Custom Message",
+    "@enterAValidInteger": {
+        "description": "Error message for invalid integer"
+    },
+    "dangerPoint": "Danger point",
+    "@dangerPoint": {
+        "description": "Danger point label"
+    },
+    "warningPoint": "Warning point",
+    "@warningPoint": {
+        "description": "Warning point label"
+    },
+    "dangerAlertIntervalInDays": "Danger alert interval (in days)",
+    "@dangerAlertIntervalInDays": {
+        "description": "Danger alert interval label in days"
+    },
+    "warningAlertIntervalInDays": "Warning alert interval (in days)",
+    "@warningAlertIntervalInDays": {
+        "description": "Warning alert interval label in days"
+    },
+    "customMessage": "Custom message",
+    "@customMessage": {
+        "description": "Custom message label"
+    },
     "failedToLoadPossibleValuesForMonitoring": "Failed to load possible values for monitoring",
-    "addingAlert": "Adding Alert...",
-    "alertAdded": "Alert Added",
+    "@failedToLoadPossibleValuesForMonitoring": {
+        "description": "Failed to load possible values for monitoring message"
+    },
+    "addingAlert": "Adding alert...",
+    "@addingAlert": {
+        "description": "Adding alert status message"
+    },
+    "alertAdded": "Alert added",
+    "@alertAdded": {
+        "description": "Alert added message"
+    },
     "failedToAddAlert": "Failed to add alert",
-    "activatingAlert": "Activating Alert...",
-    "alertActivated": "Alert Activated",
+    "@failedToAddAlert": {
+        "description": "Failed to add alert message"
+    },
+    "activatingAlert": "Activating alert...",
+    "@activatingAlert": {
+        "description": "Activating alert status message"
+    },
+    "alertActivated": "Alert activated",
+    "@alertActivated": {
+        "description": "Alert activated message"
+    },
     "failedToActivateAlert": "Failed to activate alert",
-    "deactivatingAlert": "Deactivating Alert...",
-    "alertDeactivated": "Alert Deactivated",
-    "failedToDeactivateAlert": "Failed to Deactivate alert",
-    "savingAlert": "Saving Alert...",
-    "alertSaved": "Alert Saved",
+    "@failedToActivateAlert": {
+        "description": "Failed to activate alert message"
+    },
+    "deactivatingAlert": "Deactivating alert...",
+    "@deactivatingAlert": {
+        "description": "Deactivating alert status message"
+    },
+    "alertDeactivated": "Alert deactivated",
+    "@alertDeactivated": {
+        "description": "Alert deactivated message"
+    },
+    "failedToDeactivateAlert": "Failed to deactivate alert",
+    "@failedToDeactivateAlert": {
+        "description": "Failed to deactivate alert message"
+    },
+    "savingAlert": "Saving alert...",
+    "@savingAlert": {
+        "description": "Saving alert status message"
+    },
+    "alertSaved": "Alert saved",
+    "@alertSaved": {
+        "description": "Alert saved message"
+    },
     "failedToSaveAlert": "Failed to save alert",
-    "activating": "activating",
-    "deactivating": "deactivating",
-    "activated": "activated",
-    "deactivated": "deactivated",
-    "autoGenerated": "Auto Generated",
-    "noName": "No Name",
-    "newPassword": "New Password",
-    "firstName": "First Name",
-    "lastName": "Last Name",
+    "@failedToSaveAlert": {
+        "description": "Failed to save alert message"
+    },
+    "activating": "Activating",
+    "@activating": {
+        "description": "Activating status label"
+    },
+    "deactivating": "Deactivating",
+    "@deactivating": {
+        "description": "Deactivating status label"
+    },
+    "activated": "Activated",
+    "@activated": {
+        "description": "Activated status label"
+    },
+    "deactivated": "Deactivated",
+    "@deactivated": {
+        "description": "Deactivated status label"
+    },
+    "autoGenerated": "Auto-generated",
+    "@autoGenerated": {
+        "description": "Auto-generated label"
+    },
+    "noName": "No name",
+    "@noName": {
+        "description": "No name label"
+    },
+    "newPassword": "New password",
+    "@newPassword": {
+        "description": "New password field label"
+    },
+    "firstName": "First name",
+    "@firstName": {
+        "description": "First name field label"
+    },
+    "lastName": "Last name",
+    "@lastName": {
+        "description": "Last name field label"
+    },
     "username": "Username",
+    "@username": {
+        "description": "Username field label"
+    },
     "selectedRole": "Role: {role}",
     "@selectedRole": {
+        "description": "Selected role display with placeholder",
         "placeholders": {
             "role": {
                 "type": "String"
             }
         }
     },
-    "selectASuperior": "Select a Superior",
+    "selectASuperior": "Select a superior",
+    "@selectASuperior": {
+        "description": "Prompt to select a superior"
+    },
     "selectedSuperior": "Superior: {superior}",
     "@selectedSuperior": {
+        "description": "Selected superior display with placeholder",
         "placeholders": {
             "superior": {
                 "type": "String"
@@ -638,59 +1275,104 @@
     },
     "confirmUsersDeletion": "Are you sure you want to delete {count, plural, one {user} other {users}}?",
     "@confirmUsersDeletion": {
+        "description": "Confirmation message for deleting users",
         "placeholders": {
             "count": {
                 "type": "int"
             }
         }
     },
-    "noUsername": "No Username",
+    "noUsername": "No username",
+    "@noUsername": {
+        "description": "No username label"
+    },
     "failedToGetUser": "Failed to get user",
-    "pageNotFound": "Page Not Found",
+    "@failedToGetUser": {
+        "description": "Failed to get user message"
+    },
+    "pageNotFound": "Page not found",
+    "@pageNotFound": {
+        "description": "Page not found message"
+    },
     "youDontHavePermissionToAccessThisPage": "You don't have permission to access this page",
-    "failedToConnectToUtiliteBroadcast": "Failed to connect to Utilite Broadcast {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
+    "@youDontHavePermissionToAccessThisPage": {
+        "description": "Permission denied message for page access"
+    },
+    "failedToConnectToUtiliteBroadcast": "Failed to connect to utilities broadcast, {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
     "@failedToConnectToUtiliteBroadcast": {
+        "description": "Failed to connect to utilities broadcast message",
         "placeholders": {
             "retries": {
                 "type": "int"
             }
         }
     },
-    "failedToConnectToFiltrationBroadcast": "Failed to connect to Filtration Broadcast, {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
+    "failedToConnectToFiltrationBroadcast": "Failed to connect to filtration broadcast, {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
     "@failedToConnectToFiltrationBroadcast": {
+        "description": "Failed to connect to filtration broadcast message",
         "placeholders": {
             "retries": {
                 "type": "int"
             }
         }
     },
-    "failedToConnectToSiroperieBroadcast": "Failed to connect to Siroperie Broadcast, {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
+    "failedToConnectToSiroperieBroadcast": "Failed to connect to syrup production broadcast, {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
     "@failedToConnectToSiroperieBroadcast": {
+        "description": "Failed to connect to syrup production broadcast message",
         "placeholders": {
             "retries": {
                 "type": "int"
             }
         }
     },
-    "levelInL":"Level in L",
-    "levelInM3":"Level in M3",
-    "levelInKG": "Level in KG",
-    "fillLevel": "Fill",
-    "usine": "USINE",
+    "levelInL": "Level in liters",
+    "@levelInL": {
+        "description": "Level in liters label"
+    },
+    "levelInM3": "Level in cubic meters",
+    "@levelInM3": {
+        "description": "Level in cubic meters label"
+    },
+    "levelInKG": "Level in kilograms",
+    "@levelInKG": {
+        "description": "Level in kilograms label"
+    },
+    "fillLevel": "Fill level",
+    "@fillLevel": {
+        "description": "Fill level label"
+    },
+    "usine": "Factory",
+    "@usine": {
+        "description": "Factory label"
+    },
     "error": "Error",
+    "@error": {
+        "description": "Error label"
+    },
     "errorDownloadingCertificate": "Error downloading certificate",
-    "to": "TO",
-    "send": "send",
-    "viewAlertSettingsOf": "View Alert Settings of {name}",
+    "@errorDownloadingCertificate": {
+        "description": "Error downloading certificate message"
+    },
+    "to": "To",
+    "@to": {
+        "description": "To label"
+    },
+    "send": "Send",
+    "@send": {
+        "description": "Send button text"
+    },
+    "viewAlertSettingsOf": "View alert settings of {name}",
     "@viewAlertSettingsOf": {
+        "description": "View alert settings for a specific name",
         "placeholders": {
             "name": {
                 "type": "String"
             }
         }
     },
-    "editAlertSettingsOf": "Edit Alert Settings of {name}",
+    "editAlertSettingsOf": "Edit alert settings of {name}",
     "@editAlertSettingsOf": {
+        "description": "Edit alert settings for a specific name",
         "placeholders": {
             "name": {
                 "type": "String"
@@ -699,6 +1381,7 @@
     },
     "confirmAlertsDeletion": "Are you sure you want to delete {count, plural, one {alert} other {alerts}}?",
     "@confirmAlertsDeletion": {
+        "description": "Confirmation message for deleting alerts",
         "placeholders": {
             "count": {
                 "type": "int"
@@ -706,9 +1389,16 @@
         }
     },
     "failedToLoadTags": "Failed to load tags",
+    "@failedToLoadTags": {
+        "description": "Failed to load tags message"
+    },
     "failedToLoadAlerts": "Failed to load alerts",
+    "@failedToLoadAlerts": {
+        "description": "Failed to load alerts message"
+    },
     "valueIsRequired": "The value {value} is required",
     "@valueIsRequired": {
+        "description": "Error message for required value",
         "placeholders": {
             "value": {
                 "type": "String"
@@ -716,148 +1406,503 @@
         }
     },
     "aProposIBDM": "About IBDM",
+    "@aProposIBDM": {
+        "description": "About IBDM section title"
+    },
     "aProposIBDMDescription": "IBDM is an industrial data management software designed to facilitate the monitoring and analysis of industrial equipment performance.",
+    "@aProposIBDMDescription": {
+        "description": "Description for About IBDM section"
+    },
     "contactezNous": "Contact Us",
+    "@contactezNous": {
+        "description": "Contact us section title"
+    },
     "adresse": "Akbou, Bejaia, Algeria",
-    "createdBy": "Created by : Lyes Rabhi (lyes.rabhi.020@gmail.com) & Kheloufi Mounir (mounirkheloufi2002@gmail.com)",
-    "failedToConnectToCO2Broadcast": "Failed to connect to CO2 Broadcast, {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
+    "@adresse": {
+        "description": "Address information"
+    },
+    "createdBy": "Created by: Lyes Rabhi (lyes.rabhi.020@gmail.com) & Kheloufi Mounir (mounirkheloufi2002@gmail.com)",
+    "@createdBy": {
+        "description": "Creators' information"
+    },
+    "failedToConnectToCO2Broadcast": "Failed to connect to CO2 broadcast, {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
     "@failedToConnectToCO2Broadcast": {
+        "description": "Failed to connect to CO2 broadcast message",
         "placeholders": {
             "retries": {
                 "type": "int"
             }
         }
     },
-	"co2Title": "CO2",
-	"consommation": "Consommation",
-    "failedToGetConsommationData": "Failed to get consommation data",
-    "entree": "In",
+    "co2Title": "CO2",
+    "@co2Title": {
+        "description": "CO2 section title"
+    },
+    "consommation": "Consumption",
+    "@consommation": {
+        "description": "Consumption label"
+    },
+    "failedToGetConsommationData": "Failed to get consumption data",
+    "@failedToGetConsommationData": {
+        "description": "Failed to get consumption data message"
+    },
+    "entree": "Input",
+    "@entree": {
+        "description": "Input label"
+    },
     "cannotBeASuperiorToYourself": "You cannot be a superior to yourself",
+    "@cannotBeASuperiorToYourself": {
+        "description": "Error message for invalid superior selection"
+    },
     "cannotBeASuperiorForHimself": "You cannot be a superior for yourself",
+    "@cannotBeASuperiorForHimself": {
+        "description": "Error message for invalid superior self-selection"
+    },
     "close": "Close",
+    "@close": {
+        "description": "Close button text"
+    },
     "serverStatus": "Server Status",
+    "@serverStatus": {
+        "description": "Server status section title"
+    },
     "databases": "Databases",
-    "state": "state",
+    "@databases": {
+        "description": "Databases section title"
+    },
+    "state": "State",
+    "@state": {
+        "description": "State label"
+    },
     "percentage": "Percentage",
+    "@percentage": {
+        "description": "Percentage label"
+    },
     "failedToLoadServerStatus": "Failed to load server status",
-    "restartServer": "Restart Server",
+    "@failedToLoadServerStatus": {
+        "description": "Failed to load server status message"
+    },
+    "restartServer": "Restart server",
+    "@restartServer": {
+        "description": "Restart server button text"
+    },
     "info": "Info",
-    "host_name": "Host Name",
-    "lastUpdateTime":  "Last Update Time",
-    "lastUpdateDate": "Last Update Date",
-    "osUptime": "OS Uptime",
-    "osBootTime": "OS Boot Time",
-    "osTime": "OS Time",
+    "@info": {
+        "description": "Info label"
+    },
+    "host_name": "Host name",
+    "@host_name": {
+        "description": "Host name label"
+    },
+    "lastUpdateTime": "Last update time",
+    "@lastUpdateTime": {
+        "description": "Last update time label"
+    },
+    "lastUpdateDate": "Last update date",
+    "@lastUpdateDate": {
+        "description": "Last update date label"
+    },
+    "osUptime": "OS uptime",
+    "@osUptime": {
+        "description": "OS uptime label"
+    },
+    "osBootTime": "OS boot time",
+    "@osBootTime": {
+        "description": "OS boot time label"
+    },
+    "osTime": "OS time",
+    "@osTime": {
+        "description": "OS time label"
+    },
     "version": "Version",
+    "@version": {
+        "description": "Version label"
+    },
     "environment": "Environment",
+    "@environment": {
+        "description": "Environment label"
+    },
     "debug": "Debug",
-    "on": "ON",
-    "off": "OFF",
-    "totalMemory": "Total Memory",
-    "usedMemory": "Used Memory",
-    "availableMemory": "Available Memory",
-    "memoryUsage": "Memory Usage",
+    "@debug": {
+        "description": "Debug label"
+    },
+    "on": "On",
+    "@on": {
+        "description": "On status label"
+    },
+    "off": "Off",
+    "@off": {
+        "description": "Off status label"
+    },
+    "totalMemory": "Total memory",
+    "@totalMemory": {
+        "description": "Total memory label"
+    },
+    "usedMemory": "Used memory",
+    "@usedMemory": {
+        "description": "Used memory label"
+    },
+    "availableMemory": "Available memory",
+    "@availableMemory": {
+        "description": "Available memory label"
+    },
+    "memoryUsage": "Memory usage",
+    "@memoryUsage": {
+        "description": "Memory usage label"
+    },
     "memory": "Memory",
+    "@memory": {
+        "description": "Memory label"
+    },
     "network": "Network",
+    "@network": {
+        "description": "Network label"
+    },
     "received": "Received",
+    "@received": {
+        "description": "Received label"
+    },
     "os": "OS",
-    "cpuUsage": "CPU Usage",
-    "totalStorage": "Total Storage",
-    "usedStorage": "Used Storage",
-    "availableStorage": "Available Storage",
-    "storageUsage": "Storage Usage",
-    "loadingUsers": "Loading Users...",
+    "@os": {
+        "description": "Operating system label"
+    },
+    "cpuUsage": "CPU usage",
+    "@cpuUsage": {
+        "description": "CPU usage label"
+    },
+    "totalStorage": "Total storage",
+    "@totalStorage": {
+        "description": "Total storage label"
+    },
+    "usedStorage": "Used storage",
+    "@usedStorage": {
+        "description": "Used storage label"
+    },
+    "availableStorage": "Available storage",
+    "@availableStorage": {
+        "description": "Available storage label"
+    },
+    "storageUsage": "Storage usage",
+    "@storageUsage": {
+        "description": "Storage usage label"
+    },
+    "loadingUsers": "Loading users...",
+    "@loadingUsers": {
+        "description": "Loading users status message"
+    },
     "loading": "Loading...",
-	"loadingUserDetails": "Loading User Details...",
-    "loadingUser": "Loading User...",
-    "loadingSents": "Loading Sent Emails...",
-    "loadingAlerts": "Loading Alerts...",
-    "loadingSchedules": "Loading Schedules...",
-    "loadingTags": "Loading Tags...",
-    "loadingRoles": "Loading Roles...",
-	"loadingSuperiors": "Loading Superiors...",
+    "@loading": {
+        "description": "General loading status message"
+    },
+    "loadingUserDetails": "Loading user details...",
+    "@loadingUserDetails": {
+        "description": "Loading user details status message"
+    },
+    "loadingUser": "Loading user...",
+    "@loadingUser": {
+        "description": "Loading user status message"
+    },
+    "loadingSents": "Loading sent emails...",
+    "@loadingSents": {
+        "description": "Loading sent emails status message"
+    },
+    "loadingAlerts": "Loading alerts...",
+    "@loadingAlerts": {
+        "description": "Loading alerts status message"
+    },
+    "loadingSchedules": "Loading schedules...",
+    "@loadingSchedules": {
+        "description": "Loading schedules status message"
+    },
+    "loadingTags": "Loading tags...",
+    "@loadingTags": {
+        "description": "Loading tags status message"
+    },
+    "loadingRoles": "Loading roles...",
+    "@loadingRoles": {
+        "description": "Loading roles status message"
+    },
+    "loadingSuperiors": "Loading superiors...",
+    "@loadingSuperiors": {
+        "description": "Loading superiors status message"
+    },
     "waitingForConnection": "Waiting for connection...",
+    "@waitingForConnection": {
+        "description": "Waiting for connection status message"
+    },
     "waitingForValidData": "Waiting for valid data...",
+    "@waitingForValidData": {
+        "description": "Waiting for valid data status message"
+    },
     "reconnecting": "Reconnecting...",
+    "@reconnecting": {
+        "description": "Reconnecting status message"
+    },
     "notLoading": "Not loading",
+    "@notLoading": {
+        "description": "Not loading status message"
+    },
     "waiting": "Waiting...",
-    "loadingServerConfig": "Loading Server Settings",
+    "@waiting": {
+        "description": "Waiting status message"
+    },
+    "loadingServerConfig": "Loading server settings",
+    "@loadingServerConfig": {
+        "description": "Loading server settings status message"
+    },
     "serverSettings": "Server Settings",
+    "@serverSettings": {
+        "description": "Server settings section title"
+    },
     "failedToLoadServerConfig": "Failed to load server settings",
-    "changeSecretKey": "Change Secret Key",
-    "logToFiles": "Log to Files",
-    "dbConnectionCheckTimeout": "DB Connection Check Timeout(in Seconds)",
+    "@failedToLoadServerConfig": {
+        "description": "Failed to load server settings message"
+    },
+    "changeSecretKey": "Change secret key",
+    "@changeSecretKey": {
+        "description": "Change secret key option"
+    },
+    "logToFiles": "Log to files",
+    "@logToFiles": {
+        "description": "Log to files option"
+    },
+    "dbConnectionCheckTimeout": "Database connection check timeout (in seconds)",
+    "@dbConnectionCheckTimeout": {
+        "description": "Database connection check timeout label in seconds"
+    },
     "seconds": "Seconds",
-    "allowedHosts": "Allowed Hosts",
-    "addAllowedHost": "Add Allowed Host",
-    "trustedOrigins": "Trusted Origins",
-    "addTrustedOrigin": "Add Trusted Origin",
-    "emailProviders": "Email Providers",
+    "@seconds": {
+        "description": "Seconds label"
+    },
+    "allowedHosts": "Allowed hosts",
+    "@allowedHosts": {
+        "description": "Allowed hosts label"
+    },
+    "addAllowedHost": "Add allowed host",
+    "@addAllowedHost": {
+        "description": "Add allowed host button text"
+    },
+    "trustedOrigins": "Trusted origins",
+    "@trustedOrigins": {
+        "description": "Trusted origins label"
+    },
+    "addTrustedOrigin": "Add trusted origin",
+    "@addTrustedOrigin": {
+        "description": "Add trusted origin button text"
+    },
+    "emailProviders": "Email providers",
+    "@emailProviders": {
+        "description": "Email providers label"
+    },
     "engine": "Engine",
+    "@engine": {
+        "description": "Engine label"
+    },
     "port": "Port",
+    "@port": {
+        "description": "Port label"
+    },
     "host": "Host",
-    "emailOfSender": "Email of Sender",
+    "@host": {
+        "description": "Host label"
+    },
+    "emailOfSender": "Email of sender",
+    "@emailOfSender": {
+        "description": "Email of sender label"
+    },
     "useTls": "Use TLS",
-    "systemMonitorDBTimeout": "System Monitor DB Timeout(in Seconds)",
-    "newSecretKey": "New Secret Key",
-    "newEmailProvider": "New Email Provider",
-    "newDatabase": "New Database",
-    "dbIdentifier": "DB Identifier",
-    "configSaved": "Configuration Saved",
+    "@useTls": {
+        "description": "Use TLS option"
+    },
+    "systemMonitorDBTimeout": "System monitor database timeout (in seconds)",
+    "@systemMonitorDBTimeout": {
+        "description": "System monitor database timeout label in seconds"
+    },
+    "newSecretKey": "New secret key",
+    "@newSecretKey": {
+        "description": "New secret key label"
+    },
+    "newEmailProvider": "New email provider",
+    "@newEmailProvider": {
+        "description": "New email provider label"
+    },
+    "newDatabase": "New database",
+    "@newDatabase": {
+        "description": "New database label"
+    },
+    "dbIdentifier": "Database identifier",
+    "@dbIdentifier": {
+        "description": "Database identifier label"
+    },
+    "configSaved": "Configuration saved",
+    "@configSaved": {
+        "description": "Configuration saved message"
+    },
     "failedToSaveConfig": "Failed to save configuration",
-    "savingConfig": "Saving Configuration...",
-    "saveConfig" : "Save Configuration",
+    "@failedToSaveConfig": {
+        "description": "Failed to save configuration message"
+    },
+    "savingConfig": "Saving configuration...",
+    "@savingConfig": {
+        "description": "Saving configuration status message"
+    },
+    "saveConfig": "Save configuration",
+    "@saveConfig": {
+        "description": "Save configuration button text"
+    },
     "saveConfigAlertMessage": "Are you sure you want to save the configuration? This will overwrite the current configuration. The new configuration will be irreversibly saved but it will not take effect until the server is restarted.",
-    "failedToSendEmailWithId": "Failed to send email with id: {id}",
+    "@saveConfigAlertMessage": {
+        "description": "Confirmation message for saving configuration"
+    },
+    "failedToSendEmailWithId": "Failed to send email with ID: {id}",
     "@failedToSendEmailWithId": {
+        "description": "Failed to send email message with ID",
         "placeholders": {
-            "id":{
+            "id": {
                 "type": "int"
             }
         }
     },
-    "failedToConnectToStatusBroadcast": "Failed to connect to Status Broadcast, {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
-	"@failedToConnectToStatusBroadcast": {
-		"placeholders": {
-			"retries": {
-				"type": "int"
-			}
-		}
-	},
-    "invalidEmailOrPassword": "Email or Password incorrect",
-    "userWithThisEmailAlreadyExists": "A User with this email already exists",
+    "failedToConnectToStatusBroadcast": "Failed to connect to status broadcast, {retries, plural, zero {no retries} one {1 retry} other {{retries} retries remaining}}",
+    "@failedToConnectToStatusBroadcast": {
+        "description": "Failed to connect to status broadcast message",
+        "placeholders": {
+            "retries": {
+                "type": "int"
+            }
+        }
+    },
+    "invalidEmailOrPassword": "Invalid email or password",
+    "@invalidEmailOrPassword": {
+        "description": "Invalid email or password message"
+    },
+    "userWithThisEmailAlreadyExists": "A user with this email already exists",
+    "@userWithThisEmailAlreadyExists": {
+        "description": "Error message for existing email"
+    },
     "list": "List",
+    "@list": {
+        "description": "List view label"
+    },
     "graph": "Graph",
+    "@graph": {
+        "description": "Graph view label"
+    },
     "errorConnectingBroadcast": "Error connecting to broadcast, live data will not work",
+    "@errorConnectingBroadcast": {
+        "description": "Error connecting to broadcast message"
+    },
     "date": "Date",
-    "sucre": "Sucre",
-    "utilite": "Utilite",
+    "@date": {
+        "description": "Date label"
+    },
+    "sucre": "Sugar",
+    "@sucre": {
+        "description": "Sugar label"
+    },
+    "utilite": "Utilities",
+    "@utilite": {
+        "description": "Utilities label"
+    },
     "co2": "CO2",
-    "niveau": "Niveau",
-	"volume": "Volume",
-	"debit": "Debit",
-	"presCond": "Pres Cond",
-    "failedToGetNiveauData": "Failed to get niveau data",
+    "@co2": {
+        "description": "CO2 label"
+    },
+    "niveau": "Level",
+    "@niveau": {
+        "description": "Level label"
+    },
+    "volume": "Volume",
+    "@volume": {
+        "description": "Volume label"
+    },
+    "debit": "Flow rate",
+    "@debit": {
+        "description": "Flow rate label"
+    },
+    "presCond": "Pressure and conductivity",
+    "@presCond": {
+        "description": "Pressure and conductivity label"
+    },
+    "failedToGetNiveauData": "Failed to get level data",
+    "@failedToGetNiveauData": {
+        "description": "Failed to get level data message"
+    },
     "failedToGetVolumeData": "Failed to get volume data",
-    "failedToGetDebitData": "Failed to get debit data",
-    "failedToGetPresCondData": "Failed to get pres cond data",
+    "@failedToGetVolumeData": {
+        "description": "Failed to get volume data message"
+    },
+    "failedToGetDebitData": "Failed to get flow rate data",
+    "@failedToGetDebitData": {
+        "description": "Failed to get flow rate data message"
+    },
+    "failedToGetPresCondData": "Failed to get pressure and conductivity data",
+    "@failedToGetPresCondData": {
+        "description": "Failed to get pressure and conductivity data message"
+    },
     "value": "Value",
-    "visualize" : "Visualize",
+    "@value": {
+        "description": "Value label"
+    },
+    "visualize": "Visualize",
+    "@visualize": {
+        "description": "Visualize button text"
+    },
     "week": "Week",
+    "@week": {
+        "description": "Week label"
+    },
     "precision": "Precision",
+    "@precision": {
+        "description": "Precision label"
+    },
     "type": "Type",
-    "consommationDescription": "show the consommation in a range of dates.",
-    "previousDay": "Previous Day",
-    "sinceFirstOfMonth": "Since First of Month",
+    "@type": {
+        "description": "Type label"
+    },
+    "consommationDescription": "Show the consumption in a range of dates",
+    "@consommationDescription": {
+        "description": "Description for consumption section"
+    },
+    "previousDay": "Previous day",
+    "@previousDay": {
+        "description": "Previous day label"
+    },
+    "sinceFirstOfMonth": "Since first of month",
+    "@sinceFirstOfMonth": {
+        "description": "Since first of month label"
+    },
     "reports": "Reports",
-    "sucreReports": "Sugar Reports",
-    "co2Reports": "CO2 Reports",
-    "utiliteReports": "Utilite Reports",
-    "filtrationReports": "Filtration Reports",
-    "generateReport": "Generate Report",
+    "@reports": {
+        "description": "Reports section title"
+    },
+    "sucreReports": "Sugar reports",
+    "@sucreReports": {
+        "description": "Sugar reports section title"
+    },
+    "co2Reports": "CO2 reports",
+    "@co2Reports": {
+        "description": "CO2 reports section title"
+    },
+    "utiliteReports": "Utilities reports",
+    "@utiliteReports": {
+        "description": "Utilities reports section title"
+    },
+    "filtrationReports": "Filtration reports",
+    "@filtrationReports": {
+        "description": "Filtration reports section title"
+    },
+    "generateReport": "Generate report",
+    "@generateReport": {
+        "description": "Generate report button text"
+    },
     "generateReportDescription": "Generate a report for a specific date",
+    "@generateReportDescription": {
+        "description": "Description for generating a report"
+    },
     "viewReport": "Report: {rapport}",
     "@viewReport": {
+        "description": "View report with placeholder",
         "placeholders": {
             "rapport": {
                 "type": "String"
@@ -866,37 +1911,85 @@
     },
     "viewReportDescription": "View the report of {date}",
     "@viewReportDescription": {
+        "description": "Description for viewing a report with date",
         "placeholders": {
             "date": {
                 "type": "String"
             }
         }
     },
-    "loadingReports": "Loading Reports...",
+    "loadingReports": "Loading reports...",
+    "@loadingReports": {
+        "description": "Loading reports status message"
+    },
     "failedToLoadReports": "Failed to load reports",
-    "sortReports": "Sort Reports",
-    "filterReports": "Filter Reports",
-    "hasSynthese": "Has Synthese",
+    "@failedToLoadReports": {
+        "description": "Failed to load reports message"
+    },
+    "sortReports": "Sort reports",
+    "@sortReports": {
+        "description": "Sort reports button text"
+    },
+    "filterReports": "Filter reports",
+    "@filterReports": {
+        "description": "Filter reports button text"
+    },
+    "hasSynthese": "Has synthesis",
+    "@hasSynthese": {
+        "description": "Has synthesis label"
+    },
     "getIntervalName": "{interval, select, jour {Day} semaine {Week} mois {Month} manual {Manual} other {Interval}}",
-	"@getIntervalName": {
-		"placeholders": {
-			"interval": {
-				"type": "String"
-			}
-		}
-	},
-    "withSynthese": "With Synthese",
-    "withoutSynthese": "Without Synthese",
+    "@getIntervalName": {
+        "description": "Interval name with placeholder",
+        "placeholders": {
+            "interval": {
+                "type": "String"
+            }
+        }
+    },
+    "withSynthese": "With synthesis",
+    "@withSynthese": {
+        "description": "With synthesis label"
+    },
+    "withoutSynthese": "Without synthesis",
+    "@withoutSynthese": {
+        "description": "Without synthesis label"
+    },
     "failedToGenerateReport": "Failed to generate report",
+    "@failedToGenerateReport": {
+        "description": "Failed to generate report message"
+    },
     "generate": "Generate",
-    "todaysReports": "Today's Reports",
+    "@generate": {
+        "description": "Generate button text"
+    },
+    "todaysReports": "Today's reports",
+    "@todaysReports": {
+        "description": "Today's reports section title"
+    },
     "errorLoadingReports": "Error loading reports",
-    "synthese": "Synthese",
-    "downloadCertificate": "Download Certificate",
-    "downloadingCertificateMessage": "Downloading Certificate...",
-    "downloadFailed": "Download Failed",
+    "@errorLoadingReports": {
+        "description": "Error loading reports message"
+    },
+    "synthese": "Synthesis",
+    "@synthese": {
+        "description": "Synthesis label"
+    },
+    "downloadCertificate": "Download certificate",
+    "@downloadCertificate": {
+        "description": "Download certificate button text"
+    },
+    "downloadingCertificateMessage": "Downloading certificate...",
+    "@downloadingCertificateMessage": {
+        "description": "Downloading certificate status message"
+    },
+    "downloadFailed": "Download failed",
+    "@downloadFailed": {
+        "description": "Download failed message"
+    },
     "fileDownloadedTo": "File downloaded to: {path}",
     "@fileDownloadedTo": {
+        "description": "File downloaded to path message",
         "placeholders": {
             "path": {
                 "type": "String"
@@ -904,11 +1997,106 @@
         }
     },
     "downloadedWithBrowser": "Downloaded with browser",
+    "@downloadedWithBrowser": {
+        "description": "Downloaded with browser message"
+    },
     "downloadedFilePathCopiedToClipboard": "Downloaded file path copied to clipboard",
+    "@downloadedFilePathCopiedToClipboard": {
+        "description": "Downloaded file path copied to clipboard message"
+    },
     "profile": "Profile",
-    "noSuperior": "No Superior",
-    "welcomeBack": "Welcome Back",
+    "@profile": {
+        "description": "Profile section title"
+    },
+    "noSuperior": "No superior",
+    "@noSuperior": {
+        "description": "No superior label"
+    },
+    "welcomeBack": "Welcome back",
+    "@welcomeBack": {
+        "description": "Welcome back message"
+    },
     "pression": "Pressure",
+    "@pression": {
+        "description": "Pressure label"
+    },
     "conductivity": "Conductivity",
-    "temperature": "Temperature"
+    "@conductivity": {
+        "description": "Conductivity label"
+    },
+    "temperature": "Temperature",
+    "@temperature": {
+        "description": "Temperature label"
+    },
+    "minLength": "Minimum length: {length}",
+    "@minLength": {
+        "description": "Minimum length requirement message",
+        "placeholders": {
+            "length": {
+                "type": "int"
+            }
+        }
+    },
+    "maxLength": "Maximum length: {length}",
+    "@maxLength": {
+        "description": "Maximum length requirement message",
+        "placeholders": {
+            "length": {
+                "type": "int"
+            }
+        }
+    },
+    "hasLowercaseChars": "Must contain at least {count} lowercase character",
+    "@hasLowercaseChars": {
+        "description": "Lowercase character requirement message",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "hasUppercaseChars": "Must contain at least {count} uppercase character",
+    "@hasUppercaseChars": {
+        "description": "Uppercase character requirement message",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "hasNumericChars": "Must contain at least {count} number",
+    "@hasNumericChars": {
+        "description": "Numeric character requirement message",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "hasSpecialChars": "Must contain at least {count} special character",
+    "@hasSpecialChars": {
+        "description": "Special character requirement message",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "invalidFirstName": "Invalid first name",
+    "@invalidFirstName": {
+        "description": "Invalid first name message"
+    },
+    "invalidLastName": "Invalid last name",
+    "@invalidLastName": {
+        "description": "Invalid last name message"
+    },
+    "invalidField": "Invalid {field}",
+    "@invalidField": {
+        "description": "Invalid field message with placeholder",
+        "placeholders": {
+            "field": {
+                "type": "String"
+            }
+        }
+    }
 }
