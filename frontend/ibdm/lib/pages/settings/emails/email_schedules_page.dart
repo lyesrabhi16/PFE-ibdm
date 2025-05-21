@@ -19,6 +19,7 @@ import 'package:ibdm/services/api_django/api_client/models/email_schedule.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/helpers/common_heplers.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
@@ -339,16 +340,10 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             ),
             ShadButton(
               onPressed: () {
-                if (_formKey.currentState != null &&
-                    !_formKey.currentState!.validate()) {
-                  logger.e("Form is not valid");
-                  Toasts.showErrorToastNotification(
-                      context: Get.overlayContext!,
-                      message: strings.value.pleaseFixErrorsInTheForm);
-                  return;
-                }
                 EmailActions.addSchedule(
                   context,
+                  getUniqueId(),
+                  formState: _formKey.currentState!,
                   rapport: _rapport!,
                   interval: _interval!,
                   tempsEnvoi: _tempsEnvoi!,
@@ -366,6 +361,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             )
           ],
           child: EmailScheduleForm(
+            formKey: _formKey,
             onValuesChanged: (
                 {formKey,
                 interval,
@@ -479,6 +475,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                 )).removeWhen(isAtMostSmallScreen(context))
           ].nonNulls.toList(),
           child: EmailScheduleForm(
+            formKey: _formKey,
             schedule: schedule,
             editable: false,
             showIdField: true,
@@ -536,16 +533,10 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                       icon: Icon(Icons.edit),
                       child: Text(strings.value.save),
                       onPressed: () {
-                        if (_formKey.currentState != null &&
-                            !_formKey.currentState!.validate()) {
-                          logger.e("Form is not valid");
-                          Toasts.showErrorToastNotification(
-                              context: Get.overlayContext!,
-                              message: strings.value.pleaseFixErrorsInTheForm);
-                          return;
-                        }
                         EmailActions.saveSchedule(
                           context,
+                          getUniqueId(),
+                          formState: _formKey.currentState!,
                           id: schedule.id,
                           interval: _interval!,
                           intervalManual: _intervalManual,
@@ -586,17 +577,10 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                               icon: Icon(Icons.edit),
                               child: Text(strings.value.save),
                               onPressed: () {
-                                if (_formKey.currentState != null &&
-                                    !_formKey.currentState!.validate()) {
-                                  logger.e("Form is not valid");
-                                  Toasts.showErrorToastNotification(
-                                      context: Get.overlayContext!,
-                                      message: strings
-                                          .value.pleaseFixErrorsInTheForm);
-                                  return;
-                                }
                                 EmailActions.saveSchedule(
                                   context,
+                                  getUniqueId(),
+                                  formState: _formKey.currentState!,
                                   id: schedule.id,
                                   interval: _interval!,
                                   intervalManual: _intervalManual,
@@ -626,6 +610,7 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                 )).removeWhen(isAtMostSmallScreen(context))
           ].nonNulls.toList(),
           child: EmailScheduleForm(
+            formKey: _formKey,
             editable: true,
             schedule: schedule,
             showIdField: false,
