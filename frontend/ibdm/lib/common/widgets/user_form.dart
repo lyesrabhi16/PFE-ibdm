@@ -76,9 +76,10 @@ class UserForm extends StatelessWidget {
         (o) => user == null
             ? true
             : o.value.userId != user!.userId &&
-                !user!.subordinates
-                    .map((s) => s.userId)
-                    .contains(o.value.userId),
+                (user?.role == "ADMIN_SYSTEM" ||
+                    !user!.subordinates
+                        .map((s) => s.userId)
+                        .contains(o.value.userId)),
       )
       .toList();
   bool get isEditing => user != null && editable == true;
@@ -589,6 +590,7 @@ class UserForm extends StatelessWidget {
       }
     }
 
+    logger.e("superior: ${_addUserSuperior?.userId}");
     _loadedSuperiorInitialValue.value = true;
   }
 

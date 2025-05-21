@@ -58,12 +58,14 @@ void loadSuperiorsOptions(
   ];
 
   try {
+    logger.f("user in loadSuperiorsOptions: ${userController.user}");
     if (userController.user!.role == "ADMIN_SYSTEM") {
+      logger.f("user is admin system");
       final api = await ApiClientInstance.getApiClient();
       final res = await api.getUsers(
         enablePagination: false,
       );
-
+      logger.f("res: ${res.data.length}");
       for (User user in res.data) {
         logger.e("sup user id: ${user.userId}");
         user.userId != userController.user!.userId

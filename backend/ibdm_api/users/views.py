@@ -102,12 +102,12 @@ class UserViewSet(viewsets.ModelViewSet):
         return qs.none()
     
     def check(self, serializer):
-        if self.request.user.is_superuser or self.request.user.is_admin:
+        if self.request.user.is_superuser or self.request.user.is_admin or self.request.user.role.group.name == "ADMIN_SYSTEM" or self.request.user.groups.filter(name="ADMIN_SYSTEM").exists():
             return
         # check if the user can add a user with requested role
         managed_roles = self.request.user.role.managed_roles.all()
         can_add = any(
-            serializer.validated_data['role'] == role.group.name
+            serializer.validated_data['role'].group.name.strip().upper() == role.group.name.strip().upper()
             for role in managed_roles
         )
         if not can_add :
@@ -221,7 +221,7 @@ def getSubordinateAndSuperiorId(request, subordinate, superior):
 @permission_classes([permissions.IsAuthenticated])
 def getAllUserPerms(request: Request):
     perms = set()
-    if request.user.is_superuser:
+    if request.user.is_superuser or request.user.role.group.name == "ADMIN_SYSTEM" or request.user.groups.filter(name="ADMIN_SYSTEM").exists():
         perms = Permission.objects.all().values_list("codename", flat=True)
     else:
         user_perms = Permission.objects.filter(user=request.user).values_list("codename", flat=True)

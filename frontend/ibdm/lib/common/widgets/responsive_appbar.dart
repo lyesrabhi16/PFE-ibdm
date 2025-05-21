@@ -92,7 +92,7 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                     borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   constraints: BoxConstraints(
-                    maxWidth: AppSizes.xl * 5,
+                    maxWidth: AppSizes.xl * 6,
                   ),
                   child: Obx(() {
                     return ListView(
