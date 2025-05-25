@@ -69,7 +69,7 @@ class UserViewSet(viewsets.ModelViewSet):
         FormParser,
         MultiPartParser,
     ]
-    queryset = User.objects.all()
+    queryset = User.objects.filter(is_active=True).order_by("id")
     serializer_class = UserSerializer
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     filterset_fields = ["role"]
@@ -121,6 +121,12 @@ class UserViewSet(viewsets.ModelViewSet):
     def preform_save(self, serializer):
         self.check(serializer)
         return super().perform_create(serializer)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return JsonResponse({}, status=204)
 
 @with_operation_ids(
     on_list="getGroups",
