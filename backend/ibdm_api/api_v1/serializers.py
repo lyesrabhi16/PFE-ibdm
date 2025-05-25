@@ -126,6 +126,7 @@ class ServerConfigSerializer(serializers.Serializer):
     CSRF_TRUSTED_ORIGINS = serializers.ListField(child=serializers.CharField(), allow_null=True)
     LOG_TO_FILES = serializers.BooleanField(allow_null=True)
     SERVER_DB_CONNECTION_CHECK_TIMEOUT = serializers.IntegerField(allow_null=True)
+    DATA_STOPPED_WAIT_SECONDS = serializers.IntegerField(allow_null=True, required=False, default=600)  # seconds to wait for data to be inserted before alerting of stop
     REDIS_DB = StandardDatabaseConfSerializer(allow_null=True)
     DATABASES = serializers.DictField(child=StandardDatabaseConfSerializer(), allow_null=True)
     EMAIL_PROVIDERS = serializers.DictField(child=EmailProviderConfSerializer(), allow_null=True)

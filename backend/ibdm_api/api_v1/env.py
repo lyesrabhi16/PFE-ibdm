@@ -24,6 +24,7 @@ class Env:
     CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="https://localhost:8443", cast=lambda v: [s.strip() for s in v.split(",")])
     LOG_TO_FILES = config("LOG_TO_FILES", default=True, cast=bool)
     SERVER_DB_CONNECTION_CHECK_TIMEOUT = config("SERVER_DB_CONNECTION_CHECK_TIMEOUT", default=3, cast=int) # IN SECONDS
+    DATA_STOPPED_WAIT_SECONDS = config("DATA_STOPPED_WAIT_SECONDS", default=600, cast=int)  # seconds to wait for data to be inserted before alerting of stop
 
     # ibdm redis db
     DATABASE_IBDM_REDIS_HOST = config("DATABASE_IBDM_REDIS_HOST")

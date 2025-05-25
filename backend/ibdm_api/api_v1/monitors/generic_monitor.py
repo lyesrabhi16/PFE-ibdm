@@ -9,16 +9,21 @@ from logs.logging import logger as logging
 from tenacity import retry, stop_after_delay, wait_chain, wait_fixed
 from api_v1.env import Env
 
+last_records = {}
+
 def getValueForCustomExpression(action:str, attrs: list, obj: object) -> float:
+    global last_records
+
     if action == "total":
         return sum((getattr(obj, attr) or 0)  for attr in attrs)
     if action == "stopped":
-         last5 = getattr(obj, "objects").all().order_by("-date")[:5]
-         first_record_date = last5[0].date
-         for record in last5:
-             if record.date != first_record_date:
-                 return 0
-         return 1
+         #print("current obj date", getattr(obj, "date"), "last record", last_records)
+         if obj.__class__.__name__ in last_records:
+            if (getattr(obj, "date") - last_records[obj.__class__.__name__]).total_seconds() > (Env.DATA_STOPPED_WAIT_SECONDS):
+                print(obj.__class__.__name__, "data insertion from automates has stopped")
+                return 1
+         last_records[obj.__class__.__name__] = getattr(obj, "date")
+         return 0
     raise ValueError(f"Unknown Custom Expression action '{action}'")
     
 
@@ -94,7 +99,7 @@ def sendWarningAlertEmail(name, alert, user, value):
                 logging.info(f"{name}# {provider.host} {alert.monitored_value} Sending warning alert email to '{user.email}'")
                 logging.info(f"emailScheduler#  {provider.host} sending warning alert email {alert} to '{user.email}'")
                 send_mail(
-                    subject= f"IBDM Alert D'Avertissement: {alert.monitored_value}",
+                    subject= f"IBDM Alerte D'Avertissement: {alert.monitored_value}",
                     message="",
                     html_message= render_to_string(
                         template_name="emails/alert.html",
@@ -140,7 +145,7 @@ def sendDangerAlertEmail(alert, value, user, name):
                 logging.info(f"{name}# {provider.host} {alert.monitored_value} Sending danger alert email to '{user.email}'")
                 logging.info(f"emailScheduler#  {provider.host} sending danger alert email {alert} to '{user.email}'")
                 send_mail(
-                    subject= f"IBDM Alert De Danger: {alert.monitored_value}",
+                    subject= f"IBDM Alerte De Danger: {alert.monitored_value}",
                     message="",
                     html_message= render_to_string(
                         template_name="emails/alert.html",
