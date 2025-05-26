@@ -1,3 +1,4 @@
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:ibdm/common/extensions/rbac_extensions.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
@@ -8,10 +9,13 @@ import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/common/widgets/theme_mode_switch_button.dart';
 import 'package:ibdm/common/controllers/locale_controller.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/common/controllers/theme_mode_controller.dart';
 import 'package:ibdm/common/widgets/language_switch_button.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
+import 'package:cookie_jar/cookie_jar.dart' show FileStorage, PersistCookieJar;
+import 'package:path_provider/path_provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -40,6 +44,16 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: 20),
             Expanded(
               child: Obx(() {
+                getApplicationDocumentsDirectory().then((dir) async {
+                  // Ensure the directory exists
+                  final persistentCookieJar = PersistCookieJar(
+                    storage: FileStorage(
+                      "${dir.path}/.cookies/",
+                    ),
+                  );
+                  logger.e(
+                      "cookies: ${persistentCookieJar.hostCookies} ${persistentCookieJar.domainCookies}");
+                });
                 logger.e(
                     "EmailSettingsPage show Email settings: ${Container().withAnyPermissionOf([
                               Permissions.viewEmailAlerts,
@@ -65,6 +79,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           ? strings.value.lightmode
                           : strings.value.darkmode,
                       trailing: ThemeModeSwitchButton(),
+                      onLongPress: () {
+                        LocalStorage.removeDarkThemeMode().then((_) =>
+                            Get.find<ThemeModeController>().loadThemeMode());
+                      },
                       onTap: () =>
                           Get.find<ThemeModeController>().toggleTheme(),
                     ),
@@ -85,13 +103,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         localeController.setLocale(
                             localeController.supportedLocales[nextIndex]);
                       },
-                    ),
-                    SettingCard(
-                      icon: Icons.help,
-                      title: strings.value.helpAssistance,
-                      trailing: Icon(Icons.arrow_forward_ios_rounded,
-                          color: colorScheme.primary),
-                      onTap: () => Get.toNamed(Routes.help),
                     ),
                     SettingCard(
                       icon: Icons.info,

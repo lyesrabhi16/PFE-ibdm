@@ -26,6 +26,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       userPermissions: (json['user_permissions'] as List<dynamic>)
           .map((e) => (e as num).toInt())
           .toList(),
+      isAdmin: json['is_admin'] as bool,
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -40,4 +41,5 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'superiors': instance.superiors,
       'subordinates': instance.subordinates,
       'user_permissions': instance.userPermissions,
+      'is_admin': instance.isAdmin,
     };

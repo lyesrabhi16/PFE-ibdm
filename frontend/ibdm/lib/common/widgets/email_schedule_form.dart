@@ -46,8 +46,6 @@ class EmailScheduleForm extends StatefulWidget {
 }
 
 class _EmailScheduleFormState extends State<EmailScheduleForm> {
-  final _formKey = GlobalKey<ShadFormState>();
-
   Function? _getContext;
 
   BuildContext get getContext => _getContext!.call()!;
@@ -186,7 +184,7 @@ class _EmailScheduleFormState extends State<EmailScheduleForm> {
       _valuesChanged();
       return ShadForm(
           onChanged: _valuesChanged,
-          key: _formKey,
+          key: widget.formKey ?? GlobalKey<ShadFormState>(),
           autovalidateMode: ShadAutovalidateMode.alwaysAfterFirstValidation,
           child: Obx(() {
             return Column(
@@ -269,17 +267,26 @@ class _EmailScheduleFormState extends State<EmailScheduleForm> {
                   ),
                 ),
                 SizedBox(height: AppSizes.sm),
-                if (interval!.value == IntervalEnum.manual)
-                  ShadInputFormField(
-                    enabled: widget.editable,
-                    controller: intervalManualController,
-                    label: Text(strings.value.intervalManualLabel),
-                    keyboardType: TextInputType.number,
-                    initialValue: "1",
-                    onChanged: (v) => {
-                      _valuesChanged(),
-                    },
-                  ),
+                Obx(() {
+                  logger.e("interval: ${interval!.value}");
+                  if (interval!.value == IntervalEnum.manual) {
+                    return ShadInputFormField(
+                      enabled: widget.editable,
+                      controller: intervalManualController,
+                      validator: FormBuilderValidators.integer(
+                          errorText: strings.value
+                              .invalidField(strings.value.intervalManualLabel),
+                          checkNullOrEmpty: false),
+                      label: Text(strings.value.intervalManualLabel),
+                      keyboardType: TextInputType.number,
+                      initialValue: "1",
+                      onChanged: (v) => {
+                        _valuesChanged(),
+                      },
+                    );
+                  }
+                  return SizedBox.shrink();
+                }),
                 SizedBox(height: AppSizes.sm),
                 ShadTimePickerFormField(
                   enabled: widget.editable,

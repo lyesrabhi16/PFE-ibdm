@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
@@ -14,6 +15,7 @@ import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/data_representation.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
+import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 
@@ -108,6 +110,8 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                               ),
                             ],
                             child: Text(strings.value.saveConfigAlertMessage),
+                          ).marginOnly(
+                            top: AppSizes.md,
                           ),
                         );
                       },
@@ -127,6 +131,8 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                       child: Column(
                         children: [
                           Wrap(
+                            alignment: WrapAlignment.spaceEvenly,
+                            spacing: AppSizes.xl,
                             children: [
                               ConstrainedBox(
                                 constraints: BoxConstraints(
@@ -278,11 +284,23 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                                 "SERVER_DB_CONNECTION_CHECK_TIMEOUT",
                                                 int.tryParse(value) ?? 0);
                                           },
+                                          validator:
+                                              FormBuilderValidators.integer(
+                                            errorText: strings.value
+                                                .invalidField(strings.value
+                                                    .dbConnectionCheckTimeout),
+                                          ),
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(),
                                             labelText: strings
                                                 .value.dbConnectionCheckTimeout,
                                             hintText: "10",
+                                            suffix: Text(
+                                              strings.value.seconds,
+                                              style: TextStyle(
+                                                color: colorScheme.onSurface,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                         SizedBox(height: AppSizes.sm),
@@ -294,11 +312,78 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                                 "SYSTEM_MONITOR_DB_TIMEOUT",
                                                 int.tryParse(value) ?? 0);
                                           },
+                                          validator:
+                                              FormBuilderValidators.integer(
+                                            errorText: strings.value
+                                                .invalidField(strings.value
+                                                    .systemMonitorDBTimeout),
+                                          ),
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(),
                                             labelText: strings
                                                 .value.systemMonitorDBTimeout,
                                             hintText: "10",
+                                            suffix: Text(
+                                              strings.value.seconds,
+                                              style: TextStyle(
+                                                color: colorScheme.onSurface,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: AppSizes.sm),
+                                        TextFormField(
+                                          initialValue:
+                                              "${config.value?.logSizeLimit}",
+                                          onChanged: (value) {
+                                            modifyConfig("LOG_SIZE_LIMIT",
+                                                int.tryParse(value) ?? 0);
+                                          },
+                                          validator:
+                                              FormBuilderValidators.integer(
+                                            errorText: strings.value
+                                                .invalidField(
+                                                    strings.value.logSizeLimit),
+                                          ),
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText:
+                                                strings.value.logSizeLimit,
+                                            hintText: "100",
+                                            suffix: Text(
+                                              "MB",
+                                              style: TextStyle(
+                                                color: colorScheme.onSurface,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: AppSizes.sm),
+                                        TextFormField(
+                                          initialValue:
+                                              "${config.value?.countOFLogsTOKeep}",
+                                          onChanged: (value) {
+                                            modifyConfig(
+                                                "COUNT_OF_LOGS_TO_KEEP",
+                                                int.tryParse(value) ?? 0);
+                                          },
+                                          validator:
+                                              FormBuilderValidators.integer(
+                                            errorText: strings.value
+                                                .invalidField(strings
+                                                    .value.numberOfLogsToKeep),
+                                          ),
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText: strings
+                                                .value.numberOfLogsToKeep,
+                                            hintText: "100",
+                                            suffix: Text(
+                                              strings.value.logs,
+                                              style: TextStyle(
+                                                color: colorScheme.onSurface,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -353,49 +438,52 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                             ),
                                           ],
                                         ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          SizedBox(
-                                            width: 300,
-                                            child: TextField(
-                                              onSubmitted: (value) {
+                                      SizedBox(
+                                        width: 400,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                onSubmitted: (value) {
+                                                  // Add host logic here
+                                                  final allowedHosts = config
+                                                          .value
+                                                          ?.allowedHosts ??
+                                                      [];
+                                                  allowedHosts.add(value);
+                                                  modifyConfig("ALLOWED_HOSTS",
+                                                      allowedHosts);
+                                                },
+                                                controller:
+                                                    _addAllowedHostController,
+                                                decoration: InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  labelText: strings
+                                                      .value.addAllowedHost,
+                                                  hintText:
+                                                      "www.example.com or .example.com or *",
+                                                ),
+                                              ),
+                                            ),
+                                            ShadButton.ghost(
+                                              icon: Icon(Icons.add),
+                                              onPressed: () {
                                                 // Add host logic here
                                                 final allowedHosts = config
                                                         .value?.allowedHosts ??
                                                     [];
-                                                allowedHosts.add(value);
+                                                allowedHosts.add(
+                                                    _addAllowedHostController
+                                                        .text);
                                                 modifyConfig("ALLOWED_HOSTS",
                                                     allowedHosts);
                                               },
-                                              controller:
-                                                  _addAllowedHostController,
-                                              decoration: InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                labelText: strings
-                                                    .value.addAllowedHost,
-                                                hintText:
-                                                    "www.example.com or .example.com or *",
-                                              ),
                                             ),
-                                          ),
-                                          ShadButton.ghost(
-                                            icon: Icon(Icons.add),
-                                            onPressed: () {
-                                              // Add host logic here
-                                              final allowedHosts =
-                                                  config.value?.allowedHosts ??
-                                                      [];
-                                              allowedHosts.add(
-                                                  _addAllowedHostController
-                                                      .text);
-                                              modifyConfig("ALLOWED_HOSTS",
-                                                  allowedHosts);
-                                            },
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ]),
                                   ),
@@ -445,17 +533,42 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                             ),
                                           ],
                                         ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          SizedBox(
-                                            width: 300,
-                                            child: TextFormField(
-                                              controller:
-                                                  _addTrustedOriginController,
-                                              onFieldSubmitted: (v) {
+                                      SizedBox(
+                                        width: 400,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Expanded(
+                                              child: TextFormField(
+                                                controller:
+                                                    _addTrustedOriginController,
+                                                onFieldSubmitted: (v) {
+                                                  // Add host logic here
+                                                  final trustedOrigins = config
+                                                          .value
+                                                          ?.csrfTrustedOrigins ??
+                                                      [];
+                                                  trustedOrigins.add(
+                                                      _addTrustedOriginController
+                                                          .text);
+                                                  modifyConfig(
+                                                      "CSRF_TRUSTED_ORIGINS",
+                                                      trustedOrigins);
+                                                },
+                                                decoration: InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  labelText: strings
+                                                      .value.addTrustedOrigin,
+                                                  hintText:
+                                                      "https://www.example.com:8443",
+                                                ),
+                                              ),
+                                            ),
+                                            ShadButton.ghost(
+                                              icon: Icon(Icons.add),
+                                              onPressed: () {
                                                 // Add host logic here
                                                 final trustedOrigins = config
                                                         .value
@@ -468,32 +581,9 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                                     "CSRF_TRUSTED_ORIGINS",
                                                     trustedOrigins);
                                               },
-                                              decoration: InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                labelText: strings
-                                                    .value.addTrustedOrigin,
-                                                hintText:
-                                                    "https://www.example.com:8443",
-                                              ),
                                             ),
-                                          ),
-                                          ShadButton.ghost(
-                                            icon: Icon(Icons.add),
-                                            onPressed: () {
-                                              // Add host logic here
-                                              final trustedOrigins = config
-                                                      .value
-                                                      ?.csrfTrustedOrigins ??
-                                                  [];
-                                              trustedOrigins.add(
-                                                  _addTrustedOriginController
-                                                      .text);
-                                              modifyConfig(
-                                                  "CSRF_TRUSTED_ORIGINS",
-                                                  trustedOrigins);
-                                            },
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ]),
                                   ),
@@ -504,6 +594,7 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                           SizedBox(height: AppSizes.md),
                           Wrap(
                             spacing: AppSizes.xl,
+                            direction: Axis.horizontal,
                             children: [
                               ConstrainedBox(
                                 constraints: BoxConstraints(
@@ -601,7 +692,7 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                             modifyConfig("REDIS_DB",
                                                 newDatabase.toJson());
                                           },
-                                          name: config.value!.redisDB.name ??
+                                          name: config.value!.redisDB?.name ??
                                               "Redis",
                                         ),
                                       for (var db
@@ -786,7 +877,7 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
       return MapEntry(e.key, e.value.toJson());
     }));
     newConfig["EMAIL_PROVIDERS"] = emailProviders;
-    newConfig["REDIS_DB"] = config.value?.redisDB.toJson();
+    newConfig["REDIS_DB"] = config.value?.redisDB?.toJson();
 
     newConfig[s] = value;
 
@@ -811,7 +902,7 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
       jsonConfig["EMAIL_PROVIDERS"] = Map.fromEntries(config
           .value!.emailProviders!.entries
           .map((e) => MapEntry(e.key, e.value.toJson())));
-      jsonConfig["REDIS_DB"] = config.value?.redisDB.toJson();
+      jsonConfig["REDIS_DB"] = config.value?.redisDB?.toJson();
       if (secretKey != null) {
         jsonConfig["SECRET_KEY"] = secretKey;
       }

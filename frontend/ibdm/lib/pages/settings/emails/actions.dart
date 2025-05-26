@@ -6,14 +6,17 @@ import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 class EmailActions {
   EmailActions._();
+  static String? executionId;
   static Future<void> addAlert(
-    BuildContext context, {
+    BuildContext context,
+    String id, {
     required String monitoredValue,
     String? monitorType,
     String? customMessage,
@@ -26,9 +29,22 @@ class EmailActions {
     String? warningPoint,
     Function? onSuccess,
     Function? onFail,
-    GlobalKey<FormState>? formKey,
+    ShadFormState? formState,
   }) async {
+    executionId ??= id;
+    if (id != executionId) {
+      return;
+    }
+
     final strings = getTranslations(context);
+    if (formState != null && !formState.validate()) {
+      logger.e("Form is not valid");
+      Toasts.showErrorToastNotification(
+          context: Get.overlayContext!,
+          message: strings.pleaseFixErrorsInTheForm);
+      executionId = null;
+      return;
+    }
     // add alert
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
@@ -61,23 +77,27 @@ class EmailActions {
         ),
       );
       state.value = FutureState.success;
+      executionId = null;
       onSuccess?.call();
     } on Exception catch (e) {
       logger.e("Failed to add alert : $e");
       state.value = FutureState.error;
       Toasts.showErrorToast(
           context: context, message: strings.failedToAddAlert);
+      executionId = null;
       onFail?.call();
     } finally {
       Future.delayed(Duration(seconds: 2), () {
         toastification.dismissById(toast.id);
       });
+      executionId = null;
     }
     return;
   }
 
   static Future<void> saveAlert(
-    BuildContext context, {
+    BuildContext context,
+    String id, {
     required int alertId,
     String? monitoredValue,
     String? monitorType,
@@ -91,9 +111,24 @@ class EmailActions {
     String? warningPoint,
     Function? onSuccess,
     Function? onFail,
-    GlobalKey<FormState>? formKey,
+    ShadFormState? formState,
   }) async {
+    executionId ??= id;
+    if (id != executionId) {
+      return;
+    }
+
     final strings = getTranslations(context);
+
+    if (formState != null && !formState.validate()) {
+      logger.e("Form is not valid");
+      Toasts.showErrorToastNotification(
+          context: Get.overlayContext!,
+          message: strings.pleaseFixErrorsInTheForm);
+      executionId = null;
+      return;
+    }
+
     // add alert
     final state = FutureState.loading.obs;
     final toast = Toasts.showStatefulToast(
@@ -129,14 +164,17 @@ class EmailActions {
             sendToRoles: roles?.map((e) => e.roleId).toList(),
           ));
       state.value = FutureState.success;
+      executionId = null;
       onSuccess?.call();
     } on Exception catch (e) {
+      executionId = null;
       logger.e("Failed to save alert : $e");
       state.value = FutureState.error;
       Toasts.showErrorToast(
           context: context, message: strings.failedToSaveAlert);
       onFail?.call();
     } finally {
+      executionId = null;
       Future.delayed(Duration(seconds: 2), () {
         toastification.dismissById(toast.id);
       });
@@ -203,7 +241,8 @@ class EmailActions {
   }
 
   static addSchedule(
-    BuildContext context, {
+    BuildContext context,
+    String id, {
     required RapportEnum rapport,
     required String tempsEnvoi,
     required IntervalEnum interval,
@@ -213,13 +252,19 @@ class EmailActions {
     DateTime? nextRunTime,
     Function? onSuccess,
     Function? onFail,
-    GlobalKey<FormState>? formKey,
+    required ShadFormState formState,
   }) async {
+    executionId ??= id;
+    if (id != executionId) {
+      return;
+    }
+
     final strings = getTranslations(context);
-    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+    if (!formState.validate()) {
       logger.e("Form is not valid");
       Toasts.showErrorToastNotification(
           context: context, message: strings.pleaseFixErrorsInTheForm);
+      executionId = null;
       return;
     }
     // enable or disable alert
@@ -250,14 +295,17 @@ class EmailActions {
         ),
       );
       state.value = FutureState.success;
+      executionId = null;
       onSuccess?.call();
     } on Exception catch (e) {
+      executionId = null;
       logger.e("Failed to add email schedule : $e");
       state.value = FutureState.error;
       Toasts.showErrorToast(
           context: context, message: strings.failedToAddSchedule);
       onFail?.call();
     } finally {
+      executionId = null;
       Future.delayed(Duration(seconds: 2), () {
         toastification.dismissById(toast.id);
       });
@@ -266,7 +314,8 @@ class EmailActions {
   }
 
   static saveSchedule(
-    BuildContext context, {
+    BuildContext context,
+    String reqId, {
     required int id,
     required RapportEnum rapport,
     required String tempsEnvoi,
@@ -277,13 +326,18 @@ class EmailActions {
     DateTime? nextRunTime,
     Function? onSuccess,
     Function? onFail,
-    GlobalKey<FormState>? formKey,
+    required ShadFormState formState,
   }) async {
+    executionId ??= reqId;
+    if (reqId != executionId) {
+      return;
+    }
     final strings = getTranslations(context);
-    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+    if (!formState.validate()) {
       logger.e("Form is not valid");
       Toasts.showErrorToastNotification(
           context: context, message: strings.pleaseFixErrorsInTheForm);
+      executionId = null;
       return;
     }
     // enable or disable alert
@@ -315,14 +369,17 @@ class EmailActions {
         id: id,
       );
       state.value = FutureState.success;
+      executionId = null;
       onSuccess?.call();
     } on Exception catch (e) {
+      executionId = null;
       logger.e("Failed to save email schedule : $e");
       state.value = FutureState.error;
       Toasts.showErrorToast(
           context: context, message: strings.failedToSaveSchedule);
       onFail?.call();
     } finally {
+      executionId = null;
       Future.delayed(Duration(seconds: 2), () {
         toastification.dismissById(toast.id);
       });

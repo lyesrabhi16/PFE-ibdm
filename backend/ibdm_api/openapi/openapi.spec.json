@@ -4840,12 +4840,14 @@
                         "content": {
                             "application/x-x509-ca-cert": {
                                 "schema": {
-                                    "type": "string",
-                                    "format": "binary"
+                                    "type": "string"
                                 }
                             }
                         },
                         "description": ""
+                    },
+                    "404": {
+                        "description": "No response body"
                     }
                 }
             }
@@ -5243,12 +5245,32 @@
                     "utilite.ut_sid_pg",
                     "utilite.ut_sid_tt",
                     "utilite.ut_sid_tc",
+                    "chambre_froide.ut_tt_cf1",
+                    "chambre_froide.ut_tt_cf2",
+                    "chambre_froide.ut_tt_cf3",
+                    "chambre_froide.ut_tt_cf4",
+                    "chambre_froide.ut_tt_cf5",
+                    "chambre_froide.ut_tt_cf7",
+                    "chambre_froide.ut_tt_cf8",
+                    "chambre_froide.ut_tt_cf9",
+                    "chambre_froide.ut_tt_cf10",
+                    "chambre_froide.ut_tt_cf11",
+                    "chambre_froide.ut_tt_cf12",
+                    "chambre_froide.ut_tt_cf13",
+                    "chambre_froide.ut_tt_cf14",
+                    "chambre_froide.ut_tt_sas1",
+                    "chambre_froide.ut_tt_sas2",
+                    "co2_ifruit.stopped",
                     "sucre.total.tetra",
-                    "sucre.total",
-                    "sucre.total.adue"
+                    "chambre_froide.stopped",
+                    "utilite.stopped",
+                    "sucre.total.adue",
+                    "sucre.stopped",
+                    "filtration.stopped",
+                    "sucre.total"
                 ],
                 "type": "string",
-                "description": "* `sucre.t_s21` - sucre.t_s21\n* `sucre.t_s22` - sucre.t_s22\n* `sucre.t_s23` - sucre.t_s23\n* `sucre.t_s24` - sucre.t_s24\n* `sucre.t_s25` - sucre.t_s25\n* `sucre.a_t02` - sucre.a_t02\n* `sucre.a_t03` - sucre.a_t03\n* `sucre.a_t04` - sucre.a_t04\n* `sucre.a_t05` - sucre.a_t05\n* `sucre.a_t06` - sucre.a_t06\n* `niveau.niv_f1` - niveau.niv_f2\n* `niveau.niv_uf1` - niveau.niv_uf1\n* `niveau.niv_uf2` - niveau.niv_uf2\n* `niveau.niv_os1` - niveau.niv_os1\n* `niveau.niv_os2` - niveau.niv_os2\n* `niveau.niv_os3` - niveau.niv_os3\n* `niveau.niv_os4` - niveau.niv_os4\n* `niveau.niv_os5` - niveau.niv_os5\n* `niveau.niv_os6` - niveau.niv_os6\n* `niveau.niv_os7` - niveau.niv_os7\n* `debit.d_F1` - debit.d_F1\n* `debit.d_uf1` - debit.d_uf1\n* `debit.d_uf2` - debit.d_uf2\n* `debit.d_uf3` - debit.d_uf3\n* `debit.d_uf4` - debit.d_uf4\n* `debit.d_uf5` - debit.d_uf5\n* `debit.d_uf6` - debit.d_uf6\n* `debit.d_os1` - debit.d_os1\n* `debit.d_os2` - debit.d_os2\n* `debit.d_os3` - debit.d_os3\n* `debit.d_os4` - debit.d_os4\n* `debit.d_os5` - debit.d_os5\n* `debit.d_os6` - debit.d_os6\n* `debit.d_os7` - debit.d_os7\n* `debit.d_os8` - debit.d_os8\n* `debit.d_os9` - debit.d_os9\n* `Pres_Cond.p_uf` - Pres_Cond.p_uf\n* `Pres_Cond.p_uf4` - Pres_Cond.p_uf4\n* `Pres_Cond.p_uf6` - Pres_Cond.p_uf6\n* `Pres_Cond.p_os1` - Pres_Cond.p_os1\n* `Pres_Cond.p_os2` - Pres_Cond.p_os2\n* `Pres_Cond.p_os3` - Pres_Cond.p_os3\n* `Pres_Cond.p_os4` - Pres_Cond.p_os4\n* `Pres_Cond.p_os5` - Pres_Cond.p_os5\n* `Pres_Cond.p_os6` - Pres_Cond.p_os6\n* `Pres_Cond.p_os7` - Pres_Cond.p_os7\n* `Pres_Cond.p_os71` - Pres_Cond.p_os71\n* `Pres_Cond.p_os8` - Pres_Cond.p_os8\n* `Pres_Cond.p_os9` - Pres_Cond.p_os9\n* `Pres_Cond.p_ose1` - Pres_Cond.p_ose1\n* `Pres_Cond.p_ose2` - Pres_Cond.p_ose2\n* `Pres_Cond.p_conc` - Pres_Cond.p_conc\n* `Pres_Cond.c_uf` - Pres_Cond.c_uf\n* `Pres_Cond.c_os1` - Pres_Cond.c_os1\n* `Pres_Cond.c_os2` - Pres_Cond.c_os2\n* `Pres_Cond.c_os3` - Pres_Cond.c_os3\n* `Pres_Cond.c_os4` - Pres_Cond.c_os4\n* `Pres_Cond.c_os5` - Pres_Cond.c_os5\n* `Pres_Cond.c_os6` - Pres_Cond.c_os6\n* `Pres_Cond.c_os7` - Pres_Cond.c_os7\n* `Pres_Cond.c_os8` - Pres_Cond.c_os8\n* `Pres_Cond.c_os9` - Pres_Cond.c_os9\n* `Pres_Cond.c_ose` - Pres_Cond.c_ose\n* `volume.vol_for` - volume.vol_for\n* `volume.vol_uf1` - volume.vol_uf1\n* `volume.vol_uf2` - volume.vol_uf2\n* `volume.vol_uf3` - volume.vol_uf3\n* `volume.vol_uf4` - volume.vol_uf4\n* `volume.vol_uf5` - volume.vol_uf5\n* `volume.vol_uf6` - volume.vol_uf6\n* `volume.vol_os1` - volume.vol_os1\n* `volume.vol_os2` - volume.vol_os2\n* `volume.vol_os3` - volume.vol_os3\n* `volume.vol_os4` - volume.vol_os4\n* `volume.vol_os5` - volume.vol_os5\n* `volume.vol_os6` - volume.vol_os6\n* `volume.vol_os7` - volume.vol_os7\n* `volume.vol_os8` - volume.vol_os8\n* `volume.vol_os9` - volume.vol_os9\n* `co2_ifruit.ut_co2_vc1` - co2_ifruit.ut_co2_vc1\n* `co2_ifruit.ut_co2_vc2` - co2_ifruit.ut_co2_vc2\n* `co2_ifruit.ut_co2_de` - co2_ifruit.ut_co2_de\n* `co2_ifruit.ut_co2_ve` - co2_ifruit.ut_co2_ve\n* `co2_ifruit.ut_co2_pc1` - co2_ifruit.ut_co2_pc1\n* `co2_ifruit.ut_co2_pc2` - co2_ifruit.ut_co2_pc2\n* `co2_ifruit.ut_co2_pn` - co2_ifruit.ut_co2_pn\n* `co2_ifruit.ut_co2_d182` - co2_ifruit.ut_co2_d182\n* `co2_ifruit.ut_co2_d1833` - co2_ifruit.ut_co2_d1833\n* `co2_ifruit.ut_co2_dcan35` - co2_ifruit.ut_co2_dcan35\n* `co2_ifruit.ut_co2_dkrv40` - co2_ifruit.ut_co2_dkrv40\n* `co2_ifruit.ut_co2_dcan2` - co2_ifruit.ut_co2_dcan2\n* `co2_ifruit.ut_co2_dcm16` - co2_ifruit.ut_co2_dcm16\n* `co2_ifruit.ut_co2_v182` - co2_ifruit.ut_co2_v182\n* `co2_ifruit.ut_co2_v1833` - co2_ifruit.ut_co2_v1833\n* `co2_ifruit.ut_co2_vcan35` - co2_ifruit.ut_co2_vcan35\n* `co2_ifruit.ut_co2_vkrv40` - co2_ifruit.ut_co2_vkrv40\n* `co2_ifruit.ut_co2_vcan2` - co2_ifruit.ut_co2_vcan2\n* `co2_ifruit.ut_co2_vcm16` - co2_ifruit.ut_co2_vcm16\n* `co2_ifruit.ut_co2_p182` - co2_ifruit.ut_co2_p182\n* `co2_ifruit.ut_co2_p1833` - co2_ifruit.ut_co2_p1833\n* `co2_ifruit.ut_co2_pcan35` - co2_ifruit.ut_co2_pcan35\n* `co2_ifruit.ut_co2_pkrv40` - co2_ifruit.ut_co2_pkrv40\n* `co2_ifruit.ut_co2_pcan2` - co2_ifruit.ut_co2_pcan2\n* `co2_ifruit.ut_co2_pcm16` - co2_ifruit.ut_co2_pcm16\n* `co2_ifruit.ut_n2_vn2` - co2_ifruit.ut_n2_vn2\n* `co2_ifruit.ut_n2_pn2` - co2_ifruit.ut_n2_pn2\n* `co2_ifruit.ut_soude` - co2_ifruit.ut_soude\n* `utilite.ut_kr_p7` - utilite.ut_kr_p7\n* `utilite.ut_kr_pn2` - utilite.ut_kr_pn2\n* `utilite.ut_kr_p40` - utilite.ut_kr_p40\n* `utilite.ut_kr_pv` - utilite.ut_kr_pv\n* `utilite.ut_kr_pg` - utilite.ut_kr_pg\n* `utilite.ut_kr_tt` - utilite.ut_kr_tt\n* `utilite.ut_kr_tc` - utilite.ut_kr_tc\n* `utilite.ut_sid_p7` - utilite.ut_sid_p7\n* `utilite.ut_sid_pn2` - utilite.ut_sid_pn2\n* `utilite.ut_sid_p40` - utilite.ut_sid_p40\n* `utilite.ut_sid_pv` - utilite.ut_sid_pv\n* `utilite.ut_sid_pg` - utilite.ut_sid_pg\n* `utilite.ut_sid_tt` - utilite.ut_sid_tt\n* `utilite.ut_sid_tc` - utilite.ut_sid_tc\n* `sucre.total.tetra` - sucre.total.tetra\n* `sucre.total` - sucre.total\n* `sucre.total.adue` - sucre.total.adue"
+                "description": "* `sucre.t_s21` - sucre.t_s21\n* `sucre.t_s22` - sucre.t_s22\n* `sucre.t_s23` - sucre.t_s23\n* `sucre.t_s24` - sucre.t_s24\n* `sucre.t_s25` - sucre.t_s25\n* `sucre.a_t02` - sucre.a_t02\n* `sucre.a_t03` - sucre.a_t03\n* `sucre.a_t04` - sucre.a_t04\n* `sucre.a_t05` - sucre.a_t05\n* `sucre.a_t06` - sucre.a_t06\n* `niveau.niv_f1` - niveau.niv_f2\n* `niveau.niv_uf1` - niveau.niv_uf1\n* `niveau.niv_uf2` - niveau.niv_uf2\n* `niveau.niv_os1` - niveau.niv_os1\n* `niveau.niv_os2` - niveau.niv_os2\n* `niveau.niv_os3` - niveau.niv_os3\n* `niveau.niv_os4` - niveau.niv_os4\n* `niveau.niv_os5` - niveau.niv_os5\n* `niveau.niv_os6` - niveau.niv_os6\n* `niveau.niv_os7` - niveau.niv_os7\n* `debit.d_F1` - debit.d_F1\n* `debit.d_uf1` - debit.d_uf1\n* `debit.d_uf2` - debit.d_uf2\n* `debit.d_uf3` - debit.d_uf3\n* `debit.d_uf4` - debit.d_uf4\n* `debit.d_uf5` - debit.d_uf5\n* `debit.d_uf6` - debit.d_uf6\n* `debit.d_os1` - debit.d_os1\n* `debit.d_os2` - debit.d_os2\n* `debit.d_os3` - debit.d_os3\n* `debit.d_os4` - debit.d_os4\n* `debit.d_os5` - debit.d_os5\n* `debit.d_os6` - debit.d_os6\n* `debit.d_os7` - debit.d_os7\n* `debit.d_os8` - debit.d_os8\n* `debit.d_os9` - debit.d_os9\n* `Pres_Cond.p_uf` - Pres_Cond.p_uf\n* `Pres_Cond.p_uf4` - Pres_Cond.p_uf4\n* `Pres_Cond.p_uf6` - Pres_Cond.p_uf6\n* `Pres_Cond.p_os1` - Pres_Cond.p_os1\n* `Pres_Cond.p_os2` - Pres_Cond.p_os2\n* `Pres_Cond.p_os3` - Pres_Cond.p_os3\n* `Pres_Cond.p_os4` - Pres_Cond.p_os4\n* `Pres_Cond.p_os5` - Pres_Cond.p_os5\n* `Pres_Cond.p_os6` - Pres_Cond.p_os6\n* `Pres_Cond.p_os7` - Pres_Cond.p_os7\n* `Pres_Cond.p_os71` - Pres_Cond.p_os71\n* `Pres_Cond.p_os8` - Pres_Cond.p_os8\n* `Pres_Cond.p_os9` - Pres_Cond.p_os9\n* `Pres_Cond.p_ose1` - Pres_Cond.p_ose1\n* `Pres_Cond.p_ose2` - Pres_Cond.p_ose2\n* `Pres_Cond.p_conc` - Pres_Cond.p_conc\n* `Pres_Cond.c_uf` - Pres_Cond.c_uf\n* `Pres_Cond.c_os1` - Pres_Cond.c_os1\n* `Pres_Cond.c_os2` - Pres_Cond.c_os2\n* `Pres_Cond.c_os3` - Pres_Cond.c_os3\n* `Pres_Cond.c_os4` - Pres_Cond.c_os4\n* `Pres_Cond.c_os5` - Pres_Cond.c_os5\n* `Pres_Cond.c_os6` - Pres_Cond.c_os6\n* `Pres_Cond.c_os7` - Pres_Cond.c_os7\n* `Pres_Cond.c_os8` - Pres_Cond.c_os8\n* `Pres_Cond.c_os9` - Pres_Cond.c_os9\n* `Pres_Cond.c_ose` - Pres_Cond.c_ose\n* `volume.vol_for` - volume.vol_for\n* `volume.vol_uf1` - volume.vol_uf1\n* `volume.vol_uf2` - volume.vol_uf2\n* `volume.vol_uf3` - volume.vol_uf3\n* `volume.vol_uf4` - volume.vol_uf4\n* `volume.vol_uf5` - volume.vol_uf5\n* `volume.vol_uf6` - volume.vol_uf6\n* `volume.vol_os1` - volume.vol_os1\n* `volume.vol_os2` - volume.vol_os2\n* `volume.vol_os3` - volume.vol_os3\n* `volume.vol_os4` - volume.vol_os4\n* `volume.vol_os5` - volume.vol_os5\n* `volume.vol_os6` - volume.vol_os6\n* `volume.vol_os7` - volume.vol_os7\n* `volume.vol_os8` - volume.vol_os8\n* `volume.vol_os9` - volume.vol_os9\n* `co2_ifruit.ut_co2_vc1` - co2_ifruit.ut_co2_vc1\n* `co2_ifruit.ut_co2_vc2` - co2_ifruit.ut_co2_vc2\n* `co2_ifruit.ut_co2_de` - co2_ifruit.ut_co2_de\n* `co2_ifruit.ut_co2_ve` - co2_ifruit.ut_co2_ve\n* `co2_ifruit.ut_co2_pc1` - co2_ifruit.ut_co2_pc1\n* `co2_ifruit.ut_co2_pc2` - co2_ifruit.ut_co2_pc2\n* `co2_ifruit.ut_co2_pn` - co2_ifruit.ut_co2_pn\n* `co2_ifruit.ut_co2_d182` - co2_ifruit.ut_co2_d182\n* `co2_ifruit.ut_co2_d1833` - co2_ifruit.ut_co2_d1833\n* `co2_ifruit.ut_co2_dcan35` - co2_ifruit.ut_co2_dcan35\n* `co2_ifruit.ut_co2_dkrv40` - co2_ifruit.ut_co2_dkrv40\n* `co2_ifruit.ut_co2_dcan2` - co2_ifruit.ut_co2_dcan2\n* `co2_ifruit.ut_co2_dcm16` - co2_ifruit.ut_co2_dcm16\n* `co2_ifruit.ut_co2_v182` - co2_ifruit.ut_co2_v182\n* `co2_ifruit.ut_co2_v1833` - co2_ifruit.ut_co2_v1833\n* `co2_ifruit.ut_co2_vcan35` - co2_ifruit.ut_co2_vcan35\n* `co2_ifruit.ut_co2_vkrv40` - co2_ifruit.ut_co2_vkrv40\n* `co2_ifruit.ut_co2_vcan2` - co2_ifruit.ut_co2_vcan2\n* `co2_ifruit.ut_co2_vcm16` - co2_ifruit.ut_co2_vcm16\n* `co2_ifruit.ut_co2_p182` - co2_ifruit.ut_co2_p182\n* `co2_ifruit.ut_co2_p1833` - co2_ifruit.ut_co2_p1833\n* `co2_ifruit.ut_co2_pcan35` - co2_ifruit.ut_co2_pcan35\n* `co2_ifruit.ut_co2_pkrv40` - co2_ifruit.ut_co2_pkrv40\n* `co2_ifruit.ut_co2_pcan2` - co2_ifruit.ut_co2_pcan2\n* `co2_ifruit.ut_co2_pcm16` - co2_ifruit.ut_co2_pcm16\n* `co2_ifruit.ut_n2_vn2` - co2_ifruit.ut_n2_vn2\n* `co2_ifruit.ut_n2_pn2` - co2_ifruit.ut_n2_pn2\n* `co2_ifruit.ut_soude` - co2_ifruit.ut_soude\n* `utilite.ut_kr_p7` - utilite.ut_kr_p7\n* `utilite.ut_kr_pn2` - utilite.ut_kr_pn2\n* `utilite.ut_kr_p40` - utilite.ut_kr_p40\n* `utilite.ut_kr_pv` - utilite.ut_kr_pv\n* `utilite.ut_kr_pg` - utilite.ut_kr_pg\n* `utilite.ut_kr_tt` - utilite.ut_kr_tt\n* `utilite.ut_kr_tc` - utilite.ut_kr_tc\n* `utilite.ut_sid_p7` - utilite.ut_sid_p7\n* `utilite.ut_sid_pn2` - utilite.ut_sid_pn2\n* `utilite.ut_sid_p40` - utilite.ut_sid_p40\n* `utilite.ut_sid_pv` - utilite.ut_sid_pv\n* `utilite.ut_sid_pg` - utilite.ut_sid_pg\n* `utilite.ut_sid_tt` - utilite.ut_sid_tt\n* `utilite.ut_sid_tc` - utilite.ut_sid_tc\n* `chambre_froide.ut_tt_cf1` - chambre_froide.ut_tt_cf1\n* `chambre_froide.ut_tt_cf2` - chambre_froide.ut_tt_cf2\n* `chambre_froide.ut_tt_cf3` - chambre_froide.ut_tt_cf3\n* `chambre_froide.ut_tt_cf4` - chambre_froide.ut_tt_cf4\n* `chambre_froide.ut_tt_cf5` - chambre_froide.ut_tt_cf5\n* `chambre_froide.ut_tt_cf7` - chambre_froide.ut_tt_cf7\n* `chambre_froide.ut_tt_cf8` - chambre_froide.ut_tt_cf8\n* `chambre_froide.ut_tt_cf9` - chambre_froide.ut_tt_cf9\n* `chambre_froide.ut_tt_cf10` - chambre_froide.ut_tt_cf10\n* `chambre_froide.ut_tt_cf11` - chambre_froide.ut_tt_cf11\n* `chambre_froide.ut_tt_cf12` - chambre_froide.ut_tt_cf12\n* `chambre_froide.ut_tt_cf13` - chambre_froide.ut_tt_cf13\n* `chambre_froide.ut_tt_cf14` - chambre_froide.ut_tt_cf14\n* `chambre_froide.ut_tt_sas1` - chambre_froide.ut_tt_sas1\n* `chambre_froide.ut_tt_sas2` - chambre_froide.ut_tt_sas2\n* `co2_ifruit.stopped` - co2_ifruit.stopped\n* `sucre.total.tetra` - sucre.total.tetra\n* `chambre_froide.stopped` - chambre_froide.stopped\n* `utilite.stopped` - utilite.stopped\n* `sucre.total.adue` - sucre.total.adue\n* `sucre.stopped` - sucre.stopped\n* `filtration.stopped` - filtration.stopped\n* `sucre.total` - sucre.total"
             },
             "AlertTypeEnum": {
                 "enum": [
@@ -6997,6 +7019,7 @@
                     "color": {
                         "type": "string",
                         "minLength": 1,
+                        "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
                         "maxLength": 7
                     }
                 }
@@ -7057,6 +7080,9 @@
                             "type": "integer"
                         },
                         "description": "Specific permissions for this user."
+                    },
+                    "is_admin": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -7433,6 +7459,7 @@
                     },
                     "color": {
                         "type": "string",
+                        "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
                         "maxLength": 7
                     }
                 },
@@ -7460,6 +7487,7 @@
                     "color": {
                         "type": "string",
                         "minLength": 1,
+                        "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
                         "maxLength": 7
                     }
                 },
@@ -7580,6 +7608,11 @@
                         "type": "integer",
                         "nullable": true
                     },
+                    "DATA_STOPPED_WAIT_SECONDS": {
+                        "type": "integer",
+                        "nullable": true,
+                        "default": 600
+                    },
                     "REDIS_DB": {
                         "allOf": [
                             {
@@ -7601,6 +7634,16 @@
                             "$ref": "#/components/schemas/EmailProviderConf"
                         },
                         "nullable": true
+                    },
+                    "LOG_SIZE_LIMIT": {
+                        "type": "integer",
+                        "nullable": true,
+                        "default": 100
+                    },
+                    "COUNT_OF_LOGS_TO_KEEP": {
+                        "type": "integer",
+                        "nullable": true,
+                        "default": 10
                     }
                 },
                 "required": [
@@ -7674,6 +7717,11 @@
                         "type": "integer",
                         "nullable": true
                     },
+                    "DATA_STOPPED_WAIT_SECONDS": {
+                        "type": "integer",
+                        "nullable": true,
+                        "default": 600
+                    },
                     "REDIS_DB": {
                         "allOf": [
                             {
@@ -7695,6 +7743,16 @@
                             "$ref": "#/components/schemas/EmailProviderConfRequest"
                         },
                         "nullable": true
+                    },
+                    "LOG_SIZE_LIMIT": {
+                        "type": "integer",
+                        "nullable": true,
+                        "default": 100
+                    },
+                    "COUNT_OF_LOGS_TO_KEEP": {
+                        "type": "integer",
+                        "nullable": true,
+                        "default": 10
                     }
                 },
                 "required": [
@@ -8154,6 +8212,9 @@
                             "type": "integer"
                         },
                         "description": "Specific permissions for this user."
+                    },
+                    "is_admin": {
+                        "type": "boolean"
                     }
                 },
                 "required": [
@@ -8224,6 +8285,9 @@
                             "type": "integer"
                         },
                         "description": "Specific permissions for this user."
+                    },
+                    "is_admin": {
+                        "type": "boolean"
                     }
                 },
                 "required": [
@@ -8253,10 +8317,14 @@
                             "$ref": "#/components/schemas/UserSerializerWithSubordinates"
                         },
                         "readOnly": true
+                    },
+                    "role": {
+                        "type": "string"
                     }
                 },
                 "required": [
                     "email",
+                    "role",
                     "subordinates",
                     "user_id"
                 ]
@@ -8283,10 +8351,14 @@
                             "$ref": "#/components/schemas/UserSerializerWithSuperiors"
                         },
                         "readOnly": true
+                    },
+                    "role": {
+                        "type": "string"
                     }
                 },
                 "required": [
                     "email",
+                    "role",
                     "superiors",
                     "user_id"
                 ]

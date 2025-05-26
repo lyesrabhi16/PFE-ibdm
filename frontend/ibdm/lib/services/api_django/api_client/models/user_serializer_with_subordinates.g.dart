@@ -16,6 +16,7 @@ UserSerializerWithSubordinates _$UserSerializerWithSubordinatesFromJson(
           .map((e) => UserSerializerWithSubordinates.fromJson(
               e as Map<String, dynamic>))
           .toList(),
+      role: json['role'] as String,
     );
 
 Map<String, dynamic> _$UserSerializerWithSubordinatesToJson(
@@ -25,4 +26,5 @@ Map<String, dynamic> _$UserSerializerWithSubordinatesToJson(
       'email': instance.email,
       'username': instance.username,
       'subordinates': instance.subordinates,
+      'role': instance.role,
     };

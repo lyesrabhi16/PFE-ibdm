@@ -18,6 +18,7 @@ import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:ibdm/utils/helpers/theme_helpers.dart';
+import 'package:ibdm/utils/sorter.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
 import 'package:ibdm/services/api_django/api_client/models/sent_email.dart';
@@ -26,7 +27,6 @@ import 'package:ibdm/common/widgets/side_menu_container.dart';
 import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/icon_with_label_button.dart';
 import 'package:ibdm/common/widgets/divider_with_text.dart';
-import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/common/widgets/sent_email_form.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:toastification/toastification.dart';
@@ -750,7 +750,8 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
               ? AppColors.grey.withAlpha(30)
               : AppColors.lightGrey
         }),
-        onDoubleTap: () => _showViewSentEmailDialog(
+        onDoubleTap: () => showViewSentEmailDialog(
+          context,
           sent: e,
         ),
         cells: [
@@ -795,7 +796,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      _showViewSentEmailDialog(sent: e);
+                      showViewSentEmailDialog(context, sent: e);
                     },
                     icon: Icon(Icons.remove_red_eye_rounded),
                   ),
@@ -806,69 +807,6 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
         ].nonNulls.toList(),
       );
     }).toList();
-  }
-
-  _showViewSentEmailDialog({
-    required SentEmail sent,
-  }) {
-    final strings = getTranslations(context).obs;
-
-    return showShadDialog(
-      context: context,
-      builder: (context) {
-        return ShadDialog(
-          title: Text(
-            sent.schedule != null
-                ? "${strings.value.scheduleSent}: ${sent.schedule!.rapport.json}"
-                : sent.alert != null
-                    ? "${strings.value.alertSent}: ${sent.alert!.alertType.json?.capitalize}  ${sent.alert!.alert.monitoredValue.json}"
-                    : "${strings.value.sent}: ${sent.id}",
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          description: Text(
-            "${strings.value.sentAt} ${sent.tempsEnvoi.toString().split('.')[0].substring(0, 16)}",
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          actions: [
-            ShadButton(
-              icon: Icon(Icons.close),
-              child: Text(strings.value.cancel),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ).removeWhen(isAtLeastMediumScreen(context)),
-            Obx(() => Expanded(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (loaded.value)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [],
-                        ),
-                      ShadButton(
-                        icon: Icon(Icons.close),
-                        child: Text(strings.value.cancel),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                )).removeWhen(isAtMostSmallScreen(context))
-          ].nonNulls.toList(),
-          child: SentEmailForm(
-            //ScheduleEmailForm
-            sent: sent,
-            alert: sent.alert?.alert,
-            schedule: sent.schedule,
-            editable: false,
-            showIdField: true,
-          ),
-        );
-      },
-    );
   }
 
   _getColumnSpacing() {
@@ -933,13 +871,13 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
         //       ),
         //   ],
         // ),
-        Text(strings.value.filterbyTypeofEmail,
+        Text(strings.value.filterByTypeOfEmail,
             style: Theme.of(context).textTheme.bodyMedium),
         SizedBox(
           height: AppSizes.sm,
         ),
         DropdownMenu<String>(
-          hintText: strings.value.selectTypeofEmail,
+          hintText: strings.value.selectTypeOfEmail,
           label: Text(strings.value.scheduleEmail),
           controller: emailTypeFilterController,
           width: AppSizes.xl * 8,
@@ -1253,4 +1191,70 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
       return;
     }
   }
+}
+
+showViewSentEmailDialog(
+  BuildContext context, {
+  required SentEmail sent,
+}) {
+  final strings = getTranslations(context).obs;
+  final loaded = false.obs;
+  return showShadDialog(
+    context: context,
+    builder: (context) {
+      return ShadDialog(
+        title: Text(
+          sent.schedule != null
+              ? "${strings.value.scheduleSent}: ${sent.schedule!.rapport.json}"
+              : sent.alert != null
+                  ? "${strings.value.alertSent}: ${sent.alert!.alertType.json?.capitalize}  ${sent.alert!.alert.monitoredValue.json}"
+                  : "${strings.value.sent}: ${sent.id}",
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        description: Text(
+          "${strings.value.sentAt} ${sent.tempsEnvoi.toString().split('.')[0].substring(0, 16)}",
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        actions: [
+          ShadButton(
+            icon: Icon(Icons.close),
+            child: Text(strings.value.cancel),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ).removeWhen(isAtLeastMediumScreen(context)),
+          Obx(() => Expanded(
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (loaded.value)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [],
+                      ),
+                    ShadButton(
+                      icon: Icon(Icons.close),
+                      child: Text(strings.value.cancel),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              )).removeWhen(isAtMostSmallScreen(context))
+        ].nonNulls.toList(),
+        child: SentEmailForm(
+          //ScheduleEmailForm
+          sent: sent,
+          alert: sent.alert?.alert,
+          schedule: sent.schedule,
+          editable: false,
+          showIdField: true,
+        ),
+      ).marginOnly(
+        top: AppSizes.md,
+      );
+    },
+  );
 }

@@ -28,7 +28,6 @@ class UserManager(BaseUserManager):
             user.set_password(password)
         user.save()
         user.is_admin = user.role.is_admin
-        user.is_staff = user.is_admin
         groups = {*groups, user.role.group}
         #print("Groups to be set:", groups)
         user.groups.set(groups)
@@ -60,7 +59,6 @@ class UserManager(BaseUserManager):
         user.save()
         #print("set user permissions")
         user.is_admin = role.is_admin
-        user.is_staff = user.is_admin
         #print("set user groups")
         user.groups.add(role.group)
         user.user_permissions.set(user_permissions)
@@ -78,8 +76,8 @@ class UserManager(BaseUserManager):
         )
         user.set_password(password)
 
+        user.is_active = True
         user.is_admin = True
-        user.is_staff = True
         user.is_superuser = True
 
         user.save()
@@ -189,7 +187,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     
@@ -213,6 +211,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             return True
         
         return super().has_perm(perm, obj)
+    
+    @property
+    def is_staff(self) -> bool:
+        return self.is_admin
     class Meta:
         permissions = [
             ("can_view_users_page", "Can view users page"),

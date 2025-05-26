@@ -2,6 +2,7 @@ enum FutureState {
   success,
   error,
   loading,
+  idle,
 }
 
 class CheckboxState {

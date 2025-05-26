@@ -23,6 +23,9 @@ class ServerConfig {
     required this.redisDB,
     required this.databases,
     required this.emailProviders,
+    this.dataStoppedWaitSeconds = 600,
+    this.logSizeLimit = 100,
+    this.countOFLogsTOKeep = 10,
   });
   
   factory ServerConfig.fromJson(Map<String, Object?> json) => _$ServerConfigFromJson(json);
@@ -43,12 +46,18 @@ class ServerConfig {
   final bool? logTOFiles;
   @JsonKey(name: 'SERVER_DB_CONNECTION_CHECK_TIMEOUT')
   final int? serverDBConnectionCheckTimeout;
+  @JsonKey(name: 'DATA_STOPPED_WAIT_SECONDS')
+  final int dataStoppedWaitSeconds;
   @JsonKey(name: 'REDIS_DB')
-  final StandardDatabaseConf redisDB;
+  final StandardDatabaseConf? redisDB;
   @JsonKey(name: 'DATABASES')
   final Map<String, StandardDatabaseConf>? databases;
   @JsonKey(name: 'EMAIL_PROVIDERS')
   final Map<String, EmailProviderConf>? emailProviders;
+  @JsonKey(name: 'LOG_SIZE_LIMIT')
+  final int logSizeLimit;
+  @JsonKey(name: 'COUNT_OF_LOGS_TO_KEEP')
+  final int countOFLogsTOKeep;
 
   Map<String, Object?> toJson() => _$ServerConfigToJson(this);
 }

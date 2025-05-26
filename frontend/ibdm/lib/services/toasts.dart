@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:elegant_notification/elegant_notification.dart';
 import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class Toasts {
       backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       borderSide:
           BorderSide(color: Theme.of(context).colorScheme.surfaceContainer),
-      title: Center(child: Text(message)),
+      title: Center(child: SizedBox(height: 25, child: AutoSizeText(message))),
       alignment: Alignment.topCenter,
       icon: CircularProgressIndicator.adaptive(),
       closeButtonShowType: CloseButtonShowType.onHover,
@@ -40,7 +41,7 @@ class Toasts {
       backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       borderSide:
           BorderSide(color: Theme.of(context).colorScheme.surfaceContainer),
-      title: Center(child: Text(message)),
+      title: Center(child: SizedBox(height: 25, child: AutoSizeText(message))),
       alignment: Alignment.topCenter,
       icon: Icon(Icons.close, color: errorColor),
       closeButtonShowType: CloseButtonShowType.onHover,
@@ -65,7 +66,7 @@ class Toasts {
       backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       borderSide:
           BorderSide(color: Theme.of(context).colorScheme.surfaceContainer),
-      title: Center(child: Text(message)),
+      title: Center(child: SizedBox(height: 25, child: AutoSizeText(message))),
       alignment: Alignment.topCenter,
       icon: Icon(Icons.check, color: successColor),
       closeButtonShowType: CloseButtonShowType.onHover,
@@ -89,8 +90,15 @@ class Toasts {
       border: Border.all(color: Theme.of(context).colorScheme.surfaceContainer),
       width: isLargeScreen(context) ? 400 : null,
       background: Theme.of(context).colorScheme.surfaceContainer,
-      description: Text(message),
-      title: title != null ? Text(title) : null,
+      description: SizedBox(
+        height: 50,
+        child: AutoSizeText(
+          message,
+        ),
+      ),
+      title: title != null
+          ? SizedBox(height: 25, child: AutoSizeText(title))
+          : null,
       position: Alignment.bottomRight,
       animation: AnimationType.fromRight,
       toastDuration: Duration(seconds: 5),
@@ -109,8 +117,10 @@ class Toasts {
       border: Border.all(color: Theme.of(context).colorScheme.surfaceContainer),
       width: isLargeScreen(context) ? 400 : null,
       background: Theme.of(context).colorScheme.surfaceContainer,
-      description: Text(message),
-      title: title != null ? Text(title) : null,
+      description: SizedBox(height: 50, child: AutoSizeText(message)),
+      title: title != null
+          ? SizedBox(height: 25, child: AutoSizeText(title))
+          : null,
       position: Alignment.bottomRight,
       animation: AnimationType.fromRight,
       showProgressIndicator: false,
@@ -129,8 +139,10 @@ class Toasts {
       border: Border.all(color: Theme.of(context).colorScheme.surfaceContainer),
       width: isLargeScreen(context) ? 400 : null,
       background: Theme.of(context).colorScheme.surfaceContainer,
-      description: Text(message),
-      title: title != null ? Text(title) : null,
+      description: SizedBox(height: 50, child: AutoSizeText(message)),
+      title: title != null
+          ? SizedBox(height: 25, child: AutoSizeText(title))
+          : null,
       position: Alignment.bottomRight,
       animation: AnimationType.fromRight,
       dismissDirection: DismissDirection.down,
@@ -153,10 +165,12 @@ class Toasts {
           BorderSide(color: Theme.of(context).colorScheme.surfaceContainer),
       title: Center(child: Obx(() {
         return state.value == FutureState.loading
-            ? Text(message)
+            ? SizedBox(height: 25, child: AutoSizeText(message))
             : state.value == FutureState.success
-                ? Text(messageSuccess ?? message)
-                : Text(messageError ?? message);
+                ? SizedBox(
+                    height: 25, child: AutoSizeText(messageSuccess ?? message))
+                : SizedBox(
+                    height: 25, child: AutoSizeText(messageError ?? message));
       })),
       alignment: Alignment.topCenter,
       icon: Obx(() {

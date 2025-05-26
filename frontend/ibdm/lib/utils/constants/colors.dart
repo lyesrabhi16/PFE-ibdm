@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+
+import '../helpers/logger.dart';
 
 class AppColors {
   AppColors._();
@@ -23,6 +27,26 @@ class AppColors {
   static const Color transparent = Color(0x00000000);
   static const Color grey = Color(0xFF9E9E9E);
   static const Color lightGrey = Color(0xFFE0E0E0);
+
+  static Color invertColorIfNeeded(Color color) {
+    // Calculate the luminance to determine if it's a dark color
+    double luminance = color.computeLuminance();
+    printMessage("Color: $color, Luminance: $luminance");
+    // If it's too dark, return a lighter version
+    if (luminance < 0.3 && Get.isDarkMode) {
+      printMessage("Inverting color: $color, Luminance: $luminance");
+      // Convert the color to HSL
+      HSLColor hslColor = HSLColor.fromColor(color);
+
+      // Increase lightness, ensuring it stays within [0.0, 1.0]
+      double newLightness = (max(1 - hslColor.lightness, 0.6)).clamp(0.0, 1.0);
+
+      // Return the new color with adjusted lightness
+      return hslColor.withLightness(newLightness).toColor();
+    }
+
+    return color; // Keep it unchanged if it's already bright enough
+  }
 
   static Color getColorFromString(String input,
       {Color backgroundColor = Colors.white}) {
@@ -50,7 +74,7 @@ class AppColors {
 
   static Color getRoleColorWithRole(Role role) {
     int colorValue = int.parse("FF${role.color.split("#")[1]}", radix: 16);
-    return Color(colorValue);
+    return invertColorIfNeeded(Color(colorValue));
   }
 
   static Color getRoleColorWithRoleValue(String role) {
@@ -58,6 +82,8 @@ class AppColors {
     Role? roleObj = userController.roles.firstWhereOrNull(
       (element) => element.name == role,
     );
-    return roleObj != null ? getRoleColorWithRole(roleObj) : Colors.grey;
+    logger.e("Role: $role, Role Object: $roleObj");
+    return invertColorIfNeeded(
+        roleObj != null ? getRoleColorWithRole(roleObj) : Colors.grey);
   }
 }

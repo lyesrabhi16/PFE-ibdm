@@ -18,6 +18,7 @@ scheduler.add_job(
     id="system_monitoring",
 )
 
+
 scheduler.add_job(
     broadcast_sucre,
     "cron",

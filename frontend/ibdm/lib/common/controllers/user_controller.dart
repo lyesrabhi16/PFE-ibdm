@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/permissions_controller.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 
@@ -66,11 +67,8 @@ class UserController extends GetxController {
 
   void fetchUser() async {
     User? user = await LocalStorage.getUser();
-    if (user == null) {
-      fetchUserFromApi();
-      return;
-    }
     this.user = user;
+    fetchUserFromApi();
   }
 
   void fetchUserFromApi({Function(dynamic e)? onFail}) async {
@@ -80,22 +78,9 @@ class UserController extends GetxController {
       final response = await apiClient.getCurrentUserInfo();
       setUser(response);
     } catch (e) {
+      logoutUser();
+      Get.offAllNamed(Routes.login);
       onFail?.call(e);
     }
   }
-
-  // Future<void> changeProfilePicture(File newImage) async {
-  //    try {
-  //      IbdmApiClient apiClient = await ApiClientInstance.getApiClient();
-
-  //      String newAvatarUrl = await apiClient.uploadAvatar(newImage);
-
-  //      if (_user.value != null) {
-  //        User updatedUser = _user.value!.copyWith(avatarUrl: newAvatarUrl);
-  //        setUser(updatedUser); // Mise à jour locale
-  //      }
-  //    } catch (e) {
-  //      logger.e("Erreur lors du changement de photo : $e");
-  //    }
-  //  }
 }

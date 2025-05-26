@@ -16,6 +16,7 @@ import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/graphs.dart';
 import 'package:ibdm/utils/helpers/data_representation.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
@@ -443,32 +444,35 @@ class _UtilitePageState extends State<UtilitePage> {
                     graphTypes: [
                       GraphType(
                         name: "Temperature",
-                        getGraphData: getTempGraphData,
+                        getGraphData: Graphs.getUtiliteTempGraphData,
                         ySuffix: " °C",
                       ),
                       GraphType(
                         name: "Temperature Trane",
                         getGraphData: (start, end, fetchType) =>
-                            getTempGraphData(start, end, fetchType,
+                            Graphs.getUtiliteTempGraphData(
+                                start, end, fetchType,
                                 inludeTrane: true, includeCompresseur: false),
                         ySuffix: " °C",
                       ),
                       GraphType(
                         name: "Temperature Compresseur",
                         getGraphData: (start, end, fetchType) =>
-                            getTempGraphData(start, end, fetchType,
+                            Graphs.getUtiliteTempGraphData(
+                                start, end, fetchType,
                                 inludeTrane: false, includeCompresseur: true),
                         ySuffix: " °C",
                       ),
                       GraphType(
                         name: "Pression",
-                        getGraphData: getPressionGraphData,
+                        getGraphData: Graphs.getUtilitePressionGraphData,
                         ySuffix: " Bars",
                       ),
                       GraphType(
                         name: "Pression 7",
                         getGraphData: (start, end, fetchType) =>
-                            getPressionGraphData(start, end, fetchType,
+                            Graphs.getUtilitePressionGraphData(
+                                start, end, fetchType,
                                 includePression7: true,
                                 includePression40: false,
                                 includePressionAzote: false,
@@ -479,7 +483,8 @@ class _UtilitePageState extends State<UtilitePage> {
                       GraphType(
                         name: "Pression 40",
                         getGraphData: (start, end, fetchType) =>
-                            getPressionGraphData(start, end, fetchType,
+                            Graphs.getUtilitePressionGraphData(
+                                start, end, fetchType,
                                 includePression7: false,
                                 includePression40: true,
                                 includePressionAzote: false,
@@ -490,7 +495,8 @@ class _UtilitePageState extends State<UtilitePage> {
                       GraphType(
                         name: "Pression Azote",
                         getGraphData: (start, end, fetchType) =>
-                            getPressionGraphData(start, end, fetchType,
+                            Graphs.getUtilitePressionGraphData(
+                                start, end, fetchType,
                                 includePression7: false,
                                 includePression40: false,
                                 includePressionAzote: true,
@@ -501,7 +507,8 @@ class _UtilitePageState extends State<UtilitePage> {
                       GraphType(
                         name: "Pression Chaudiere",
                         getGraphData: (start, end, fetchType) =>
-                            getPressionGraphData(start, end, fetchType,
+                            Graphs.getUtilitePressionGraphData(
+                                start, end, fetchType,
                                 includePression7: false,
                                 includePression40: false,
                                 includePressionAzote: false,
@@ -512,7 +519,8 @@ class _UtilitePageState extends State<UtilitePage> {
                       GraphType(
                         name: "Pression Gaz",
                         getGraphData: (start, end, fetchType) =>
-                            getPressionGraphData(start, end, fetchType,
+                            Graphs.getUtilitePressionGraphData(
+                                start, end, fetchType,
                                 includePression7: false,
                                 includePression40: false,
                                 includePressionAzote: false,
@@ -524,6 +532,8 @@ class _UtilitePageState extends State<UtilitePage> {
                   ),
                 ],
               ),
+            ).marginOnly(
+              top: AppSizes.md,
             ),
           );
         },
@@ -567,156 +577,14 @@ class _UtilitePageState extends State<UtilitePage> {
                     ),
                   ],
                 ),
+              ).marginOnly(
+                top: AppSizes.md,
               );
             },
           );
         },
       );
     });
-  }
-
-  Future<Map> getTempGraphData(
-    DateTime startDate,
-    DateTime endDate,
-    FetchType? fetchType, {
-    bool inludeTrane = true,
-    bool includeCompresseur = true,
-  }) async {
-    final strings = getTranslations(getContext);
-    Map data = {};
-    if (inludeTrane) {
-      data["Temp Trane Krones"] = [];
-      data["Temp Trane Sidel"] = [];
-    }
-    if (includeCompresseur) {
-      data["Temp Compresseur Krones"] = [];
-      data["Temp Compresseur Sidel"] = [];
-    }
-    final api = await ApiClientInstance.getApiClient();
-    final res = await api.getUtiliteBetweenDates(
-      startDate: startDate.toIso8601String(),
-      endDate: endDate.toIso8601String(),
-      enablePagination: false,
-      fetchType: fetchType,
-    );
-    for (var e in res.data) {
-      if (inludeTrane) {
-        data["Temp Trane Krones"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utKrTt ?? 0,
-        });
-        data["Temp Trane Sidel"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utSidTt ?? 0,
-        });
-      }
-      if (includeCompresseur) {
-        data["Temp Compresseur Krones"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utKrTc ?? 0,
-        });
-        data["Temp Compresseur Sidel"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utSidTc ?? 0,
-        });
-      }
-    }
-    return data;
-  }
-
-  Future<Map> getPressionGraphData(
-    DateTime startDate,
-    DateTime endDate,
-    FetchType? fetchType, {
-    bool includePression7 = true,
-    bool includePression40 = true,
-    bool includePressionAzote = true,
-    bool includePressionChaudiere = true,
-    bool includePressionGaz = true,
-  }) async {
-    final strings = getTranslations(getContext);
-    Map data = {};
-    if (includePression7) {
-      data["Pression 7 Krones"] = [];
-      data["Pression 7 Sidel"] = [];
-    }
-    if (includePression40) {
-      data["Pression 40 Krones"] = [];
-      data["Pression 40 Sidel"] = [];
-    }
-    if (includePressionAzote) {
-      data["Pression Azote Krones"] = [];
-      data["Pression Azote Sidel"] = [];
-    }
-    if (includePressionChaudiere) {
-      data["Pression Chaudiere Krones"] = [];
-      data["Pression Chaudiere Sidel"] = [];
-    }
-    if (includePressionGaz) {
-      data["Pression Gaz Krones"] = [];
-      data["Pression Gaz Sidel"] = [];
-    }
-
-    final api = await ApiClientInstance.getApiClient();
-    final res = await api.getUtiliteBetweenDates(
-      startDate: startDate.toIso8601String(),
-      endDate: endDate.toIso8601String(),
-      enablePagination: false,
-      fetchType: fetchType,
-    );
-    for (var e in res.data) {
-      if (includePression7) {
-        data["Pression 7 Krones"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utKrP7 ?? 0,
-        });
-        data["Pression 7 Sidel"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utSidP7 ?? 0,
-        });
-      }
-      if (includePression40) {
-        data["Pression 40 Krones"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utKrP40 ?? 0,
-        });
-        data["Pression 40 Sidel"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utSidP40 ?? 0,
-        });
-      }
-      if (includePressionAzote) {
-        data["Pression Azote Krones"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utKrPn2 ?? 0,
-        });
-        data["Pression Azote Sidel"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utSidPn2 ?? 0,
-        });
-      }
-      if (includePressionChaudiere) {
-        data["Pression Chaudiere Krones"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utKrPv ?? 0,
-        });
-        data["Pression Chaudiere Sidel"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utSidPv ?? 0,
-        });
-      }
-      if (includePressionGaz) {
-        data["Pression Gaz Krones"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utKrPg ?? 0,
-        });
-        data["Pression Gaz Sidel"].add({
-          "x": e.date.millisecondsSinceEpoch,
-          "y": e.utSidPg ?? 0,
-        });
-      }
-    }
-    return data;
   }
 
   void onTapListItem(DataRepresentation<dynamic> d) {
@@ -792,7 +660,9 @@ class _UtilitePageState extends State<UtilitePage> {
                         ),
                       )
                     ]
-                ]));
+                ])).marginOnly(
+          top: AppSizes.md,
+        );
       },
     );
   }

@@ -16,7 +16,9 @@ class EnvModes:
 
 class Env:
     def __init__(self):
+        print("Loading environment variables...")
         Env.load_settings_json()
+        print("Environment variables loaded.")
 
     settings : Dict = {}
     settings_encrypted : Dict = {}
@@ -33,10 +35,13 @@ class Env:
     REDIS_DB : Dict = dict((settings.get('REDIS_DB')) or config("REDIS_DB", default={},cast=dict) or {})
     DATABASES : Dict = dict(settings.get('DATABASES') or config("DATABASES", default={}, cast=dict) or {})
     EMAIL_PROVIDERS : Dict = dict(settings.get('EMAIL_PROVIDERS') or config("EMAIL_PROVIDERS", default={}, cast=dict) or {})
+    DATA_STOPPED_WAIT_SECONDS = config("DATA_STOPPED_WAIT_SECONDS", default=600, cast=int)  # seconds to wait for data to be inserted before alerting of stop
+    LOG_SIZE_LIMIT = config("LOG_SIZE_LIMIT", default=100, cast=int)  # 100 MB for each log file
+    COUNT_OF_LOGS_TO_KEEP = config("COUNT_OF_LOGS_TO_KEEP", default=10, cast=int)  # 10 Log files for each log type
 
     @classmethod
     def load_settings_json(cls):
-        
+        print("Loading settings...")
         json_file = django_settings.SETTINGS_JSON_FILE_PATH
         with open(json_file, "r+") as f:
             try:
@@ -50,7 +55,7 @@ class Env:
                         decrypt,
                     )
                 for key in Env.settings:
-                    print("setting : ",key)
+                    #print("setting : ",key)
                     setattr(Env, key, Env.settings[key])
             except Exception as e:
                 print("using env vars : ",e)
@@ -120,4 +125,5 @@ class Env:
                 key_path,
                 decrypt,
             ) 
+        print("Settings loaded successfully.")
         return Env.settings

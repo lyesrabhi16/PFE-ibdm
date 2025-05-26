@@ -11,7 +11,7 @@ import 'package:ibdm/common/widgets/page_navigation.dart';
 import 'package:ibdm/common/widgets/per_page_input.dart';
 import 'package:ibdm/common/widgets/scrollable_shad_sheet_container.dart';
 import 'package:ibdm/common/widgets/setting_card.dart';
-import 'package:ibdm/pages/users.dart';
+import 'package:ibdm/pages/reports/reports_page.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
@@ -19,8 +19,8 @@ import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
+import 'package:ibdm/utils/sorter.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:toastification/toastification.dart';
 
 class FiltrationReportsPage extends StatefulWidget {
   const FiltrationReportsPage({super.key});
@@ -325,7 +325,8 @@ class _FiltrationReportsPageState extends State<FiltrationReportsPage> {
         ),
         child: Column(
           children: [
-            Row(
+            Wrap(
+              alignment: WrapAlignment.center,
               children: [
                 ShadDatePicker(
                   onChanged: (value) => {
@@ -336,7 +337,7 @@ class _FiltrationReportsPageState extends State<FiltrationReportsPage> {
                   selectableDayPredicate: (day) =>
                       day.isSameDayOrLower(DateTime.now()),
                   allowDeselection: false,
-                  formatDate: (date) => DateFormat("dd/MM/yyyy").format(date),
+                  formatDate: (date) => DateFormat("dd-MM-yyyy").format(date),
                   selected: _selectedDate.value,
                   initialMonth: _selectedDate.value,
                 ),
@@ -364,10 +365,12 @@ class _FiltrationReportsPageState extends State<FiltrationReportsPage> {
               if (_failed.value) {
                 return Text(strings.value.failedToGenerateReport);
               }
-              return _reportData(report!);
+              return reportData(context, report!);
             })
           ],
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }
@@ -891,101 +894,10 @@ class _FiltrationReportsPageState extends State<FiltrationReportsPage> {
     return reports.map((report) {
       return SettingCard(
         icon: LucideIcons.fileText,
-        onTap: () => _showViewReportDialog(report),
+        onTap: () => showViewReportDialog(context, report),
         title:
-            "${report.rapport} - ${DateFormat('dd/MM/yyyy').format(report.date)}",
+            "${report.rapport} - ${DateFormat('dd-MM-yyyy').format(report.date)}",
       );
     }).toList();
-  }
-
-  void _showViewReportDialog(
-    Report report,
-  ) {
-    final strings = getTranslations(context).obs;
-    final formattedReportDate = DateFormat('dd/MM/yyyy').format(report.date);
-
-    showShadDialog(
-      context: context,
-      builder: (context) {
-        return ShadDialog(
-          title: Text(strings.value.viewReport(report.rapport),
-              style: Theme.of(context).textTheme.headlineMedium),
-          description: Text(
-              strings.value.viewReportDescription(formattedReportDate),
-              style: Theme.of(context).textTheme.bodyMedium),
-          actions: [
-            ShadButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(strings.value.close),
-            ),
-          ],
-          constraints: BoxConstraints(
-            minWidth: min(context.width, 600),
-            maxWidth: min(context.width, 800),
-            minHeight: 600,
-          ),
-          child: Container(
-            child: _reportData(report),
-          ),
-        );
-      },
-    );
-  }
-
-  Column _reportData(Report report) {
-    return Column(
-      children: [
-        Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: context.width,
-              minWidth: min(context.width, 800),
-              minHeight: 300,
-              maxHeight: 680,
-            ),
-            child: ShadTable.list(
-              columnSpanExtent: (c) => FixedSpanExtent(min(
-                    context.width,
-                    800,
-                  ) /
-                  report.colNames.length),
-              header: [
-                for (var c in report.colNames)
-                  ShadTableCell.header(child: Text(c)),
-              ],
-              rowSpanBackgroundDecoration: (c) => SpanDecoration(
-                color: report.data[max(c - 1, 0)]["highlight"] == true
-                    ? Theme.of(context).colorScheme.surfaceContainerLow
-                    : Colors.transparent,
-              ),
-              children: [
-                for (var r in report.data)
-                  [
-                    for (var c in report.colNames)
-                      ShadTableCell(
-                        child: Text(
-                          r[c] != null ? r[c].toString() : "",
-                          softWrap: false,
-                          overflow: c == report.colNames.first
-                              ? TextOverflow.visible
-                              : TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: r["danger"] == true
-                                ? errorColor
-                                : r["highlight"] == true
-                                    ? successColor
-                                    : Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                      ),
-                  ],
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }

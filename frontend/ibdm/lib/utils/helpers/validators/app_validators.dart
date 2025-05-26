@@ -8,10 +8,13 @@ class AppValidators {
   const AppValidators._();
 
   static String? phoneNumberValidator(String v) {
+    final strings = getTranslations(Get.context!);
     return FormBuilderValidators.compose([
       FormBuilderValidators.conditional(
         (String? v) => v != null ? v.isNotEmpty : false,
-        FormBuilderValidators.phoneNumber(),
+        FormBuilderValidators.phoneNumber(
+          errorText: strings.invalidField(strings.phoneNumber),
+        ),
       ),
     ])(v);
   }
@@ -70,16 +73,37 @@ class AppValidators {
     String v, {
     bool optional = false,
   }) {
+    final strings = getTranslations(Get.context!);
     return optional && v.isEmpty
         ? null
         : FormBuilderValidators.compose([
-            FormBuilderValidators.required(),
-            FormBuilderValidators.minLength(8),
-            FormBuilderValidators.maxLength(255),
-            FormBuilderValidators.hasLowercaseChars(atLeast: 1),
-            FormBuilderValidators.hasUppercaseChars(atLeast: 1),
-            FormBuilderValidators.hasNumericChars(atLeast: 1),
-            FormBuilderValidators.hasSpecialChars(atLeast: 1),
+            FormBuilderValidators.required(
+              errorText: strings.valueIsRequired(strings.password),
+            ),
+            FormBuilderValidators.minLength(
+              8,
+              errorText: strings.minLength(8),
+            ),
+            FormBuilderValidators.maxLength(
+              255,
+              errorText: strings.maxLength(255),
+            ),
+            FormBuilderValidators.hasLowercaseChars(
+              atLeast: 1,
+              errorText: strings.hasLowercaseChars(1),
+            ),
+            FormBuilderValidators.hasUppercaseChars(
+              atLeast: 1,
+              errorText: strings.hasUppercaseChars(1),
+            ),
+            FormBuilderValidators.hasNumericChars(
+              atLeast: 1,
+              errorText: strings.hasNumericChars(1),
+            ),
+            FormBuilderValidators.hasSpecialChars(
+              atLeast: 1,
+              errorText: strings.hasSpecialChars(1),
+            ),
           ])(v);
   }
 }

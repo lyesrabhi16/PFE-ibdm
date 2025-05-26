@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
@@ -31,7 +32,15 @@ class LocalStorage {
   }
 
   static Future<bool?> getDarkThemeMode() async {
+    if (!await perfs.containsKey(StorageKeys.darkThemeMode.name)) {
+      // return device default theme mode
+      return PlatformDispatcher.instance.platformBrightness == Brightness.dark;
+    }
     return perfs.getBool(StorageKeys.darkThemeMode.name);
+  }
+
+  static Future<void> removeDarkThemeMode() async {
+    return perfs.remove(StorageKeys.darkThemeMode.name);
   }
 
   static Future<void> setUser(User user) async {

@@ -1,3 +1,5 @@
+from datetime import datetime
+import re
 from logs.logging import logger as logging
 from .utils import get_existing_reports_from_disk
 from api_v1.excel_helpers import get_dict_from_excel_report
@@ -127,13 +129,38 @@ class ReportsViewSet(viewsets.ViewSet):
             if search_term:
                 filtered_reports = []
                 for report in reports:
-                    # Adjust these fields based on your actual report structure
-                    searchable_fields = ['Rapport', 'Date', 'Interval', 'Synthese']
-                    
+                    searchable_fields = ['Rapport', 'Date', 'Interval', 'synthese']
                     for field in searchable_fields:
-                        if field in report and isinstance(report[field], str) and search_term in report[field].lower():
+                        if field in report and field == "Date":
+                            # Convert datetime to string for comparison
+                            report_date_str = report[field]
+                            if search_term in report_date_str:
+                                filtered_reports.append(report)
+                                break
+                            search_term_to_date = None
+                            if "-" in search_term:
+                                search_term_to_date = search_term.split("-")
+                            elif "." in search_term:
+                                search_term_to_date = search_term.split(".")
+                            elif "/" in search_term:
+                                search_term_to_date = search_term.split("/")
+
+                            
+                            if search_term_to_date is not None:
+                                constained = []
+                                report_date_list = report_date_str.split("-")
+                                for item in search_term_to_date:
+                                    if item in report_date_list:
+                                        report_date_list.remove(item)
+                                        constained.append(item)
+                                if len(constained) == len(search_term_to_date):
+                                    filtered_reports.append(report)
+                                    break
+
+                        elif field in report and isinstance(report[field], str) and search_term in report[field].lower():
                             filtered_reports.append(report)
                             break
+                        
                 reports = filtered_reports
             
             # Apply ordering if provided
