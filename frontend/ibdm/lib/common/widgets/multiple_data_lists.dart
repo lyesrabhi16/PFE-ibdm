@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:ibdm/common/widgets/data_list.dart';
 import 'package:ibdm/utils/helpers/data_representation.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
+import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class MultipleDataLists extends StatelessWidget {
@@ -15,14 +18,17 @@ class MultipleDataLists extends StatelessWidget {
     return ShadTabs(
       tabs: tabs
           .map((tab) => ShadTab(
-                value: tab.name,
-                icon: Icon(Icons.list),
-                content: DataList(
-                  onTap: tab.onTap,
-                  getData: (start, end, page) => tab.getData!(start, end, page),
-                ),
-                child: Text(tab.name),
-              ))
+              value: tab.name,
+              icon: Icon(Icons.list),
+              content: DataList(
+                onTap: tab.onTap,
+                getData: (start, end, page) => tab.getData!(start, end, page),
+              ),
+              child: Text(
+                tabs.length > 3 && isAtMostSmallScreen(context)
+                    ? tab.name.characters.first.toUpperCase()
+                    : tab.name,
+              )))
           .toList(),
       value: tabs.first.name,
     );

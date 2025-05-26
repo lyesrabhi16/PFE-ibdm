@@ -16,7 +16,11 @@ class ScrollableShadSheetContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ShadSheet(
-      scrollable: false, // Changed to true to allow scrolling
+      scrollable: false,
+      closeIconPosition: ShadPosition(
+        top: AppSizes.lg,
+        right: AppSizes.md,
+      ),
       child: Container(
         constraints: BoxConstraints(
           minWidth: min(context.width / 2, 300),

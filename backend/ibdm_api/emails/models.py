@@ -6,6 +6,8 @@ CUSTOM_MONITORED_VALUES = {
     "filtration.stopped": (),
     "co2_ifruit.stopped": (),
     "utilite.stopped": (),
+    "chambre_froide.stopped": (),
+    
     "sucre.total.tetra": (
         "t_s21",
         "t_s22",
@@ -168,6 +170,22 @@ ALL_MONITORED_VALUES = (
     ("utilite.ut_sid_pg", "utilite.ut_sid_pg"),
     ("utilite.ut_sid_tt", "utilite.ut_sid_tt"),
     ("utilite.ut_sid_tc", "utilite.ut_sid_tc"),
+
+    ("chambre_froide.ut_tt_cf1", "chambre_froide.ut_tt_cf1"),
+    ("chambre_froide.ut_tt_cf2", "chambre_froide.ut_tt_cf2"),
+    ("chambre_froide.ut_tt_cf3", "chambre_froide.ut_tt_cf3"),
+    ("chambre_froide.ut_tt_cf4", "chambre_froide.ut_tt_cf4"),
+    ("chambre_froide.ut_tt_cf5", "chambre_froide.ut_tt_cf5"),
+    ("chambre_froide.ut_tt_cf7", "chambre_froide.ut_tt_cf7"),
+    ("chambre_froide.ut_tt_cf8", "chambre_froide.ut_tt_cf8"),
+    ("chambre_froide.ut_tt_cf9", "chambre_froide.ut_tt_cf9"),
+    ("chambre_froide.ut_tt_cf10", "chambre_froide.ut_tt_cf10"),
+    ("chambre_froide.ut_tt_cf11", "chambre_froide.ut_tt_cf11"),
+    ("chambre_froide.ut_tt_cf12", "chambre_froide.ut_tt_cf12"),
+    ("chambre_froide.ut_tt_cf13", "chambre_froide.ut_tt_cf13"),
+    ("chambre_froide.ut_tt_cf14", "chambre_froide.ut_tt_cf14"),
+    ("chambre_froide.ut_tt_sas1", "chambre_froide.ut_tt_sas1"),
+    ("chambre_froide.ut_tt_sas2", "chambre_froide.ut_tt_sas2"),
 
     # custom values
     *{(k, k) for k in CUSTOM_MONITORED_VALUES},

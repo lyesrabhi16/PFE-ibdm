@@ -169,6 +169,7 @@ class UserSerializer(serializers.ModelSerializer, SuperiorsAndSubordinatesFields
             "superiors",
             "subordinates",
             "user_permissions",
+            "is_admin"
         ]
         extra_kwargs = {
             "user_id": {"read_only": True},

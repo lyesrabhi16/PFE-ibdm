@@ -17,6 +17,9 @@ from corsheaders.defaults import default_headers
 import logging
 from api_v1.env import Env
 from api_v1.smtp_backend import EmailBackend
+
+print("STARTING IBDM SERVER...")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -285,6 +288,7 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
 
+LOG_ARCHIVE_DIR = os.path.join(BASE_DIR, "data", "archives", "logs")
 LOG_DIR = os.path.join(BASE_DIR, "data", "logs")
 if os.path.exists(LOG_DIR) is False:
     os.makedirs(LOG_DIR)
@@ -313,96 +317,126 @@ LOGGING = None if not Env.LOG_TO_FILES else {
         },
         'file_debug': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'debug.log'),
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'formatter': 'verbose',
             'filters': ['debug_filter'],
         },
         'file_info': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'info.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['info_filter'],
         },
         'file_warning': {
             'level': 'WARNING',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'warning.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['warning_filter'],
         },
         'file_error': {
             'level': 'ERROR',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'error.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['error_filter'],
         },
         'file_critical': {
             'level': 'CRITICAL',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'critical.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['critical_filter'],
         },
         'file_emails': {
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'emails.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['emails_filter'],
         },
 
         'file_emails_broadcast': {
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'emails_broadcast.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['broadcast_sent_emails_filter'],
         },
         'file_sucre_broadcast': {
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'sucre_broadcast.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['broadcast_sucre_filter'],
         },
         'file_status_broadcast': {
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'status_broadcast.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['broadcast_status_filter'],
         },
         'file_filtration_broadcast': {
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'filtration_broadcast.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['broadcast_filtration_filter'],
         },
         'file_utilite_broadcast': {
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'utilite_broadcast.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['broadcast_utilite_filter'],
         },
         "file_http":{
-            'class': "logging.FileHandler",
+            'class': "logging.handlers.RotatingFileHandler",
             'filename': os.path.join(LOG_DIR, 'http.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
         },
         "file_server":{
-            'class': "logging.FileHandler",
+            'class': "logging.handlers.RotatingFileHandler",
             'filename': os.path.join(LOG_DIR, 'server.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
         },
         "file_monitors":{
-            'class': "logging.FileHandler",
+            'class': "logging.handlers.RotatingFileHandler",
             'filename': os.path.join(LOG_DIR, 'monitors.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['monitors_filter'],
         },
         "file_system_monitor":{
-            'class': "logging.FileHandler",
+            'class': "logging.handlers.RotatingFileHandler",
             'filename': os.path.join(LOG_DIR, 'system_monitor.log'),
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * Env.LOG_SIZE_LIMIT,  # IN MB
+            'backupCount': Env.COUNT_OF_LOGS_TO_KEEP,  # number of files to Keep
             'filters': ['system_monitor_filter'],
         },
     },
@@ -496,7 +530,7 @@ def require_tags(record, tags):
             return False
         tag = message_split[0]
         if tag not in seen_tags:
-            print("new tag:", tag)
+            print("started:", tag)
             seen_tags.add(tag)
         return tag in tags
     except Exception as e:

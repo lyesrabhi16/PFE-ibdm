@@ -723,6 +723,8 @@ class _CO2PageState extends State<CO2Page> {
                   ),
                 ],
               ),
+            ).marginOnly(
+              top: AppSizes.md,
             ),
           );
         },
@@ -766,6 +768,8 @@ class _CO2PageState extends State<CO2Page> {
                     ),
                   ],
                 ),
+              ).marginOnly(
+                top: AppSizes.md,
               );
             },
           );
@@ -887,7 +891,8 @@ class _CO2PageState extends State<CO2Page> {
         description: Text(strings.value.consommationDescription),
         child: Column(
           children: [
-            Row(
+            Wrap(
+              alignment: WrapAlignment.center,
               children: [
                 ShadDatePicker.range(
                   onRangeChanged: (value) => {
@@ -1022,6 +1027,8 @@ class _CO2PageState extends State<CO2Page> {
             })
           ],
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }
@@ -1099,7 +1106,9 @@ class _CO2PageState extends State<CO2Page> {
                         ),
                       )
                     ]
-                ]));
+                ])).marginOnly(
+          top: AppSizes.md,
+        );
       },
     );
   }

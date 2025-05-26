@@ -325,7 +325,8 @@ class _Co2ReportsPageState extends State<Co2ReportsPage> {
         ),
         child: Column(
           children: [
-            Row(
+            Wrap(
+              alignment: WrapAlignment.center,
               children: [
                 ShadDatePicker(
                   onChanged: (value) => {
@@ -368,6 +369,8 @@ class _Co2ReportsPageState extends State<Co2ReportsPage> {
             })
           ],
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }

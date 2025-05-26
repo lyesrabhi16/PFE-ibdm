@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 
 class DividerWithText extends StatelessWidget {
   const DividerWithText({super.key, required this.text, this.color});
@@ -6,6 +7,7 @@ class DividerWithText extends StatelessWidget {
   final Color? color;
   @override
   Widget build(BuildContext context) {
+    printMessage("DividerWithText: $text");
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -17,11 +19,13 @@ class DividerWithText extends StatelessWidget {
             endIndent: 10,
           ),
         ),
-        Text(
-          text,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: color ?? Theme.of(context).colorScheme.onSurface,
-              ),
+        FittedBox(
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: color ?? Theme.of(context).colorScheme.onSurface,
+                ),
+          ),
         ),
         Expanded(
           child: Divider(

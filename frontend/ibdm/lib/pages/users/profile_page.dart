@@ -182,6 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   onPressed: () => onSaveButtonPressed(
                                     context: context,
                                     user: User(
+                                      isAdmin: false,
                                       userId: userController.user!.userId,
                                       firstName: firstName ??
                                           userController.user!.firstName,

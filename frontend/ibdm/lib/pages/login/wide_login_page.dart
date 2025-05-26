@@ -8,7 +8,6 @@ import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 
 class WideLoginPage extends StatelessWidget {
   final Rx<CheckboxState> _rememberMe = CheckboxState.unchecked.obs;

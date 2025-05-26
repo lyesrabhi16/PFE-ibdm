@@ -3,6 +3,7 @@ import 'package:get/get.dart' as g;
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:super_clipboard/super_clipboard.dart';
+import 'package:permission_handler/permission_handler.dart' as ph;
 // import 'package:dio/browser.dart'; //! fails on non-web platforms
 import 'package:dio/dio.dart'
     show
@@ -39,6 +40,7 @@ import 'package:path_provider/path_provider.dart'
 import 'package:universal_html/html.dart' as uhtml;
 import 'package:open_filex/open_filex.dart';
 import 'package:flutter/material.dart';
+import 'package:downloadsfolder/downloadsfolder.dart' as df;
 
 /* 
 extension RoleExtension on Role {
@@ -49,19 +51,26 @@ extension RoleExtension on Role {
 
 class ApiClientInstance {
   static final dio = Dio();
-
+  static bool _initialized = false;
   ApiClientInstance._() {
     init();
   }
 
   static init() async {
+    if (_initialized) {
+      printMessage("ApiClientInstance: Already initialized");
+      return;
+    }
     // set default configurations
     dio.options.baseUrl = ApiConfig.base_url;
     dio.options.headers['Content-Type'] = 'application/json';
     dio.options.headers['Accept'] = 'application/json';
     dio.options.extra["withCredentials"] = true;
-    dio.interceptors.add(TestInterceptor());
-    dio.interceptors.add(CsrfInterceptor());
+    final interceptors = [
+      TestInterceptor(),
+      CsrfInterceptor(),
+      EnumFixInterceptor(),
+    ];
     //dio.interceptors.add(RoleFixInterceptor());
 
     if (kIsWeb) {
@@ -72,7 +81,7 @@ class ApiClientInstance {
           "${(await getApplicationDocumentsDirectory()).path}/.cookies/",
         ),
       );
-      dio.interceptors.add(CookieManager(persistentCookieJar));
+      interceptors.add(CookieManager(persistentCookieJar));
 
       // trust CA on Android app (android only)
       if (defaultTargetPlatform == TargetPlatform.android) {
@@ -88,8 +97,19 @@ class ApiClientInstance {
       }
     }
     //dio.interceptors.add(CsrfInterceptor());
-    dio.interceptors.add(EnumFixInterceptor());
+    for (var interceptor in interceptors) {
+      if (dio.interceptors
+          .any((i) => i.runtimeType == interceptor.runtimeType)) {
+        printMessage(
+            "ApiClientInstance: Interceptor ${interceptor.runtimeType} already exists");
+      } else {
+        printMessage(
+            "ApiClientInstance: Adding Interceptor ${interceptor.runtimeType}");
+        dio.interceptors.add(interceptor);
+      }
+    }
 
+    _initialized = false;
     printMessage("ApiClientInstance: Initialized");
   }
 
@@ -150,6 +170,7 @@ extension DownloadFile on IbdmApiClient {
     required String url,
     required String fileName,
     String? type,
+    bool open = false,
   }) async {
     String filePath = "";
     String message = "";
@@ -164,28 +185,35 @@ extension DownloadFile on IbdmApiClient {
     } else {
       try {
         logger.e("Downloading file: $url");
+        final r = await ph.Permission.manageExternalStorage.request();
+        if (r.isDenied || r.isRestricted) {
+          logger.e("Permission denied: $r");
+          message = strings.permissionDenied;
+          throw Exception(message);
+        }
         // Gestion pour Windows & iOS & Android
-        String? downloadDirectory =
-            (await getDownloadsDirectory() ?? await getTemporaryDirectory())
-                .path;
+        final downloadDirectory = (await df.getDownloadDirectory()).path;
 
+        logger.e("Download directory: $downloadDirectory");
         filePath = "$downloadDirectory/$fileName";
         logger.e("File path: $filePath");
         Dio dio = Dio();
         // download file
         await dio.download(url, filePath);
-        OpenFilex.open(filePath, type: type);
+        if (open) {
+          OpenFilex.open(filePath, type: type);
+        }
         final clipboard = SystemClipboard.instance;
         if (clipboard == null) {
           return; // Clipboard API is not supported on this platform.
         }
-        final item = DataWriterItem();
-        item.add(Formats.fileUri(Uri.file(filePath)));
-        await clipboard.write([item]);
         Clipboard.setData(ClipboardData(text: filePath));
         message = strings.downloadedFilePathCopiedToClipboard;
       } catch (e) {
-        message = strings.downloadFailed;
+        logger.e("Download failed: $e");
+        if (message != strings.permissionDenied) {
+          message = strings.downloadFailed;
+        }
       }
     }
 
@@ -612,66 +640,8 @@ class TestInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    printMessage("Interceptor Error: ${err.message} ${err.response?.data}");
+    printMessage(
+        "Interceptor Error: ${err.message} ${err.type} ${err.requestOptions.data} ${err.response?.statusCode} ${err.response?.data}");
     super.onError(err, handler);
   }
 }
-/* 
-class RoleFixInterceptor extends Interceptor {
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    printMessage("RoleFixInterceptor: Start");
-    if (options.data is Map<String, dynamic>) {
-      if (options.data.containsKey('role')) {
-        options.data.fields['role'] = Role.values
-            .firstWhere((role) => role.name == options.data['role'])
-            .json;
-      }
-    } else if (options.data is FormData) {
-      if (_hasRoleField((options.data as FormData).fields)) {
-        printMessage("RoleFixInterceptor: request has role field");
-        for (var e in (options.data as FormData).fields) {
-          if (e.key == "role") {
-            printMessage(
-                "RoleFixInterceptor: Found role field with value: ${e.value}");
-            MapEntry<String, String> newE = MapEntry(
-                e.key,
-                Role.values.firstWhere(
-                      (r) => r.name == e.value,
-                      orElse: () {
-                        if (Role.values.indexWhere((r) => r.json == e.value) ==
-                            -1) {
-                          logger.e(
-                              "RoleFixInterceptor: Role value ${e.value} not found in Role Enum (name or json value)");
-                          throw Exception(
-                              "RoleFixInterceptor: Role value ${e.value} not found in Role Enum (name or json value)");
-                        }
-                        return Role.fromJson(e.value);
-                      },
-                    ).json ??
-                    "");
-            (options.data as FormData)
-                .fields
-                .insert((options.data as FormData).fields.indexOf(e), newE);
-            printMessage("RoleFixInterceptor: created new role value: $newE");
-            (options.data as FormData).fields.remove(e);
-            printMessage(
-                "RoleFixInterceptor: Changed ${e.key} from ${e.value} to ${newE.value}");
-          }
-        }
-      }
-    }
-    printMessage("RoleFixInterceptor: Finished");
-    super.onRequest(options, handler);
-  }
-
-  bool _hasRoleField(List<MapEntry<String, String>> data) {
-    for (var e in data) {
-      if (e.key.toLowerCase() == "role") {
-        return true;
-      }
-    }
-    return false;
-  }
-}
- */

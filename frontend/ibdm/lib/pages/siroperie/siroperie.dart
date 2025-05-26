@@ -585,6 +585,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
                   ),
                 ],
               ),
+            ).marginOnly(
+              top: AppSizes.md,
             ),
           );
         },
@@ -627,6 +629,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
                         }),
                   ],
                 ),
+              ).marginOnly(
+                top: AppSizes.md,
               );
             },
           );
@@ -1171,6 +1175,8 @@ class _SiroperiePageState extends State<SiroperiePage> {
             })
           ],
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }
@@ -1231,7 +1237,9 @@ class _SiroperiePageState extends State<SiroperiePage> {
                         ),
                       )
                     ]
-                ]));
+                ])).marginOnly(
+          top: AppSizes.md,
+        );
       },
     );
   }

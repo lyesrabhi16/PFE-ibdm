@@ -1221,6 +1221,8 @@ class _UsersPageState extends State<UsersPage> {
             );
           },
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }
@@ -1424,6 +1426,7 @@ class _UsersPageState extends State<UsersPage> {
         loadedUserSuperiorOptions: _loadedAddUserSuperiorOptions);
     logger.d("showing edit dialog");
     User newUser = User(
+      isAdmin: false,
       userId: user.userId,
       email: user.email,
       username: user.username,
@@ -1602,6 +1605,7 @@ class _UsersPageState extends State<UsersPage> {
                     avatarUrl: null,
                     subordinates: newUser.subordinates,
                     userPermissions: newUser.userPermissions,
+                    isAdmin: false,
                   )
                 },
                 addUserEmailController:
@@ -1621,6 +1625,8 @@ class _UsersPageState extends State<UsersPage> {
             },
           ),
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }
@@ -1766,6 +1772,8 @@ class _UsersPageState extends State<UsersPage> {
             },
           ),
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }

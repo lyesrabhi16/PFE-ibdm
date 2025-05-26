@@ -1666,7 +1666,7 @@
     "@logToFiles": {
         "description": "Option de journalisation dans des fichiers"
     },
-    "dbConnectionCheckTimeout": "Délai de vérification de la connexion à la base de données (en secondes)",
+    "dbConnectionCheckTimeout": "Délai de vérification de la connexion à les bases de données",
     "@dbConnectionCheckTimeout": {
         "description": "Étiquette du délai de vérification de la connexion à la base de données en secondes"
     },
@@ -1714,7 +1714,7 @@
     "@useTls": {
         "description": "Option d'utilisation de TLS"
     },
-    "systemMonitorDBTimeout": "Délai de la base de données du moniteur système (en secondes)",
+    "systemMonitorDBTimeout": "Délai de la surviellance du systéme",
     "@systemMonitorDBTimeout": {
         "description": "Étiquette du délai de la base de données du moniteur système en secondes"
     },
@@ -1820,7 +1820,7 @@
     "@debit": {
         "description": "Étiquette de débit"
     },
-    "presCond": "Pression et conductivité",
+    "presCond": "Pres Cond",
     "@presCond": {
         "description": "Étiquette de pression et conductivité"
     },
@@ -2098,5 +2098,29 @@
                 "type": "String"
             }
         }
+    },
+    "admin": "Panneau d'Administration",
+    "@admin": {
+        "description": "administrateur libellé"
+    },
+    "errorOpeningAdminPanel": "Échec de l'ouverture du panneau d'administration",
+    "@errorOpeningAdminPanel": {
+        "description": "Message d'échec de l'ouverture du panneau d'administration"
+    },
+    "logSizeLimit": "Limite de taille des fichiers journals",
+    "@logSizeLimit": {
+        "description": "Étiquette de la limite de taille du fichier journal"
+    },
+    "numberOfLogsToKeep": "Nombre de journaux à conserver",
+    "@numberOfLogsToKeep": {
+        "description": "Étiquette du nombre de journaux à conserver"
+    },
+    "logs": "Journaux",
+    "@logs": {
+        "description": "Étiquette des journaux"
+    },
+    "permissionDenied": "Permission refusée",
+    "@permissionDenied": {
+        "description": "Message de permission refusée"
     }
 }

@@ -58,7 +58,7 @@ class UserForm extends StatelessWidget {
   )? onAddUser;
 
   final bool editable;
-  static final RxList<Role> roles = <Role>[].obs;
+  static late RxList<Role> roles;
   Role? role;
   final bool showPlaceHolders;
   final RxBool _showPassword = false.obs;
@@ -145,9 +145,8 @@ class UserForm extends StatelessWidget {
 
   Future<void> _load(context) async {
     _loaded.value = false;
-    roles.clear();
     final List<Role> localRoles = await userController.getRoles(context);
-    roles.addAll(localRoles);
+    roles = [...localRoles].obs;
     await getInitialValueOfSuperior();
     _loaded.value = true;
   }
@@ -446,6 +445,7 @@ class UserForm extends StatelessWidget {
                           "after value: ${value?.name} __userRole: ${userRole.value?.name}");
                     },
                     selectedOptionBuilder: (context, value) {
+                      logger.e("selected role: ${value.name}");
                       return Container(
                         constraints: BoxConstraints(
                           minWidth: context.width,
@@ -457,8 +457,9 @@ class UserForm extends StatelessWidget {
                                 .textTheme
                                 .titleSmall
                                 ?.copyWith(
-                                  color: AppColors.getRoleColorWithRole(value),
-                                )),
+                                    color: AppColors.getRoleColorWithRoleValue(
+                                  value.name,
+                                ))),
                       );
                     },
                     placeholder: Text(strings.value.role),
@@ -584,6 +585,7 @@ class UserForm extends StatelessWidget {
           superiors: [],
           subordinates: [],
           userPermissions: [],
+          isAdmin: false,
         );
       } else {
         _addUserSuperior = null;

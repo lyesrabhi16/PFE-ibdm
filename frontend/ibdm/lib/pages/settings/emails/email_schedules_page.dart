@@ -382,6 +382,8 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                   users?.map((u) => u.email).toList() ?? _scheduledUsers;
             },
           ),
+        ).marginOnly(
+          top: AppSizes.md,
         );
       },
     );
@@ -481,6 +483,8 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             showIdField: true,
             showNextRunTime: true,
           ),
+        ).marginOnly(
+          top: AppSizes.md,
         );
       },
     );
@@ -635,6 +639,8 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                   users?.map((u) => u.email).toList() ?? _scheduledUsers;
             },
           ),
+        ).marginOnly(
+          top: AppSizes.md,
         );
       },
     );

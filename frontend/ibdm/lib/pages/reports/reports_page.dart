@@ -187,11 +187,13 @@ void showViewReportDialog(
         constraints: BoxConstraints(
           minWidth: min(context.width, 600),
           maxWidth: min(context.width, 600),
-          minHeight: 600,
+          minHeight: 700,
         ),
         child: Container(
           child: reportData(context, report),
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       );
     },
   );
@@ -207,10 +209,10 @@ Column reportData(BuildContext context, Report report) {
           constraints: BoxConstraints(
             maxWidth: context.width,
             minHeight: 300,
-            maxHeight: 680,
+            maxHeight: 700,
           ),
           child: ShadTable.list(
-            columnSpanExtent: (c) => FixedSpanExtent(min(
+            columnSpanExtent: (c) => FixedSpanExtent(max(
                   context.width,
                   600,
                 ) /

@@ -323,7 +323,8 @@ class _SucreReportsPageState extends State<SucreReportsPage> {
         ),
         child: Column(
           children: [
-            Row(
+            Wrap(
+              alignment: WrapAlignment.center,
               children: [
                 ShadDatePicker(
                   onChanged: (value) => {
@@ -366,6 +367,8 @@ class _SucreReportsPageState extends State<SucreReportsPage> {
             })
           ],
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }

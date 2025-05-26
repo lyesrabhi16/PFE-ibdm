@@ -532,6 +532,8 @@ class _UtilitePageState extends State<UtilitePage> {
                   ),
                 ],
               ),
+            ).marginOnly(
+              top: AppSizes.md,
             ),
           );
         },
@@ -575,6 +577,8 @@ class _UtilitePageState extends State<UtilitePage> {
                     ),
                   ],
                 ),
+              ).marginOnly(
+                top: AppSizes.md,
               );
             },
           );
@@ -656,7 +660,9 @@ class _UtilitePageState extends State<UtilitePage> {
                         ),
                       )
                     ]
-                ]));
+                ])).marginOnly(
+          top: AppSizes.md,
+        );
       },
     );
   }
