@@ -8,6 +8,7 @@ import 'package:ibdm/pages/login/wide_login_page.dart';
 import 'package:ibdm/pages/login/small_login_page.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/helpers/common_heplers.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
 
@@ -43,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return SafeArea(
       child: Scaffold(
-        body: isSmallScreen(context)
+        body: isAtMostSmallScreen(context)
             ? SmallLoginPage()
             : NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) => [
@@ -59,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(width: AppSizes.sm),
                       IconButton(
                         icon: Icon(Icons.card_membership),
-                        onPressed: downloadCertificate,
+                        onPressed: () => downloadCertificate(context),
                       ),
                       SizedBox(width: AppSizes.sm),
                     ],
@@ -76,19 +77,5 @@ class _LoginPageState extends State<LoginPage> {
               ),
       ),
     );
-  }
-
-  downloadCertificate() async {
-    final strings = getTranslations(context);
-    try {
-      final api = await ApiClientInstance.getApiClient();
-      api.downloadCertificate(context);
-    } catch (e) {
-      Get.snackbar(
-        strings.error,
-        strings.errorDownloadingCertificate,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    }
   }
 }

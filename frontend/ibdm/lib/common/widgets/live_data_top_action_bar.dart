@@ -167,6 +167,17 @@ class LiveDataTopActionBar extends StatelessWidget {
                                         itemWidth: 80,
                                         spacing: AppSizes.md,
                                         alignment: Alignment.center,
+                                        normalTextStyle: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall!,
+                                        highlightedTextStyle: Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium!
+                                            .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                            ),
                                         onTimeChange: (dt) => {
                                           _selectedDate.value = _selectedDate
                                                       .value !=
@@ -182,6 +193,8 @@ class LiveDataTopActionBar extends StatelessWidget {
                                       ),
                                     ),
                                   ),
+                                ).marginOnly(
+                                  top: AppSizes.md,
                                 ));
                       }).marginSymmetric(
                     horizontal: AppSizes.sm,

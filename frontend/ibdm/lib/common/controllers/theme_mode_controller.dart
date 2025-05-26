@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
+import 'package:ibdm/utils/helpers/logger.dart';
 
 class ThemeModeController extends GetxController {
   ThemeModeController() {
@@ -20,6 +21,7 @@ class ThemeModeController extends GetxController {
 
   void loadThemeMode() {
     LocalStorage.getDarkThemeMode().then((value) {
+      logger.e("Loaded dark theme mode: $value");
       if (value == null) {
         isDark.value = ThemeMode.system == ThemeMode.dark;
         themeMode.value = ThemeMode.system;

@@ -125,9 +125,29 @@ import 'package:json_annotation/json_annotation.dart';
 /// * `utilite.ut_sid_pg` - utilite.ut_sid_pg.
 /// * `utilite.ut_sid_tt` - utilite.ut_sid_tt.
 /// * `utilite.ut_sid_tc` - utilite.ut_sid_tc.
+/// * `chambre_froide.ut_tt_cf1` - chambre_froide.ut_tt_cf1.
+/// * `chambre_froide.ut_tt_cf2` - chambre_froide.ut_tt_cf2.
+/// * `chambre_froide.ut_tt_cf3` - chambre_froide.ut_tt_cf3.
+/// * `chambre_froide.ut_tt_cf4` - chambre_froide.ut_tt_cf4.
+/// * `chambre_froide.ut_tt_cf5` - chambre_froide.ut_tt_cf5.
+/// * `chambre_froide.ut_tt_cf7` - chambre_froide.ut_tt_cf7.
+/// * `chambre_froide.ut_tt_cf8` - chambre_froide.ut_tt_cf8.
+/// * `chambre_froide.ut_tt_cf9` - chambre_froide.ut_tt_cf9.
+/// * `chambre_froide.ut_tt_cf10` - chambre_froide.ut_tt_cf10.
+/// * `chambre_froide.ut_tt_cf11` - chambre_froide.ut_tt_cf11.
+/// * `chambre_froide.ut_tt_cf12` - chambre_froide.ut_tt_cf12.
+/// * `chambre_froide.ut_tt_cf13` - chambre_froide.ut_tt_cf13.
+/// * `chambre_froide.ut_tt_cf14` - chambre_froide.ut_tt_cf14.
+/// * `chambre_froide.ut_tt_sas1` - chambre_froide.ut_tt_sas1.
+/// * `chambre_froide.ut_tt_sas2` - chambre_froide.ut_tt_sas2.
+/// * `co2_ifruit.stopped` - co2_ifruit.stopped.
 /// * `sucre.total.tetra` - sucre.total.tetra.
-/// * `sucre.total` - sucre.total.
+/// * `chambre_froide.stopped` - chambre_froide.stopped.
+/// * `utilite.stopped` - utilite.stopped.
 /// * `sucre.total.adue` - sucre.total.adue.
+/// * `sucre.stopped` - sucre.stopped.
+/// * `filtration.stopped` - filtration.stopped.
+/// * `sucre.total` - sucre.total.
 @JsonEnum()
 enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `sucre.t_s21`.
@@ -493,15 +513,75 @@ enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `utilite.ut_sid_tc`.
   @JsonValue('utilite.ut_sid_tc')
   undefined120('utilite.ut_sid_tc'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf1`.
+  @JsonValue('chambre_froide.ut_tt_cf1')
+  undefined121('chambre_froide.ut_tt_cf1'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf2`.
+  @JsonValue('chambre_froide.ut_tt_cf2')
+  undefined122('chambre_froide.ut_tt_cf2'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf3`.
+  @JsonValue('chambre_froide.ut_tt_cf3')
+  undefined123('chambre_froide.ut_tt_cf3'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf4`.
+  @JsonValue('chambre_froide.ut_tt_cf4')
+  undefined124('chambre_froide.ut_tt_cf4'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf5`.
+  @JsonValue('chambre_froide.ut_tt_cf5')
+  undefined125('chambre_froide.ut_tt_cf5'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf7`.
+  @JsonValue('chambre_froide.ut_tt_cf7')
+  undefined126('chambre_froide.ut_tt_cf7'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf8`.
+  @JsonValue('chambre_froide.ut_tt_cf8')
+  undefined127('chambre_froide.ut_tt_cf8'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf9`.
+  @JsonValue('chambre_froide.ut_tt_cf9')
+  undefined128('chambre_froide.ut_tt_cf9'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf10`.
+  @JsonValue('chambre_froide.ut_tt_cf10')
+  undefined129('chambre_froide.ut_tt_cf10'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf11`.
+  @JsonValue('chambre_froide.ut_tt_cf11')
+  undefined130('chambre_froide.ut_tt_cf11'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf12`.
+  @JsonValue('chambre_froide.ut_tt_cf12')
+  undefined131('chambre_froide.ut_tt_cf12'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf13`.
+  @JsonValue('chambre_froide.ut_tt_cf13')
+  undefined132('chambre_froide.ut_tt_cf13'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_cf14`.
+  @JsonValue('chambre_froide.ut_tt_cf14')
+  undefined133('chambre_froide.ut_tt_cf14'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_sas1`.
+  @JsonValue('chambre_froide.ut_tt_sas1')
+  undefined134('chambre_froide.ut_tt_sas1'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_sas2`.
+  @JsonValue('chambre_froide.ut_tt_sas2')
+  undefined135('chambre_froide.ut_tt_sas2'),
+  /// Incorrect name has been replaced. Original name: `co2_ifruit.stopped`.
+  @JsonValue('co2_ifruit.stopped')
+  undefined136('co2_ifruit.stopped'),
   /// Incorrect name has been replaced. Original name: `sucre.total.tetra`.
   @JsonValue('sucre.total.tetra')
-  undefined121('sucre.total.tetra'),
-  /// Incorrect name has been replaced. Original name: `sucre.total`.
-  @JsonValue('sucre.total')
-  undefined122('sucre.total'),
+  undefined137('sucre.total.tetra'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.stopped`.
+  @JsonValue('chambre_froide.stopped')
+  undefined138('chambre_froide.stopped'),
+  /// Incorrect name has been replaced. Original name: `utilite.stopped`.
+  @JsonValue('utilite.stopped')
+  undefined139('utilite.stopped'),
   /// Incorrect name has been replaced. Original name: `sucre.total.adue`.
   @JsonValue('sucre.total.adue')
-  undefined123('sucre.total.adue'),
+  undefined140('sucre.total.adue'),
+  /// Incorrect name has been replaced. Original name: `sucre.stopped`.
+  @JsonValue('sucre.stopped')
+  undefined141('sucre.stopped'),
+  /// Incorrect name has been replaced. Original name: `filtration.stopped`.
+  @JsonValue('filtration.stopped')
+  undefined142('filtration.stopped'),
+  /// Incorrect name has been replaced. Original name: `sucre.total`.
+  @JsonValue('sucre.total')
+  undefined143('sucre.total'),
   /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
   $unknown(null);
 

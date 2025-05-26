@@ -1,894 +1,2126 @@
 {
-	"@@author": "lyes rabhi",
-	"@@locale": "fr",
-	"homePageWelcomeMessage": "Bienvenue dans l'application",
-	"@homePageWelcomeMessage": {
-		"description": "Welcome message on the home page"
-	},
-	"login": "S'identifier",
-	"@login": {
-		"description": "Login button text"
-	},
-	"loginToContinue": "Connectez-vous pour continuer",
-	"@loginToContinue": {
-		"description": "Prompt to login to continue"
-	},
-	"email": "Email",
-	"@email": {
-		"description": "Email field label"
-	},
-	"emailExemple": "compte@exemple.com",
-	"@emailExemple": {
-		"description": "Example email address"
-	},
-	"password": "Mot de passe",
-	"@password": {
-		"description": "Password field label"
-	},
-	"forgotPassword": "Mot de passe oublié",
-	"@forgotPassword": {
-		"description": "Forgot password link text"
-	},
-	"rememberMe": "Se souvenir de moi",
-	"@rememberMe": {
-		"description": "Remember me checkbox label"
-	},
-	"invalidEmail": "Email invalide",
-	"@invalidEmail": {
-		"description": "Error message for invalid email"
-	},
-	"invalidPassword": "Mot de passe invalide",
-	"@invalidPassword": {
-		"description": "Error message for invalid password"
-	},
-	"requiredEmail": "Email est requis",
-	"@requiredEmail": {
-		"description": "Error message for required email"
-	},
-	"requiredPassword": "Mot de passe est requis",
-	"@requiredPassword": {
-		"description": "Error message for required password"
-	},
-	"enterYourEmail": "Entrez votre email",
-	"@enterYourEmail": {
-		"description": "Prompt to enter email"
-	},
-	"enterYourPassword": "Entrez votre mot de passe",
-	"@enterYourPassword": {
-		"description": "Prompt to enter password"
-	},
-	"loginFailed": "Échec de la connexion",
-	"@loginFailed": {
-		"description": "Login failed message"
-	},
-	"loginSuccess": "Connexion réussie",
-	"@loginSuccess": {
-		"description": "Login success message"
-	},
-	"logout": "Se déconnecter",
-	"@logout": {
-		"description": "Logout button text"
-	},
-	"logoutSuccess": "Déconnexion réussie",
-	"@logoutSuccess": {
-		"description": "Logout success message"
-	},
-	"logoutFailed": "Échec de la déconnexion",
-	"@logoutFailed": {
-		"description": "Logout failed message"
-	},
-	"pleaseFillInAllFields": "Veuillez remplir tous les champs",
-	"@pleaseFillInAllFields": {
-		"description": "Prompt to fill in all fields"
-	},
-	"logginIn": "Connexion...",
-	"@logginIn": {
-		"description": "Logging in message"
-	},
-	"loginSuccessful": "Connexion réussie",
-	"@loginSuccessful": {
-		"description": "Login successful message"
-	},
-	"logoutSuccessMessage": "Vous vous êtes déconnecté avec succès",
-	"@logoutSuccessMessage": {
-		"description": "Logout success detailed message"
-	},
-	"logoutFailedMessage": "Une erreur s'est produite lors de la déconnexion",
-	"@logoutFailedMessage": {
-		"description": "Logout failed detailed message"
-	},
-	"loginFailedMessage": "Une erreur s'est produite lors de la connexion",
-	"@loginFailedMessage": {
-		"description": "Login failed detailed message"
-	},
-	"loginSuccessMessage": "Vous vous êtes connecté avec succès",
-	"@loginSuccessMessage": {
-		"description": "Login success detailed message"
-	},
-	"connectionFailedError": "Une erreur de connexion s'est produite, veuillez vérifier votre connexion Internet et réessayer",
-	"@connectionFailedError": {
-		"description": "Connection failed error message"
-	},
-	"serverError": "Une erreur de serveur s'est produite, veuillez réessayer plus tard",
-	"@serverError": {
-		"description": "Server error message"
-	},
-	"noInternetConnection": "Pas de connexion Internet",
-	"@noInternetConnection": {
-		"description": "No internet connection message"
-	},
-	"noInternetConnectionMessage": "Veuillez vérifier votre connexion Internet et réessayer",
-	"@noInternetConnectionMessage": {
-		"description": "Detailed no internet connection message"
-	},
-	"timeOutError": "Délai d'attente de la demande dépassé, veuillez réessayer plus tard",
-	"@timeOutError": {
-		"description": "Timeout error message"
-	},
-	"cancelMessage": "Demande annulée",
-	"@cancelMessage": {
-		"description": "Request cancelled message"
-	},
-	"unknownError": "Une erreur inconnue s'est produite, veuillez réessayer plus tard",
-	"@unknownError": {
-		"description": "Unknown error message"
-	},
-	"connectionFailed": "Échec de la connexion",
-	"@connectionFailed": {
-		"description": "Connection failed message"
-	},
-	"accessDenied": "Accès refusé",
-	"@accessDenied": {
-		"description": "Access denied message"
-	},
-	"loginRequired": "Authentification requise",
-	"@loginRequired": {
-		"description": "Login required message"
-	},
-	"logoutRequired": "Déconnexion requise",
-	"@logoutRequired": {
-		"description": "Logout required message"
-	},
-	"search": "Rechercher...",
-	"@search": {
-		"description": "Search placeholder text"
-	},
-	"userManagement": "Management des Utilisateurs",
-	"@userManagement": {
-		"description": "User management section title"
-	},
-	"addUser": "Ajouter Utilisateur",
-	"@addUser": {
-		"description": "Add user button text"
-	},
-	"addOneUser": "Ajouter Un Utilisateur",
-	"@addOneUser": {
-		"description": "Add one user button text"
-	},
-	"delete": "Supprimer",
-	"@delete": {
-		"description": "Delete button text"
-	},
-	"filters": "Filtres",
-	"@filters": {
-		"description": "Filters section title"
-	},
-	"filterUser": "Filtrer les utilisateurs",
-	"@filterUser": {
-		"description": "Filter users button text"
-	},
-	"filterByRole": "Filtrer par Role",
-	"@filterByRole": {
-		"description": "Filter by role button text"
-	},
-	"role": "Role",
-	"@role": {
-		"description": "Role field label"
-	},
-	"filter": "Filtrer",
-	"@filter": {
-		"description": "Filter button text"
-	},
-	"sort": "Trier",
-	"@sort": {
-		"description": "Sort button text"
-	},
-	"sortUser": "Trier utilisateurs",
-	"@sortUser": {
-		"description": "Sort users button text"
-	},
-	"sortBy": "Trier par",
-	"@sortBy": {
-		"description": "Sort by label"
-	},
-	"id": "ID",
-	"@id": {
-		"description": "ID field label"
-	},
-	"name": "Nom",
-	"@name": {
-		"description": "Name field label"
-	},
-	"perPage": "Par Page",
-	"@perPage": {
-		"description": "Per page label"
-	},
-	"yes": "Oui",
-	"no": "Non",
-	"num": "no",
-	"@no": {
-		"description": "No field label"
-	},
-	"avatar": "Avatar",
-	"@avatar": {
-		"description": "Avatar field label"
-	},
-	"actions": "Actions",
-	"@actions": {
-		"description": "Actions field label"
-	},
-	"page": "Page",
-	"@page": {
-		"description": "Page field label"
-	},
-	"prevPage": "Précédente",
-	"@prevPage": {
-		"description": "Previous page button text"
-	},
-	"nextPage": "Suivante",
-	"@nextPage": {
-		"description": "Next page button text"
-	},
-	"users": "Utilisateurs",
-	"@users": {
-		"description": "Users section title"
-	},
-	"deleteUser": "Supprimer Utilisateurs",
-	"@deleteUser": {
-		"description": "Delete users button text"
-	},
-	"selectUserDelete": "Selectionner l'Utilisateur à Supprimer",
-	"@selectUserDelete": {
-		"description": "Select user to delete prompt"
-	},
-	"cancel": "Annuler",
-	"@cancel": {
-		"description": "Cancel button text"
-	},
-	"repFav": "Oui",
-	"@repFav": {
-		"description": "Yes option text"
-	},
-	"repDeFav": "Non",
-	"@repDeFav": {
-		"description": "No option text"
-	},
-	"pleaseFixErrorsInTheForm": "SVP fixer les erreurs dans le formulaire",
-	"@pleaseFixErrorsInTheForm": {
-		"description": "Prompt to fix errors in the form"
-	},
-	"addUserMessage": "Ajout de l'utilisateur...",
-	"@addUserMessage": {
-		"description": "Adding user message"
-	},
-	"failedToGetUsersMessage": "Échec de l'obtention des utilisateurs",
-	"@failedToGetUsersMessage": {
-		"description": "Failed to get users message"
-	},
-	"errorFailedToGetUsers": "Erreur: Échec de l'obtention des utilisateurs",
-	"@errorFailedToGetUsers": {
-		"description": "Error message for failed to get users"
-	},
-	"failedToAddUserMessage": "Ajout Utilisateur échoué",
-	"@failedToAddUserMessage": {
-		"description": "Failed to add user message"
-	},
-	"successAddUserMessage": "Utilisateur Ajouté Avec Succès",
-	"@successAddUserMessage": {
-		"description": "User added successfully message"
-	},
-	"openingFilePicker": "Ouverture de Sélecteur de Fichier...",
-	"@openingFilePicker": {
-		"description": "Opening file picker message"
-	},
-	"canceled": "Annulée",
-	"@canceled": {
-		"description": "Cancelled message"
-	},
-	"fileSelected": "Fichier Choisi",
-	"@fileSelected": {
-		"description": "File selected message"
-	},
-	"phoneNumber": "Numero de Téléphone",
-	"@phoneNumber": {
-		"description": "Phone number field label"
-	},
-	"superior": "Supérieur",
-	"@superior": {
-		"description": "Superior field label"
-	},
-	"selectSuperior": "Selectionner le Supérieur",
-	"@selectSuperior": {
-		"description": "Select superior prompt"
-	},
-	"delete_users": "Êtes-vous sûr de vouloir supprimer {count, plural, one{utilisateur} other {utilisateurs}} ?",
-	"@delete_users": {
-		"description": "Delete users confirmation message",
-		"placeholders": {
-			"count": {
-				"type": "int"
-			}
-		}
-	},
-	"ibdm": "IBDM",
-	"@ibdm": {
-		"description": "IBDM acronym"
-	},
-	"ifri_bdd": "Ifri Base de Données Machines",
-	"@ifri_bdd": {
-		"description": "Ifri Database Machines"
-	},
-	"options": "Options",
-	"@options": {
-		"description": "Options section title"
-	},
-	"me": "Moi",
-	"@me": {
-		"description": "Me option text"
-	},
-	"siroperieTitle": "Siroperie",
-	"january": "Janvier",
-	"february": "Février",
-	"march": "Mars",
-	"april": "Avril",
-	"may": "Mai",
-	"june": "Juin",
-	"july": "Juillet",
-	"august": "Août",
-	"september": "Septembre",
-	"october": "Octobre",
-	"november": "Novembre",
-	"december": "Décembre",
-	"year": "Année: {year}",
-	"@year": {
-		"placeholders": {
-			"year": {
-				"type": "int",
-				"description": "the year to display",
-				"example": "2025"
-			}
-		}
-	},
-	"month": "Mois: {month}",
-	"@month": {
-		"placeholders": {
-			"month": {
-				"type": "String",
-				"description": "the month to display",
-				"example": "july"
-			}
-		}
-	},
-	"day": "Jour: {day}",
-	"@day": {
-		"placeholders": {
-			"day": {
-				"type": "String",
-				"description": "the day to display",
-				"example": "25"
-			}
-		}
-	},
-	"hour": "Heure",
-	"minute": "Minute",
-	"second": "Seconde",
-	"pick": "Choisir",
-	"totalSucre": "Sucre Total :",
-	"totalSucreTetra": "Sucre Total Tetra :",
-	"totalSucreAdue": "Sucre Total Adue:",
-	"sucreTetraTitle": "Sucre Tetra",
-	"sucreAdueTitle": "Sucre Adue",
-	"showLiveData": "Afficher en temps réel",
-	"showingLiveData": "Affichage en temps réel",
-	"inventory": "inventaire",
-	"inventoryDescription": "afficher l'inventaire d'un jour spécifique.",
-	"cuve": "cuve",
-	"failedToGetInventory": "Échec de l'obtention de l'inventaire",
-	"toOrder": "À commander",
-	"tank": "{count, plural, =0 {Citerne} =1 {Citerne} other {Citernes}}",
-	"@tank": {
-		"placeholders": {
-			"count": {
-				"type": "int",
-				"description": "the number of tanks",
-				"example": "5"
-			}
-		}
-	},
-	"filtrationTitle": "Filtration",
-	"eauBrute": "Eau Brute",
-	"eauFiltrer": "Eau Filtrée",
-	"eauOsmose": "Eau Osmosée",
+    "@@author": "Lyes Rabhi",
+    "@@locale": "fr",
+    "homePageWelcomeMessage": "Bienvenue dans l'application",
+    "@homePageWelcomeMessage": {
+        "description": "Message de bienvenue sur la page d'accueil"
+    },
+    "login": "Connecter",
+    "@login": {
+        "description": "Texte du bouton de connexion"
+    },
+    "loginToContinue": "Connectez-vous pour continuer",
+    "@loginToContinue": {
+        "description": "Invitation à se connecter pour continuer"
+    },
+    "email": "Email",
+    "@email": {
+        "description": "Étiquette du champ email"
+    },
+    "emailExemple": "compte@exemple.com",
+    "@emailExemple": {
+        "description": "Exemple d'adresse email"
+    },
+    "password": "Mot de passe",
+    "@password": {
+        "description": "Étiquette du champ mot de passe"
+    },
+    "forgotPassword": "Mot de passe oublié",
+    "@forgotPassword": {
+        "description": "Texte du lien mot de passe oublié"
+    },
+    "rememberMe": "Se souvenir de moi",
+    "@rememberMe": {
+        "description": "Étiquette de la case à cocher se souvenir de moi"
+    },
+    "invalidEmail": "Email invalide",
+    "@invalidEmail": {
+        "description": "Message d'erreur pour un email invalide"
+    },
+    "invalidPassword": "Mot de passe invalide",
+    "@invalidPassword": {
+        "description": "Message d'erreur pour un mot de passe invalide"
+    },
+    "requiredEmail": "L'email est requis",
+    "@requiredEmail": {
+        "description": "Message d'erreur pour un email requis"
+    },
+    "requiredPassword": "Le mot de passe est requis",
+    "@requiredPassword": {
+        "description": "Message d'erreur pour un mot de passe requis"
+    },
+    "enterYourEmail": "Entrez votre email",
+    "@enterYourEmail": {
+        "description": "Texte de remplacement pour le champ email"
+    },
+    "enterYourPassword": "Entrez votre mot de passe",
+    "@enterYourPassword": {
+        "description": "Texte de remplacement pour le champ mot de passe"
+    },
+    "loginFailed": "Échec de la connexion",
+    "@loginFailed": {
+        "description": "Message d'échec de la connexion"
+    },
+    "loginSuccess": "Connexion réussie",
+    "@loginSuccess": {
+        "description": "Message de succès de la connexion"
+    },
+    "logout": "Déconnecter",
+    "@logout": {
+        "description": "Texte du bouton de déconnexion"
+    },
+    "logoutSuccess": "Déconnexion réussie",
+    "@logoutSuccess": {
+        "description": "Message de succès de la déconnexion"
+    },
+    "logoutFailed": "Échec de la déconnexion",
+    "@logoutFailed": {
+        "description": "Message d'échec de la déconnexion"
+    },
+    "pleaseFillInAllFields": "Veuillez remplir tous les champs",
+    "@pleaseFillInAllFields": {
+        "description": "Invitation à remplir tous les champs"
+    },
+    "loggingIn": "Connexion en cours...",
+    "@loggingIn": {
+        "description": "Message de statut de connexion"
+    },
+    "loginSuccessful": "Connexion réussie",
+    "@loginSuccessful": {
+        "description": "Message de succès de la connexion"
+    },
+    "logoutSuccessMessage": "Vous vous êtes déconnecté avec succès",
+    "@logoutSuccessMessage": {
+        "description": "Message détaillé de succès de la déconnexion"
+    },
+    "logoutFailedMessage": "Une erreur s'est produite lors de la déconnexion",
+    "@logoutFailedMessage": {
+        "description": "Message détaillé d'échec de la déconnexion"
+    },
+    "loginFailedMessage": "Une erreur s'est produite lors de la connexion",
+    "@loginFailedMessage": {
+        "description": "Message détaillé d'échec de la connexion"
+    },
+    "loginSuccessMessage": "Vous vous êtes connecté avec succès",
+    "@loginSuccessMessage": {
+        "description": "Message détaillé de succès de la connexion"
+    },
+    "connectionFailedError": "Une erreur de connexion s'est produite, veuillez vérifier votre connexion Internet et réessayer",
+    "@connectionFailedError": {
+        "description": "Message d'erreur de connexion échouée"
+    },
+    "serverError": "Une erreur de serveur s'est produite, veuillez réessayer plus tard",
+    "@serverError": {
+        "description": "Message d'erreur de serveur"
+    },
+    "noInternetConnection": "Pas de connexion Internet",
+    "@noInternetConnection": {
+        "description": "Message de non-connexion à Internet"
+    },
+    "noInternetConnectionMessage": "Veuillez vérifier votre connexion Internet et réessayer",
+    "@noInternetConnectionMessage": {
+        "description": "Message détaillé de non-connexion à Internet"
+    },
+    "timeOutError": "La requête a expiré, veuillez réessayer plus tard",
+    "@timeOutError": {
+        "description": "Message d'erreur de délai d'attente"
+    },
+    "cancelMessage": "Requête annulée",
+    "@cancelMessage": {
+        "description": "Message de requête annulée"
+    },
+    "unknownError": "Une erreur inconnue s'est produite, veuillez réessayer plus tard",
+    "@unknownError": {
+        "description": "Message d'erreur inconnue"
+    },
+    "connectionFailed": "Connexion échouée",
+    "@connectionFailed": {
+        "description": "Message de connexion échouée"
+    },
+    "accessDenied": "Accès refusé",
+    "@accessDenied": {
+        "description": "Message d'accès refusé"
+    },
+    "loginRequired": "Vous devez être connecté",
+    "@loginRequired": {
+        "description": "Message de connexion requise"
+    },
+    "logoutRequired": "Vous devez être déconnecté",
+    "@logoutRequired": {
+        "description": "Message de déconnexion requise"
+    },
+    "search": "Rechercher...",
+    "@search": {
+        "description": "Texte de remplacement pour la recherche"
+    },
+    "userManagement": "Gestion des utilisateurs",
+    "@userManagement": {
+        "description": "Titre de la section de gestion des utilisateurs"
+    },
+    "addUser": "Ajouter un utilisateur",
+    "@addUser": {
+        "description": "Texte du bouton ajouter un utilisateur"
+    },
+    "addOneUser": "Ajouter un utilisateur",
+    "@addOneUser": {
+        "description": "Texte du bouton ajouter un utilisateur"
+    },
+    "delete": "Supprimer",
+    "@delete": {
+        "description": "Texte du bouton supprimer"
+    },
+    "filters": "Filtres",
+    "@filters": {
+        "description": "Titre de la section des filtres"
+    },
+    "filterUser": "Filtrer les utilisateurs",
+    "@filterUser": {
+        "description": "Texte du bouton filtrer les utilisateurs"
+    },
+    "filterByRole": "Filtrer par rôle",
+    "@filterByRole": {
+        "description": "Option de filtrage par rôle"
+    },
+    "role": "Rôle",
+    "@role": {
+        "description": "Étiquette du champ rôle"
+    },
+    "filter": "Filtrer",
+    "@filter": {
+        "description": "Texte du bouton filtrer"
+    },
+    "sort": "Trier",
+    "@sort": {
+        "description": "Titre de la section de tri"
+    },
+    "sortUser": "Trier les utilisateurs",
+    "@sortUser": {
+        "description": "Texte du bouton trier les utilisateurs"
+    },
+    "sortBy": "Trier par",
+    "@sortBy": {
+        "description": "Étiquette de tri par"
+    },
+    "id": "ID",
+    "@id": {
+        "description": "Étiquette du champ ID"
+    },
+    "name": "Nom",
+    "@name": {
+        "description": "Étiquette du champ nom"
+    },
+    "perPage": "Par page",
+    "@perPage": {
+        "description": "Étiquette par page"
+    },
+    "yes": "Oui",
+    "@yes": {
+        "description": "Option oui"
+    },
+    "no": "Non",
+    "@no": {
+        "description": "Option non"
+    },
+    "num": "Num",
+    "avatar": "Avatar",
+    "@avatar": {
+        "description": "Étiquette du champ avatar"
+    },
+    "actions": "Actions",
+    "@actions": {
+        "description": "Étiquette du champ actions"
+    },
+    "page": "Page",
+    "@page": {
+        "description": "Étiquette de page"
+    },
+    "prevPage": "Précédent",
+    "@prevPage": {
+        "description": "Texte du bouton page précédente"
+    },
+    "nextPage": "Suivant",
+    "@nextPage": {
+        "description": "Texte du bouton page suivante"
+    },
+    "users": "Utilisateurs",
+    "@users": {
+        "description": "Titre de la section utilisateurs"
+    },
+    "deleteUser": "Supprimer des utilisateurs",
+    "@deleteUser": {
+        "description": "Texte du bouton supprimer des utilisateurs"
+    },
+    "selectUserDelete": "Sélectionner les utilisateurs à supprimer",
+    "@selectUserDelete": {
+        "description": "Invitation à sélectionner les utilisateurs à supprimer"
+    },
+    "cancel": "Annuler",
+    "@cancel": {
+        "description": "Texte du bouton annuler"
+    },
+    "repFav": "Oui",
+    "@repFav": {
+        "description": "Option oui pour les favoris"
+    },
+    "repDeFav": "Non",
+    "@repDeFav": {
+        "description": "Option non pour les favoris"
+    },
+    "pleaseFixErrorsInTheForm": "Veuillez corriger les erreurs dans le formulaire",
+    "@pleaseFixErrorsInTheForm": {
+        "description": "Invitation à corriger les erreurs dans le formulaire"
+    },
+    "addUserMessage": "Ajout d'un utilisateur...",
+    "@addUserMessage": {
+        "description": "Message de statut d'ajout d'utilisateur"
+    },
+    "failedToGetUsersMessage": "Échec de la récupération des utilisateurs",
+    "@failedToGetUsersMessage": {
+        "description": "Message d'échec de la récupération des utilisateurs"
+    },
+    "errorFailedToGetUsers": "Erreur : Échec de la récupération des utilisateurs",
+    "@errorFailedToGetUsers": {
+        "description": "Message d'erreur pour l'échec de la récupération des utilisateurs"
+    },
+    "failedToAddUserMessage": "Échec de l'ajout de l'utilisateur",
+    "@failedToAddUserMessage": {
+        "description": "Message d'échec de l'ajout de l'utilisateur"
+    },
+    "successAddUserMessage": "Utilisateur ajouté avec succès",
+    "@successAddUserMessage": {
+        "description": "Message de succès de l'ajout de l'utilisateur"
+    },
+    "openingFilePicker": "Ouverture du sélecteur de fichiers...",
+    "@openingFilePicker": {
+        "description": "Message de statut d'ouverture du sélecteur de fichiers"
+    },
+    "canceled": "Annulé",
+    "@canceled": {
+        "description": "Message de statut annulé"
+    },
+    "fileSelected": "Fichier sélectionné",
+    "@fileSelected": {
+        "description": "Message de statut de fichier sélectionné"
+    },
+    "phoneNumber": "Numéro de téléphone",
+    "@phoneNumber": {
+        "description": "Étiquette du champ numéro de téléphone"
+    },
+    "superior": "Supérieur",
+    "@superior": {
+        "description": "Étiquette du champ supérieur"
+    },
+    "selectSuperior": "Sélectionner un supérieur",
+    "@selectSuperior": {
+        "description": "Invitation à sélectionner un supérieur"
+    },
+    "delete_users": "Êtes-vous sûr de vouloir supprimer {count, plural, one {l'utilisateur} other {les utilisateurs}} ?",
+    "@delete_users": {
+        "description": "Message de confirmation pour la suppression des utilisateurs",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "ibdm": "IBDM",
+    "@ibdm": {
+        "description": "Acronyme IBDM"
+    },
+    "ifri_bdd": "Base de données des machines Ifri",
+    "@ifri_bdd": {
+        "description": "Nom complet de la base de données des machines Ifri"
+    },
+    "options": "Options",
+    "@options": {
+        "description": "Titre de la section options"
+    },
+    "me": "Moi",
+    "@me": {
+        "description": "Titre de la section moi"
+    },
+    "siroperieTitle": "Production de sirop",
+    "@siroperieTitle": {
+        "description": "Titre de la section production de sirop"
+    },
+    "january": "Janvier",
+    "@january": {
+        "description": "Nom du mois de janvier"
+    },
+    "february": "Février",
+    "@february": {
+        "description": "Nom du mois de février"
+    },
+    "march": "Mars",
+    "@march": {
+        "description": "Nom du mois de mars"
+    },
+    "april": "Avril",
+    "@april": {
+        "description": "Nom du mois d'avril"
+    },
+    "may": "Mai",
+    "@may": {
+        "description": "Nom du mois de mai"
+    },
+    "june": "Juin",
+    "@june": {
+        "description": "Nom du mois de juin"
+    },
+    "july": "Juillet",
+    "@july": {
+        "description": "Nom du mois de juillet"
+    },
+    "august": "Août",
+    "@august": {
+        "description": "Nom du mois d'août"
+    },
+    "september": "Septembre",
+    "@september": {
+        "description": "Nom du mois de septembre"
+    },
+    "october": "Octobre",
+    "@october": {
+        "description": "Nom du mois d'octobre"
+    },
+    "november": "Novembre",
+    "@november": {
+        "description": "Nom du mois de novembre"
+    },
+    "december": "Décembre",
+    "@december": {
+        "description": "Nom du mois de décembre"
+    },
+    "year": "Année : {year}",
+    "@year": {
+        "description": "Affichage de l'année avec placeholder",
+        "placeholders": {
+            "year": {
+                "type": "int",
+                "description": "L'année à afficher",
+                "example": "2025"
+            }
+        }
+    },
+    "month": "Mois : {month}",
+    "@month": {
+        "description": "Affichage du mois avec placeholder",
+        "placeholders": {
+            "month": {
+                "type": "String",
+                "description": "Le mois à afficher",
+                "example": "Juillet"
+            }
+        }
+    },
+    "day": "Jour : {day}",
+    "@day": {
+        "description": "Affichage du jour avec placeholder",
+        "placeholders": {
+            "day": {
+                "type": "String",
+                "description": "Le jour à afficher",
+                "example": "17"
+            }
+        }
+    },
+    "hour": "Heure",
+    "@hour": {
+        "description": "Étiquette de l'heure"
+    },
+    "minute": "Minute",
+    "@minute": {
+        "description": "Étiquette de la minute"
+    },
+    "second": "Seconde",
+    "@second": {
+        "description": "Étiquette de la seconde"
+    },
+    "pick": "Choisir",
+    "@pick": {
+        "description": "Texte du bouton choisir"
+    },
+    "totalSucre": "Sucre total :",
+    "@totalSucre": {
+        "description": "Étiquette du sucre total"
+    },
+    "totalSucreTetra": "Sucre Tetra total :",
+    "@totalSucreTetra": {
+        "description": "Étiquette du sucre Tetra total"
+    },
+    "totalSucreAdue": "Sucre Adue total :",
+    "@totalSucreAdue": {
+        "description": "Étiquette du sucre Adue total"
+    },
+    "sucreTetraTitle": "Sucre Tetra",
+    "@sucreTetraTitle": {
+        "description": "Titre de la section sucre Tetra"
+    },
+    "sucreAdueTitle": "Sucre Adue",
+    "@sucreAdueTitle": {
+        "description": "Titre de la section sucre Adue"
+    },
+    "showLiveData": "Afficher les données en direct",
+    "@showLiveData": {
+        "description": "Texte du bouton afficher les données en direct"
+    },
+    "showingLiveData": "Affichage des données en direct",
+    "@showingLiveData": {
+        "description": "Message de statut d'affichage des données en direct"
+    },
+    "inventory": "Inventaire",
+    "@inventory": {
+        "description": "Titre de la section inventaire"
+    },
+    "inventoryDescription": "Afficher l'inventaire d'un jour spécifique",
+    "@inventoryDescription": {
+        "description": "Description de la section inventaire"
+    },
+    "cuve": "Cuve",
+    "@cuve": {
+        "description": "Étiquette de la cuve"
+    },
+    "failedToGetInventory": "Échec de la récupération de l'inventaire",
+    "@failedToGetInventory": {
+        "description": "Message d'échec de la récupération de l'inventaire"
+    },
+    "toOrder": "À commander",
+    "@toOrder": {
+        "description": "Étiquette à commander"
+    },
+    "tank": "{count, plural, one {Cuve} other {Cuves}}",
+    "@tank": {
+        "description": "Étiquette de cuve avec pluralisation",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Le nombre de cuves",
+                "example": "5"
+            }
+        }
+    },
+    "filtrationTitle": "Filtration",
+    "@filtrationTitle": {
+        "description": "Titre de la section filtration"
+    },
+    "eauBrute": "Eau brute",
+    "@eauBrute": {
+        "description": "Étiquette de l'eau brute"
+    },
+    "eauFiltrer": "Eau filtrée",
+    "@eauFiltrer": {
+        "description": "Étiquette de l'eau filtrée"
+    },
+    "eauOsmose": "Eau osmosée",
+    "@eauOsmose": {
+        "description": "Étiquette de l'eau osmosée"
+    },
     "settings": "Paramètres",
+    "@settings": {
+        "description": "Titre de la section paramètres"
+    },
     "lightmode": "Mode clair",
+    "@lightmode": {
+        "description": "Option mode clair"
+    },
     "darkmode": "Mode sombre",
+    "@darkmode": {
+        "description": "Option mode sombre"
+    },
     "language": "Langue",
-    "helpAssistance": "Aide et Assistance",
+    "@language": {
+        "description": "Étiquette de sélection de langue"
+    },
+    "helpAssistance": "Aide et assistance",
+    "@helpAssistance": {
+        "description": "Titre de la section aide et assistance"
+    },
     "about": "À propos",
-	"emailSchedules": "Emails Cycliques",
-	"emailSents": "Emails Envoyés",
-	"emailSchedulesDescription": "Emails envoyés a des intervalles réguliers.",
-	"emaisSentDescription": "Emails envoyés à des utilisateurs.",
-	"emailAlerts": "Emails D'Alertes",
-	"emailAlertsDescription": "Emails envoyés quand des valuers Surveillée attients certain points.",
-	"monitored": "Surveillée",
-	"danger": "Danger",
-	"warning": "Avertissement",
-	"active" : "Actif",
-	"inactive" : "Inactif",
-	"addAlertEmail": "Ajouter un Email D'Alerte",
-	"addScheduleEmail": "Ajouter un Email Cyclique",
-	"edit": "Modifier",
-	"save": "Sauvegarder",
-	"rapport": "Rapport",
-	"interval": "Interval",
-	"tempsEnvoi": "Temps D'Envoi",
-	"nextRunTime": "Prochaine Envoi",
-	"days": "Jours",
-	"deletingSchedules": "Suppression des Emails Cycliques...",
-	"deletingAlerts": "Suppression des Emails D'Alertes...",
-	"schedulesDeleted": "Emails Cycliques Supprimés",
-	"alertsDeleted": "Emails D'Alertes Supprimés",
-	"failedToDeleteSchedules": "Échec de la suppression des Emails Cycliques",
-	"failedToDeleteAlerts": "Échec de la suppression des Emails D'Alertes",
-	"failedToDeleteScheduleWithId": "Échec de la suppression de l'Email Cyclique avec l'ID {id}",
-	"@failedToDeleteScheduleWithId": {
+    "@about": {
+        "description": "Titre de la section à propos"
+    },
+    "emailSchedules": "Email Cycliques",
+    "@emailSchedules": {
+        "description": "Titre de la section d'emails cycliques"
+    },
+    "emailSents": "Emails envoyés",
+    "@emailSents": {
+        "description": "Titre de la section emails envoyés"
+    },
+    "emailSchedulesDescription": "Emails envoyés à intervalles définis",
+    "@emailSchedulesDescription": {
+        "description": "Description de la section d'emails cycliques"
+    },
+    "emailSentsDescription": "Emails envoyés aux utilisateurs",
+    "@emailSentsDescription": {
+        "description": "Description de la section emails envoyés"
+    },
+    "emailAlerts": "Alertes par email",
+    "@emailAlerts": {
+        "description": "Titre de la section alertes par email"
+    },
+    "emailAlertsDescription": "Emails envoyés lorsque les valeurs surveillées atteignent certains seuils",
+    "@emailAlertsDescription": {
+        "description": "Description de la section alertes par email"
+    },
+    "monitored": "Surveillé",
+    "@monitored": {
+        "description": "Étiquette surveillé"
+    },
+    "danger": "Danger",
+    "@danger": {
+        "description": "Étiquette du niveau d'alerte danger"
+    },
+    "warning": "Avertissement",
+    "@warning": {
+        "description": "Étiquette du niveau d'alerte avertissement"
+    },
+    "active": "Actif",
+    "@active": {
+        "description": "Étiquette de statut actif"
+    },
+    "inactive": "Inactif",
+    "@inactive": {
+        "description": "Étiquette de statut inactif"
+    },
+    "addAlertEmail": "Ajouter une alerte par email",
+    "@addAlertEmail": {
+        "description": "Texte du bouton ajouter une alerte par email"
+    },
+    "addScheduleEmail": "Ajouter un email cyclique",
+    "@addScheduleEmail": {
+        "description": "Texte du bouton ajouter un email cyclique"
+    },
+    "edit": "Modifier",
+    "@edit": {
+        "description": "Texte du bouton modifier"
+    },
+    "save": "Enregistrer",
+    "@save": {
+        "description": "Texte du bouton enregistrer"
+    },
+    "rapport": "Rapport",
+    "@rapport": {
+        "description": "Étiquette de rapport"
+    },
+    "interval": "Intervalle",
+    "@interval": {
+        "description": "Étiquette d'intervalle"
+    },
+    "tempsEnvoi": "Heure d'envoi",
+    "@tempsEnvoi": {
+        "description": "Étiquette de l'heure d'envoi"
+    },
+    "nextRunTime": "Prochain envoi",
+    "@nextRunTime": {
+        "description": "Étiquette du prochain envoi"
+    },
+    "days": "Jours",
+    "@days": {
+        "description": "Étiquette des jours"
+    },
+    "deletingSchedules": "Suppression des emails cycliques...",
+    "@deletingSchedules": {
+        "description": "Message de statut de suppression des emails cycliques"
+    },
+    "deletingAlerts": "Suppression des alertes...",
+    "@deletingAlerts": {
+        "description": "Message de statut de suppression des alertes"
+    },
+    "schedulesDeleted": "Emails cycliques supprimées",
+    "@schedulesDeleted": {
+        "description": "Message d'email cyclique supprimée"
+    },
+    "alertsDeleted": "Alertes supprimées",
+    "@alertsDeleted": {
+        "description": "Message d'alertes supprimées"
+    },
+    "failedToDeleteSchedules": "Échec de la suppression des emails cycliques",
+    "@failedToDeleteSchedules": {
+        "description": "Message d'échec de la suppression des emails cycliques"
+    },
+    "failedToDeleteAlerts": "Échec de la suppression des alertes",
+    "@failedToDeleteAlerts": {
+        "description": "Message d'échec de la suppression des alertes"
+    },
+    "failedToDeleteScheduleWithId": "Échec de la suppression de l'email cyclique avec l'ID : {id}",
+    "@failedToDeleteScheduleWithId": {
+        "description": "Message d'échec de la suppression de l'email cyclique avec ID",
         "placeholders": {
             "id": {
                 "type": "int"
             }
         }
     },
-	"failedToDeleteAlertWithId": "Échec de la suppression de l'Email D'Alerte avec l'ID {id}",
-	"@failedToDeleteAlertWithId": {
+    "failedToDeleteAlertWithId": "Échec de la suppression de l'alerte avec l'ID : {id}",
+    "@failedToDeleteAlertWithId": {
+        "description": "Message d'échec de la suppression de l'alerte avec ID",
         "placeholders": {
             "id": {
                 "type": "int"
             }
         }
     },
-	"sortSchedules": "Trier les Emails Cycliques",
-	"sortAlerts": "Trier les Emails D'Alertes",
-	"filterSchedules": "Filtrer les Emails Cycliques",
-	"filterAlerts": "Filtrer les Emails D'Alertes",
-	"editSchedule": "Modifier l'email cyclique",
-	"editAlert": "Modifier l'alerte",
-	"editScheduleSettings": "Modifier les paramètres d'email cyclique",
-	"editAlertSettings": "Modifier les paramètres de l'alerte",
-	"viewSchedule": "Voir l'email cyclique",
-	"viewAlert": "Voir l'alerte",
-	"view": "Voir",
-	"viewScheduleSettings": "Voir les paramètres d'email cyclique",
-	"viewAlertSettings": "Voir les paramètres de l'alerte",
-	"addSchedule": "Ajouter un email cyclique",
-	"addAlert": "Ajouter une alerte",
-	"addScheduleSettings": "Ajouter un email cyclique",
-	"addAlertSettings": "Ajouter une alerte d'email",
-	"unscheduled": "Non planifié",
-	"deleteSchedules": "Supprimer les Emails Cycliques",
-	"deleteAlerts": "Supprimer les Emails D'Alertes",
-	"selectSchedulesToDelete": "Sélectionner les emails cycliques à supprimer",
-	"selectAlertsToDelete": "Sélectionner les alertes à supprimer",
-	"confirmSchedulesDeletion": "Êtes-vous sûr de vouloir supprimer {count} {count, plural, one {email cyclique} other {emails cycliques}}?",
-	"@confirmSchedulesDeletion": {
-		"placeholders": {
-			"count": {
-				"type": "int"
-			}
-		}
-	},
-	"selectAReport": "Sélectionner un rapport",
-	"selectAnInterval": "Sélectionner un intervalle",
-	"intervalManualLabel": "Interval Manuel (en jours)",
-	"scheduleManually": "Planifier la prochaine execution manuellement",
-	"roles": "Rôles",
-	"selectRoles": "Sélectionner les rôles",
-	"selectUsers": "Sélectionner les utilisateurs",
-	"sendThisAlertToRoles": "Envoyer cette alerte aux rôles",
-	"sendThisAlertToUsers": "Envoyer cette alerte aux utilisateurs",
-	"schedules": "Emails Cycliques",
-	"alerts": "Alertes",
-	"addANewScheduleEmail": "Ajouter un nouveau mail cyclique",
-	"addANewAlertEmail": "Ajouter un nouveau mail d'alerte",
-	"editScheduleEmail": "Modifier l'email cyclique",
-	"editAlertEmail": "Modifier l'email d'alerte",
-	"viewScheduleEmail": "Voir l'email cyclique",
-	"viewAlertEmail": "Voir l'email d'alerte",
-	"add": "Ajouter",
-	"nextRunTimeDate": "date du prochain envoi",
-	"nextRunTimeTime": "heure du prochain envoi",
-	"filterByInterval": "filtrer avec l'interval",
-	"filterByMonitoredValueTag": "filtrer avec le tag de valeur surveillée",
-	"filterByActivationState": "filtrer avec l'état d'activation",
-	"selectActivationState": "sélectionner l'état d'activation",
-	"activationState": "État d'activation",
-	"tag": "Tag",
-    "filterByRapport": "filtrer avec le rapport",
-    "selectInterval": "Seléctioner un Interval",
-	"addingSchedule": "Ajouter un Email Cyclique...",
-    "ScheduleAdded": "Email Cyclique Ajouté",
-    "failedToAddSchedule": "l'ajout de l'email cyclique a echoué",
-	"scheduleAdded": "Email Cyclique Ajouté",
-	"savingSchedule": "Sauvegarde de l'email cyclique...",
-	"scheduleSaved": "Email cyclique sauvegardé",
-	"failedToSaveSchedule": "Échec de la sauvegarde de l'email cyclique",
-	"sents": "Envoyés",
-	"scheduleSent": "Email Cyclique Envoyé",
-	"alertSent": "Alerte Envoyé",
-	"deletEmailSents": "Supprimer Emails Envoyés",
-	"selectEmailSentsToDelete": "Sélectionner Emails Envoyés à Supprimer",
-	"delete_sents": "Êtes-vous sûr de vouloir supprimer {count, plural, one {envoyé} other {envoyés}}?",
-	"@delete_sents": {
-		"description": "Message de confirmation pour la suppression des envoyés",
-		"placeholders": {
-			"count": {
-				"type": "int"
-			}
-		}
-	},
-	"refresh": "Rafraichir",
-	"failedToLoadSents": "Failed to load sents",
-	"tempEnvoi": "Temp D'Envoi",
-    "receptionist": "Receptionist",
-	"schedule": "Emails Cyclique",
-	"alers": "Alert",
-	"unknown": "inconnu",
-	"deletingSents": "Supprimer les Emails Envoyée ...",
-    "sentsDeleted": "les Emails Envoyée Supprimé.",
-    "deletEmailSent": "Echéc de Suppression des Emails Envoyée/Envoyées",
-	"filterEmailsSent": "Filtrer les Emails Envoyée",
-    "filterbySendingtime": "Filtrer par le Temps D'Envoi",
-	"selectSendingtime": "Sélectionner le Temps D'Envoi" ,
-    "time": "Temp",
-    "filterbyTypeofEmail": "Filtrer par Type D'Email",
-    "selectTypeofEmail": "Sélectionner Type D'Email",
-    "scheduleEmail": "Emails Cyclique",
-	"sortSents": "Trier les Emails Envoyée",
-    "order": "Ordrer",
-    "asc": "asc",
-    "desc": "desc",
-	"emailSentsDescription": "Emails envoyés à des utilisateurs.",
-	"emails": "Emails",
+    "sortSchedules": "Trier les emails cycliques",
+    "@sortSchedules": {
+        "description": "Texte du bouton trier les emails cycliques"
+    },
+    "sortAlerts": "Trier les alertes",
+    "@sortAlerts": {
+        "description": "Texte du bouton trier les alertes"
+    },
+    "filterSchedules": "Filtrer les emails cycliques",
+    "@filterSchedules": {
+        "description": "Texte du bouton filtrer les emails cycliques"
+    },
+    "filterAlerts": "Filtrer les alertes",
+    "@filterAlerts": {
+        "description": "Texte du bouton filtrer les alertes"
+    },
+    "editSchedule": "Modifier l'email cyclique",
+    "@editSchedule": {
+        "description": "Texte du bouton modifier l'email cyclique"
+    },
+    "editAlert": "Modifier l'alerte",
+    "@editAlert": {
+        "description": "Texte du bouton modifier l'alerte"
+    },
+    "editScheduleSettings": "Modifier les paramètres d'email cyclique",
+    "@editScheduleSettings": {
+        "description": "Option de modification des paramètres d'email cyclique"
+    },
+    "editAlertSettings": "Modifier les paramètres d'alerte",
+    "@editAlertSettings": {
+        "description": "Option de modification des paramètres d'alerte"
+    },
+    "viewSchedule": "Consulter l'email cyclique",
+    "@viewSchedule": {
+        "description": "Texte du bouton consulter l'email cyclique"
+    },
+    "viewAlert": "Consulter l'alerte",
+    "@viewAlert": {
+        "description": "Texte du bouton consulter l'alerte"
+    },
+    "view": "Consulter",
+    "@view": {
+        "description": "Texte du bouton consulter"
+    },
+    "viewScheduleSettings": "Voir les paramètres d'email cyclique",
+    "@viewScheduleSettings": {
+        "description": "Option de visualisation des paramètres d'email cyclique"
+    },
+    "viewAlertSettings": "Voir les paramètres d'alerte",
+    "@viewAlertSettings": {
+        "description": "Option de visualisation des paramètres d'alerte"
+    },
+    "addSchedule": "Ajouter un email cyclique",
+    "@addSchedule": {
+        "description": "Texte du bouton ajouter un email cyclique"
+    },
+    "addAlert": "Ajouter une alerte",
+    "@addAlert": {
+        "description": "Texte du bouton ajouter une alerte"
+    },
+    "addScheduleSettings": "Ajouter un email cyclique",
+    "@addScheduleSettings": {
+        "description": "Option d'ajout d'un email cyclique"
+    },
+    "addAlertSettings": "Ajouter une alerte par email",
+    "@addAlertSettings": {
+        "description": "Option d'ajout d'une alerte par email"
+    },
+    "unscheduled": "Non programmé",
+    "@unscheduled": {
+        "description": "Étiquette de statut non programmé"
+    },
+    "deleteSchedules": "Supprimer les emails cycliques",
+    "@deleteSchedules": {
+        "description": "Texte du bouton supprimer les emails cycliques"
+    },
+    "deleteAlerts": "Supprimer les alertes",
+    "@deleteAlerts": {
+        "description": "Texte du bouton supprimer les alertes"
+    },
+    "selectSchedulesToDelete": "Sélectionner les emails cycliques à supprimer",
+    "@selectSchedulesToDelete": {
+        "description": "Invitation à sélectionner les emails cycliques à supprimer"
+    },
+    "selectAlertsToDelete": "Sélectionner les alertes à supprimer",
+    "@selectAlertsToDelete": {
+        "description": "Invitation à sélectionner les alertes à supprimer"
+    },
+    "confirmSchedulesDeletion": "Êtes-vous sûr de vouloir supprimer {count, plural, one {l'email cyclique} other {les emails cycliques}} ?",
+    "@confirmSchedulesDeletion": {
+        "description": "Message de confirmation pour la suppression des emails cycliques",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "selectAReport": "Sélectionner un rapport",
+    "@selectAReport": {
+        "description": "Invitation à sélectionner un rapport"
+    },
+    "selectAnInterval": "Sélectionner un intervalle",
+    "@selectAnInterval": {
+        "description": "Invitation à sélectionner un intervalle"
+    },
+    "intervalManualLabel": "Intervalle manuel (en jours)",
+    "@intervalManualLabel": {
+        "description": "Étiquette d'intervalle manuel en jours"
+    },
+    "scheduleManually": "Programmer le prochain envoi manuellement",
+    "@scheduleManually": {
+        "description": "Option de programmation manuelle du prochain envoi"
+    },
+    "roles": "Rôles",
+    "@roles": {
+        "description": "Titre de la section rôles"
+    },
+    "selectRoles": "Sélectionner des rôles",
+    "@selectRoles": {
+        "description": "Invitation à sélectionner des rôles"
+    },
+    "selectUsers": "Sélectionner des utilisateurs",
+    "@selectUsers": {
+        "description": "Invitation à sélectionner des utilisateurs"
+    },
+    "sendThisAlertToRoles": "Envoyer cette alerte aux rôles",
+    "@sendThisAlertToRoles": {
+        "description": "Option d'envoi de l'alerte aux rôles"
+    },
+    "sendThisAlertToUsers": "Envoyer cette alerte aux utilisateurs",
+    "@sendThisAlertToUsers": {
+        "description": "Option d'envoi de l'alerte aux utilisateurs"
+    },
+    "schedules": "Emails Cycliques",
+    "@schedules": {
+        "description": "Titre de la section emails cycliques"
+    },
+    "alerts": "Alertes",
+    "@alerts": {
+        "description": "Titre de la section alertes"
+    },
+    "addANewScheduleEmail": "Ajouter un nouvel email cyclique",
+    "@addANewScheduleEmail": {
+        "description": "Texte du bouton ajouter un nouvel email cyclique"
+    },
+    "addANewAlertEmail": "Ajouter une nouvelle alerte par email",
+    "@addANewAlertEmail": {
+        "description": "Texte du bouton ajouter une nouvelle alerte par email"
+    },
+    "editScheduleEmail": "Modifier l'email cyclique",
+    "@editScheduleEmail": {
+        "description": "Texte du bouton modifier l'email cyclique"
+    },
+    "editAlertEmail": "Modifier l'alerte par email",
+    "@editAlertEmail": {
+        "description": "Texte du bouton modifier l'alerte par email"
+    },
+    "viewScheduleEmail": "Voir l'email cyclique",
+    "@viewScheduleEmail": {
+        "description": "Texte du bouton voir l'email cyclique"
+    },
+    "viewAlertEmail": "Voir l'alerte par email",
+    "@viewAlertEmail": {
+        "description": "Texte du bouton voir l'alerte par email"
+    },
+    "add": "Ajouter",
+    "@add": {
+        "description": "Texte du bouton ajouter"
+    },
+    "nextRunTimeDate": "Date du prochain envoi",
+    "@nextRunTimeDate": {
+        "description": "Étiquette de la date du prochain envoi"
+    },
+    "nextRunTimeTime": "Heure du prochain envoi",
+    "@nextRunTimeTime": {
+        "description": "Étiquette de l'heure du prochain envoi"
+    },
+    "filterByInterval": "Filtrer par intervalle",
+    "@filterByInterval": {
+        "description": "Option de filtrage par intervalle"
+    },
+    "filterByMonitoredValueTag": "Filtrer par étiquette de valeur surveillée",
+    "@filterByMonitoredValueTag": {
+        "description": "Option de filtrage par étiquette de valeur surveillée"
+    },
+    "filterByActivationState": "Filtrer par état d'activation",
+    "@filterByActivationState": {
+        "description": "Option de filtrage par état d'activation"
+    },
+    "selectActivationState": "Sélectionner l'état d'activation",
+    "@selectActivationState": {
+        "description": "Invitation à sélectionner l'état d'activation"
+    },
+    "activationState": "État d'activation",
+    "@activationState": {
+        "description": "Étiquette de l'état d'activation"
+    },
+    "tag": "Étiquette",
+    "@tag": {
+        "description": "Étiquette"
+    },
+    "filterByRapport": "Filtrer par rapport",
+    "@filterByRapport": {
+        "description": "Option de filtrage par rapport"
+    },
+    "selectInterval": "Sélectionner un intervalle",
+    "@selectInterval": {
+        "description": "Invitation à sélectionner un intervalle"
+    },
+    "addingSchedule": "Ajout d'un email cyclique...",
+    "@addingSchedule": {
+        "description": "Message de statut d'ajout d'un email cyclique"
+    },
+    "scheduleAdded": "Emails cyclique ajoutée",
+    "@scheduleAdded": {
+        "description": "Message d'email cyclique ajoutée"
+    },
+    "failedToAddSchedule": "Échec de l'ajout de l'email cyclique",
+    "@failedToAddSchedule": {
+        "description": "Message d'échec de l'ajout de l'email cyclique"
+    },
+    "savingSchedule": "Enregistrement de l'email cyclique...",
+    "@savingSchedule": {
+        "description": "Message de statut d'enregistrement de l'email cyclique"
+    },
+    "scheduleSaved": "Emails cyclique enregistrée",
+    "@scheduleSaved": {
+        "description": "Message de email cyclique enregistrée"
+    },
+    "failedToSaveSchedule": "Échec de l'enregistrement de l'email cyclique",
+    "@failedToSaveSchedule": {
+        "description": "Message d'échec de l'enregistrement de l'email cyclique"
+    },
+    "sents": "Envoyés",
+    "@sents": {
+        "description": "Étiquette envoyés"
+    },
+    "scheduleSent": "Email cyclique envoyée",
+    "@scheduleSent": {
+        "description": "Message d'email cyclique envoyée"
+    },
+    "alertSent": "Alerte envoyée",
+    "@alertSent": {
+        "description": "Message d'alerte envoyée"
+    },
+    "deleteEmailSents": "Supprimer les emails envoyés",
+    "@deleteEmailSents": {
+        "description": "Texte du bouton supprimer les emails envoyés"
+    },
+    "selectEmailSentsToDelete": "Sélectionner les emails envoyés à supprimer",
+    "@selectEmailSentsToDelete": {
+        "description": "Invitation à sélectionner les emails envoyés à supprimer"
+    },
+    "delete_sents": "Êtes-vous sûr de vouloir supprimer {count, plural, one {l'email envoyé} other {les emails envoyés}} ?",
+    "@delete_sents": {
+        "description": "Message de confirmation pour la suppression des emails envoyés",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "refresh": "Rafraîchir",
+    "@refresh": {
+        "description": "Texte du bouton rafraîchir"
+    },
+    "failedToLoadSents": "Échec du chargement des emails envoyés",
+    "@failedToLoadSents": {
+        "description": "Message d'échec du chargement des emails envoyés"
+    },
+    "tempEnvoi": "Heure d'envoi",
+    "@tempEnvoi": {
+        "description": "Étiquette de l'heure d'envoi"
+    },
+    "receptionist": "Réceptionniste",
+    "@receptionist": {
+        "description": "Étiquette du rôle réceptionniste"
+    },
+    "schedule": "Email cyclique",
+    "@schedule": {
+        "description": "Titre de la section emails cycliques"
+    },
+    "alert": "Alerte",
+    "@alert": {
+        "description": "Étiquette d'alerte"
+    },
+    "unknown": "Inconnu",
+    "@unknown": {
+        "description": "Étiquette de statut inconnu"
+    },
+    "deletingSents": "Suppression des emails envoyés...",
+    "@deletingSents": {
+        "description": "Message de statut de suppression des emails envoyés"
+    },
+    "sentsDeleted": "Emails envoyés supprimés",
+    "@sentsDeleted": {
+        "description": "Message d'emails envoyés supprimés"
+    },
+    "deleteEmailSent": "Échec de la suppression de(s) email(s) envoyé(s)",
+    "@deleteEmailSent": {
+        "description": "Message d'échec de la suppression des emails envoyés"
+    },
+    "filterEmailsSent": "Filtrer les emails envoyés",
+    "@filterEmailsSent": {
+        "description": "Texte du bouton filtrer les emails envoyés"
+    },
+    "filterBySendingTime": "Filtrer par heure d'envoi",
+    "@filterBySendingTime": {
+        "description": "Option de filtrage par heure d'envoi"
+    },
+    "selectSendingTime": "Sélectionner l'heure d'envoi",
+    "@selectSendingTime": {
+        "description": "Invitation à sélectionner l'heure d'envoi"
+    },
+    "time": "Heure",
+    "@time": {
+        "description": "Étiquette de l'heure"
+    },
+    "filterByTypeOfEmail": "Filtrer par type d'email",
+    "@filterByTypeOfEmail": {
+        "description": "Option de filtrage par type d'email"
+    },
+    "selectTypeOfEmail": "Sélectionner le type d'email",
+    "@selectTypeOfEmail": {
+        "description": "Invitation à sélectionner le type d'email"
+    },
+    "scheduleEmail": "Email cyclique",
+    "@scheduleEmail": {
+        "description": "Étiquette d'email cyclique"
+    },
+    "sortSents": "Trier les emails envoyés",
+    "@sortSents": {
+        "description": "Texte du bouton trier les emails envoyés"
+    },
+    "order": "Ordre",
+    "@order": {
+        "description": "Étiquette d'ordre"
+    },
+    "asc": "Ascendant",
+    "@asc": {
+        "description": "Option d'ordre ascendant"
+    },
+    "desc": "Descendant",
+    "@desc": {
+        "description": "Option d'ordre descendant"
+    },
+    "details": "Détails",
+    "@details": {
+        "description": "Étiquette de détails"
+    },
+    "user": "Utilisateur",
+    "@user": {
+        "description": "Étiquette d'utilisateur"
+    },
+    "editUser": "Modifier l'utilisateur",
+    "@editUser": {
+        "description": "Texte du bouton modifier l'utilisateur"
+    },
+    "viewUserDetails": "Voir les détails de l'utilisateur",
+    "@viewUserDetails": {
+        "description": "Texte du bouton voir les détails de l'utilisateur"
+    },
+    "hashedValue": "Valeur hachée",
+    "@hashedValue": {
+        "description": "Étiquette de valeur hachée"
+    },
+    "addingUser": "Ajout d'un utilisateur...",
+    "@addingUser": {
+        "description": "Message de statut d'ajout d'utilisateur"
+    },
+    "failedToAddUser": "Échec de l'ajout de l'utilisateur",
+    "@failedToAddUser": {
+        "description": "Message d'échec de l'ajout de l'utilisateur"
+    },
+    "userAddedSuccessfully": "Utilisateur ajouté avec succès",
+    "@userAddedSuccessfully": {
+        "description": "Message de succès de l'ajout de l'utilisateur"
+    },
+    "savingUser": "Enregistrement de l'utilisateur...",
+    "@savingUser": {
+        "description": "Message de statut d'enregistrement de l'utilisateur"
+    },
+    "failedToSaveUser": "Échec de l'enregistrement de l'utilisateur",
+    "@failedToSaveUser": {
+        "description": "Message d'échec de l'enregistrement de l'utilisateur"
+    },
+    "userSavedSuccessfully": "Utilisateur enregistré avec succès",
+    "@userSavedSuccessfully": {
+        "description": "Message de succès de l'enregistrement de l'utilisateur"
+    },
+    "emails": "Emails",
+    "@emails": {
+        "description": "Titre de la section emails"
+    },
     "description": "Description",
-    "alert": "Alert",
-	"sent": "Envoyé",
-    "sentAt": "Envoyé en",
-	"newEmailSent": "Un Nouveau mail a été Envoyé",
-	"details": "Détails",
-	"user": "Utilisateur",
-	"editUser": "Modifier l'utilisateur",
-	"viewUserDetails": "Voir les détails de l'utilisateur",
-	"hashedValue": "Valeur Hachée",
-	"addingUser": "Ajout de l'utilisateur...",
-	"failedToAddUser": "Échec de l'ajout de l'utilisateur",
-	"userAddedSuccessfully": "Utilisateur ajouté avec succès",
-	"savingUser": "Sauvegarde de l'utilisateur...",
-	"failedToSaveUser": "Échec de la sauvegarde de l'utilisateur",
-	"userSavedSuccessfully": "Utilisateur sauvegardé avec succès",
-	"welcome": "Bienvenue",
-	"dataFound": "Données trouvées",
-	"retrievingData": "Récupération des données...",
-	"dataNotFound": "Données non trouvées",
-	"failedToLoadData": "Échec du chargement des données",
-    "utiliteTitle": "Utilite",
-	"sendingEmail": "Envoi de l'email...",
-	"emailSent": "Email envoyé",
-	"failedToSendEmail": "Échec de l'envoi de l'email",
-	"find": "Rechercher",
-	"failedToLoadUsers": "Échec du chargement des utilisateurs",
-	"monitoredValue": "Valeur à Surveiller",
-	"selectAValueToMonitor": "Sélectionnez une valeur à surveiller",
-	"requiredField": "Champ requis",
-	"monitorType": "Type de Surveillance",
-	"selectAMonitorType": "Sélectionnez un type de surveillance",
-	"enterAValidInteger": "Entrez un entier valide",
-	"dangerPoint": "Point de danger",
-	"warningPoint": "Point d'avertissement",
-	"dangerAlertIntervalInDays": "Intervalle d'alerte de danger (en jours)",
-	"warningAlertIntervalInDays": "Intervalle d'alerte d'avertissement (en jours)",
-	"customMessage": "Message personnalisé",
-	"failedToLoadPossibleValuesForMonitoring": "Échec du chargement des valeurs possibles pour la surveillance",
-	"addingAlert": "Ajouter l'Alert...",
-    "alertAdded": "Alert Ajoutée",
-    "failedToAddAlert": "Ajout de l'Alert a echoué",
-    "activatingAlert": "Activation de l'Alert...",
-    "alertActivated": "Alert Activée",
-    "failedToActivateAlert": "Activation de l'Alert a echouée",
-    "deactivatingAlert": "Désactivation de l'Alert...",
-    "alertDeactivated": "Alert Désactivée",
-    "failedToDeactivateAlert": "Désactivation de l'Alert A echouée",
-    "savingAlert": "Sauvgarde de l'Alert...",
-    "alertSaved": "Alert Sauvgardée",
-    "failedToSaveAlert": "Sauvgarde de l'Alert a echouée",
-    "activating": "activation",
-    "deactivating": "désactivation",
-	"activated": "activé",
-	"deactivated": "désactivé",
-	"autoGenerated": "Généré automatiquement",
-	"noName": "Pas de nom",
-	"newPassword": "Nouveau mot de passe",
-	"firstName": "Prénom",
-	"lastName": "Nom",
-	"username": "Nom d'utilisateur",
-	"selectedRole": "Rôle : {role}",
-	"@selectedRole": {
-		"placeholders": {
-			"role": {
-				"type": "String"
-			}
-		}
-	},
-	"selectASuperior": "Sélectionnez un supérieur",
-	"selectedSuperior": "Supérieur : {superior}",
-	"@selectedSuperior": {
-		"placeholders": {
-			"superior": {
-				"type": "String"
-			}
-		}
-	},
-	"confirmUsersDeletion": "Êtes-vous sûr de vouloir supprimer {count} {count, plural, one {utilisateur} other {utilisateurs}}?",
-	"@confirmUsersDeletion": {
-		"placeholders": {
-			"count": {
-				"type": "int"
-			}
-		}
-	},
-	"noUsername": "Pas de nom d'utilisateur",
-	"failedToGetUser": "Échec de l'obtention de l'utilisateur",
-	"pageNotFound": "Page non trouvée",
-	"youDontHavePermissionToAccessThisPage": "Vous n'avez pas la permission d'accéder à cette page",
-	"failedToConnectToUtiliteBroadcast": "Échec de la connexion à Utilite Broadcast {retries, plural, zero {aucune tentative restante} one {1 tentative restante} other {{retries} tentatives restantes}}",
-	"@failedToConnectToUtiliteBroadcast": {
-		"placeholders": {
-			"retries": {
-				"type": "int"
-			}
-		}
-	},
-	"failedToConnectToFiltrationBroadcast": "Échec de la connexion à Filtration Broadcast, {retries, plural, zero {aucune tentative restante} one {1 tentative restante} other {{retries} tentatives restantes}}",
-	"@failedToConnectToFiltrationBroadcast": {
-		"placeholders": {
-			"retries": {
-				"type": "int"
-			}
-		}
-	},
-	"failedToConnectToSiroperieBroadcast": "Échec de la connexion à Siroperie Broadcast, {retries, plural, zero {aucune tentative restante} one {1 tentative restante} other {{retries} tentatives restantes}}",
-	"@failedToConnectToSiroperieBroadcast": {
-		"placeholders": {
-			"retries": {
-				"type": "int"
-			}
-		}
-	},
-	"levelInL": "Niveau en L",
-	"levelInM3": "Niveau en M3",
-	"levelInKG": "Niveau en KG",
-	"fillLevel": "Remplissage",
-	"usine":"USINE",
-	"error": "Erreur",
-	"errorDownloadingCertificate": "Erreur lors du téléchargement du certificat",
-	"to": "TO",
-	"send": "envoyer",
-	"viewAlertSettingsOf": "Voir les paramètres de l'alerte de {name}",
-	"@viewAlertSettingsOf": {
-		"placeholders": {
-			"name": {
-				"type": "String"
-			}
-		}
-	},
-	"editAlertSettingsOf": "Modifier les paramètres de l'alerte de {name}",
-	"@editAlertSettingsOf": {
-		"placeholders": {
-			"name": {
-				"type": "String"
-			}
-		}
-	},
-	"confirmAlertsDeletion": "Êtes-vous sûr de vouloir supprimer {count} {count, plural, one {alerte} other {alertes}}?",
-	"@confirmAlertsDeletion": {
-		"placeholders": {
-			"count": {
-				"type": "int"
-			}
-		}
-	},
-	"failedToLoadTags": "Échec du chargement des tags",
-	"failedToLoadAlerts": "Échec du chargement des alertes",
-	"valueIsRequired": "La valeur {value} est requise ",
-	"@valueIsRequired": {
-		"placeholders": {
-			"value": {
-				"type": "String"
-			}
-		}
-	},
-	"aProposIBDM": "À propos d'IBDM",
-	"aProposIBDMDescription": "IBDM est un logiciel de gestion de données industrielles conçu pour faciliter le suivi et l'analyse des performances des équipements industriels.",
-	"contactezNous": "Contactez-nous",
-	"adresse": "Akbou, Bejaia, Algérie",
-	"createdBy": "Créé par : Lyes Rabhi (lyes.rabhi.020@gmail.com) & Kheloufi Mounir (mounirkheloufi2002@gmail.com)",
-	"failedToConnectToCO2Broadcast": "Échec de la connexion à CO2 Broadcast, {retries, plural, zero {aucune tentative restante} one {1 tentative restante} other {{retries} tentatives restantes}}",
-	"@failedToConnectToCO2Broadcast": {
-		"placeholders": {
-			"retries": {
-				"type": "int"
-			}
-		}
-	},
-	"co2Title": "CO2",
-	"consommation": "Consommation",
-	"failedToGetConsommationData": "Echec lors de la recuperation des Données de consommation",
-	"entree": "Entrée",
-	"cannotBeASuperiorToYourself": "Vous ne pouvez pas être le supérieur de vous-même",
-	"cannotBeASuperiorForHimself": "Il ne peut pas être le supérieur de lui-même",
-	"close": "Fermer",
-	"serverStatus": "Etats du Serveur",
-	"databases": "Bases de Données",
-	"state": "État",
-	"percentage": "Pourcentage",
-	"failedToLoadServerStatus": "Échec du chargement des etats du serveur",
-	"restartServer": "Redémarrer le serveur",
-	"info": "Info",
-	"host_name": "Nom d'hôte",
-	"lastUpdateTime":  "Dernière heure de mise à jour",
-	"lastUpdateDate": "Dernière date de mise à jour",
-	"osUptime": "Temps de fonctionnement du système",
-	"osBootTime": "Heure de démarrage du système",
-	"osTime": "Heure système",
-	"version": "Version",
-	"environment": "Environnement",
-	"debug": "Débogage",
-	"on": "ACTIVÉ",
-	"off": "DÉSACTIVÉ",
-	"totalMemory": "Mémoire Totale",
-	"usedMemory": "Mémoire Utilisée",
-	"availableMemory": "Mémoire Disponible",
-	"memoryUsage": "Utilisation de la Mémoire",
-	"memory": "Mémoire",
-	"network": "Réseau",
-	"received": "Reçu",
-	"os": "Système d'exploitation",
-	"cpuUsage": "Utilisation du CPU",
-	"totalStorage": "Stockage Total",
-	"usedStorage": "Stockage Utilisé",
-	"availableStorage": "Stockage Disponible",
-	"storageUsage": "Utilisation du Stockage",
-	"loadingUsers": "Chargement des Utilisateurs...",
-	"loading": "Chargement...",
-	"loadingUserDetails": "Chargement des Détails de l'Utilisateur...",
-	"loadingSuperiors": "Chargement des Supérieurs...",
-	"loadingUser": "Chargement de l'utilisateur...",
-	"loadingSents": "Chargement des emails envoyés...",
-	"loadingAlerts": "Chargement des alertes...",
-	"loadingSchedules": "Chargement des emails cycliques...",
-	"loadingTags": "Chargement des tags...",
-	"loadingRoles": "Chargement des rôles...",
-	"waitingForConnection": "En attente de connexion...",
-	"waitingForValidData": "En attente de données valides...",
-	"reconnecting": "reconnexion...",
-	"notLoading": "Pas De Chargement",
-	"waiting": "En Attente...",
-	"loadingServerConfig": "Chargement des paramètres du serveur",
-	"serverSettings": "Paramètres du serveur",
-	"failedToLoadServerConfig": "Échec du chargement des paramètres du serveur",
-	"changeSecretKey": "Changer la Clé Secrete",
-	"logToFiles": "Enregistrer les logs dans des fichiers",
-	"dbConnectionCheckTimeout": "Délai d'attente de la vérification de la connexion à la base de données(En Secondes)",
-	"seconds": "Secondes",
-	"allowedHosts": "Hôtes Autorisés",
-	"addAllowedHost": "Ajouter un Hôte Autorisé",
-	"trustedOrigins": "Origines de Confiance",
-	"addTrustedOrigin": "Ajouter une Origine de Confiance",
-	"emailProviders": "Fournisseurs d'Email",
-	"engine": "Moteur",
-	"port": "Port",
-	"host": "Hôte",
-	"emailOfSender": "Email de l'Expéditeur",
-	"useTls": "Utiliser TLS",
-	"systemMonitorDBTimeout": "Délai d'attente de la base de données du moniteur système (En Secondes)",
-	"newSecretKey": "Nouvelle Clé Secrète",
-	"newEmailProvider": "Nouveau Fournisseur d'Email",
-	"newDatabase": "Nouvelle Base de Données",
-	"dbIdentifier": "Identifiant de la Base de Données",
-	"configSaved": "Configuration Sauvegardée",
-	"failedToSaveConfig": "Échec de la sauvegarde de la configuration",
-	"savingConfig": "Sauvegarde de la configuration...",
-	"saveConfig" : "Sauvegarder la Configuration",
-	"saveConfigAlertMessage": "Êtes-vous sûr de vouloir sauvegarder la configuration ? Cela écrasera la configuration actuelle. La nouvelle configuration sera irréversiblement sauvegardée mais ne prendra effet qu'après le redémarrage du serveur.",
-	"failedToSendEmailWithId": "Échec de l'envoi de l'email avec l'ID {id}",
-	"@failedToSendEmailWithId": {
+    "@description": {
+        "description": "Étiquette de description"
+    },
+    "sent": "Envoyé",
+    "@sent": {
+        "description": "Étiquette de statut envoyé"
+    },
+    "sentAt": "Envoyé à",
+    "@sentAt": {
+        "description": "Étiquette envoyé à"
+    },
+    "newEmailSent": "Un nouvel email a été envoyé",
+    "@newEmailSent": {
+        "description": "Message de nouvel email envoyé"
+    },
+    "welcome": "Bienvenue",
+    "@welcome": {
+        "description": "Message de bienvenue"
+    },
+    "dataFound": "Données trouvées",
+    "@dataFound": {
+        "description": "Message de données trouvées"
+    },
+    "retrievingData": "Récupération des données...",
+    "@retrievingData": {
+        "description": "Message de statut de récupération des données"
+    },
+    "dataNotFound": "Données non trouvées",
+    "@dataNotFound": {
+        "description": "Message de données non trouvées"
+    },
+    "failedToLoadData": "Échec du chargement des données",
+    "@failedToLoadData": {
+        "description": "Message d'échec du chargement des données"
+    },
+    "utiliteTitle": "Utilitaires",
+    "@utiliteTitle": {
+        "description": "Titre de la section utilitaires"
+    },
+    "sendingEmail": "Envoi de l'email...",
+    "@sendingEmail": {
+        "description": "Message de statut d'envoi de l'email"
+    },
+    "emailSent": "Email envoyé",
+    "@emailSent": {
+        "description": "Message d'email envoyé"
+    },
+    "failedToSendEmail": "Échec de l'envoi de l'email",
+    "@failedToSendEmail": {
+        "description": "Message d'échec de l'envoi de l'email"
+    },
+    "find": "Trouver",
+    "@find": {
+        "description": "Texte du bouton trouver"
+    },
+    "failedToLoadUsers": "Échec du chargement des utilisateurs",
+    "@failedToLoadUsers": {
+        "description": "Message d'échec du chargement des utilisateurs"
+    },
+    "monitoredValue": "Valeur surveillée",
+    "@monitoredValue": {
+        "description": "Étiquette de valeur surveillée"
+    },
+    "selectAValueToMonitor": "Sélectionner une valeur à surveiller",
+    "@selectAValueToMonitor": {
+        "description": "Invitation à sélectionner une valeur à surveiller"
+    },
+    "requiredField": "Le champ est requis",
+    "@requiredField": {
+        "description": "Message d'erreur pour champ requis"
+    },
+    "monitorType": "Type de surveillance",
+    "@monitorType": {
+        "description": "Étiquette du type de surveillance"
+    },
+    "selectAMonitorType": "Sélectionner un type de surveillance",
+    "@selectAMonitorType": {
+        "description": "Invitation à sélectionner un type de surveillance"
+    },
+    "enterAValidInteger": "Entrez un entier valide",
+    "@enterAValidInteger": {
+        "description": "Message d'erreur pour un entier invalide"
+    },
+    "dangerPoint": "Point de danger",
+    "@dangerPoint": {
+        "description": "Étiquette du point de danger"
+    },
+    "warningPoint": "Point d'avertissement",
+    "@warningPoint": {
+        "description": "Étiquette du point d'avertissement"
+    },
+    "dangerAlertIntervalInDays": "Intervalle d'alerte de danger (en jours)",
+    "@dangerAlertIntervalInDays": {
+        "description": "Étiquette de l'intervalle d'alerte de danger en jours"
+    },
+    "warningAlertIntervalInDays": "Intervalle d'alerte d'avertissement (en jours)",
+    "@warningAlertIntervalInDays": {
+        "description": "Étiquette de l'intervalle d'alerte d'avertissement en jours"
+    },
+    "customMessage": "Message personnalisé",
+    "@customMessage": {
+        "description": "Étiquette de message personnalisé"
+    },
+    "failedToLoadPossibleValuesForMonitoring": "Échec du chargement des valeurs possibles pour la surveillance",
+    "@failedToLoadPossibleValuesForMonitoring": {
+        "description": "Message d'échec du chargement des valeurs possibles pour la surveillance"
+    },
+    "addingAlert": "Ajout d'une alerte...",
+    "@addingAlert": {
+        "description": "Message de statut d'ajout d'une alerte"
+    },
+    "alertAdded": "Alerte ajoutée",
+    "@alertAdded": {
+        "description": "Message d'alerte ajoutée"
+    },
+    "failedToAddAlert": "Échec de l'ajout de l'alerte",
+    "@failedToAddAlert": {
+        "description": "Message d'échec de l'ajout de l'alerte"
+    },
+    "activatingAlert": "Activation de l'alerte...",
+    "@activatingAlert": {
+        "description": "Message de statut d'activation de l'alerte"
+    },
+    "alertActivated": "Alerte activée",
+    "@alertActivated": {
+        "description": "Message d'alerte activée"
+    },
+    "failedToActivateAlert": "Échec de l'activation de l'alerte",
+    "@failedToActivateAlert": {
+        "description": "Message d'échec de l'activation de l'alerte"
+    },
+    "deactivatingAlert": "Désactivation de l'alerte...",
+    "@deactivatingAlert": {
+        "description": "Message de statut de désactivation de l'alerte"
+    },
+    "alertDeactivated": "Alerte désactivée",
+    "@alertDeactivated": {
+        "description": "Message d'alerte désactivée"
+    },
+    "failedToDeactivateAlert": "Échec de la désactivation de l'alerte",
+    "@failedToDeactivateAlert": {
+        "description": "Message d'échec de la désactivation de l'alerte"
+    },
+    "savingAlert": "Enregistrement de l'alerte...",
+    "@savingAlert": {
+        "description": "Message de statut d'enregistrement de l'alerte"
+    },
+    "alertSaved": "Alerte enregistrée",
+    "@alertSaved": {
+        "description": "Message d'alerte enregistrée"
+    },
+    "failedToSaveAlert": "Échec de l'enregistrement de l'alerte",
+    "@failedToSaveAlert": {
+        "description": "Message d'échec de l'enregistrement de l'alerte"
+    },
+    "activating": "Activation",
+    "@activating": {
+        "description": "Étiquette de statut d'activation"
+    },
+    "deactivating": "Désactivation",
+    "@deactivating": {
+        "description": "Étiquette de statut de désactivation"
+    },
+    "activated": "Activé",
+    "@activated": {
+        "description": "Étiquette de statut activé"
+    },
+    "deactivated": "Désactivé",
+    "@deactivated": {
+        "description": "Étiquette de statut désactivé"
+    },
+    "autoGenerated": "Généré automatiquement",
+    "@autoGenerated": {
+        "description": "Étiquette généré automatiquement"
+    },
+    "noName": "Pas de nom",
+    "@noName": {
+        "description": "Étiquette pas de nom"
+    },
+    "newPassword": "Nouveau mot de passe",
+    "@newPassword": {
+        "description": "Étiquette du champ nouveau mot de passe"
+    },
+    "firstName": "Prénom",
+    "@firstName": {
+        "description": "Étiquette du champ prénom"
+    },
+    "lastName": "Nom de famille",
+    "@lastName": {
+        "description": "Étiquette du champ nom de famille"
+    },
+    "username": "Nom d'utilisateur",
+    "@username": {
+        "description": "Étiquette du champ nom d'utilisateur"
+    },
+    "selectedRole": "Rôle : {role}",
+    "@selectedRole": {
+        "description": "Affichage du rôle sélectionné avec placeholder",
         "placeholders": {
-            "id":{
+            "role": {
+                "type": "String"
+            }
+        }
+    },
+    "selectASuperior": "Sélectionner un supérieur",
+    "@selectASuperior": {
+        "description": "Invitation à sélectionner un supérieur"
+    },
+    "selectedSuperior": "Supérieur : {superior}",
+    "@selectedSuperior": {
+        "description": "Affichage du supérieur sélectionné avec placeholder",
+        "placeholders": {
+            "superior": {
+                "type": "String"
+            }
+        }
+    },
+    "confirmUsersDeletion": "Êtes-vous sûr de vouloir supprimer {count, plural, one {l'utilisateur} other {les utilisateurs}} ?",
+    "@confirmUsersDeletion": {
+        "description": "Message de confirmation pour la suppression des utilisateurs",
+        "placeholders": {
+            "count": {
                 "type": "int"
             }
         }
     },
-	"failedToConnectToStatusBroadcast": "Échec de la connexion à Status Broadcast {retries, plural, zero {aucune tentative restante} one {1 tentative restante} other {{retries} tentatives restantes}}",
-	"@failedToConnectToStatusBroadcast": {
-		"placeholders": {
-			"retries": {
-				"type": "int"
-			}
-		}
-	},
-    "invalidEmailOrPassword": "Email ou mot de pass incorrecte",
-	"userWithThisEmailAlreadyExists": "Un Utilisateur avec cette email existe déja",
-	"list": "Liste",
-	"graph": "Graph",
-	"errorConnectingBroadcast": "Erreur de connexion à la diffusion, les données en temps réel ne fonctionneront pas",
-	"date": "Date",
-	"sucre": "Sucre",
-	"utilite": "Utilite",
-	"co2": "CO2",
-	"niveau": "Niveau",
-	"volume": "Volume",
-	"debit": "Debit",
-	"presCond": "Pres Cond",
-	"failedToGetNiveauData": "Échec de l'obtention des données de niveau",
-	"failedToGetVolumeData": "Échec de l'obtention des données de volume",
-	"failedToGetDebitData": "Échec de l'obtention des données de débit",
-	"failedToGetPresCondData": "Échec de l'obtention des données de pres cond",
-	"value": "Valeur",
-	"visualize": "Visualiser",
-	"week": "Semaine",
-	"precision": "Précision",
-	"type": "Type",
-	"consommationDescription": "afficher la consommation sur une plage de dates.",
-	"previousDay": "Jour Précédent",
-	"sinceFirstOfMonth": "Depuis le 1er du mois",
-	"reports": "Rapports",
-	"sucreReports": "Rapports de Sucre (Inventaire du Sucre)",
-	"co2Reports": "Rapports de CO2",
-	"utiliteReports": "Rapports d'Utilite",
-	"filtrationReports": "Rapports de Filtration",
-	"generateReport": "Générer un Rapport",
-	"generateReportDescription": "Générer un rapport pour une période spécifique.",
-	"viewReport": "Rapport: {rapport}",
-	"@viewReport": {
-		"placeholders": {
-			"rapport": {
-				"type": "String"
-			}
-		}
-	},
-	"viewReportDescription": "Voir le rapport du {date}.",
-	"@viewReportDescription": {
-		"placeholders": {
-			"date": {
-				"type": "String"
-			}
-		}
-	},
-	"loadingReports": "Chargement des Rapports...",
-	"failedToLoadReports": "Échec du chargement des rapports",
-	"sortReports": "Trier les Rapports",
-	"filterReports": "Filtrer les Rapports",
-	"hasSynthese": "Avec Synthese",
-	"getIntervalName": "{interval, select, jour {Jour} semaine {Semaine} mois {Mois} manual {Manual} other {Intervalle}}",
-	"@getIntervalName": {
-		"placeholders": {
-			"interval": {
-				"type": "String"
-			}
-		}
-	},
-	"withSynthese": "Avec Synthese",
-	"withoutSynthese": "Sans Synthese",
-	"failedToGenerateReport": "Échec de la génération du rapport",
-	"generate": "Générer"
-
+    "noUsername": "Pas de nom d'utilisateur",
+    "@noUsername": {
+        "description": "Étiquette pas de nom d'utilisateur"
+    },
+    "failedToGetUser": "Échec de la récupération de l'utilisateur",
+    "@failedToGetUser": {
+        "description": "Message d'échec de la récupération de l'utilisateur"
+    },
+    "pageNotFound": "Page non trouvée",
+    "@pageNotFound": {
+        "description": "Message de page non trouvée"
+    },
+    "youDontHavePermissionToAccessThisPage": "Vous n'avez pas la permission d'accéder à cette page",
+    "@youDontHavePermissionToAccessThisPage": {
+        "description": "Message de permission refusée pour l'accès à la page"
+    },
+    "failedToConnectToUtiliteBroadcast": "Échec de la connexion à la diffusion des utilitaires, {retries, plural, zero {aucune tentative} one {1 tentative} other {{retries} tentatives restantes}}",
+    "@failedToConnectToUtiliteBroadcast": {
+        "description": "Message d'échec de la connexion à la diffusion des utilitaires",
+        "placeholders": {
+            "retries": {
+                "type": "int"
+            }
+        }
+    },
+    "failedToConnectToFiltrationBroadcast": "Échec de la connexion à la diffusion de filtration, {retries, plural, zero {aucune tentative} one {1 tentative} other {{retries} tentatives restantes}}",
+    "@failedToConnectToFiltrationBroadcast": {
+        "description": "Message d'échec de la connexion à la diffusion de filtration",
+        "placeholders": {
+            "retries": {
+                "type": "int"
+            }
+        }
+    },
+    "failedToConnectToSiroperieBroadcast": "Échec de la connexion à la diffusion de la production de sirop, {retries, plural, zero {aucune tentative} one {1 tentative} other {{retries} tentatives restantes}}",
+    "@failedToConnectToSiroperieBroadcast": {
+        "description": "Message d'échec de la connexion à la diffusion de la production de sirop",
+        "placeholders": {
+            "retries": {
+                "type": "int"
+            }
+        }
+    },
+    "levelInL": "Niveau en litres",
+    "@levelInL": {
+        "description": "Étiquette du niveau en litres"
+    },
+    "levelInM3": "Niveau en mètres cubes",
+    "@levelInM3": {
+        "description": "Étiquette du niveau en mètres cubes"
+    },
+    "levelInKG": "Niveau en kilogrammes",
+    "@levelInKG": {
+        "description": "Étiquette du niveau en kilogrammes"
+    },
+    "fillLevel": "Niveau de remplissage",
+    "@fillLevel": {
+        "description": "Étiquette du niveau de remplissage"
+    },
+    "usine": "Usine",
+    "@usine": {
+        "description": "Étiquette de l'usine"
+    },
+    "error": "Erreur",
+    "@error": {
+        "description": "Étiquette d'erreur"
+    },
+    "errorDownloadingCertificate": "Erreur lors du téléchargement du certificat",
+    "@errorDownloadingCertificate": {
+        "description": "Message d'erreur lors du téléchargement du certificat"
+    },
+    "to": "À",
+    "@to": {
+        "description": "Étiquette à"
+    },
+    "send": "Envoyer",
+    "@send": {
+        "description": "Texte du bouton envoyer"
+    },
+    "viewAlertSettingsOf": "Voir les paramètres d'alerte de {name}",
+    "@viewAlertSettingsOf": {
+        "description": "Voir les paramètres d'alerte pour un nom spécifique",
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "editAlertSettingsOf": "Modifier les paramètres d'alerte de {name}",
+    "@editAlertSettingsOf": {
+        "description": "Modifier les paramètres d'alerte pour un nom spécifique",
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "confirmAlertsDeletion": "Êtes-vous sûr de vouloir supprimer {count, plural, one {l'alerte} other {les alertes}} ?",
+    "@confirmAlertsDeletion": {
+        "description": "Message de confirmation pour la suppression des alertes",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "failedToLoadTags": "Échec du chargement des étiquettes",
+    "@failedToLoadTags": {
+        "description": "Message d'échec du chargement des étiquettes"
+    },
+    "failedToLoadAlerts": "Échec du chargement des alertes",
+    "@failedToLoadAlerts": {
+        "description": "Message d'échec du chargement des alertes"
+    },
+    "valueIsRequired": "La valeur {value} est requise",
+    "@valueIsRequired": {
+        "description": "Message d'erreur pour une valeur requise",
+        "placeholders": {
+            "value": {
+                "type": "String"
+            }
+        }
+    },
+    "aProposIBDM": "À propos d'IBDM",
+    "@aProposIBDM": {
+        "description": "Titre de la section à propos d'IBDM"
+    },
+    "aProposIBDMDescription": "IBDM est un logiciel de gestion de données industrielles conçu pour faciliter la surveillance et l'analyse des performances des équipements industriels.",
+    "@aProposIBDMDescription": {
+        "description": "Description de la section à propos d'IBDM"
+    },
+    "contactezNous": "Contactez-nous",
+    "@contactezNous": {
+        "description": "Titre de la section contactez-nous"
+    },
+    "adresse": "Akbou, Béjaïa, Algérie",
+    "@adresse": {
+        "description": "Informations sur l'adresse"
+    },
+    "createdBy": "Créé par : Lyes Rabhi (lyes.rabhi.020@gmail.com) & Kheloufi Mounir (mounirkheloufi2002@gmail.com)",
+    "@createdBy": {
+        "description": "Informations sur les créateurs"
+    },
+    "failedToConnectToCO2Broadcast": "Échec de la connexion à la diffusion de CO2, {retries, plural, zero {aucune tentative} one {1 tentative} other {{retries} tentatives restantes}}",
+    "@failedToConnectToCO2Broadcast": {
+        "description": "Message d'échec de la connexion à la diffusion de CO2",
+        "placeholders": {
+            "retries": {
+                "type": "int"
+            }
+        }
+    },
+    "co2Title": "CO2",
+    "@co2Title": {
+        "description": "Titre de la section CO2"
+    },
+    "consommation": "Consommation",
+    "@consommation": {
+        "description": "Étiquette de consommation"
+    },
+    "failedToGetConsommationData": "Échec de la récupération des données de consommation",
+    "@failedToGetConsommationData": {
+        "description": "Message d'échec de la récupération des données de consommation"
+    },
+    "entree": "Entrée",
+    "@entree": {
+        "description": "Étiquette d'entrée"
+    },
+    "cannotBeASuperiorToYourself": "Vous ne pouvez pas être votre propre supérieur",
+    "@cannotBeASuperiorToYourself": {
+        "description": "Message d'erreur pour une sélection de supérieur invalide"
+    },
+    "cannotBeASuperiorForHimself": "Vous ne pouvez pas être supérieur à vous-même",
+    "@cannotBeASuperiorForHimself": {
+        "description": "Message d'erreur pour une auto-sélection de supérieur invalide"
+    },
+    "close": "Fermer",
+    "@close": {
+        "description": "Texte du bouton fermer"
+    },
+    "serverStatus": "État du serveur",
+    "@serverStatus": {
+        "description": "Titre de la section état du serveur"
+    },
+    "databases": "Bases de données",
+    "@databases": {
+        "description": "Titre de la section bases de données"
+    },
+    "state": "État",
+    "@state": {
+        "description": "Étiquette d'état"
+    },
+    "percentage": "Pourcentage",
+    "@percentage": {
+        "description": "Étiquette de pourcentage"
+    },
+    "failedToLoadServerStatus": "Échec du chargement de l'état du serveur",
+    "@failedToLoadServerStatus": {
+        "description": "Message d'échec du chargement de l'état du serveur"
+    },
+    "restartServer": "Redémarrer le serveur",
+    "@restartServer": {
+        "description": "Texte du bouton redémarrer le serveur"
+    },
+    "info": "Info",
+    "@info": {
+        "description": "Étiquette d'information"
+    },
+    "host_name": "Nom d'hôte",
+    "@host_name": {
+        "description": "Étiquette du nom d'hôte"
+    },
+    "lastUpdateTime": "Heure de la dernière mise à jour",
+    "@lastUpdateTime": {
+        "description": "Étiquette de l'heure de la dernière mise à jour"
+    },
+    "lastUpdateDate": "Date de la dernière mise à jour",
+    "@lastUpdateDate": {
+        "description": "Étiquette de la date de la dernière mise à jour"
+    },
+    "osUptime": "Temps de fonctionnement du système d'exploitation",
+    "@osUptime": {
+        "description": "Étiquette du temps de fonctionnement du système d'exploitation"
+    },
+    "osBootTime": "Heure de démarrage du système d'exploitation",
+    "@osBootTime": {
+        "description": "Étiquette de l'heure de démarrage du système d'exploitation"
+    },
+    "osTime": "Heure du système d'exploitation",
+    "@osTime": {
+        "description": "Étiquette de l'heure du système d'exploitation"
+    },
+    "version": "Version",
+    "@version": {
+        "description": "Étiquette de version"
+    },
+    "environment": "Environnement",
+    "@environment": {
+        "description": "Étiquette d'environnement"
+    },
+    "debug": "Débogage",
+    "@debug": {
+        "description": "Étiquette de débogage"
+    },
+    "on": "Activé",
+    "@on": {
+        "description": "Étiquette de statut activé"
+    },
+    "off": "Désactivé",
+    "@off": {
+        "description": "Étiquette de statut désactivé"
+    },
+    "totalMemory": "Mémoire totale",
+    "@totalMemory": {
+        "description": "Étiquette de mémoire totale"
+    },
+    "usedMemory": "Mémoire utilisée",
+    "@usedMemory": {
+        "description": "Étiquette de mémoire utilisée"
+    },
+    "availableMemory": "Mémoire disponible",
+    "@availableMemory": {
+        "description": "Étiquette de mémoire disponible"
+    },
+    "memoryUsage": "Utilisation de la mémoire",
+    "@memoryUsage": {
+        "description": "Étiquette d'utilisation de la mémoire"
+    },
+    "memory": "Mémoire",
+    "@memory": {
+        "description": "Étiquette de mémoire"
+    },
+    "network": "Réseau",
+    "@network": {
+        "description": "Étiquette de réseau"
+    },
+    "received": "Reçu",
+    "@received": {
+        "description": "Étiquette de reçu"
+    },
+    "os": "Système d'exploitation",
+    "@os": {
+        "description": "Étiquette de système d'exploitation"
+    },
+    "cpuUsage": "Utilisation du processeur",
+    "@cpuUsage": {
+        "description": "Étiquette d'utilisation du processeur"
+    },
+    "totalStorage": "Stockage total",
+    "@totalStorage": {
+        "description": "Étiquette de stockage total"
+    },
+    "usedStorage": "Stockage utilisé",
+    "@usedStorage": {
+        "description": "Étiquette de stockage utilisé"
+    },
+    "availableStorage": "Stockage disponible",
+    "@availableStorage": {
+        "description": "Étiquette de stockage disponible"
+    },
+    "storageUsage": "Utilisation du stockage",
+    "@storageUsage": {
+        "description": "Étiquette d'utilisation du stockage"
+    },
+    "loadingUsers": "Chargement des utilisateurs...",
+    "@loadingUsers": {
+        "description": "Message de statut de chargement des utilisateurs"
+    },
+    "loading": "Chargement...",
+    "@loading": {
+        "description": "Message de statut de chargement général"
+    },
+    "loadingUserDetails": "Chargement des détails de l'utilisateur...",
+    "@loadingUserDetails": {
+        "description": "Message de statut de chargement des détails de l'utilisateur"
+    },
+    "loadingUser": "Chargement de l'utilisateur...",
+    "@loadingUser": {
+        "description": "Message de statut de chargement de l'utilisateur"
+    },
+    "loadingSents": "Chargement des emails envoyés...",
+    "@loadingSents": {
+        "description": "Message de statut de chargement des emails envoyés"
+    },
+    "loadingAlerts": "Chargement des alertes...",
+    "@loadingAlerts": {
+        "description": "Message de statut de chargement des alertes"
+    },
+    "loadingSchedules": "Chargement des emails cycliques...",
+    "@loadingSchedules": {
+        "description": "Message de statut de chargement des emails cycliques"
+    },
+    "loadingTags": "Chargement des étiquettes...",
+    "@loadingTags": {
+        "description": "Message de statut de chargement des étiquettes"
+    },
+    "loadingRoles": "Chargement des rôles...",
+    "@loadingRoles": {
+        "description": "Message de statut de chargement des rôles"
+    },
+    "loadingSuperiors": "Chargement des supérieurs...",
+    "@loadingSuperiors": {
+        "description": "Message de statut de chargement des supérieurs"
+    },
+    "waitingForConnection": "En attente de connexion...",
+    "@waitingForConnection": {
+        "description": "Message de statut d'attente de connexion"
+    },
+    "waitingForValidData": "En attente de données valides...",
+    "@waitingForValidData": {
+        "description": "Message de statut d'attente de données valides"
+    },
+    "reconnecting": "Reconnexion...",
+    "@reconnecting": {
+        "description": "Message de statut de reconnexion"
+    },
+    "notLoading": "Non chargé",
+    "@notLoading": {
+        "description": "Message de statut non chargé"
+    },
+    "waiting": "En attente...",
+    "@waiting": {
+        "description": "Message de statut d'attente"
+    },
+    "loadingServerConfig": "Chargement des paramètres du serveur",
+    "@loadingServerConfig": {
+        "description": "Message de statut de chargement des paramètres du serveur"
+    },
+    "serverSettings": "Paramètres du serveur",
+    "@serverSettings": {
+        "description": "Titre de la section paramètres du serveur"
+    },
+    "failedToLoadServerConfig": "Échec du chargement des paramètres du serveur",
+    "@failedToLoadServerConfig": {
+        "description": "Message d'échec du chargement des paramètres du serveur"
+    },
+    "changeSecretKey": "Changer la clé secrète",
+    "@changeSecretKey": {
+        "description": "Option de changement de la clé secrète"
+    },
+    "logToFiles": "Journaliser dans des fichiers",
+    "@logToFiles": {
+        "description": "Option de journalisation dans des fichiers"
+    },
+    "dbConnectionCheckTimeout": "Délai de vérification de la connexion à les bases de données",
+    "@dbConnectionCheckTimeout": {
+        "description": "Étiquette du délai de vérification de la connexion à la base de données en secondes"
+    },
+    "seconds": "Secondes",
+    "@seconds": {
+        "description": "Étiquette des secondes"
+    },
+    "allowedHosts": "Hôtes autorisés",
+    "@allowedHosts": {
+        "description": "Étiquette des hôtes autorisés"
+    },
+    "addAllowedHost": "Ajouter un hôte autorisé",
+    "@addAllowedHost": {
+        "description": "Texte du bouton ajouter un hôte autorisé"
+    },
+    "trustedOrigins": "Origines de confiance",
+    "@trustedOrigins": {
+        "description": "Étiquette des origines de confiance"
+    },
+    "addTrustedOrigin": "Ajouter une origine de confiance",
+    "@addTrustedOrigin": {
+        "description": "Texte du bouton ajouter une origine de confiance"
+    },
+    "emailProviders": "Fournisseurs d'emails",
+    "@emailProviders": {
+        "description": "Étiquette des fournisseurs d'emails"
+    },
+    "engine": "Moteur",
+    "@engine": {
+        "description": "Étiquette du moteur"
+    },
+    "port": "Port",
+    "@port": {
+        "description": "Étiquette du port"
+    },
+    "host": "Hôte",
+    "@host": {
+        "description": "Étiquette de l'hôte"
+    },
+    "emailOfSender": "Email de l'expéditeur",
+    "@emailOfSender": {
+        "description": "Étiquette de l'email de l'expéditeur"
+    },
+    "useTls": "Utiliser TLS",
+    "@useTls": {
+        "description": "Option d'utilisation de TLS"
+    },
+    "systemMonitorDBTimeout": "Délai de la surviellance du systéme",
+    "@systemMonitorDBTimeout": {
+        "description": "Étiquette du délai de la base de données du moniteur système en secondes"
+    },
+    "newSecretKey": "Nouvelle clé secrète",
+    "@newSecretKey": {
+        "description": "Étiquette de la nouvelle clé secrète"
+    },
+    "newEmailProvider": "Nouveau fournisseur d'email",
+    "@newEmailProvider": {
+        "description": "Étiquette du nouveau fournisseur d'email"
+    },
+    "newDatabase": "Nouvelle base de données",
+    "@newDatabase": {
+        "description": "Étiquette de la nouvelle base de données"
+    },
+    "dbIdentifier": "Identifiant de la base de données",
+    "@dbIdentifier": {
+        "description": "Étiquette de l'identifiant de la base de données"
+    },
+    "configSaved": "Configuration enregistrée",
+    "@configSaved": {
+        "description": "Message de configuration enregistrée"
+    },
+    "failedToSaveConfig": "Échec de l'enregistrement de la configuration",
+    "@failedToSaveConfig": {
+        "description": "Message d'échec de l'enregistrement de la configuration"
+    },
+    "savingConfig": "Enregistrement de la configuration...",
+    "@savingConfig": {
+        "description": "Message de statut d'enregistrement de la configuration"
+    },
+    "saveConfig": "Enregistrer la configuration",
+    "@saveConfig": {
+        "description": "Texte du bouton enregistrer la configuration"
+    },
+    "saveConfigAlertMessage": "Êtes-vous sûr de vouloir enregistrer la configuration ? Cela écrasera la configuration actuelle. La nouvelle configuration sera enregistrée de manière irréversible mais ne prendra effet qu'après le redémarrage du serveur.",
+    "@saveConfigAlertMessage": {
+        "description": "Message de confirmation pour l'enregistrement de la configuration"
+    },
+    "failedToSendEmailWithId": "Échec de l'envoi de l'email avec l'ID : {id}",
+    "@failedToSendEmailWithId": {
+        "description": "Message d'échec de l'envoi de l'email avec ID",
+        "placeholders": {
+            "id": {
+                "type": "int"
+            }
+        }
+    },
+    "failedToConnectToStatusBroadcast": "Échec de la connexion à la diffusion de l'état, {retries, plural, zero {aucune tentative} one {1 tentative} other {{retries} tentatives restantes}}",
+    "@failedToConnectToStatusBroadcast": {
+        "description": "Message d'échec de la connexion à la diffusion de l'état",
+        "placeholders": {
+            "retries": {
+                "type": "int"
+            }
+        }
+    },
+    "invalidEmailOrPassword": "Email ou mot de passe invalide",
+    "@invalidEmailOrPassword": {
+        "description": "Message d'email ou mot de passe invalide"
+    },
+    "userWithThisEmailAlreadyExists": "Un utilisateur avec cet email existe déjà",
+    "@userWithThisEmailAlreadyExists": {
+        "description": "Message d'erreur pour un email déjà existant"
+    },
+    "list": "Liste",
+    "@list": {
+        "description": "Étiquette de la vue en liste"
+    },
+    "graph": "Graphe",
+    "@graph": {
+        "description": "Étiquette de la vue en graphique"
+    },
+    "errorConnectingBroadcast": "Erreur de connexion à la diffusion, les données en direct ne fonctionneront pas",
+    "@errorConnectingBroadcast": {
+        "description": "Message d'erreur de connexion à la diffusion"
+    },
+    "date": "Date",
+    "@date": {
+        "description": "Étiquette de date"
+    },
+    "sucre": "Sucre",
+    "@sucre": {
+        "description": "Étiquette de sucre"
+    },
+    "utilite": "Utilitaires",
+    "@utilite": {
+        "description": "Étiquette des utilitaires"
+    },
+    "co2": "CO2",
+    "@co2": {
+        "description": "Étiquette de CO2"
+    },
+    "niveau": "Niveau",
+    "@niveau": {
+        "description": "Étiquette de niveau"
+    },
+    "volume": "Volume",
+    "@volume": {
+        "description": "Étiquette de volume"
+    },
+    "debit": "Débit",
+    "@debit": {
+        "description": "Étiquette de débit"
+    },
+    "presCond": "Pres Cond",
+    "@presCond": {
+        "description": "Étiquette de pression et conductivité"
+    },
+    "failedToGetNiveauData": "Échec de la récupération des données de niveau",
+    "@failedToGetNiveauData": {
+        "description": "Message d'échec de la récupération des données de niveau"
+    },
+    "failedToGetVolumeData": "Échec de la récupération des données de volume",
+    "@failedToGetVolumeData": {
+        "description": "Message d'échec de la récupération des données de volume"
+    },
+    "failedToGetDebitData": "Échec de la récupération des données de débit",
+    "@failedToGetDebitData": {
+        "description": "Message d'échec de la récupération des données de débit"
+    },
+    "failedToGetPresCondData": "Échec de la récupération des données de pression et conductivité",
+    "@failedToGetPresCondData": {
+        "description": "Message d'échec de la récupération des données de pression et conductivité"
+    },
+    "value": "Valeur",
+    "@value": {
+        "description": "Étiquette de valeur"
+    },
+    "visualize": "Visualiser",
+    "@visualize": {
+        "description": "Texte du bouton visualiser"
+    },
+    "week": "Semaine",
+    "@week": {
+        "description": "Étiquette de semaine"
+    },
+    "precision": "Précision",
+    "@precision": {
+        "description": "Étiquette de précision"
+    },
+    "type": "Type",
+    "@type": {
+        "description": "Étiquette de type"
+    },
+    "consommationDescription": "Afficher la consommation dans une plage de dates",
+    "@consommationDescription": {
+        "description": "Description de la section consommation"
+    },
+    "previousDay": "Jour précédent",
+    "@previousDay": {
+        "description": "Étiquette du jour précédent"
+    },
+    "sinceFirstOfMonth": "Depuis le début du mois",
+    "@sinceFirstOfMonth": {
+        "description": "Étiquette depuis le début du mois"
+    },
+    "reports": "Rapports",
+    "@reports": {
+        "description": "Titre de la section rapports"
+    },
+    "sucreReports": "Rapports sur le sucre",
+    "@sucreReports": {
+        "description": "Titre de la section rapports sur le sucre"
+    },
+    "co2Reports": "Rapports sur le CO2",
+    "@co2Reports": {
+        "description": "Titre de la section rapports sur le CO2"
+    },
+    "utiliteReports": "Rapports sur les utilitaires",
+    "@utiliteReports": {
+        "description": "Titre de la section rapports sur les utilitaires"
+    },
+	    "filtrationReports": "Rapports sur la filtration",
+    "@filtrationReports": {
+        "description": "Titre de la section rapports sur la filtration"
+    },
+    "generateReport": "Générer un rapport",
+    "@generateReport": {
+        "description": "Texte du bouton générer un rapport"
+    },
+    "generateReportDescription": "Générer un rapport pour une date spécifique",
+    "@generateReportDescription": {
+        "description": "Description pour la génération d'un rapport"
+    },
+    "viewReport": "Rapport : {rapport}",
+    "@viewReport": {
+        "description": "Voir le rapport avec placeholder",
+        "placeholders": {
+            "rapport": {
+                "type": "String"
+            }
+        }
+    },
+    "viewReportDescription": "Voir le rapport du {date}",
+    "@viewReportDescription": {
+        "description": "Description pour la visualisation d'un rapport avec date",
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "loadingReports": "Chargement des rapports...",
+    "@loadingReports": {
+        "description": "Message de statut de chargement des rapports"
+    },
+    "failedToLoadReports": "Échec du chargement des rapports",
+    "@failedToLoadReports": {
+        "description": "Message d'échec du chargement des rapports"
+    },
+    "sortReports": "Trier les rapports",
+    "@sortReports": {
+        "description": "Texte du bouton trier les rapports"
+    },
+    "filterReports": "Filtrer les rapports",
+    "@filterReports": {
+        "description": "Texte du bouton filtrer les rapports"
+    },
+    "hasSynthese": "A une synthèse",
+    "@hasSynthese": {
+        "description": "Étiquette a une synthèse"
+    },
+    "getIntervalName": "{interval, select, jour {Jour} semaine {Semaine} mois {Mois} manual {Manuel} other {Intervalle}}",
+    "@getIntervalName": {
+        "description": "Nom de l'intervalle avec placeholder",
+        "placeholders": {
+            "interval": {
+                "type": "String"
+            }
+        }
+    },
+    "withSynthese": "Avec synthèse",
+    "@withSynthese": {
+        "description": "Étiquette avec synthèse"
+    },
+    "withoutSynthese": "Sans synthèse",
+    "@withoutSynthese": {
+        "description": "Étiquette sans synthèse"
+    },
+    "failedToGenerateReport": "Échec de la génération du rapport",
+    "@failedToGenerateReport": {
+        "description": "Message d'échec de la génération du rapport"
+    },
+    "generate": "Générer",
+    "@generate": {
+        "description": "Texte du bouton générer"
+    },
+    "todaysReports": "Rapports d'aujourd'hui",
+    "@todaysReports": {
+        "description": "Titre de la section rapports d'aujourd'hui"
+    },
+    "errorLoadingReports": "Erreur lors du chargement des rapports",
+    "@errorLoadingReports": {
+        "description": "Message d'erreur de chargement des rapports"
+    },
+    "synthese": "Synthèse",
+    "@synthese": {
+        "description": "Étiquette de synthèse"
+    },
+    "downloadCertificate": "Télécharger le certificat",
+    "@downloadCertificate": {
+        "description": "Texte du bouton télécharger le certificat"
+    },
+    "downloadingCertificateMessage": "Téléchargement du certificat...",
+    "@downloadingCertificateMessage": {
+        "description": "Message de statut de téléchargement du certificat"
+    },
+    "downloadFailed": "Échec du téléchargement",
+    "@downloadFailed": {
+        "description": "Message d'échec du téléchargement"
+    },
+    "fileDownloadedTo": "Fichier téléchargé à : {path}",
+    "@fileDownloadedTo": {
+        "description": "Message de fichier téléchargé à un chemin",
+        "placeholders": {
+            "path": {
+                "type": "String"
+            }
+        }
+    },
+    "downloadedWithBrowser": "Téléchargé avec le navigateur",
+    "@downloadedWithBrowser": {
+        "description": "Message de téléchargement avec le navigateur"
+    },
+    "downloadedFilePathCopiedToClipboard": "Chemin du fichier téléchargé copié dans le presse-papiers",
+    "@downloadedFilePathCopiedToClipboard": {
+        "description": "Message de chemin du fichier téléchargé copié dans le presse-papiers"
+    },
+    "profile": "Profil",
+    "@profile": {
+        "description": "Titre de la section profil"
+    },
+    "noSuperior": "Aucun supérieur",
+    "@noSuperior": {
+        "description": "Étiquette aucun supérieur"
+    },
+    "welcomeBack": "Bon retour",
+    "@welcomeBack": {
+        "description": "Message de bon retour"
+    },
+    "pression": "Pression",
+    "@pression": {
+        "description": "Étiquette de pression"
+    },
+    "conductivity": "Conductivité",
+    "@conductivity": {
+        "description": "Étiquette de conductivité"
+    },
+    "temperature": "Température",
+    "@temperature": {
+        "description": "Étiquette de température"
+    },
+    "minLength": "Longueur minimale : {length}",
+    "@minLength": {
+        "description": "Message d'exigence de longueur minimale",
+        "placeholders": {
+            "length": {
+                "type": "int"
+            }
+        }
+    },
+    "maxLength": "Longueur maximale : {length}",
+    "@maxLength": {
+        "description": "Message d'exigence de longueur maximale",
+        "placeholders": {
+            "length": {
+                "type": "int"
+            }
+        }
+    },
+    "hasLowercaseChars": "Doit contenir au moins {count} caractère minuscule",
+    "@hasLowercaseChars": {
+        "description": "Message d'exigence de caractère minuscule",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "hasUppercaseChars": "Doit contenir au moins {count} caractère majuscule",
+    "@hasUppercaseChars": {
+        "description": "Message d'exigence de caractère majuscule",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "hasNumericChars": "Doit contenir au moins {count} chiffre",
+    "@hasNumericChars": {
+        "description": "Message d'exigence de caractère numérique",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "hasSpecialChars": "Doit contenir au moins {count} caractère spécial",
+    "@hasSpecialChars": {
+        "description": "Message d'exigence de caractère spécial",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "invalidFirstName": "Prénom invalide",
+    "@invalidFirstName": {
+        "description": "Message de prénom invalide"
+    },
+    "invalidLastName": "Nom de famille invalide",
+    "@invalidLastName": {
+        "description": "Message de nom de famille invalide"
+    },
+    "invalidField": "{field} invalide",
+    "@invalidField": {
+        "description": "Message de champ invalide avec placeholder",
+        "placeholders": {
+            "field": {
+                "type": "String"
+            }
+        }
+    },
+    "admin": "Panneau d'Administration",
+    "@admin": {
+        "description": "administrateur libellé"
+    },
+    "errorOpeningAdminPanel": "Échec de l'ouverture du panneau d'administration",
+    "@errorOpeningAdminPanel": {
+        "description": "Message d'échec de l'ouverture du panneau d'administration"
+    },
+    "logSizeLimit": "Limite de taille des fichiers journals",
+    "@logSizeLimit": {
+        "description": "Étiquette de la limite de taille du fichier journal"
+    },
+    "numberOfLogsToKeep": "Nombre de journaux à conserver",
+    "@numberOfLogsToKeep": {
+        "description": "Étiquette du nombre de journaux à conserver"
+    },
+    "logs": "Journaux",
+    "@logs": {
+        "description": "Étiquette des journaux"
+    },
+    "permissionDenied": "Permission refusée",
+    "@permissionDenied": {
+        "description": "Message de permission refusée"
+    }
 }

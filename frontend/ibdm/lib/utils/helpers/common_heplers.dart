@@ -1,4 +1,8 @@
 import 'dart:math';
+import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:ibdm/services/api/api_client.dart';
+import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 String fromBytesToHumanReadableSize(int bytes) {
@@ -20,4 +24,24 @@ String getUniqueId() {
   const characters = 'abcdefghijklmnopqrstuvwxyz0123456789*-_+=!@#\$%^&*()';
   return List.generate(
       10, (index) => characters[random.nextInt(characters.length)]).join();
+}
+
+downloadCertificate(BuildContext context) async {
+  final strings = getTranslations(context);
+  Get.snackbar(
+    strings.downloadCertificate,
+    strings.downloadingCertificateMessage,
+    snackPosition: SnackPosition.BOTTOM,
+  );
+
+  try {
+    final api = await ApiClientInstance.getApiClient();
+    api.downloadCertificate(context);
+  } catch (e) {
+    Get.snackbar(
+      strings.error,
+      strings.errorDownloadingCertificate,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
 }

@@ -22,8 +22,10 @@ ServerConfigRequest _$ServerConfigRequestFromJson(Map<String, dynamic> json) =>
       logTOFiles: json['LOG_TO_FILES'] as bool?,
       serverDBConnectionCheckTimeout:
           (json['SERVER_DB_CONNECTION_CHECK_TIMEOUT'] as num?)?.toInt(),
-      redisDB: StandardDatabaseConfRequest.fromJson(
-          json['REDIS_DB'] as Map<String, dynamic>),
+      redisDB: json['REDIS_DB'] == null
+          ? null
+          : StandardDatabaseConfRequest.fromJson(
+              json['REDIS_DB'] as Map<String, dynamic>),
       databases: (json['DATABASES'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(
             k, StandardDatabaseConfRequest.fromJson(e as Map<String, dynamic>)),
@@ -32,6 +34,10 @@ ServerConfigRequest _$ServerConfigRequestFromJson(Map<String, dynamic> json) =>
         (k, e) => MapEntry(
             k, EmailProviderConfRequest.fromJson(e as Map<String, dynamic>)),
       ),
+      dataStoppedWaitSeconds:
+          (json['DATA_STOPPED_WAIT_SECONDS'] as num?)?.toInt() ?? 600,
+      logSizeLimit: (json['LOG_SIZE_LIMIT'] as num?)?.toInt() ?? 100,
+      countOFLogsTOKeep: (json['COUNT_OF_LOGS_TO_KEEP'] as num?)?.toInt() ?? 10,
       secretKey: json['SECRET_KEY'] as String?,
     );
 
@@ -48,7 +54,10 @@ Map<String, dynamic> _$ServerConfigRequestToJson(
       'LOG_TO_FILES': instance.logTOFiles,
       'SERVER_DB_CONNECTION_CHECK_TIMEOUT':
           instance.serverDBConnectionCheckTimeout,
+      'DATA_STOPPED_WAIT_SECONDS': instance.dataStoppedWaitSeconds,
       'REDIS_DB': instance.redisDB,
       'DATABASES': instance.databases,
       'EMAIL_PROVIDERS': instance.emailProviders,
+      'LOG_SIZE_LIMIT': instance.logSizeLimit,
+      'COUNT_OF_LOGS_TO_KEEP': instance.countOFLogsTOKeep,
     };

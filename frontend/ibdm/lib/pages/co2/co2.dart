@@ -18,6 +18,7 @@ import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
+import 'package:ibdm/utils/graphs.dart';
 import 'package:ibdm/utils/helpers/data_representation.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
@@ -598,7 +599,7 @@ class _CO2PageState extends State<CO2Page> {
                     ShadTableCell(
                       alignment: Alignment.center,
                       child: Text(
-                          ("${((d.value ?? 0) as double).toStringAsFixed(2)} M3")),
+                          ("${((d.value ?? 0) as double).toStringAsFixed(2)} KG")),
                     ),
                   ],
                 ),
@@ -704,12 +705,12 @@ class _CO2PageState extends State<CO2Page> {
                     graphTypes: [
                       GraphType(
                         name: "Niveau",
-                        getGraphData: getNiveauGraphData,
+                        getGraphData: Graphs.getCO2NiveauGraphData,
                         ySuffix: " KG",
                       ),
                       GraphType(
                         name: "Pression",
-                        getGraphData: getPressionGraphData,
+                        getGraphData: Graphs.getCO2PressionGraphData,
                         ySuffix: " Bars",
                       ),
                       GraphType(
@@ -722,6 +723,8 @@ class _CO2PageState extends State<CO2Page> {
                   ),
                 ],
               ),
+            ).marginOnly(
+              top: AppSizes.md,
             ),
           );
         },
@@ -765,6 +768,8 @@ class _CO2PageState extends State<CO2Page> {
                     ),
                   ],
                 ),
+              ).marginOnly(
+                top: AppSizes.md,
               );
             },
           );
@@ -886,7 +891,8 @@ class _CO2PageState extends State<CO2Page> {
         description: Text(strings.value.consommationDescription),
         child: Column(
           children: [
-            Row(
+            Wrap(
+              alignment: WrapAlignment.center,
               children: [
                 ShadDatePicker.range(
                   onRangeChanged: (value) => {
@@ -1021,6 +1027,8 @@ class _CO2PageState extends State<CO2Page> {
             })
           ],
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }
@@ -1098,82 +1106,10 @@ class _CO2PageState extends State<CO2Page> {
                         ),
                       )
                     ]
-                ]));
+                ])).marginOnly(
+          top: AppSizes.md,
+        );
       },
     );
-  }
-
-  Future<Map> getNiveauGraphData(
-      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
-    final strings = getTranslations(getContext);
-    Map data = {
-      "MGI": [],
-      "CEVITAL": [],
-      "N2": [],
-    };
-    final api = await ApiClientInstance.getApiClient();
-    final res = await api.getCo2BetweenDates(
-      startDate: startDate.toIso8601String(),
-      endDate: endDate.toIso8601String(),
-      enablePagination: false,
-      fetchType: fetchType,
-    );
-    for (var e in res.data) {
-      data["MGI"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.utCo2Vc1 ?? 0,
-      });
-      data["CEVITAL"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.utCo2Vc2 ?? 0,
-      });
-      data["N2"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.utN2Vn2 ?? 0,
-      });
-    }
-    return data;
-  }
-
-  Future<Map> getPressionGraphData(
-      DateTime startDate, DateTime endDate, FetchType? fetchType) async {
-    final strings = getTranslations(getContext);
-    Map data = {
-      "MGI": [],
-      "CEVITAL": [],
-      "N2": [],
-      "NOURISSE": [],
-      "SOUDE": [],
-    };
-    final api = await ApiClientInstance.getApiClient();
-    final res = await api.getCo2BetweenDates(
-      startDate: startDate.toIso8601String(),
-      endDate: endDate.toIso8601String(),
-      enablePagination: false,
-      fetchType: fetchType,
-    );
-    for (var e in res.data) {
-      data["MGI"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.utCo2Pc1 ?? 0,
-      });
-      data["CEVITAL"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.utCo2Pc2 ?? 0,
-      });
-      data["N2"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.utN2Pn2 ?? 0,
-      });
-      data["NOURISSE"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.utCo2Pn ?? 0,
-      });
-      data["SOUDE"].add({
-        "x": e.date.millisecondsSinceEpoch,
-        "y": e.utSoude ?? 0,
-      });
-    }
-    return data;
   }
 }

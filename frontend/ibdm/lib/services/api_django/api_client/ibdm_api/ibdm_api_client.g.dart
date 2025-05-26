@@ -2416,6 +2416,7 @@ class _IbdmApiClient implements IbdmApiClient {
     String? phoneNumber,
     File? avatar,
     List<int>? userPermissions,
+    bool? isAdmin,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -2459,6 +2460,9 @@ class _IbdmApiClient implements IbdmApiClient {
           MultipartFile.fromBytes(userPermissions, filename: null),
         ),
       );
+    }
+    if (isAdmin != null) {
+      _data.fields.add(MapEntry('is_admin', isAdmin.toString()));
     }
     final _options = _setStreamType<User>(
       Options(
@@ -2525,6 +2529,7 @@ class _IbdmApiClient implements IbdmApiClient {
     String? phoneNumber,
     File? avatar,
     List<int>? userPermissions,
+    bool? isAdmin,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -2569,6 +2574,9 @@ class _IbdmApiClient implements IbdmApiClient {
         ),
       );
     }
+    if (isAdmin != null) {
+      _data.fields.add(MapEntry('is_admin', isAdmin.toString()));
+    }
     final _options = _setStreamType<User>(
       Options(
         method: 'PUT',
@@ -2607,6 +2615,7 @@ class _IbdmApiClient implements IbdmApiClient {
     File? avatar,
     String? role,
     List<int>? userPermissions,
+    bool? isAdmin,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -2654,6 +2663,9 @@ class _IbdmApiClient implements IbdmApiClient {
           MultipartFile.fromBytes(userPermissions, filename: null),
         ),
       );
+    }
+    if (isAdmin != null) {
+      _data.fields.add(MapEntry('is_admin', isAdmin.toString()));
     }
     final _options = _setStreamType<User>(
       Options(

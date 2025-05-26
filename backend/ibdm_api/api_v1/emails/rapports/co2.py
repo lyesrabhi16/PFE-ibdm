@@ -30,18 +30,18 @@ def rapport_co2(interval=None, render_to_HTML_string=True, date=None, force_recr
     for thread in threads:
         thread.join()
 
-    cons_depuis_1er_v182 = co2_cons.get("ut_co2_v182", 0)
-    cons_depuis_1er_v1833 = co2_cons.get("ut_co2_v1833", 0)
-    cons_depuis_1er_vcan35 = co2_cons.get("ut_co2_vcan35", 0)
-    cons_depuis_1er_vkrv40 = co2_cons.get("ut_co2_vkrv40", 0)
-    cons_depuis_1er_ve = co2_cons.get("ut_co2_ve", 0)
+    cons_depuis_1er_v182 = co2_cons.get("ut_co2_v182", 0) or 0
+    cons_depuis_1er_v1833 = co2_cons.get("ut_co2_v1833", 0) or 0
+    cons_depuis_1er_vcan35 = co2_cons.get("ut_co2_vcan35", 0) or 0
+    cons_depuis_1er_vkrv40 = co2_cons.get("ut_co2_vkrv40", 0) or 0
+    cons_depuis_1er_ve = co2_cons.get("ut_co2_ve", 0) or 0
 
     for _co2_cons in co2_cons_list:
-        cons_depuis_1er_v182 += _co2_cons.get("ut_co2_v182", 0)
-        cons_depuis_1er_v1833 += _co2_cons.get("ut_co2_v1833", 0)
-        cons_depuis_1er_vcan35 += _co2_cons.get("ut_co2_vcan35", 0)
-        cons_depuis_1er_vkrv40 += _co2_cons.get("ut_co2_vkrv40", 0)
-        cons_depuis_1er_ve += _co2_cons.get("ut_co2_ve", 0)
+        cons_depuis_1er_v182 += _co2_cons.get("ut_co2_v182", 0) or 0
+        cons_depuis_1er_v1833 += _co2_cons.get("ut_co2_v1833", 0) or 0
+        cons_depuis_1er_vcan35 += _co2_cons.get("ut_co2_vcan35", 0) or 0
+        cons_depuis_1er_vkrv40 += _co2_cons.get("ut_co2_vkrv40", 0) or 0
+        cons_depuis_1er_ve += _co2_cons.get("ut_co2_ve", 0) or 0
 
 
     if (co2 is None):
@@ -143,28 +143,28 @@ def rapport_co2(interval=None, render_to_HTML_string=True, date=None, force_recr
             {
                 "zone": "",
                 "nom": "182",
-                "valeur": "{:.2f}".format(co2_cons.get("ut_co2_v182", 0)),
+                "valeur": "{:.2f}".format(co2_cons.get("ut_co2_v182", 0) or 0),
                 "unite": "KG",
                 "danger": False,
             },
             {
                 "zone": "",
                 "nom": "1833",
-                "valeur": "{:.2f}".format(co2_cons.get("ut_co2_v1833", 0)),
+                "valeur": "{:.2f}".format(co2_cons.get("ut_co2_v1833", 0) or 0),
                 "unite": "KG",
                 "danger": False,
             },
             {
                 "zone": "",
                 "nom": "can35",
-                "valeur": "{:.2f}".format(co2_cons.get("ut_co2_vcan35", 0)),
+                "valeur": "{:.2f}".format(co2_cons.get("ut_co2_vcan35", 0) or 0),
                 "unite": "KG",
                 "danger": False,
             },
             {
                 "zone": "",
                 "nom": "krv40",
-                "valeur": "{:.2f}".format(co2_cons.get("ut_co2_vkrv40", 0)),
+                "valeur": "{:.2f}".format(co2_cons.get("ut_co2_vkrv40", 0) or 0),
                 "unite": "KG",
                 "danger": False,
             },
@@ -215,7 +215,7 @@ def rapport_co2(interval=None, render_to_HTML_string=True, date=None, force_recr
             {
                 "zone": "",
                 "nom": "VE",
-                "valeur": "{:.2f}".format(co2_cons.get("ut_co2_ve", 0)),
+                "valeur": "{:.2f}".format(co2_cons.get("ut_co2_ve", 0) or 0),
                 "unite": "KG",
                 "danger": False,
             },

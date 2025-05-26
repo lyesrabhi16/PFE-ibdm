@@ -15,6 +15,7 @@ class UserSerializerWithSuperiors {
     required this.email,
     required this.username,
     required this.superiors,
+    required this.role,
   });
   
   factory UserSerializerWithSuperiors.fromJson(Map<String, Object?> json) => _$UserSerializerWithSuperiorsFromJson(json);
@@ -24,6 +25,7 @@ class UserSerializerWithSuperiors {
   final String email;
   final String username;
   final List<UserSerializerWithSuperiors> superiors;
+  final String role;
 
   Map<String, Object?> toJson() => _$UserSerializerWithSuperiorsToJson(this);
 }

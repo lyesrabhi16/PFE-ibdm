@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibdm/common/extensions/widget_remove_when.dart';
 import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/config/api.config.dart';
-import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/routes.dart';
@@ -876,18 +876,6 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
                   icon: const Icon(Icons.settings),
                   child: Text(
                     strings.value.settings,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onPrimary,
-                    ),
-                  ),
-                ),
-                ShadButton(
-                  onPressed: () {
-                    api!.restartServer();
-                  },
-                  icon: const Icon(Icons.restart_alt_rounded),
-                  child: Text(
-                    strings.value.restartServer,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onPrimary,
                     ),

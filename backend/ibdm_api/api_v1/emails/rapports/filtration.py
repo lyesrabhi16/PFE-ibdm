@@ -9,7 +9,7 @@ import threading
 
 from api_v1.utils import get_midnight_value, get_value_at, print_log
 from filtration.utils import calculate_consommation_filtration
-
+from logs.logging import logger as logging
 
 niveau : Niveau|None = None
 volume : Volume|None = None
@@ -79,20 +79,15 @@ def rapport_filtration(interval = None, render_to_HTML_string=True, date=None, f
         c_os1 = pres_cond.c_os1 or 0
         c_os2 = pres_cond.c_os2 or 0
         c_os3 = pres_cond.c_os3 or 0
-
-        cond_calculer = (c_os1*d_os1/10+c_os2*d_os2/10+c_os3*d_os3/10)/(d_os1/10+d_os2/10+d_os3/10)
-        """ 
+        
         cond_calculer = 0
-        try:
-            
-            denominator = d_os1 + d_os2 + d_os3
 
-            if denominator > 0:  # Avoid division by zero
-                cond_calculer = (c_os1*d_os1/10+c_os2*d_os2/10+c_os3*d_os3/10)/10/(d_os1/10+d_os2/10+d_os3/10)
+        try:
+            cond_calculer = (c_os1*d_os1/10+c_os2*d_os2/10+c_os3*d_os3/10)/(d_os1/10+d_os2/10+d_os3/10)    
         except Exception as e:
             # Handle any errors in calculation
             logging.info(f"Error calculating cond_calculer: {e}")
-            cond_calculer = 0 """
+            cond_calculer = 0
         return cond_calculer
 
     # niveau

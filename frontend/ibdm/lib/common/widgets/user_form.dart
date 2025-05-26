@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
@@ -36,9 +37,13 @@ class UserForm extends StatelessWidget {
     required this.addFirstNameController,
     required this.addLastNameController,
     this.onAddUser,
+    this.showRole = true,
+    this.showSuperior = true,
   });
   final User? user;
   static final UserController userController = Get.find();
+  final bool showRole;
+  final bool showSuperior;
   final Function(
     String email,
     String username,
@@ -53,9 +58,10 @@ class UserForm extends StatelessWidget {
   )? onAddUser;
 
   final bool editable;
-  static final RxList<Role> roles = <Role>[].obs;
+  static late RxList<Role> roles;
   Role? role;
   final bool showPlaceHolders;
+  final RxBool _showPassword = false.obs;
   // add user form
   final GlobalKey<FormState> formKeyAddUser;
   final TextEditingController addUserEmailController;
@@ -70,9 +76,10 @@ class UserForm extends StatelessWidget {
         (o) => user == null
             ? true
             : o.value.userId != user!.userId &&
-                !user!.subordinates
-                    .map((s) => s.userId)
-                    .contains(o.value.userId),
+                (user?.role == "ADMIN_SYSTEM" ||
+                    !user!.subordinates
+                        .map((s) => s.userId)
+                        .contains(o.value.userId)),
       )
       .toList();
   bool get isEditing => user != null && editable == true;
@@ -138,9 +145,8 @@ class UserForm extends StatelessWidget {
 
   Future<void> _load(context) async {
     _loaded.value = false;
-    roles.clear();
     final List<Role> localRoles = await userController.getRoles(context);
-    roles.addAll(localRoles);
+    roles = [...localRoles].obs;
     await getInitialValueOfSuperior();
     _loaded.value = true;
   }
@@ -317,7 +323,9 @@ class UserForm extends StatelessWidget {
                 enabled: editable,
                 controller: addUserEmailController,
                 keyboardType: TextInputType.emailAddress,
-                validator: FormBuilderValidators.email(),
+                validator: FormBuilderValidators.email(
+                  errorText: strings.value.invalidEmail,
+                ),
                 label: Text(strings.value.email),
                 placeholder: Text("account@exmaple.com"),
               ),
@@ -332,7 +340,19 @@ class UserForm extends StatelessWidget {
                 keyboardType: TextInputType.visiblePassword,
                 validator: (v) => AppValidators.customPasswordValidator(v,
                     optional: isEditing),
-                obscureText: true,
+                obscureText: !_showPassword.value,
+                suffix: IconButton(
+                  icon: Icon(
+                    _showPassword.value ? LucideIcons.eye : LucideIcons.eyeOff,
+                  ),
+                  onPressed: () {
+                    _showPassword.value = !_showPassword.value;
+                  },
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSizes.sm,
+                  vertical: 0,
+                ),
                 label: Text(isEditing
                     ? strings.value.newPassword
                     : strings.value.password),
@@ -344,8 +364,21 @@ class UserForm extends StatelessWidget {
                 enabled: editable,
                 controller: addFirstNameController,
                 keyboardType: TextInputType.name,
-                validator: FormBuilderValidators.firstName(),
+                validator: FormBuilderValidators.firstName(
+                    regex: RegExp("^[a-zA-Z]+( [a-zA-Z]+)*\$"),
+                    errorText: strings.value.invalidFirstName,
+                    checkNullOrEmpty: false),
                 label: Text(strings.value.firstName),
+                inputFormatters: [
+                  TextInputFormatter.withFunction(
+                    (oldValue, newValue) {
+                      return TextEditingValue(
+                        text: newValue.text.capitalize!,
+                        selection: newValue.selection,
+                      );
+                    },
+                  ),
+                ],
                 placeholder: showPlaceHolders ? Text("Lyes") : null,
               ),
               // last_name
@@ -353,8 +386,21 @@ class UserForm extends StatelessWidget {
                 enabled: editable,
                 controller: addLastNameController,
                 keyboardType: TextInputType.name,
-                validator: FormBuilderValidators.lastName(),
+                validator: FormBuilderValidators.lastName(
+                    regex: RegExp("^[a-zA-Z]+( [a-zA-Z]+)*\$"),
+                    errorText: strings.value.invalidLastName,
+                    checkNullOrEmpty: false),
                 label: Text(strings.value.lastName),
+                inputFormatters: [
+                  TextInputFormatter.withFunction(
+                    (oldValue, newValue) {
+                      return TextEditingValue(
+                        text: newValue.text.capitalize!,
+                        selection: newValue.selection,
+                      );
+                    },
+                  ),
+                ],
                 placeholder: showPlaceHolders ? Text("Rabhi") : null,
               ),
               // username
@@ -368,52 +414,58 @@ class UserForm extends StatelessWidget {
                   allowNumbers: true,
                   allowSpace: true,
                   allowUnderscore: true,
+                  errorText: strings.value.invalidField(strings.value.username),
+                  checkNullOrEmpty: false,
                 ),
                 label: Text(strings.value.username),
                 placeholder: showPlaceHolders ? Text("Lyes Rabhi") : null,
               ),
               SizedBox(height: AppSizes.sm),
               // role
-              Container(
-                constraints: BoxConstraints(
-                  minWidth: context.width,
-                ),
-                child: ShadSelectFormField<Role>(
-                  initialValue: userRole.value,
-                  enabled: editable,
-                  validator: (v) =>
-                      AppValidators.roleSelectionValidator(v?.name),
-                  options: getRoleOptions(context),
-                  label: Text(strings.value.role),
-                  onChanged: (value) {
-                    logger.e(
-                        "before value: ${value?.name} __userRole: ${userRole.value?.name}");
-                    userRole.value = value;
-                    _addUserRole = value;
-                    _valuesChanged();
+              if (showRole)
+                Container(
+                  constraints: BoxConstraints(
+                    minWidth: context.width,
+                  ),
+                  child: ShadSelectFormField<Role>(
+                    initialValue: userRole.value,
+                    enabled: editable,
+                    validator: (v) =>
+                        AppValidators.roleSelectionValidator(v?.name),
+                    options: getRoleOptions(context),
+                    label: Text(strings.value.role),
+                    onChanged: (value) {
+                      logger.e(
+                          "before value: ${value?.name} __userRole: ${userRole.value?.name}");
+                      userRole.value = value;
+                      _addUserRole = value;
+                      _valuesChanged();
 
-                    logger.e(
-                        "after value: ${value?.name} __userRole: ${userRole.value?.name}");
-                  },
-                  selectedOptionBuilder: (context, value) {
-                    return Container(
-                      constraints: BoxConstraints(
-                        minWidth: context.width,
-                      ),
-                      child: Text(
-                          strings.value.selectedRole(value.name.toUpperCase()),
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleSmall
-                              ?.copyWith(
-                                color: AppColors.getRoleColorWithRole(value),
-                              )),
-                    );
-                  },
-                  placeholder: Text(strings.value.role),
-                  shrinkWrap: false,
+                      logger.e(
+                          "after value: ${value?.name} __userRole: ${userRole.value?.name}");
+                    },
+                    selectedOptionBuilder: (context, value) {
+                      logger.e("selected role: ${value.name}");
+                      return Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
+                        ),
+                        child: Text(
+                            strings.value
+                                .selectedRole(value.name.toUpperCase()),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                    color: AppColors.getRoleColorWithRoleValue(
+                                  value.name,
+                                ))),
+                      );
+                    },
+                    placeholder: Text(strings.value.role),
+                    shrinkWrap: false,
+                  ),
                 ),
-              ),
               SizedBox(height: AppSizes.sm),
               // phone number
               ShadInputFormField(
@@ -427,70 +479,74 @@ class UserForm extends StatelessWidget {
 
               SizedBox(height: AppSizes.sm),
               // superior
-              Container(
-                constraints: BoxConstraints(
-                  minWidth: context.width,
-                ),
-                child: ShadSelectFormField<User>.withSearch(
-                  initialValue: _addUserSuperior,
-                  enabled: editable,
-                  label: Text(strings.value.superior),
-                  validator: (value) =>
-                      AppValidators.superiorSelectionValidator(
-                    user?.userId.toString(),
-                    value?.userId.toString(),
-                    _addUserSuperiorOptions.map((o) => o.value).toList(),
+              if (showSuperior)
+                Container(
+                  constraints: BoxConstraints(
+                    minWidth: context.width,
                   ),
-                  allowDeselection: true,
-                  options: _searchAddUserSuperior.value
-                      ? _searchAddUserSuperiorOptions
-                      : _addUserSuperiorOptions,
-                  placeholder: Container(
+                  child: ShadSelectFormField<User>.withSearch(
+                    initialValue: _addUserSuperior,
+                    enabled: editable,
+                    label: Text(strings.value.superior),
+                    validator: (value) =>
+                        AppValidators.superiorSelectionValidator(
+                      user?.userId.toString(),
+                      value?.userId.toString(),
+                      _addUserSuperiorOptions.map((o) => o.value).toList(),
+                    ),
+                    allowDeselection: true,
+                    options: _searchAddUserSuperior.value
+                        ? _searchAddUserSuperiorOptions
+                        : _addUserSuperiorOptions,
+                    placeholder: Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
+                        ),
+                        child: Text(!editable
+                            ? strings.value.noSuperior
+                            : strings.value.selectASuperior)),
+                    anchor: ShadAnchorAuto(
+                      preferBelow: false,
+                    ),
+                    onChanged: (value) {
+                      logger.d("superior value: ${value?.email}");
+                      _addUserSuperior = value;
+                      _valuesChanged();
+                    },
+                    selectedOptionBuilder: (context, value) => Container(
                       constraints: BoxConstraints(
                         minWidth: context.width,
                       ),
-                      child: Text(strings.value.selectASuperior)),
-                  anchor: ShadAnchorAuto(
-                    preferBelow: false,
-                  ),
-                  onChanged: (value) {
-                    logger.d("superior value: ${value?.email}");
-                    _addUserSuperior = value;
-                    _valuesChanged();
-                  },
-                  selectedOptionBuilder: (context, value) => Container(
-                    constraints: BoxConstraints(
-                      minWidth: context.width,
+                      child: Text(
+                          strings.value.selectedSuperior(
+                              "${value.role} ${getUserName(value)}"),
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    color: AppColors.getRoleColorWithRoleValue(
+                                        value.role),
+                                  )),
                     ),
-                    child: Text(
-                        strings.value.selectedSuperior(
-                            "${value.role} ${getUserName(value)}"),
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: AppColors.getRoleColorWithRoleValue(
-                                  value.role),
-                            )),
+                    onSearchChanged: (value) {
+                      if (value.isNotEmpty) {
+                        _searchAddUserSuperior.value =
+                            false; // turn it off to trigger update later
+                        _searchAddUserSuperiorOptions.clear();
+                        _searchAddUserSuperiorOptions
+                            .addAll(_addUserSuperiorOptions.where((o) {
+                          if (o.value.username.contains(value)) {
+                            return true;
+                          }
+                          return o.value.email.contains(value);
+                        }));
+                        _searchAddUserSuperior.value =
+                            true; // turning it back on to trigger update
+                      } else {
+                        _searchAddUserSuperior.value = false;
+                        _searchAddUserSuperiorOptions.clear();
+                      }
+                    },
                   ),
-                  onSearchChanged: (value) {
-                    if (value.isNotEmpty) {
-                      _searchAddUserSuperior.value =
-                          false; // turn it off to trigger update later
-                      _searchAddUserSuperiorOptions.clear();
-                      _searchAddUserSuperiorOptions
-                          .addAll(_addUserSuperiorOptions.where((o) {
-                        if (o.value.username.contains(value)) {
-                          return true;
-                        }
-                        return o.value.email.contains(value);
-                      }));
-                      _searchAddUserSuperior.value =
-                          true; // turning it back on to trigger update
-                    } else {
-                      _searchAddUserSuperior.value = false;
-                      _searchAddUserSuperiorOptions.clear();
-                    }
-                  },
                 ),
-              ),
               SizedBox(height: AppSizes.md),
             ],
           ),
@@ -511,9 +567,32 @@ class UserForm extends StatelessWidget {
       return;
     }
 
-    _addUserSuperior = await (await ApiClientInstance.getApiClient())
-        .getUser(id: user!.superiors.first.userId);
+    try {
+      _addUserSuperior = await (await ApiClientInstance.getApiClient())
+          .getUser(id: user!.superiors.first.userId);
+    } catch (e) {
+      logger.e("error getting superior: $e");
+      if (user!.superiors.isNotEmpty) {
+        _addUserSuperior = User(
+          userId: user!.superiors.first.userId,
+          username: user!.superiors.first.username,
+          email: user!.superiors.first.email,
+          role: user!.superiors.first.role,
+          firstName: "",
+          lastName: "",
+          phoneNumber: "",
+          avatarUrl: "",
+          superiors: [],
+          subordinates: [],
+          userPermissions: [],
+          isAdmin: false,
+        );
+      } else {
+        _addUserSuperior = null;
+      }
+    }
 
+    logger.e("superior: ${_addUserSuperior?.userId}");
     _loadedSuperiorInitialValue.value = true;
   }
 

@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import Any, List
 from django import forms
 from django.contrib import admin
@@ -31,14 +32,14 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'email', 'password')}),
         ('Info', {'fields': ('first_name', 'last_name', 'phone_number', 'avatar')}),
-        ('Permissions', {'fields': ('is_staff', 'is_admin', 'is_superuser','role',
+        ('Permissions', {'fields': ('is_active', 'is_admin', 'is_superuser','role',
                                     'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('created_at', 'updated_at')}),
     )
     readonly_fields = ("created_at", 'updated_at')
     
-    list_display = ("email", "username", "first_name", "last_name", "is_staff", "is_admin","is_superuser")
-    list_filter = ("is_staff", "is_admin", "is_superuser")
+    list_display = ("email", "username", "first_name", "last_name", "role", "is_admin", "is_superuser", "is_active")
+    list_filter = ("is_admin", "is_superuser", "is_active")
     search_fields = ("username", "first_name", "last_name", "email")
     add_form = AddUserForm
     add_fieldsets = (
@@ -52,9 +53,12 @@ class CustomUserAdmin(UserAdmin):
         if change:
             # Update an existing user
             user = form.instance
+            print("form data", form.cleaned_data)
+            data = deepcopy(form.cleaned_data)
+            del data['password']
             user = UserManager().update_user(
                 user.id,
-                **form.cleaned_data,
+                **data,
             )
             #print("User updated:", user.email)
         else:
@@ -73,4 +77,3 @@ class CustomUserAdmin(UserAdmin):
 # Register your models here.
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Role)
-admin.site.register(Permission)

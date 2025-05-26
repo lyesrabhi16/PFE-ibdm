@@ -22,10 +22,10 @@ import 'package:ibdm/pages/settings/emails/email_schedules_page.dart';
 import 'package:ibdm/pages/settings/server_settings/server_settings.dart';
 import 'package:ibdm/pages/settings/settings.dart';
 import 'package:ibdm/pages/siroperie/siroperie.dart';
-import 'package:ibdm/pages/users.dart';
 import 'package:ibdm/pages/settings/emails/email_settings_page.dart';
 import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
-import 'package:ibdm/pages/settings/help_page.dart';
+import 'package:ibdm/pages/users/profile_page.dart';
+import 'package:ibdm/pages/users/users.dart';
 import 'package:ibdm/pages/utilite/utilite.dart';
 import 'package:ibdm/utils/constants/destinations.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
@@ -48,7 +48,6 @@ class Routes {
   static const String emailAlerts = '/settings/email-settings/alerts';
   static const String emailSent = '/settings/email-settings/sent';
   static const String about = '/settings/about';
-  static const String help = '/settings/help';
   static const String utilite = '/utilite';
   static const String co2 = '/co2';
   static const String serverStatus = "/server-status";
@@ -60,6 +59,7 @@ class Routes {
   static const String filtrationReports = "/reports/emails";
   static const String utiliteReports = "/reports/utilite";
   static const String co2Reports = "/reports/co2";
+  static const String profile = "/profile";
 
   static List<Destination> get destinations => [
         Destination(
@@ -130,7 +130,6 @@ class Routes {
     emailAlerts: settings,
     emailSent: settings,
     about: settings,
-    help: settings,
     sucreReports: reports,
     filtrationReports: reports,
     utiliteReports: reports,
@@ -139,6 +138,7 @@ class Routes {
   static final routePermissions = {
     Routes.home: RoutePermissions(),
     Routes.login: RoutePermissions(),
+    Routes.profile: RoutePermissions(),
     Routes.emailSettings: RoutePermissions(
       anyOfPermissions: [
         Permissions.viewEmailAlerts,
@@ -156,7 +156,6 @@ class Routes {
       requiredPermissions: [Permissions.viewEmailsSent],
     ),
     Routes.about: RoutePermissions(),
-    Routes.help: RoutePermissions(),
     Routes.siroperie: RoutePermissions(
       requiredPermissions: [Permissions.viewSiroperiePage],
     ),
@@ -210,6 +209,11 @@ class Routes {
       page: () => Home(),
       middlewares: [ProtectedRouteMiddleware()],
     ),
+    Routes.profile: GetPage(
+      name: Routes.profile,
+      page: () => ProfilePage(),
+      middlewares: [ProtectedRouteMiddleware()],
+    ),
     Routes.login: GetPage(
       name: Routes.login,
       page: () => LoginPage(),
@@ -249,11 +253,6 @@ class Routes {
     Routes.about: GetPage(name: about, page: () => AboutPage(), middlewares: [
       ProtectedRouteMiddleware(
         routePermissions: routePermissions[about],
-      )
-    ]),
-    Routes.help: GetPage(name: help, page: () => HelpPage(), middlewares: [
-      ProtectedRouteMiddleware(
-        routePermissions: routePermissions[help],
       )
     ]),
     Routes.siroperie: GetPage(
