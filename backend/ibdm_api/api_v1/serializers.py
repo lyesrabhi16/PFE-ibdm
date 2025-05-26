@@ -130,7 +130,8 @@ class ServerConfigSerializer(serializers.Serializer):
     REDIS_DB = StandardDatabaseConfSerializer(allow_null=True)
     DATABASES = serializers.DictField(child=StandardDatabaseConfSerializer(), allow_null=True)
     EMAIL_PROVIDERS = serializers.DictField(child=EmailProviderConfSerializer(), allow_null=True)
-
+    LOG_SIZE_LIMIT = serializers.IntegerField(allow_null=True, required=False, default=100)  # 100 MB default log size limit
+    COUNT_OF_LOGS_TO_KEEP = serializers.IntegerField(allow_null=True, required=False, default=10)  # 10 Log files for each log type
 
 class StartEndDatesSerializer(serializers.Serializer):
     start_date = serializers.DateTimeField()

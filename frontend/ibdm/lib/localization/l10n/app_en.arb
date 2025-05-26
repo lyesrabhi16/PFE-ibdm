@@ -1820,7 +1820,7 @@
     "@debit": {
         "description": "Flow rate label"
     },
-    "presCond": "Pressure and conductivity",
+    "presCond": "Pres Cond",
     "@presCond": {
         "description": "Pressure and conductivity label"
     },
@@ -2098,5 +2098,30 @@
                 "type": "String"
             }
         }
+    },
+    "admin": "Admin Panel",
+    "@admin": {
+        "description": "Admin button label"
+    },
+    "errorOpeningAdminPanel": "Failed to open admin panel",
+    "@errorOpeningAdminPanel": {
+        "description": "Failed to open admin panel message"
+    },
+    "logSizeLimit": "Log file size limit",
+    "@logSizeLimit": {
+        "description": "Log file size limit label"
+    },
+    "numberOfLogsToKeep": "Number of logs to keep",
+    "@numberOfLogsToKeep": {
+        "description": "Number of logs to keep label"
+    },
+    "logs": "Logs",
+    "@logs": {
+        "description": "Logs section title"
+    },
+    "permissionDenied": "Permission denied",
+    "@permissionDenied": {
+        "description": "Permission denied message"
     }
+
 }

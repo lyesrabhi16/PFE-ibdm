@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/loading_page_controller.dart';
@@ -39,6 +41,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = createTextTheme(context, "Poppins", "Poppins");
     MaterialTheme theme = MaterialTheme(textTheme);
+
+    PlatformDispatcher.instance.onPlatformBrightnessChanged = () {
+      // Update the theme mode when the platform brightness changes
+      themeModeController.loadThemeMode();
+    };
+
     return Obx(
       () => ShadApp.custom(
         themeMode: themeModeController.themeMode.value,
@@ -121,7 +129,22 @@ class MyApp extends StatelessWidget {
             },
             builder: (context, child) {
               try {
-                return ShadToaster(child: child ?? Container());
+                return ShadToaster(
+                    child: ScrollConfiguration(
+                        behavior: ScrollBehavior().copyWith(
+                          overscroll: false,
+                          physics: const BouncingScrollPhysics(),
+                          scrollbars: true,
+                          dragDevices: {
+                            PointerDeviceKind.touch,
+                            PointerDeviceKind.mouse,
+                            PointerDeviceKind.trackpad,
+                            PointerDeviceKind.stylus,
+                            PointerDeviceKind.invertedStylus,
+                            PointerDeviceKind.unknown
+                          },
+                        ),
+                        child: child ?? Container()));
               } catch (e) {
                 logger.e("Error building app: $e");
               }

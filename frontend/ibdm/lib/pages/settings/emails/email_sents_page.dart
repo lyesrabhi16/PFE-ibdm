@@ -1252,6 +1252,8 @@ showViewSentEmailDialog(
           editable: false,
           showIdField: true,
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       );
     },
   );

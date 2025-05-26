@@ -1247,7 +1247,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
           _dataLoaded.value = true;
           Toasts.showErrorToast(
             context: getContext,
-            message: strings.value.failedToGetInventory,
+            message: strings.value.failedToLoadData,
           );
         }
       }
@@ -1265,7 +1265,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
         description: Text(strings.value.consommationDescription),
         child: Column(
           children: [
-            Row(
+            Wrap(
+              alignment: WrapAlignment.center,
               children: [
                 ShadDatePicker.range(
                   onRangeChanged: (value) => {
@@ -1309,7 +1310,7 @@ class _FiltrationPageState extends State<FiltrationPage> {
                     ));
               }
               if (_failed.value) {
-                return Text(strings.value.failedToGetInventory);
+                return Text(strings.value.failedToLoadData);
               }
               return Column(
                 children: [
@@ -1385,6 +1386,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
             })
           ],
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }
@@ -1800,6 +1803,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                 ),
               ],
             ),
+          ).marginOnly(
+            top: AppSizes.md,
           ),
         );
       },
@@ -1965,6 +1970,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
                   ),
                 ],
               ),
+            ).marginOnly(
+              top: AppSizes.md,
             );
           },
         );
@@ -2028,7 +2035,9 @@ class _FiltrationPageState extends State<FiltrationPage> {
                         ),
                       )
                     ]
-                ]));
+                ])).marginOnly(
+          top: AppSizes.md,
+        );
       },
     );
   }

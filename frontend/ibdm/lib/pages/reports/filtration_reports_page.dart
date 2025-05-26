@@ -325,7 +325,8 @@ class _FiltrationReportsPageState extends State<FiltrationReportsPage> {
         ),
         child: Column(
           children: [
-            Row(
+            Wrap(
+              alignment: WrapAlignment.center,
               children: [
                 ShadDatePicker(
                   onChanged: (value) => {
@@ -368,6 +369,8 @@ class _FiltrationReportsPageState extends State<FiltrationReportsPage> {
             })
           ],
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }

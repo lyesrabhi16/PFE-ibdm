@@ -16,6 +16,7 @@ import 'package:ibdm/pages/settings/emails/email_sents_page.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/constants/permissions.dart';
+import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/graphs.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
@@ -60,6 +61,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if (Get.currentRoute != Routes.home) {
+      Home.closeChannels();
+      return const SizedBox.shrink();
+    }
+
     final strings = getTranslations(context).obs;
     final userController = Get.find<UserController>();
 
@@ -308,7 +314,7 @@ class _HomeState extends State<Home> {
                 }
                 if (snapshot.hasError) {
                   return Center(
-                    child: Text(strings.value.errorLoadingReports),
+                    child: Text(strings.value.failedToLoadData),
                   );
                 }
                 List<Widget> _emailCards = <Widget>[...snapshot.data!];

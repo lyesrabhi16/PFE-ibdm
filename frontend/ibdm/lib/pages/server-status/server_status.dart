@@ -881,18 +881,6 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
                     ),
                   ),
                 ),
-                ShadButton(
-                  onPressed: () {
-                    api!.restartServer();
-                  },
-                  icon: const Icon(Icons.restart_alt_rounded),
-                  child: Text(
-                    strings.value.restartServer,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onPrimary,
-                    ),
-                  ),
-                ),
               ],
             ),
           ],

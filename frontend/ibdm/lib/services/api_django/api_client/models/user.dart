@@ -23,6 +23,7 @@ class User {
     required this.superiors,
     required this.subordinates,
     required this.userPermissions,
+    required this.isAdmin,
   });
   
   factory User.fromJson(Map<String, Object?> json) => _$UserFromJson(json);
@@ -46,6 +47,8 @@ class User {
   /// Specific permissions for this user.
   @JsonKey(name: 'user_permissions')
   final List<int> userPermissions;
+  @JsonKey(name: 'is_admin')
+  final bool isAdmin;
 
   Map<String, Object?> toJson() => _$UserToJson(this);
 }

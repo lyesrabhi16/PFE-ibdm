@@ -1,11 +1,34 @@
-# self is an auto-generated Django model module.
-# You'll have to do the following manually to clean self up:
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+
+
+class ChambreFroide(models.Model):
+    date = models.DateTimeField(blank=True, primary_key=True)
+    ut_tt_cf1 = models.FloatField(db_column='Ut_TT_CF1', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf2 = models.FloatField(db_column='Ut_TT_CF2', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf3 = models.FloatField(db_column='Ut_TT_CF3', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf4 = models.FloatField(db_column='Ut_TT_CF4', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf5 = models.FloatField(db_column='Ut_TT_CF5', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf7 = models.FloatField(db_column='Ut_TT_CF7', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf8 = models.FloatField(db_column='Ut_TT_CF8', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf9 = models.FloatField(db_column='Ut_TT_CF9', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf10 = models.FloatField(db_column='Ut_TT_CF10', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf11 = models.FloatField(db_column='Ut_TT_CF11', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf12 = models.FloatField(db_column='Ut_TT_CF12', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf13 = models.FloatField(db_column='Ut_TT_CF13', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_cf14 = models.FloatField(db_column='Ut_TT_CF14', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_sas1 = models.FloatField(db_column='Ut_TT_SAS1', blank=True, null=True)  # Field name made lowercase.
+    ut_tt_sas2 = models.FloatField(db_column='Ut_TT_SAS2', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Chambre_Froide'
 
 
 class Co2Ifruit(models.Model):
@@ -39,13 +62,9 @@ class Co2Ifruit(models.Model):
     ut_n2_pn2 = models.FloatField(db_column='UT_N2_PN2', blank=True, null=True)  # Field name made lowercase.
     ut_soude = models.FloatField(db_column='UT_Soude', blank=True, null=True)  # Field name made lowercase.
 
-    def __str__(self):
-        return f"Co2Ifruit({str(self.date)})"
-
     class Meta:
         managed = False
         db_table = 'Co2_Ifruit'
-    
 
 
 class Utilite(models.Model):
@@ -64,9 +83,7 @@ class Utilite(models.Model):
     ut_sid_pg = models.FloatField(db_column='UT_SID_PG', blank=True, null=True)  # Field name made lowercase.
     ut_sid_tt = models.FloatField(db_column='UT_SID_TT', blank=True, null=True)  # Field name made lowercase.
     ut_sid_tc = models.FloatField(db_column='UT_SID_TC', blank=True, null=True)  # Field name made lowercase.
-    
-    def __str__(self):
-        return f"Utilite({str(self.date)})"
+
     class Meta:
         managed = False
         db_table = 'Utilite'

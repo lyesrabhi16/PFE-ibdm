@@ -823,6 +823,7 @@ abstract class IbdmApiClient {
     @Part(name: 'phone_number') String? phoneNumber,
     @Part(name: 'avatar') File? avatar,
     @Part(name: 'user_permissions') List<int>? userPermissions,
+    @Part(name: 'is_admin') bool? isAdmin,
   });
 
   /// API endpoint that allows users to be viewed or edited.
@@ -851,6 +852,7 @@ abstract class IbdmApiClient {
     @Part(name: 'phone_number') String? phoneNumber,
     @Part(name: 'avatar') File? avatar,
     @Part(name: 'user_permissions') List<int>? userPermissions,
+    @Part(name: 'is_admin') bool? isAdmin,
   });
 
   /// API endpoint that allows users to be viewed or edited.
@@ -871,6 +873,7 @@ abstract class IbdmApiClient {
     @Part(name: 'avatar') File? avatar,
     @Part(name: 'role') String? role,
     @Part(name: 'user_permissions') List<int>? userPermissions,
+    @Part(name: 'is_admin') bool? isAdmin,
   });
 
   /// API endpoint that allows users to be viewed or edited.

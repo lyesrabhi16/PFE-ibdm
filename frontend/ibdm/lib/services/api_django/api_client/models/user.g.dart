@@ -6,32 +6,28 @@ part of 'user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-User _$UserFromJson(Map<String, dynamic> json) {
-  print(json);
-  final u = User(
-    userId: (json['user_id'] as num).toInt(),
-    firstName: json['first_name'] as String,
-    lastName: json['last_name'] as String,
-    username: json['username'] as String,
-    email: json['email'] as String,
-    phoneNumber: json['phone_number'] as String,
-    avatarUrl: json['avatar_url'] as String?,
-    role: json['role'] as String,
-    superiors: (json['superiors'] as List<dynamic>)
-        .map((e) =>
-            UserSerializerWithSuperiors.fromJson(e as Map<String, dynamic>))
-        .toList(),
-    subordinates: (json['subordinates'] as List<dynamic>)
-        .map((e) =>
-            UserSerializerWithSubordinates.fromJson(e as Map<String, dynamic>))
-        .toList(),
-    userPermissions: (json['user_permissions'] as List<dynamic>)
-        .map((e) => (e as num).toInt())
-        .toList(),
-  );
-  print("User: $u");
-  return u;
-}
+User _$UserFromJson(Map<String, dynamic> json) => User(
+      userId: (json['user_id'] as num).toInt(),
+      firstName: json['first_name'] as String,
+      lastName: json['last_name'] as String,
+      username: json['username'] as String,
+      email: json['email'] as String,
+      phoneNumber: json['phone_number'] as String,
+      avatarUrl: json['avatar_url'] as String?,
+      role: json['role'] as String,
+      superiors: (json['superiors'] as List<dynamic>)
+          .map((e) =>
+              UserSerializerWithSuperiors.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      subordinates: (json['subordinates'] as List<dynamic>)
+          .map((e) => UserSerializerWithSubordinates.fromJson(
+              e as Map<String, dynamic>))
+          .toList(),
+      userPermissions: (json['user_permissions'] as List<dynamic>)
+          .map((e) => (e as num).toInt())
+          .toList(),
+      isAdmin: json['is_admin'] as bool,
+    );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'user_id': instance.userId,
@@ -45,4 +41,5 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'superiors': instance.superiors,
       'subordinates': instance.subordinates,
       'user_permissions': instance.userPermissions,
+      'is_admin': instance.isAdmin,
     };

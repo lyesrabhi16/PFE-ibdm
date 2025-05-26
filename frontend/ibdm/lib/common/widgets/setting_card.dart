@@ -10,6 +10,7 @@ class SettingCard extends StatelessWidget {
     this.trailing,
     this.onTap,
     this.titleTextStyle,
+    this.onLongPress,
   });
 
   final IconData? icon;
@@ -17,6 +18,7 @@ class SettingCard extends StatelessWidget {
   final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   final TextStyle? titleTextStyle;
 
@@ -24,6 +26,7 @@ class SettingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8.0),
         elevation: 2,

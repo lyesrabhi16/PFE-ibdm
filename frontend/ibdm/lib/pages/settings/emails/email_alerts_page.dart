@@ -400,6 +400,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               _addAlertWarningPoint = warningPoint;
             },
           ),
+        ).marginOnly(
+          top: AppSizes.md,
         );
       },
     );
@@ -497,6 +499,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             showIdField: true,
             formKey: _formKey,
           ),
+        ).marginOnly(
+          top: AppSizes.md,
         );
       },
     );
@@ -691,6 +695,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               }
             },
           ),
+        ).marginOnly(
+          top: AppSizes.md,
         );
       },
     );

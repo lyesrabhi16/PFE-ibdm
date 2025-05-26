@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+
+import '../helpers/logger.dart';
 
 class AppColors {
   AppColors._();
@@ -26,14 +30,22 @@ class AppColors {
 
   static Color invertColorIfNeeded(Color color) {
     // Calculate the luminance to determine if it's a dark color
-    double luminance =
-        (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
-
+    double luminance = color.computeLuminance();
+    printMessage("Color: $color, Luminance: $luminance");
     // If it's too dark, return a lighter version
-    return luminance < 0.5 && Get.isDarkMode
-        ? Color.fromARGB(color.a.toInt(), 255 - color.r.toInt(),
-            255 - color.g.toInt(), 255 - color.b.toInt())
-        : color; // Keep it unchanged if it's already bright enough
+    if (luminance < 0.3 && Get.isDarkMode) {
+      printMessage("Inverting color: $color, Luminance: $luminance");
+      // Convert the color to HSL
+      HSLColor hslColor = HSLColor.fromColor(color);
+
+      // Increase lightness, ensuring it stays within [0.0, 1.0]
+      double newLightness = (max(1 - hslColor.lightness, 0.6)).clamp(0.0, 1.0);
+
+      // Return the new color with adjusted lightness
+      return hslColor.withLightness(newLightness).toColor();
+    }
+
+    return color; // Keep it unchanged if it's already bright enough
   }
 
   static Color getColorFromString(String input,
@@ -70,6 +82,7 @@ class AppColors {
     Role? roleObj = userController.roles.firstWhereOrNull(
       (element) => element.name == role,
     );
+    logger.e("Role: $role, Role Object: $roleObj");
     return invertColorIfNeeded(
         roleObj != null ? getRoleColorWithRole(roleObj) : Colors.grey);
   }

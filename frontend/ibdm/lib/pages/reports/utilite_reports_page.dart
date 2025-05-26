@@ -325,7 +325,8 @@ class _UtiliteReportsPageState extends State<UtiliteReportsPage> {
         ),
         child: Column(
           children: [
-            Row(
+            Wrap(
+              alignment: WrapAlignment.center,
               children: [
                 ShadDatePicker(
                   onChanged: (value) => {
@@ -368,6 +369,8 @@ class _UtiliteReportsPageState extends State<UtiliteReportsPage> {
             })
           ],
         ),
+      ).marginOnly(
+        top: AppSizes.md,
       ),
     );
   }

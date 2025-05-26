@@ -17,13 +17,20 @@ def getValueForCustomExpression(action:str, attrs: list, obj: object) -> float:
     if action == "total":
         return sum((getattr(obj, attr) or 0)  for attr in attrs)
     if action == "stopped":
-         #print("current obj date", getattr(obj, "date"), "last record", last_records)
-         if obj.__class__.__name__ in last_records:
-            if (getattr(obj, "date") - last_records[obj.__class__.__name__]).total_seconds() > (Env.DATA_STOPPED_WAIT_SECONDS):
-                print(obj.__class__.__name__, "data insertion from automates has stopped")
-                return 1
-         last_records[obj.__class__.__name__] = getattr(obj, "date")
-         return 0
+        #print("current obj date", getattr(obj, "date"), "last record", last_records)
+        if obj.__class__.__name__ in last_records:
+            current_obj_data = getattr(obj, "date")
+            last_record = last_records[obj.__class__.__name__]
+            if (current_obj_data - last_record["obj_date"]).total_seconds() == 0:
+                if (datetime.now() - last_record["server_time"]).total_seconds() > Env.DATA_STOPPED_WAIT_SECONDS:
+                    print(obj.__class__.__name__, "data insertion from automates has stopped")
+                    return 1
+                return 0
+        last_records[obj.__class__.__name__] = {
+            "obj_date": getattr(obj, "date"),
+            "server_time": datetime.now()
+        }
+        return 0
     raise ValueError(f"Unknown Custom Expression action '{action}'")
     
 

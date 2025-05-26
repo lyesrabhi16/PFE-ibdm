@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ibdm/config/api.config.dart';
+import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
@@ -8,6 +10,7 @@ import 'package:ibdm/common/controllers/user_controller.dart';
 import 'package:get/get.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:toastification/toastification.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ResponsiveAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String userName;
@@ -32,6 +35,7 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
   final _popoverController = ShadPopoverController();
   final RxBool _logoutHover = false.obs;
   final RxBool _profileHover = false.obs;
+  final RxBool _SwitchToAdminHover = false.obs;
   @override
   Widget build(BuildContext context) {
     bool isSmallScreen = MediaQuery.of(context).size.width < 600;
@@ -92,7 +96,7 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                     borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   constraints: BoxConstraints(
-                    maxWidth: AppSizes.xl * 6,
+                    maxWidth: AppSizes.xl * 7,
                   ),
                   child: Obx(() {
                     return ListView(
@@ -139,6 +143,62 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                             ),
                           ),
                         ),
+                        if (userController.user!.isAdmin) ...[
+                          const SizedBox(height: AppSizes.sm),
+                          MouseRegion(
+                            onEnter: (event) =>
+                                _SwitchToAdminHover.value = true,
+                            onExit: (event) =>
+                                _SwitchToAdminHover.value = false,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: _SwitchToAdminHover.value
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer
+                                    : null,
+                                borderRadius: BorderRadius.circular(
+                                    AppSizes.borderRadius),
+                              ),
+                              child: ListTile(
+                                leading: const Icon(Icons.person, size: 18),
+                                iconColor: !_SwitchToAdminHover.value
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer
+                                    : Theme.of(context).colorScheme.onSurface,
+                                title: Text(
+                                  strings.value.admin,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: !_SwitchToAdminHover.value
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primaryContainer
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                      ),
+                                ),
+                                onTap: () {
+                                  launchUrl(
+                                    Uri.parse(ApiConfig.admin_url),
+                                    mode: LaunchMode.externalApplication,
+                                  ).then((value) {
+                                    if (value == false) {
+                                      Toasts.showErrorToastNotification(
+                                          context: context,
+                                          message: strings
+                                              .value.errorOpeningAdminPanel);
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                          )
+                        ],
                         const SizedBox(height: AppSizes.sm),
                         MouseRegion(
                           onEnter: (event) => _logoutHover.value = true,
