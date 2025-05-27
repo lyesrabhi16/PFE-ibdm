@@ -131,12 +131,111 @@ class AppLineChart extends StatelessWidget {
         lastReqId = getUniqueId();
         _getGraphData(reqId: lastReqId!);
       }
-      printMessage("building inside obx");
       return Padding(
         padding: const EdgeInsets.all(AppSizes.sm),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
+            if (!isLive) ...[
+              Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  ShadSelect<GraphType>(
+                    onChanged: (value) {
+                      graphType.value = value!;
+                      fetchType =
+                          graphType.value!.supportsFetchType ? fetchType : null;
+                    },
+                    allowDeselection: false,
+                    initialValue: graphType.value!,
+                    options: [
+                      for (var e in graphTypes)
+                        ShadOption(
+                          value: e,
+                          child: Text(e.name.capitalize!),
+                        ),
+                    ],
+                    selectedOptionBuilder: (context, value) {
+                      return Text(
+                        "${strings.value.type} : ${value.name.capitalize!}",
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(),
+                      );
+                    },
+                  ),
+                  if (graphType.value!.supportsFetchType)
+                    ShadSelect<FetchType>(
+                      enabled: graphType.value!.supportsFetchType,
+                      placeholder: Text(strings.value.precision),
+                      onChanged: (value) {
+                        fetchType = value!;
+                      },
+                      allowDeselection: false,
+                      initialValue: fetchType,
+                      options: [
+                        for (var e in FetchType.values
+                            .where((e) => e != FetchType.$unknown))
+                          ShadOption(
+                            value: e,
+                            child: Text(e.name.capitalize!),
+                          ),
+                      ],
+                      selectedOptionBuilder: (context, value) {
+                        return Text(
+                          "${strings.value.precision} : ${value.name.capitalize!}",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(),
+                        );
+                      },
+                    ),
+                  ShadDatePicker.range(
+                    onRangeChanged: (value) {
+                      startDate = value!.start!.copyWith(
+                        hour: 0,
+                        minute: 0,
+                        second: 0,
+                        millisecond: 0,
+                        microsecond: 0,
+                      );
+                      endDate = value.end?.copyWith(
+                            hour: 23,
+                            minute: 59,
+                            second: 59,
+                            millisecond: 999,
+                            microsecond: 999,
+                          ) ??
+                          value.start!.copyWith(
+                            hour: 23,
+                            minute: 59,
+                            second: 59,
+                            millisecond: 999,
+                            microsecond: 999,
+                          );
+                    },
+                    closeOnSelection: false,
+                    closeOnTapOutside: true,
+                    formatDateRange: (dateRange) =>
+                        dateTimeRangeToString(dateRange.start, dateRange.end),
+                    selectableDayPredicate: (day) => true,
+                    allowDeselection: false,
+                    selected: ShadDateTimeRange(
+                      start: startDate,
+                      end: endDate,
+                    ),
+                  ),
+                  ShadButton(
+                    child: Text(strings.value.find),
+                    onPressed: () {
+                      lastReqId = getUniqueId();
+                      _getGraphData(reqId: lastReqId!);
+                    },
+                  ),
+                ],
+              ),
+            ],
             SizedBox(height: AppSizes.md),
             DividerWithText(
                 text: isLive
@@ -156,38 +255,35 @@ class AppLineChart extends StatelessWidget {
                             : false,
                       )} "),
             SizedBox(height: AppSizes.sm),
-            Builder(builder: (context) {
-              printMessage("Building legend");
-              return Wrap(
-                alignment: WrapAlignment.start,
-                direction: Axis.horizontal,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: AppSizes.sm,
-                children: [
-                  for (var key in graphData.keys)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 20,
-                          height: 20,
-                          color: AppColors.getColorFromString(key,
-                              backgroundColor: getBackgroundColor()),
-                        ),
-                        SizedBox(width: AppSizes.sm),
-                        Text(
-                          key,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                      ],
-                    ),
-                ],
-              );
-            }),
+            Wrap(
+              alignment: WrapAlignment.start,
+              direction: Axis.horizontal,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: AppSizes.sm,
+              children: [
+                for (var key in graphData.keys)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        color: AppColors.getColorFromString(key,
+                            backgroundColor: getBackgroundColor()),
+                      ),
+                      SizedBox(width: AppSizes.sm),
+                      Text(
+                        key,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
             SizedBox(height: AppSizes.sm),
             !graphLoaded.value
                 ? SizedBox(

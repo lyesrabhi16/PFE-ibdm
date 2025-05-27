@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:elegant_notification/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,7 @@ import 'package:ibdm/utils/constants/permissions.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
+import 'package:ibdm/utils/helpers/screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class ReportsPage extends StatefulWidget {
@@ -199,70 +201,75 @@ void showViewReportDialog(
   );
 }
 
-Column reportData(BuildContext context, Report report) {
+Widget reportData(BuildContext context, Report report) {
   final strings = getTranslations(context).obs;
 
-  return Column(
-    children: [
-      Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: context.width,
-            minHeight: 300,
-            maxHeight: 700,
-          ),
-          child: ShadTable.list(
-            columnSpanExtent: (c) => FixedSpanExtent(max(
-                  context.width,
-                  600,
-                ) /
-                report.colNames.length),
-            header: [
-              for (var c in report.colNames)
-                ShadTableCell.header(child: Text(c)),
-            ],
-            rowSpanBackgroundDecoration: (c) => SpanDecoration(
-              color: report.data[max(c - 1, 0)]["highlight"] == true
-                  ? Theme.of(context).colorScheme.surfaceContainerLow
-                  : Colors.transparent,
+  double tableWidth = 600;
+
+  return Builder(builder: (context) {
+    return Column(
+      children: [
+        Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: tableWidth,
+              maxWidth: tableWidth,
+              minHeight: 300,
+              maxHeight: 700,
             ),
-            children: [
-              for (var r in report.data)
-                [
-                  for (var c in report.colNames)
-                    ShadTableCell(
-                      child: Text(
-                        r[c] ?? "",
-                        softWrap: false,
-                        style: TextStyle(
-                          color: r["danger"] == true
-                              ? errorColor
-                              : r["highlight"] == true
-                                  ? successColor
-                                  : Theme.of(context).colorScheme.onSurface,
+            child: ShadTable.list(
+              columnSpanExtent: (c) => FixedSpanExtent(
+                  tableWidth / report.colNames.length - (c == 0 ? 0 : 16)),
+              header: [
+                for (var c in report.colNames)
+                  ShadTableCell.header(child: Text(c.toString().toUpperCase())),
+              ],
+              rowSpanBackgroundDecoration: (c) => SpanDecoration(
+                color: report.data[max(c - 1, 0)]["highlight"] == true
+                    ? Theme.of(context).colorScheme.surfaceContainerLow
+                    : Colors.transparent,
+              ),
+              children: [
+                for (var r in report.data)
+                  [
+                    for (var c in report.colNames)
+                      ShadTableCell(
+                        child: AutoSizeText(
+                          r[c] ?? "",
+                          softWrap: false,
+                          style: TextStyle(
+                            overflow: report.colNames.indexOf(c) == 0
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                            color: r["danger"] == true
+                                ? errorColor
+                                : r["highlight"] == true
+                                    ? successColor
+                                    : Theme.of(context).colorScheme.onSurface,
+                          ),
                         ),
                       ),
-                    ),
-                ],
-            ],
+                  ],
+              ],
+            ),
           ),
         ),
-      ),
-      if (report.synthese != null) ...[
-        SizedBox(
-          height: AppSizes.sm,
-        ),
-        Text(strings.value.synthese),
-        SizedBox(
-          height: AppSizes.sm,
-        ),
-        Text(
-          report.synthese!,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-        )
-      ]
-    ],
-  );
+        if (report.synthese != null) ...[
+          SizedBox(
+            height: AppSizes.sm,
+          ),
+          Text(strings.value.synthese),
+          SizedBox(
+            height: AppSizes.sm,
+          ),
+          Text(
+            report.synthese!,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+          )
+        ]
+      ],
+    );
+  });
 }
