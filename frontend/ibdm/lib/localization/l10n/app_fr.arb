@@ -460,13 +460,13 @@
     "@sucreAdueTitle": {
         "description": "Titre de la section sucre Adue"
     },
-    "showLiveData": "Afficher les données en direct",
+    "showLiveData": "Afficher les données en temps réel",
     "@showLiveData": {
-        "description": "Texte du bouton afficher les données en direct"
+        "description": "Texte du bouton afficher les données en temps réel"
     },
-    "showingLiveData": "Affichage des données en direct",
+    "showingLiveData": "Affichage des données en temps réel",
     "@showingLiveData": {
-        "description": "Message de statut d'affichage des données en direct"
+        "description": "Message de statut d'affichage des données en temps réel"
     },
     "inventory": "Inventaire",
     "@inventory": {
@@ -488,7 +488,7 @@
     "@toOrder": {
         "description": "Étiquette à commander"
     },
-    "tank": "{count, plural, one {Cuve} other {Cuves}}",
+    "tank": "{count, plural, one {Citerne} other {Citernes}}",
     "@tank": {
         "description": "Étiquette de cuve avec pluralisation",
         "placeholders": {
@@ -1788,7 +1788,7 @@
     "@graph": {
         "description": "Étiquette de la vue en graphique"
     },
-    "errorConnectingBroadcast": "Erreur de connexion à la diffusion, les données en direct ne fonctionneront pas",
+    "errorConnectingBroadcast": "Erreur de connexion à la diffusion, les données en temps réel ne fonctionneront pas",
     "@errorConnectingBroadcast": {
         "description": "Message d'erreur de connexion à la diffusion"
     },
