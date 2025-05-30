@@ -142,27 +142,27 @@ abstract class IbdmApiClient {
     @Body() required AlertEmailRequest body,
   });
 
-  /// [id] - A unique integer value identifying this alert email.
+  /// [id] - A unique integer value identifying this Alerte.
   @GET('/api/v1/emails/alerts/{id}/')
   Future<AlertEmail> getAlertEmail({
     @Path('id') required int id,
   });
 
-  /// [id] - A unique integer value identifying this alert email.
+  /// [id] - A unique integer value identifying this Alerte.
   @PUT('/api/v1/emails/alerts/{id}/')
   Future<AlertEmail> updateAlertEmail({
     @Path('id') required int id,
     @Body() required AlertEmailRequest body,
   });
 
-  /// [id] - A unique integer value identifying this alert email.
+  /// [id] - A unique integer value identifying this Alerte.
   @PATCH('/api/v1/emails/alerts/{id}/')
   Future<AlertEmail> partialUpdateAlertEmail({
     @Path('id') required int id,
     @Body() PatchedAlertEmailRequest? body,
   });
 
-  /// [id] - A unique integer value identifying this alert email.
+  /// [id] - A unique integer value identifying this Alerte.
   @DELETE('/api/v1/emails/alerts/{id}/')
   Future<void> destroyAlertEmail({
     @Path('id') required int id,
@@ -207,27 +207,27 @@ abstract class IbdmApiClient {
     @Body() required EmailScheduleRequest body,
   });
 
-  /// [id] - A unique integer value identifying this email schedule.
+  /// [id] - A unique integer value identifying this Rapport Cyclique.
   @GET('/api/v1/emails/schedules/{id}/')
   Future<EmailSchedule> getEmailSchedule({
     @Path('id') required int id,
   });
 
-  /// [id] - A unique integer value identifying this email schedule.
+  /// [id] - A unique integer value identifying this Rapport Cyclique.
   @PUT('/api/v1/emails/schedules/{id}/')
   Future<EmailSchedule> updateEmailSchedule({
     @Path('id') required int id,
     @Body() required EmailScheduleRequest body,
   });
 
-  /// [id] - A unique integer value identifying this email schedule.
+  /// [id] - A unique integer value identifying this Rapport Cyclique.
   @PATCH('/api/v1/emails/schedules/{id}/')
   Future<EmailSchedule> partialUpdateEmailSchedule({
     @Path('id') required int id,
     @Body() PatchedEmailScheduleRequest? body,
   });
 
-  /// [id] - A unique integer value identifying this email schedule.
+  /// [id] - A unique integer value identifying this Rapport Cyclique.
   @DELETE('/api/v1/emails/schedules/{id}/')
   Future<void> destroyEmailSchedule({
     @Path('id') required int id,
@@ -594,7 +594,7 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows groups to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this group.
+  /// [id] - A unique integer value identifying this groupe.
   @GET('/api/v1/user-management/groups/{id}/')
   Future<Group> getGroup({
     @Path('id') required int id,
@@ -602,7 +602,7 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows groups to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this group.
+  /// [id] - A unique integer value identifying this groupe.
   @PUT('/api/v1/user-management/groups/{id}/')
   Future<Group> updateGroup({
     @Path('id') required int id,
@@ -611,7 +611,7 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows groups to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this group.
+  /// [id] - A unique integer value identifying this groupe.
   @PATCH('/api/v1/user-management/groups/{id}/')
   Future<Group> partialUpdateGroup({
     @Path('id') required int id,
@@ -620,7 +620,7 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows groups to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this group.
+  /// [id] - A unique integer value identifying this groupe.
   @DELETE('/api/v1/user-management/groups/{id}/')
   Future<void> removeGroup({
     @Path('id') required int id,
@@ -702,7 +702,7 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows groups to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this role.
+  /// [id] - A unique integer value identifying this Role.
   @GET('/api/v1/user-management/roles/{id}/')
   Future<Role> getRole({
     @Path('id') required int id,
@@ -710,7 +710,7 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows groups to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this role.
+  /// [id] - A unique integer value identifying this Role.
   @PUT('/api/v1/user-management/roles/{id}/')
   Future<Role> updateRole({
     @Path('id') required int id,
@@ -719,7 +719,7 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows groups to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this role.
+  /// [id] - A unique integer value identifying this Role.
   @PATCH('/api/v1/user-management/roles/{id}/')
   Future<Role> partialUpdateRole({
     @Path('id') required int id,
@@ -728,7 +728,7 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows groups to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this role.
+  /// [id] - A unique integer value identifying this Role.
   @DELETE('/api/v1/user-management/roles/{id}/')
   Future<void> removeRole({
     @Path('id') required int id,
@@ -810,7 +810,7 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows users to be viewed or edited.
   ///
-  /// [userPermissions] - Specific permissions for this user.
+  /// [userPermissions] - Permissions spÃ©cifiques Ã  cet utilisateur.
   @MultiPart()
   @POST('/api/v1/user-management/users/')
   Future<User> addUser({
@@ -828,7 +828,7 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows users to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this user.
+  /// [id] - A unique integer value identifying this Utilisateur.
   @GET('/api/v1/user-management/users/{id}/')
   Future<User> getUser({
     @Path('id') required int id,
@@ -836,9 +836,9 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows users to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this user.
+  /// [id] - A unique integer value identifying this Utilisateur.
   ///
-  /// [userPermissions] - Specific permissions for this user.
+  /// [userPermissions] - Permissions spÃ©cifiques Ã  cet utilisateur.
   @MultiPart()
   @PUT('/api/v1/user-management/users/{id}/')
   Future<User> updateUser({
@@ -857,9 +857,9 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows users to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this user.
+  /// [id] - A unique integer value identifying this Utilisateur.
   ///
-  /// [userPermissions] - Specific permissions for this user.
+  /// [userPermissions] - Permissions spÃ©cifiques Ã  cet utilisateur.
   @MultiPart()
   @PATCH('/api/v1/user-management/users/{id}/')
   Future<User> partialUpdateUser({
@@ -878,7 +878,7 @@ abstract class IbdmApiClient {
 
   /// API endpoint that allows users to be viewed or edited.
   ///
-  /// [id] - A unique integer value identifying this user.
+  /// [id] - A unique integer value identifying this Utilisateur.
   @DELETE('/api/v1/user-management/users/{id}/')
   Future<void> removeUser({
     @Path('id') required int id,

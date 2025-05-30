@@ -185,7 +185,7 @@ class _EmailScheduleFormState extends State<EmailScheduleForm> {
       return ShadForm(
           onChanged: _valuesChanged,
           key: widget.formKey ?? GlobalKey<ShadFormState>(),
-          autovalidateMode: ShadAutovalidateMode.alwaysAfterFirstValidation,
+          autovalidateMode: ShadAutovalidateMode.onUserInteraction,
           child: Obx(() {
             return Column(
               children: [
@@ -273,10 +273,17 @@ class _EmailScheduleFormState extends State<EmailScheduleForm> {
                     return ShadInputFormField(
                       enabled: widget.editable,
                       controller: intervalManualController,
-                      validator: FormBuilderValidators.integer(
-                          errorText: strings.value
-                              .invalidField(strings.value.intervalManualLabel),
-                          checkNullOrEmpty: false),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.integer(
+                          errorText: strings.value.enterAValidInteger,
+                          checkNullOrEmpty: false,
+                        ),
+                        FormBuilderValidators.min(
+                          0,
+                          errorText: strings.value.min(1),
+                          checkNullOrEmpty: false,
+                        ),
+                      ]),
                       label: Text(strings.value.intervalManualLabel),
                       keyboardType: TextInputType.number,
                       initialValue: "1",
@@ -317,72 +324,74 @@ class _EmailScheduleFormState extends State<EmailScheduleForm> {
                             children: [
                               Text(strings.value.sendThisAlertToRoles),
                               SizedBox(height: AppSizes.sm),
-                              ShadSelect<Role>.multipleWithSearch(
-                                onSearchChanged: (value) {
-                                  _searchInRoles.value = false;
-                                  if (value.isNotEmpty) {
-                                    _searchInRoles.value = true;
-                                    _searchResultsRoles.value = userController
-                                        .roles
-                                        .where(
-                                            (role) => searchRoles(role, value))
-                                        .toList();
-                                  }
-                                },
-                                enabled: widget.editable,
-                                closeOnSelect: false,
-                                onChanged: (v) {
-                                  sendToRoles.clear();
-                                  sendToRoles.addAll(v);
-                                  _valuesChanged();
-                                },
-                                anchor: ShadAnchorAuto(
-                                  preferBelow: false,
-                                ),
-                                options: (_searchInRoles.value
-                                        ? _searchResultsRoles
-                                        : userController.roles)
-                                    .map(
-                                  (r) => ShadOption(
-                                    value: r,
-                                    child: Text(r.name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              color: AppColors
-                                                  .getRoleColorWithRole(r),
-                                            )),
+                              Obx(() {
+                                return ShadSelect<Role>.multipleWithSearch(
+                                  onSearchChanged: (value) {
+                                    _searchInRoles.value = false;
+                                    if (value.isNotEmpty) {
+                                      _searchInRoles.value = true;
+                                      _searchResultsRoles.value = userController
+                                          .roles
+                                          .where((role) =>
+                                              searchRoles(role, value))
+                                          .toList();
+                                    }
+                                  },
+                                  enabled: widget.editable,
+                                  closeOnSelect: false,
+                                  onChanged: (v) {
+                                    sendToRoles.clear();
+                                    sendToRoles.addAll(v);
+                                    _valuesChanged();
+                                  },
+                                  anchor: ShadAnchorAuto(
+                                    preferBelow: false,
                                   ),
-                                ),
-                                selectedOptionsBuilder: (context, values) =>
-                                    Container(
-                                  constraints: BoxConstraints(
-                                    minWidth: context.width,
+                                  options: (_searchInRoles.value
+                                          ? _searchResultsRoles
+                                          : userController.roles)
+                                      .map(
+                                    (r) => ShadOption(
+                                      value: r,
+                                      child: Text(r.name,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: AppColors
+                                                    .getRoleColorWithRole(r),
+                                              )),
+                                    ),
                                   ),
-                                  child: Column(
-                                    children: values
-                                        .map((role) => Text(
-                                              role.name,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.copyWith(
-                                                    color: AppColors
-                                                        .getRoleColorWithRole(
-                                                            role),
-                                                  ),
-                                            ))
-                                        .toList(),
-                                  ),
-                                ),
-                                initialValues: sendToRoles,
-                                placeholder: Container(
+                                  selectedOptionsBuilder: (context, values) =>
+                                      Container(
                                     constraints: BoxConstraints(
                                       minWidth: context.width,
                                     ),
-                                    child: Text(strings.value.selectRoles)),
-                              ),
+                                    child: Column(
+                                      children: values
+                                          .map((role) => Text(
+                                                role.name,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                      color: AppColors
+                                                          .getRoleColorWithRole(
+                                                              role),
+                                                    ),
+                                              ))
+                                          .toList(),
+                                    ),
+                                  ),
+                                  initialValues: sendToRoles,
+                                  placeholder: Container(
+                                      constraints: BoxConstraints(
+                                        minWidth: context.width,
+                                      ),
+                                      child: Text(strings.value.selectRoles)),
+                                );
+                              }),
                             ],
                           ),
                         ),
@@ -395,72 +404,74 @@ class _EmailScheduleFormState extends State<EmailScheduleForm> {
                               children: [
                                 Text(strings.value.sendThisAlertToUsers),
                                 SizedBox(height: AppSizes.sm),
-                                ShadSelect<User>.multipleWithSearch(
-                                  onSearchChanged: (value) {
-                                    _searchInUsers.value = false;
-                                    if (value.isNotEmpty) {
-                                      _searchInUsers.value = true;
-                                      _searchResultsUsers.value = _users
-                                          .where((element) =>
-                                              searchUsers(element, value))
-                                          .toList();
-                                    }
-                                  },
-                                  enabled: widget.editable,
-                                  onChanged: (v) {
-                                    sendToUsers.clear();
-                                    sendToUsers.addAll(v);
-                                    _valuesChanged();
-                                  },
-                                  closeOnSelect: false,
-                                  anchor: ShadAnchorAuto(
-                                    preferBelow: false,
-                                  ),
-                                  options: (_searchInUsers.value
-                                          ? _searchResultsUsers
-                                          : _users)
-                                      .map(
-                                    (user) => ShadOption(
-                                      value: user,
-                                      child: Text(getUserName(user),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                color: AppColors
-                                                    .getRoleColorWithRoleValue(
-                                                        user.role),
-                                              )),
+                                Obx(() {
+                                  return ShadSelect<User>.multipleWithSearch(
+                                    onSearchChanged: (value) {
+                                      _searchInUsers.value = false;
+                                      if (value.isNotEmpty) {
+                                        _searchInUsers.value = true;
+                                        _searchResultsUsers.value = _users
+                                            .where((element) =>
+                                                searchUsers(element, value))
+                                            .toList();
+                                      }
+                                    },
+                                    enabled: widget.editable,
+                                    onChanged: (v) {
+                                      sendToUsers.clear();
+                                      sendToUsers.addAll(v);
+                                      _valuesChanged();
+                                    },
+                                    closeOnSelect: false,
+                                    anchor: ShadAnchorAuto(
+                                      preferBelow: false,
                                     ),
-                                  ),
-                                  selectedOptionsBuilder: (context, values) =>
-                                      Container(
-                                    constraints: BoxConstraints(
-                                      minWidth: context.width,
+                                    options: (_searchInUsers.value
+                                            ? _searchResultsUsers
+                                            : _users)
+                                        .map(
+                                      (user) => ShadOption(
+                                        value: user,
+                                        child: Text(getUserName(user),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  color: AppColors
+                                                      .getRoleColorWithRoleValue(
+                                                          user.role),
+                                                )),
+                                      ),
                                     ),
-                                    child: Column(
-                                      children: values
-                                          .map((user) => Text(
-                                                getUserName(user),
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.copyWith(
-                                                      color: AppColors
-                                                          .getRoleColorWithRoleValue(
-                                                              user.role),
-                                                    ),
-                                              ))
-                                          .toList(),
-                                    ),
-                                  ),
-                                  initialValues: sendToUsers,
-                                  placeholder: Container(
+                                    selectedOptionsBuilder: (context, values) =>
+                                        Container(
                                       constraints: BoxConstraints(
                                         minWidth: context.width,
                                       ),
-                                      child: Text(strings.value.selectUsers)),
-                                ),
+                                      child: Column(
+                                        children: values
+                                            .map((user) => Text(
+                                                  getUserName(user),
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                        color: AppColors
+                                                            .getRoleColorWithRoleValue(
+                                                                user.role),
+                                                      ),
+                                                ))
+                                            .toList(),
+                                      ),
+                                    ),
+                                    initialValues: sendToUsers,
+                                    placeholder: Container(
+                                        constraints: BoxConstraints(
+                                          minWidth: context.width,
+                                        ),
+                                        child: Text(strings.value.selectUsers)),
+                                  );
+                                }),
                               ],
                             ),
                           ),

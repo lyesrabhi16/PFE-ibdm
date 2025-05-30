@@ -44,7 +44,7 @@ class User {
   final List<UserSerializerWithSuperiors> superiors;
   final List<UserSerializerWithSubordinates> subordinates;
 
-  /// Specific permissions for this user.
+  /// Permissions spÃ©cifiques Ã  cet utilisateur.
   @JsonKey(name: 'user_permissions')
   final List<int> userPermissions;
   @JsonKey(name: 'is_admin')

@@ -233,7 +233,7 @@ class sentEmail(models.Model):
             return f"unknown email type with id: {self.pk}"
 
 class AlertEmail(models.Model):
-    monitored_value = models.CharField(max_length=255,choices=ALL_MONITORED_VALUES, unique=True)
+    monitored_value = models.CharField(max_length=255,choices=ALL_MONITORED_VALUES)
     monitor_type = models.CharField(max_length=255, choices=[('ASC', 'ASC'), ('DESC','DESC')], default='DESC')
     danger_point = models.FloatField(default=10)
     warning_point = models.FloatField(default=25)

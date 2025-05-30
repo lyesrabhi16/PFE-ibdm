@@ -238,26 +238,34 @@ class _ResponsiveAppBarState extends State<ResponsiveAppBar> {
                   }),
                 );
               },
-              child: IconButton(
-                onPressed: () {
-                  _popoverController.toggle();
-                },
-                icon: CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.grey[300],
-                  backgroundImage: (widget.userImage.isNotEmpty)
-                      ? NetworkImage(widget.userImage)
-                      : null,
-                  child: (widget.userImage.isNotEmpty)
-                      ? null
-                      : ShadAvatar(
-                          LucideIcons.circleUserRound,
-                          fit: BoxFit.cover,
-                          backgroundColor: userController.user != null
-                              ? AppColors.getRoleColorWithRoleValue(
-                                  userController.user!.role)
-                              : null,
-                        ),
+              child: ShadTooltip(
+                builder: (context) => Text(
+                  getUserName(userController.user!),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    _popoverController.toggle();
+                  },
+                  icon: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.grey[300],
+                    backgroundImage: (widget.userImage.isNotEmpty)
+                        ? NetworkImage(widget.userImage)
+                        : null,
+                    child: (widget.userImage.isNotEmpty)
+                        ? null
+                        : ShadAvatar(
+                            LucideIcons.circleUserRound,
+                            fit: BoxFit.cover,
+                            backgroundColor: userController.user != null
+                                ? AppColors.getRoleColorWithRoleValue(
+                                    userController.user!.role)
+                                : null,
+                          ),
+                  ),
                 ),
               ),
             ),
