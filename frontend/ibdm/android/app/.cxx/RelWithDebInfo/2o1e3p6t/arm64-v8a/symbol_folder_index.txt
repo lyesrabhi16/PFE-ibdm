@@ -1,0 +1,1 @@
+D:\studies\projects\PFE-IBDM-DEPLOY\PFE-ibdm-1\frontend\ibdm\build\app\intermediates\cxx\RelWithDebInfo\2o1e3p6t\obj\arm64-v8a
