@@ -12,7 +12,7 @@ from api_v1.utils import filter_by_fetch_type
 from .utils import get_co2_consommation
 from api_v1.constants import ErrorCodes
 from .serializers import Co2MultiMetaConsommationsSerializer
-
+from api_v1.permissions import WithPermission, WithAnyPermissionOf
 
 @extend_schema(tags=["Utilite"])
 @with_operation_ids(
@@ -23,7 +23,7 @@ from .serializers import Co2MultiMetaConsommationsSerializer
 class Co2IfruitViewset(viewsets.ReadOnlyModelViewSet):
     queryset = Co2Ifruit.objects.all()
     serializer_class = Co2IfruitSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_co2_page")]
 
 
 @extend_schema(tags=["Utilite"])
@@ -35,7 +35,7 @@ class Co2IfruitViewset(viewsets.ReadOnlyModelViewSet):
 class UtiliteViewset(viewsets.ReadOnlyModelViewSet):
     queryset = Utilite.objects.all()
     serializer_class = UtiliteSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_utilite_page")]
 
 
 
@@ -87,7 +87,7 @@ class UtiliteViewset(viewsets.ReadOnlyModelViewSet):
     ]
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_co2_page")])
 def getCo2IfruitAtSpecificTime(request):
     """
     getCo2IfruitAtSpecificTime
@@ -167,7 +167,7 @@ def getCo2IfruitAtSpecificTime(request):
     ]
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_utilite_page")])
 def getUtiliteAtSpecificTime(request):
     """
     getUtiliteAtSpecificTime
@@ -205,7 +205,7 @@ def getUtiliteAtSpecificTime(request):
     },
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithAnyPermissionOf(["can_view_utilite_page", "can_view_co2_page"])])
 def getUtiliteMetaData(request):
     co2_ifruit_first = Co2Ifruit.objects.first()
     co2_ifruit_last = Co2Ifruit.objects.last()
@@ -271,7 +271,7 @@ def getUtiliteMetaData(request):
     ]
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_co2_page")])
 def getCo2IfruitConsommation(request):
     """
     getCo2IfruitConsommation
@@ -341,7 +341,7 @@ class UtiliteListView(viewsets.ReadOnlyModelViewSet):
     queryset = Utilite.objects.all()
     serializer_class = UtiliteSerializer
     
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_utilite_page")]
 
     def get_queryset(self):
 
@@ -405,7 +405,7 @@ class CO2ListView(viewsets.ReadOnlyModelViewSet):
     queryset = Co2Ifruit.objects.all()
     serializer_class = Co2IfruitSerializer
     
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_co2_page")]
 
     def get_queryset(self):
 
@@ -456,7 +456,7 @@ class CO2ListView(viewsets.ReadOnlyModelViewSet):
     ]
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_co2_page")])
 def getCo2ConsommationBetweenDates(request):
     """
     getCo2ConsommationBetweenDates

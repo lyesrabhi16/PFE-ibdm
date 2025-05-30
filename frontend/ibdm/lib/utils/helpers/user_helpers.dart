@@ -24,10 +24,10 @@ String getUserName(User user, {bool orEmail = true}) {
 }
 
 bool searchUsers(User element, String value) {
-  return element.email.contains(value) ||
-      element.firstName.contains(value) ||
-      element.lastName.contains(value) ||
-      element.username.contains(value);
+  return element.email.toLowerCase().contains(value.toLowerCase()) ||
+      element.firstName.toLowerCase().contains(value.toLowerCase()) ||
+      element.lastName.toLowerCase().contains(value.toLowerCase()) ||
+      element.username.toLowerCase().contains(value.toLowerCase());
 }
 
 bool searchRoles(Role role, String value) {

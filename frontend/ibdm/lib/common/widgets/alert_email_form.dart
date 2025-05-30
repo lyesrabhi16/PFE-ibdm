@@ -200,87 +200,96 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                   label: Text(strings.value.id),
                 ),
               SizedBox(height: AppSizes.sm),
-              Container(
-                constraints: BoxConstraints(
-                  minWidth: context.width,
-                ),
-                child: ShadSelectFormField<String>.withSearch(
-                  enabled: widget.editable,
-                  validator: (v) => AppValidators.monitoredValueValidator(v),
-                  label: Text(strings.value.monitoredValue),
-                  options: _searchInMonitorValues.value
-                      ? _searchResultsMonitorValues.map(
-                          (value) => ShadOption(
-                            value: value,
-                            child: Text(value),
+              ShadTooltip(
+                builder: (context) =>
+                    Text(strings.value.monitoredValueDescription),
+                child: Container(
+                  constraints: BoxConstraints(
+                    minWidth: context.width,
+                  ),
+                  child: ShadSelectFormField<String>.withSearch(
+                    enabled: widget.editable,
+                    validator: (v) => AppValidators.monitoredValueValidator(v),
+                    label: Text(strings.value.monitoredValue),
+                    options: _searchInMonitorValues.value
+                        ? _searchResultsMonitorValues.map(
+                            (value) => ShadOption(
+                              value: value,
+                              child: Text(value),
+                            ),
+                          )
+                        : _possibleMonitorValues.map(
+                            (value) => ShadOption(
+                              value: value,
+                              child: Text(value),
+                            ),
                           ),
-                        )
-                      : _possibleMonitorValues.map(
-                          (value) => ShadOption(
-                            value: value,
-                            child: Text(value),
-                          ),
+                    selectedOptionBuilder: (context, value) => Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
                         ),
-                  selectedOptionBuilder: (context, value) => Container(
-                      constraints: BoxConstraints(
-                        minWidth: context.width,
-                      ),
-                      child: Text(value)),
-                  initialValue: widget.alert?.monitoredValue.json,
-                  onChanged: (v) {
-                    monitoredValueController.text = v!;
-                    _valuesChanged();
-                  },
-                  placeholder: Container(
-                      constraints: BoxConstraints(
-                        minWidth: context.width,
-                      ),
-                      child: Text(strings.value.selectAValueToMonitor)),
-                  onSearchChanged: (String value) {
-                    _searchInMonitorValues.value = false;
-                    if (value.isNotEmpty) {
-                      _searchInMonitorValues.value = true;
-                      _searchResultsMonitorValues.value = _possibleMonitorValues
-                          .where((element) => element.contains(value))
-                          .toList();
-                    }
-                  },
+                        child: Text(value)),
+                    initialValue: widget.alert?.monitoredValue.json,
+                    onChanged: (v) {
+                      monitoredValueController.text = v!;
+                      _valuesChanged();
+                    },
+                    placeholder: Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
+                        ),
+                        child: Text(strings.value.selectAValueToMonitor)),
+                    onSearchChanged: (String value) {
+                      _searchInMonitorValues.value = false;
+                      if (value.isNotEmpty) {
+                        _searchInMonitorValues.value = true;
+                        _searchResultsMonitorValues.value =
+                            _possibleMonitorValues
+                                .where((element) => element.contains(value))
+                                .toList();
+                      }
+                    },
+                  ),
                 ),
               ),
               SizedBox(height: AppSizes.sm),
-              Container(
-                constraints: BoxConstraints(
-                  minWidth: context.width,
-                ),
-                child: ShadSelectFormField<String>(
-                  enabled: widget.editable,
-                  validator: FormBuilderValidators.required(
-                    errorText: strings.value.requiredField,
+              ShadTooltip(
+                builder: (context) =>
+                    Text(strings.value.monitorTypeDescription),
+                child: Container(
+                  constraints: BoxConstraints(
+                    minWidth: context.width,
                   ),
-                  label: Text(strings.value.monitorType),
-                  options: MonitorTypeEnum.values
-                      .where((mt) => mt != MonitorTypeEnum.$unknown)
-                      .map(
-                        (value) => ShadOption(
-                          value: value.json,
-                          child: Text(value.json!),
+                  child: ShadSelectFormField<String>(
+                    enabled: widget.editable,
+                    validator: FormBuilderValidators.required(
+                      errorText: strings.value.requiredField,
+                    ),
+                    label: Text(strings.value.monitorType),
+                    options: MonitorTypeEnum.values
+                        .where((mt) => mt != MonitorTypeEnum.$unknown)
+                        .map(
+                          (value) => ShadOption(
+                            value: value.json,
+                            child: Text(value.json!),
+                          ),
                         ),
-                      ),
-                  selectedOptionBuilder: (context, value) => Container(
-                      constraints: BoxConstraints(
-                        minWidth: context.width,
-                      ),
-                      child: Text(value)),
-                  initialValue: widget.alert?.monitorType!.json,
-                  onChanged: (v) {
-                    monitorTypeController.text = v!;
-                    _valuesChanged();
-                  },
-                  placeholder: Container(
-                      constraints: BoxConstraints(
-                        minWidth: context.width,
-                      ),
-                      child: Text(strings.value.selectAMonitorType)),
+                    selectedOptionBuilder: (context, value) => Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
+                        ),
+                        child: Text(value)),
+                    initialValue: widget.alert?.monitorType!.json,
+                    onChanged: (v) {
+                      monitorTypeController.text = v!;
+                      _valuesChanged();
+                    },
+                    placeholder: Container(
+                        constraints: BoxConstraints(
+                          minWidth: context.width,
+                        ),
+                        child: Text(strings.value.selectAMonitorType)),
+                  ),
                 ),
               ),
               SizedBox(height: AppSizes.sm),
@@ -312,32 +321,52 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                 },
               ),
               SizedBox(height: AppSizes.sm),
-              ShadInputFormField(
-                enabled: widget.editable,
-                controller: dangerAlertIntervalController,
-                validator: FormBuilderValidators.numeric(
-                  errorText: strings.value.enterAValidInteger,
+              ShadTooltip(
+                builder: (context) =>
+                    Text(strings.value.dangerAlertIntervalDescription),
+                child: ShadInputFormField(
+                  enabled: widget.editable,
+                  controller: dangerAlertIntervalController,
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.integer(
+                      errorText: strings.value.enterAValidInteger,
+                    ),
+                    FormBuilderValidators.min(
+                      0,
+                      errorText: strings.value.min(0),
+                    ),
+                  ]),
+                  label: Text(strings.value.dangerAlertIntervalInDays),
+                  keyboardType: TextInputType.number,
+                  initialValue: "1",
+                  onChanged: (v) => {
+                    _valuesChanged(),
+                  },
                 ),
-                label: Text(strings.value.dangerAlertIntervalInDays),
-                keyboardType: TextInputType.number,
-                initialValue: "1",
-                onChanged: (v) => {
-                  _valuesChanged(),
-                },
               ),
               SizedBox(height: AppSizes.sm),
-              ShadInputFormField(
-                enabled: widget.editable,
-                controller: warningAlertIntervalController,
-                validator: FormBuilderValidators.numeric(
-                  errorText: strings.value.enterAValidInteger,
+              ShadTooltip(
+                builder: (context) =>
+                    Text(strings.value.warningAlertIntervalDescription),
+                child: ShadInputFormField(
+                  enabled: widget.editable,
+                  controller: warningAlertIntervalController,
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.integer(
+                      errorText: strings.value.enterAValidInteger,
+                    ),
+                    FormBuilderValidators.min(
+                      0,
+                      errorText: strings.value.min(0),
+                    ),
+                  ]),
+                  label: Text(strings.value.warningAlertIntervalInDays),
+                  keyboardType: TextInputType.number,
+                  initialValue: "7",
+                  onChanged: (v) => {
+                    _valuesChanged(),
+                  },
                 ),
-                label: Text(strings.value.warningAlertIntervalInDays),
-                keyboardType: TextInputType.number,
-                initialValue: "7",
-                onChanged: (v) => {
-                  _valuesChanged(),
-                },
               ),
               SizedBox(height: AppSizes.sm),
               // tab panes to send based on users or roles
@@ -357,73 +386,75 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                           children: [
                             Text(strings.value.sendThisAlertToRoles),
                             SizedBox(height: AppSizes.sm),
-                            ShadSelect<Role>.multipleWithSearch(
-                              onSearchChanged: (value) {
-                                _searchInRoles.value = false;
-                                if (value.isNotEmpty) {
-                                  _searchInRoles.value = true;
-                                  _searchResultsRoles.value = userController
-                                      .roles
-                                      .where((element) =>
-                                          searchRoles(element, value))
-                                      .toList();
-                                }
-                              },
-                              enabled: widget.editable,
-                              closeOnSelect: false,
-                              onChanged: (v) {
-                                sendToRoles.clear();
-                                sendToRoles.addAll(v);
-                                _valuesChanged();
-                              },
-                              anchor: ShadAnchorAuto(
-                                preferBelow: false,
-                              ),
-                              options: (_searchInMonitorValues.value
-                                      ? _searchResultsRoles
-                                      : userController.roles)
-                                  .map(
-                                (r) => ShadOption(
-                                  value: r,
-                                  child: Text(r.name,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color:
-                                                AppColors.getRoleColorWithRole(
-                                                    r),
-                                          )),
+                            Obx(() {
+                              return ShadSelect<Role>.multipleWithSearch(
+                                onSearchChanged: (value) {
+                                  _searchInRoles.value = false;
+                                  if (value.isNotEmpty) {
+                                    _searchInRoles.value = true;
+                                    _searchResultsRoles.value = userController
+                                        .roles
+                                        .where((element) =>
+                                            searchRoles(element, value))
+                                        .toList();
+                                  }
+                                },
+                                enabled: widget.editable,
+                                closeOnSelect: false,
+                                onChanged: (v) {
+                                  sendToRoles.clear();
+                                  sendToRoles.addAll(v);
+                                  _valuesChanged();
+                                },
+                                anchor: ShadAnchorAuto(
+                                  preferBelow: false,
                                 ),
-                              ),
-                              selectedOptionsBuilder: (context, values) =>
-                                  Container(
-                                constraints: BoxConstraints(
-                                  minWidth: context.width,
+                                clearSearchOnClose: false,
+                                options: (_searchInRoles.value
+                                        ? _searchResultsRoles
+                                        : userController.roles)
+                                    .map(
+                                  (r) => ShadOption(
+                                    value: r,
+                                    child: Text(r.name,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              color: AppColors
+                                                  .getRoleColorWithRole(r),
+                                            )),
+                                  ),
                                 ),
-                                child: Column(
-                                  children: values
-                                      .map((role) => Text(
-                                            role.name,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.copyWith(
-                                                  color: AppColors
-                                                      .getRoleColorWithRole(
-                                                          role),
-                                                ),
-                                          ))
-                                      .toList(),
-                                ),
-                              ),
-                              initialValues: sendToRoles,
-                              placeholder: Container(
+                                selectedOptionsBuilder: (context, values) =>
+                                    Container(
                                   constraints: BoxConstraints(
                                     minWidth: context.width,
                                   ),
-                                  child: Text(strings.value.selectRoles)),
-                            ),
+                                  child: Column(
+                                    children: values
+                                        .map((role) => Text(
+                                              role.name,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium
+                                                  ?.copyWith(
+                                                    color: AppColors
+                                                        .getRoleColorWithRole(
+                                                            role),
+                                                  ),
+                                            ))
+                                        .toList(),
+                                  ),
+                                ),
+                                initialValues: sendToRoles,
+                                placeholder: Container(
+                                    constraints: BoxConstraints(
+                                      minWidth: context.width,
+                                    ),
+                                    child: Text(strings.value.selectRoles)),
+                              );
+                            }),
                           ],
                         ),
                       ),
@@ -436,72 +467,74 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                             children: [
                               Text(strings.value.sendThisAlertToUsers),
                               SizedBox(height: AppSizes.sm),
-                              ShadSelect<User>.multipleWithSearch(
-                                onSearchChanged: (value) {
-                                  _searchInUsers.value = false;
-                                  if (value.isNotEmpty) {
-                                    _searchInUsers.value = true;
-                                    _searchResultsUsers.value = _users
-                                        .where((element) =>
-                                            searchUsers(element, value))
-                                        .toList();
-                                  }
-                                },
-                                enabled: widget.editable,
-                                onChanged: (v) {
-                                  sendToUsers.clear();
-                                  sendToUsers.addAll(v);
-                                  _valuesChanged();
-                                },
-                                closeOnSelect: false,
-                                anchor: ShadAnchorAuto(
-                                  preferBelow: false,
-                                ),
-                                options: (_searchInUsers.value
-                                        ? _searchResultsUsers
-                                        : _users)
-                                    .map(
-                                  (user) => ShadOption(
-                                    value: user,
-                                    child: Text(getUserName(user),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              color: AppColors
-                                                  .getRoleColorWithRoleValue(
-                                                      user.role),
-                                            )),
+                              Obx(() {
+                                return ShadSelect<User>.multipleWithSearch(
+                                  onSearchChanged: (value) {
+                                    _searchInUsers.value = false;
+                                    if (value.isNotEmpty) {
+                                      _searchInUsers.value = true;
+                                      _searchResultsUsers.value = _users
+                                          .where((element) =>
+                                              searchUsers(element, value))
+                                          .toList();
+                                    }
+                                  },
+                                  enabled: widget.editable,
+                                  onChanged: (v) {
+                                    sendToUsers.clear();
+                                    sendToUsers.addAll(v);
+                                    _valuesChanged();
+                                  },
+                                  closeOnSelect: false,
+                                  anchor: ShadAnchorAuto(
+                                    preferBelow: false,
                                   ),
-                                ),
-                                selectedOptionsBuilder: (context, values) =>
-                                    Container(
-                                  constraints: BoxConstraints(
-                                    minWidth: context.width,
+                                  options: (_searchInUsers.value
+                                          ? _searchResultsUsers
+                                          : _users)
+                                      .map(
+                                    (user) => ShadOption(
+                                      value: user,
+                                      child: Text(getUserName(user),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: AppColors
+                                                    .getRoleColorWithRoleValue(
+                                                        user.role),
+                                              )),
+                                    ),
                                   ),
-                                  child: Column(
-                                    children: values
-                                        .map((user) => Text(
-                                              getUserName(user),
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.copyWith(
-                                                    color: AppColors
-                                                        .getRoleColorWithRoleValue(
-                                                            user.role),
-                                                  ),
-                                            ))
-                                        .toList(),
-                                  ),
-                                ),
-                                initialValues: sendToUsers,
-                                placeholder: Container(
+                                  selectedOptionsBuilder: (context, values) =>
+                                      Container(
                                     constraints: BoxConstraints(
                                       minWidth: context.width,
                                     ),
-                                    child: Text(strings.value.selectUsers)),
-                              ),
+                                    child: Column(
+                                      children: values
+                                          .map((user) => Text(
+                                                getUserName(user),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                      color: AppColors
+                                                          .getRoleColorWithRoleValue(
+                                                              user.role),
+                                                    ),
+                                              ))
+                                          .toList(),
+                                    ),
+                                  ),
+                                  initialValues: sendToUsers,
+                                  placeholder: Container(
+                                      constraints: BoxConstraints(
+                                        minWidth: context.width,
+                                      ),
+                                      child: Text(strings.value.selectUsers)),
+                                );
+                              }),
                             ],
                           ),
                         ),
@@ -547,7 +580,7 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
       final res = await api!.getPossibleMonitorValuesAlertEmails();
       _possibleMonitorValues = [
         widget.alert?.monitoredValue.json,
-        ...res.possibleValues
+        ...res.allValues
       ].nonNulls.toList();
       _possibleMonitorValues.sort();
     } catch (e) {

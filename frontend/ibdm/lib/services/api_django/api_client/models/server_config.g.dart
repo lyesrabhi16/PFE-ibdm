@@ -33,10 +33,10 @@ ServerConfig _$ServerConfigFromJson(Map<String, dynamic> json) => ServerConfig(
         (k, e) =>
             MapEntry(k, EmailProviderConf.fromJson(e as Map<String, dynamic>)),
       ),
-      dataStoppedWaitSeconds:
-          (json['DATA_STOPPED_WAIT_SECONDS'] as num?)?.toInt() ?? 600,
       logSizeLimit: (json['LOG_SIZE_LIMIT'] as num?)?.toInt() ?? 100,
       countOFLogsTOKeep: (json['COUNT_OF_LOGS_TO_KEEP'] as num?)?.toInt() ?? 10,
+      dataStoppedWaitSeconds:
+          (json['DATA_STOPPED_WAIT_SECONDS'] as num?)?.toInt() ?? 600,
     );
 
 Map<String, dynamic> _$ServerConfigToJson(ServerConfig instance) =>
@@ -50,10 +50,10 @@ Map<String, dynamic> _$ServerConfigToJson(ServerConfig instance) =>
       'LOG_TO_FILES': instance.logTOFiles,
       'SERVER_DB_CONNECTION_CHECK_TIMEOUT':
           instance.serverDBConnectionCheckTimeout,
-      'DATA_STOPPED_WAIT_SECONDS': instance.dataStoppedWaitSeconds,
       'REDIS_DB': instance.redisDB,
       'DATABASES': instance.databases,
       'EMAIL_PROVIDERS': instance.emailProviders,
       'LOG_SIZE_LIMIT': instance.logSizeLimit,
       'COUNT_OF_LOGS_TO_KEEP': instance.countOFLogsTOKeep,
+      'DATA_STOPPED_WAIT_SECONDS': instance.dataStoppedWaitSeconds,
     };

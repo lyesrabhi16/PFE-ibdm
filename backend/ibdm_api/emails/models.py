@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils.translation import gettext_lazy as _
 
 CUSTOM_MONITORED_VALUES = {
     "sucre.stopped": (),
@@ -210,6 +210,10 @@ class EmailSchedule(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        verbose_name = _("Rapport Cyclique")
+        verbose_name_plural = _("Rapports Cycliques")
+
     def __str__(self):
         return f"{self.pk} {self.rapport} - {self.temps_envoi} - {self.interval}"
 
@@ -218,7 +222,6 @@ class sentEmail(models.Model):
     receptionist = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="sent_email_to")
     schedule = models.ForeignKey(EmailSchedule, on_delete=models.CASCADE, related_name="sent_email_schedule", blank=True, null=True)
     alert = models.ForeignKey("emails.SentAlertEmail", on_delete=models.CASCADE, related_name="sent_email_alert_meta", blank=True, null=True)
-
 
 
     def __str__(self):
@@ -230,7 +233,7 @@ class sentEmail(models.Model):
             return f"unknown email type with id: {self.pk}"
 
 class AlertEmail(models.Model):
-    monitored_value = models.CharField(max_length=255,choices=ALL_MONITORED_VALUES, unique=True)
+    monitored_value = models.CharField(max_length=255,choices=ALL_MONITORED_VALUES)
     monitor_type = models.CharField(max_length=255, choices=[('ASC', 'ASC'), ('DESC','DESC')], default='DESC')
     danger_point = models.FloatField(default=10)
     warning_point = models.FloatField(default=25)
@@ -243,6 +246,9 @@ class AlertEmail(models.Model):
     send_to_roles = models.ManyToManyField("users.Role", related_name="roles", blank=True, null=True)
     enabled = models.BooleanField(default=True, blank=True)
 
+    class Meta:
+        verbose_name = _("Alerte")
+        verbose_name_plural = _("Alertes")
     def __str__(self) -> str:
         return f"ALERT: {self.monitored_value} - danger: {self.danger_point} - warning: {self.warning_point}"
 

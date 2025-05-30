@@ -14,6 +14,7 @@ import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
+import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
@@ -160,11 +161,11 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
                               controller: _searchController,
                               onSubmitted: (_) =>
                                   _searchController.text != prevSearch
-                                      ? _loadSents()
+                                      ? {page = 1, _loadSents()}
                                       : null,
                               onTapOutside: (_) =>
                                   _searchController.text != prevSearch
-                                      ? _loadSents()
+                                      ? {page = 1, _loadSents()}
                                       : null,
                               constraints: BoxConstraints(
                                 maxWidth: 200,
@@ -665,6 +666,11 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
     if (loaded.value) {
       loaded.value = false;
     }
+    // use stored perPage if it exists
+    int? perPageInStorage = await LocalStorage.getPerPage();
+    if (perPageInStorage != null) {
+      _perPageController.text = perPageInStorage.toString();
+    }
     api ??= await ApiClientInstance.getApiClient();
     await _loadSents();
     connectToEmailBroadcast();
@@ -730,13 +736,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
   _getRows() {
     final strings = getTranslations(context).obs;
     return sents.map((e) {
-      final _color = e.schedule != null
-          ? colorScheme.secondary
-          : e.alert != null
-              ? (e.alert!.alertType.json == AlertTypeEnum.danger.json)
-                  ? errorColor
-                  : Colors.orange
-              : null;
+      final _color = AppColors.getEmailColor(context, e);
 
       return DataRow2(
         color: WidgetStateProperty.fromMap({
@@ -894,10 +894,12 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
             if (emailTypeFilter == value) {
               emailTypeFilterController.clear();
               emailTypeFilter = null;
+              page = 1;
               _loadSents();
               return;
             }
             emailTypeFilter = value;
+            page = 1;
             _loadSents();
           },
           dropdownMenuEntries: [
@@ -1248,6 +1250,7 @@ showViewSentEmailDialog(
           //ScheduleEmailForm
           sent: sent,
           alert: sent.alert?.alert,
+          alertMeta: sent.alert,
           schedule: sent.schedule,
           editable: false,
           showIdField: true,

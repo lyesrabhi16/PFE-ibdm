@@ -86,4 +86,14 @@ class AppColors {
     return invertColorIfNeeded(
         roleObj != null ? getRoleColorWithRole(roleObj) : Colors.grey);
   }
+
+  static Color? getEmailColor(BuildContext context, SentEmail e) {
+    return e.schedule != null
+        ? Theme.of(context).colorScheme.secondary
+        : e.alert != null
+            ? (e.alert!.alertType.json == AlertTypeEnum.danger.json)
+                ? errorColor
+                : Colors.orange
+            : null;
+  }
 }

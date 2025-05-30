@@ -24,6 +24,7 @@ from .serializers import (
 from rest_framework.decorators import api_view, permission_classes
 from logs.logging import logger as logging
 from rest_framework import serializers
+from api_v1.permissions import WithPermission
 
 User = get_user_model()
 
@@ -75,31 +76,11 @@ class UserViewSet(viewsets.ModelViewSet):
     filterset_fields = ["role"]
     search_fields = ["username", "email", "first_name", "last_name"]
     ordering_fields = ["id","username", "email", "first_name", "last_name", "role"]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_users_page", allow_if_safe_methods=True)]
 
     def get_queryset(self):
-        qs = super().get_queryset()
-
-        if (self.request.user.is_superuser or self.request.user.is_admin):
-            return qs
-
-        # traverse the subordinate and superior relationship to get all subordinates of the user
-        # and their subordinates
-        # if the user has no subordinates, return an empty queryset
-        def traverse_tree(user):
-            sub_sup = SubordinateAndSuperior.objects.filter(superior=user)
-            if sub_sup.exists():
-                subordinates = {s.subordinate for s in sub_sup}
-                for s in sub_sup:    
-                  subordinates = subordinates.union(traverse_tree(s.subordinate))
-                return subordinates
-            return set()
-
-        subordinates = traverse_tree(self.request.user)
-        if len(subordinates) > 0:
-            qs = qs.filter(id__in=[u.id for u in subordinates])
-            return qs
-        return qs.none()
+        return getUsersQueryset(self.request.user)
+    
     
     def check(self, serializer):
         if self.request.user.is_superuser or self.request.user.is_admin or self.request.user.role.group.name == "ADMIN_SYSTEM" or self.request.user.groups.filter(name="ADMIN_SYSTEM").exists():
@@ -144,7 +125,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     queryset = Group.objects.all().order_by("name")
     serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_groups_page", allow_if_safe_methods=True)]
 
 @with_operation_ids(
     on_list="getRoles",
@@ -162,7 +143,7 @@ class RoleViewSet(viewsets.ModelViewSet):
     """
     queryset = Role.objects.all().order_by("group__name")
     serializer_class = RoleSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_roles_page", allow_if_safe_methods=True)]
 
     def get_extra_action_url_map(self):
         logging.info("Extra action url map", super().get_extra_action_url_map())
@@ -184,7 +165,7 @@ class PermissionViewSet(viewsets.ModelViewSet):
 
     queryset = Permission.objects.all().order_by("name")
     serializer_class = PermissionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("superuser", allow_if_safe_methods=True)]
 
 @with_operation_ids(
     on_list="getSubordinatesAndSuperiors",
@@ -206,7 +187,7 @@ class SubordinateAndSuperiorViewSet(viewsets.ModelViewSet):
     404: ErrorResponseSerializer,
 })
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_users_page", allow_if_safe_methods=True)])
 def getSubordinateAndSuperiorId(request, subordinate, superior):
     """
     Get the id of the SubordinateAndSuperior object that links the current user to their superior
@@ -236,3 +217,33 @@ def getAllUserPerms(request: Request):
     return JsonResponse(UserPermsSerializer({
         "perms": perms
     }).data, status=200)
+
+
+def getUsersQueryset(user, inlcude_inactive=False):
+    """
+    Get the queryset of users that the current user can view.
+    If the user is a superuser or has admin permissions, return all users.
+    Otherwise, return only users that are managed by the user's role.
+    """
+    qs = User.objects.all().order_by("id") if inlcude_inactive else User.objects.filter(is_active=True).order_by("id")
+
+    if (user.is_superuser):
+        return qs
+
+    # traverse the subordinate and superior relationship to get all subordinates of the user
+    # and their subordinates
+    # if the user has no subordinates, return an empty queryset
+    def traverse_tree(user):
+        sub_sup = SubordinateAndSuperior.objects.filter(superior=user)
+        if sub_sup.exists():
+            subordinates = {s.subordinate for s in sub_sup}
+            for s in sub_sup:    
+                subordinates = subordinates.union(traverse_tree(s.subordinate))
+            return subordinates
+        return set()
+
+    subordinates = traverse_tree(user)
+    if len(subordinates) > 0:
+        qs = qs.filter(id__in=[u.id for u in subordinates])
+        return qs
+    return qs.none()

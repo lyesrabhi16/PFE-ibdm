@@ -17,6 +17,8 @@ from api_v1.emails.rapports.utilite import rapport_utilite
 from api_v1.emails.rapports.filtration import rapport_filtration
 from api_v1.emails.rapports.co2 import rapport_co2
 from rest_framework.decorators import api_view, permission_classes
+from api_v1.permissions import OnlyAccessibleReports
+
 @extend_schema(
     tags=["Reports"],
     summary="Get reports",
@@ -71,7 +73,7 @@ from rest_framework.decorators import api_view, permission_classes
     on_list="getReports",
 )
 class ReportsViewSet(viewsets.ViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, OnlyAccessibleReports]
     pagination_class = CustomPagination
     
     def list(self, request: Request):
@@ -228,7 +230,7 @@ class ReportsViewSet(viewsets.ViewSet):
     },
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, OnlyAccessibleReports])
 def generateReport(request: Request):
     """
     Generate a report based on the provided date
