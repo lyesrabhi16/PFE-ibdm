@@ -28,7 +28,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Function? _getContext;
-  BuildContext get getContext => _getContext!.call()!;
+
+  BuildContext get context => _getContext!.call()!;
 
   @override
   Widget build(BuildContext context) {
@@ -40,28 +41,48 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   final formKeyAddUser = GlobalKey<FormState>();
+
   final addUserEmailController = TextEditingController();
+
   final addUserNameController = TextEditingController();
+
   final addUserPasswordController = TextEditingController();
+
   final addUserPhoneController = TextEditingController();
+
   final addUserSuperiorOptions = <ShadOption<User>>[].obs;
+
   final addFirstNameController = TextEditingController();
+
   final addLastNameController = TextEditingController();
 
   final UserController userController = Get.find<UserController>();
+
   final _loadedUserSuperiorOptions = false.obs;
+
   final _editable = false.obs;
 
   String? email;
+
   String? username;
+
   String? password;
+
   String? phone;
+
   Role? role;
+
   User? superior;
+
   String? firstName;
+
   String? lastName;
+
   Uint8List? avatarBytes;
+
   File? avatarFile;
+
+  bool initiallized = false;
 
   _buildBody() {
     final strings = getTranslations(context).obs;
@@ -71,11 +92,13 @@ class _ProfilePageState extends State<ProfilePage> {
     addFirstNameController.text = userController.user?.firstName ?? "";
     addLastNameController.text = userController.user?.lastName ?? "";
     return Container(
+      key: ValueKey("profile_page_container"),
       constraints: BoxConstraints(
         minHeight: 600,
       ),
       child: Obx(() {
         return Column(
+          key: ValueKey("profile_page"),
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -114,114 +137,120 @@ class _ProfilePageState extends State<ProfilePage> {
                         }
                         logger.f(
                             "superior options: ${addUserSuperiorOptions.length}");
-                        return Column(
-                          children: [
-                            UserForm(
-                              editable: _editable.value,
-                              showPlaceHolders: false,
-                              showRole:
-                                  userController.user!.role == "ADMIN_SYSTEM" ||
-                                      !_editable.value,
-                              showSuperior:
-                                  userController.user!.role == "ADMIN_SYSTEM" ||
-                                      !_editable.value,
-                              role: role,
-                              user: userController.user,
-                              formKeyAddUser: formKeyAddUser,
-                              addUserEmailController: addUserEmailController,
-                              addUserNameController: addUserNameController,
-                              addUserPasswordController:
-                                  addUserPasswordController,
-                              addUserPhoneController: addUserPhoneController,
-                              addUserSuperiorOptions: addUserSuperiorOptions,
-                              addFirstNameController: addFirstNameController,
-                              addLastNameController: addLastNameController,
-                              onAddUser: (email,
-                                      username,
-                                      password,
-                                      phone,
-                                      role,
-                                      superior,
-                                      firstName,
-                                      lastName,
-                                      avatarBytes,
-                                      avatarFile) =>
-                                  {
-                                this.email = email,
-                                this.username = username,
-                                this.password = password,
-                                this.phone = phone,
-                                this.role = role,
-                                this.superior = superior,
-                                this.firstName = firstName,
-                                this.lastName = lastName,
-                                this.avatarBytes = avatarBytes,
-                                this.avatarFile = avatarFile
-                              },
-                            ),
-                            // Buttons
-                            Wrap(
-                              children: [
-                                ShadButton(
-                                  icon: Icon(
-                                    _editable.value
-                                        ? Icons.edit_off
-                                        : Icons.edit,
-                                    size: AppSizes.md,
-                                  ),
-                                  onPressed: () {
-                                    _editable.value = !_editable.value;
-                                  },
-                                  child: Text(strings.value.edit),
-                                ).marginOnly(right: AppSizes.sm),
-                                ShadButton(
-                                  icon: Icon(
-                                    Icons.save,
-                                    size: AppSizes.md,
-                                  ),
-                                  onPressed: () => onSaveButtonPressed(
-                                    context: context,
-                                    user: User(
-                                      isAdmin: false,
-                                      userId: userController.user!.userId,
-                                      firstName: firstName ??
-                                          userController.user!.firstName,
-                                      lastName: lastName ??
-                                          userController.user!.lastName,
-                                      username: username ??
-                                          userController.user!.username,
-                                      email:
-                                          email ?? userController.user!.email,
-                                      phoneNumber: phone ??
-                                          userController.user!.phoneNumber,
-                                      role: role?.name ??
-                                          userController.user!.role,
-                                      superiors: superior != null
-                                          ? [
-                                              UserSerializerWithSuperiors(
-                                                userId: superior!.userId,
-                                                email: superior!.email,
-                                                superiors: superior!.superiors,
-                                                username: superior!.username,
-                                                role: superior!.role,
-                                              )
-                                            ]
-                                          : userController.user!.superiors,
-                                      avatarUrl: userController.user!.avatarUrl,
-                                      subordinates:
-                                          userController.user!.subordinates,
-                                      userPermissions:
-                                          userController.user!.userPermissions,
+                        return ShadDialog(
+                          child: Column(
+                            key: ValueKey("profile_user_form_column"),
+                            children: [
+                              UserForm(
+                                key: ValueKey("profile_user_form"),
+                                editable: _editable.value,
+                                showPlaceHolders: false,
+                                showRole: userController.user!.role ==
+                                        "ADMIN_SYSTEM" ||
+                                    !_editable.value,
+                                showSuperior: userController.user!.role ==
+                                        "ADMIN_SYSTEM" ||
+                                    !_editable.value,
+                                role: role,
+                                user: userController.user,
+                                formKeyAddUser: formKeyAddUser,
+                                addUserEmailController: addUserEmailController,
+                                addUserNameController: addUserNameController,
+                                addUserPasswordController:
+                                    addUserPasswordController,
+                                addUserPhoneController: addUserPhoneController,
+                                addUserSuperiorOptions: addUserSuperiorOptions,
+                                addFirstNameController: addFirstNameController,
+                                addLastNameController: addLastNameController,
+                                onAddUser: (email,
+                                        username,
+                                        password,
+                                        phone,
+                                        role,
+                                        superior,
+                                        firstName,
+                                        lastName,
+                                        avatarBytes,
+                                        avatarFile) =>
+                                    {
+                                  this.email = email,
+                                  this.username = username,
+                                  this.password = password,
+                                  this.phone = phone,
+                                  this.role = role,
+                                  this.superior = superior,
+                                  this.firstName = firstName,
+                                  this.lastName = lastName,
+                                  this.avatarBytes = avatarBytes,
+                                  this.avatarFile = avatarFile
+                                },
+                              ),
+                              // Buttons
+                              Wrap(
+                                children: [
+                                  ShadButton(
+                                    icon: Icon(
+                                      _editable.value
+                                          ? Icons.edit_off
+                                          : Icons.edit,
+                                      size: AppSizes.md,
                                     ),
-                                    userAvatarBytes: avatarBytes,
-                                    userAvatarFile: avatarFile,
-                                    password: password,
+                                    onPressed: () {
+                                      _editable.value = !_editable.value;
+                                    },
+                                    child: Text(strings.value.edit),
+                                  ).marginOnly(right: AppSizes.sm),
+                                  ShadButton(
+                                    icon: Icon(
+                                      Icons.save,
+                                      size: AppSizes.md,
+                                    ),
+                                    onPressed: () => onSaveButtonPressed(
+                                      context: context,
+                                      user: User(
+                                        isAdmin: false,
+                                        userId: userController.user!.userId,
+                                        firstName: firstName ??
+                                            userController.user!.firstName,
+                                        lastName: lastName ??
+                                            userController.user!.lastName,
+                                        username: username ??
+                                            userController.user!.username,
+                                        email:
+                                            email ?? userController.user!.email,
+                                        phoneNumber: phone ??
+                                            userController.user!.phoneNumber,
+                                        role: role?.name ??
+                                            userController.user!.role,
+                                        superiors: superior != null
+                                            ? [
+                                                UserSerializerWithSuperiors(
+                                                  userId: superior!.userId,
+                                                  email: superior!.email,
+                                                  superiors:
+                                                      superior!.superiors,
+                                                  username: superior!.username,
+                                                  role: superior!.role,
+                                                )
+                                              ]
+                                            : userController.user!.superiors,
+                                        avatarUrl:
+                                            userController.user!.avatarUrl,
+                                        subordinates:
+                                            userController.user!.subordinates,
+                                        userPermissions: userController
+                                            .user!.userPermissions,
+                                      ),
+                                      userAvatarBytes: avatarBytes,
+                                      userAvatarFile: avatarFile,
+                                      password: password,
+                                    ),
+                                    child: Text(strings.value.save),
                                   ),
-                                  child: Text(strings.value.save),
-                                ),
-                              ],
-                            ).marginAll(AppSizes.md),
-                          ],
+                                ],
+                              ).marginAll(AppSizes.md),
+                            ],
+                          ),
                         );
                       }),
                     ),

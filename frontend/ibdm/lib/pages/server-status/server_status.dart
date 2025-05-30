@@ -8,6 +8,7 @@ import 'package:ibdm/common/widgets/app_custom_container.dart';
 import 'package:ibdm/common/widgets/circular_progress_indicator_with_text.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+import 'package:ibdm/services/socket.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/routes.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
@@ -405,8 +406,8 @@ class _ServerStatusPageState extends State<ServerStatusPage> {
       if (ServerStatusPage.stream == null) {
         try {
           printMessage("connecting to ServerStatusPage broadcast");
-          ServerStatusPage.channel = WebSocketChannel.connect(
-              Uri.parse(ApiConfig.status_broadcast_websocket_url));
+          ServerStatusPage.channel = await getWebSocketChannel(
+              ApiConfig.status_broadcast_websocket_url);
 
           printMessage("ServerStatusPage broadcast connected");
           await ServerStatusPage.channel!.ready;

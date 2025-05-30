@@ -90,6 +90,9 @@ class OnlyAccessibleReports(BasePermission):
 
 
 async def broadcastConnectionCheck(scope, group_name, permission_type):
+    #import json
+    #print("scope:", json.dumps(scope, indent=4, default=str))
+    #print(f"user: {scope['user']}, group: {group_name}, permission: {permission_type}")
     logging.info(f"Broadcast connection check for group: {group_name}, user: {scope['user']} with permission: {permission_type}")
     perms = permission_type if isinstance(permission_type, list) else [permission_type]
     has_perm = False
@@ -100,5 +103,6 @@ async def broadcastConnectionCheck(scope, group_name, permission_type):
             break
     if not has_perm:
         logging.warning(f"User {scope['user']} attempted to connect to {group_name} broadcast without having the permission {permission_type}")
+        print(f"DenyConnection for User {scope['user']} attempted to connect to {group_name} broadcast without having the permission {permission_type}")
         raise DenyConnection
     return has_perm

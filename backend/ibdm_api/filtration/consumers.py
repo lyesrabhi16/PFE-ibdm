@@ -5,8 +5,8 @@ class FiltrationConsumer(AsyncWebsocketConsumer):
     
     connected_count = 0
     async def connect(self):
-        await broadcastConnectionCheck(self.scope, "filtration", "can_view_filtration_page")
         self.group_name = "filtration"
+        await broadcastConnectionCheck(self.scope, "filtration", "can_view_filtration_page")
         await self.accept()
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         FiltrationConsumer.connected_count+=1

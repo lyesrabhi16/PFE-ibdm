@@ -1,16 +1,24 @@
 from rest_framework.authentication import SessionAuthentication
-from api_v1.env import Env, EnvModes
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.extensions import OpenApiAuthenticationExtension
 
+from django.contrib.auth import get_user_model
+from django.contrib.sessions.middleware import SessionMiddleware
+from channels.db import database_sync_to_async
+from api_v1.env import Env, EnvModes
+
 class MySessionAuthentication(SessionAuthentication):
+    def authenticate(self, request):
+        print("Authenticating with MySessionAuthentication", request)
+        return super().authenticate(request)
     def enforce_csrf(self, request):
+        print("Enforcing CSRF for MySessionAuthentication")
         if (Env.ENV_MODE == EnvModes.DEVELOPMENT):
             # dev purposes
             return None 
         #raise ValueError("CSRF Failed: %s" % request.headers)
         if "HTTP_REFERER" not in request.META:
-            request.META["HTTP_REFERER"] = "https://server.ibdm.local.ifri"
+            request.META["HTTP_REFERER"] = Env.CSRF_TRUSTED_ORIGINS[0] if len(Env.CSRF_TRUSTED_ORIGINS) > 0 else ""
         try:
             super().enforce_csrf(request)
         except Exception as e:
@@ -32,3 +40,4 @@ class MySessionAuthenticationScheme(OpenApiAuthenticationExtension):
                 'Session based authentication. Use the sessionid cookie to authenticate.'
             )
         }
+    

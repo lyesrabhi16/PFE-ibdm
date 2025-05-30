@@ -5,8 +5,8 @@ class SentEmailsConsumer(AsyncWebsocketConsumer):
     
     connected_count = 0
     async def connect(self):
-        await broadcastConnectionCheck(self.scope, "sent_emails", "can_view_emails_sent")
         self.group_name = "sent_emails"
+        await broadcastConnectionCheck(self.scope, "sent_emails", "can_view_emails_sent")
         await self.accept()
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         SentEmailsConsumer.connected_count+=1

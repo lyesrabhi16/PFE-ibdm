@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:get/get.dart' as g;
+import 'package:ibdm/services/cookies.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:super_clipboard/super_clipboard.dart';
@@ -32,11 +33,8 @@ import 'package:dio/io.dart' show IOHttpClientAdapter;
 import 'package:flutter/foundation.dart'
     show ByteData, TargetPlatform, Uint8List, defaultTargetPlatform, kIsWeb;
 import 'package:ibdm/config/api.config.dart' show ApiConfig;
-import 'package:cookie_jar/cookie_jar.dart' show FileStorage, PersistCookieJar;
 import 'package:ibdm/services/api_django/api_client/export.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
-import 'package:path_provider/path_provider.dart'
-    show getApplicationDocumentsDirectory;
 import 'package:universal_html/html.dart' as uhtml;
 import 'package:open_filex/open_filex.dart';
 import 'package:flutter/material.dart';
@@ -76,11 +74,7 @@ class ApiClientInstance {
     if (kIsWeb) {
       (dio.httpClientAdapter as dynamic).withCredentials = true;
     } else {
-      final persistentCookieJar = PersistCookieJar(
-        storage: FileStorage(
-          "${(await getApplicationDocumentsDirectory()).path}/.cookies/",
-        ),
-      );
+      final persistentCookieJar = await getCookieJar();
       interceptors.add(CookieManager(persistentCookieJar));
 
       // trust CA on Android app (android only)

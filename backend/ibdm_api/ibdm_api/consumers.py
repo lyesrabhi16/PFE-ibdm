@@ -5,8 +5,8 @@ class StatusConsumer(AsyncWebsocketConsumer):
     
     connected_count = 0
     async def connect(self):
-        await broadcastConnectionCheck(self.scope, "status", "can_view_server_status_page")
         self.group_name = "status"
+        await broadcastConnectionCheck(self.scope, "status", "can_view_server_status_page")
         await self.accept()
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         StatusConsumer.connected_count+=1
