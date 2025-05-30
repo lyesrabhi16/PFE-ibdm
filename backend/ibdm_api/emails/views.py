@@ -15,6 +15,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
+from api_v1.permissions import WithPermission
 # Create your views here.
 @with_operation_ids(
     on_create="addEmailSchedule",
@@ -59,7 +60,7 @@ from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 class EmailScheduleViewset(viewsets.ModelViewSet):
     queryset = EmailSchedule.objects.all()
     serializer_class = EmailScheduleSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_email_schedule_settings")]
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     filterset_fields = ("interval", "rapport", )
     search_fields = ["rapport", "scheduled_users__username", "scheduled_users__email", "scheduled_users__first_name", "scheduled_users__last_name", "scheduled_roles__group__name"]
@@ -122,7 +123,7 @@ class SentEamilViewset(viewsets.ReadOnlyModelViewSet):
     queryset = sentEmail.objects.all().order_by("temps_envoi").reverse()
     serializer_class = SentEmailSerializer
     parser_classes = [JSONParser]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_emails_sent")]
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     filterset_class = SentEmailFilters
     search_fields = [
@@ -191,7 +192,7 @@ class AlertEamilViewset(viewsets.ModelViewSet):
     filterset_class = CustomAlertFilter
     search_fields = ["monitored_value", "send_to_users__username", "send_to_users__email", "send_to_users__first_name", "send_to_users__last_name", "send_to_roles__group__name"]
     ordering_fields = ["monitored_value", "danger_point", "warning_point", "danger_reminder_interval", "warning_reminder_interval"]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_email_alerts")]
 
 
 
@@ -203,7 +204,7 @@ class AlertEamilViewset(viewsets.ModelViewSet):
     responses={200: PossibleMonitorValuesAlertEmailsSerializer}
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_email_alerts")])
 def getPossibleMonitorValuesAlertEmails(request):
     all_values = set(map( lambda x: x[0] ,ALL_MONITORED_VALUES))
     monitored_values = set(AlertEmail.objects.all().values_list("monitored_value", flat=True))
@@ -227,7 +228,7 @@ def getPossibleMonitorValuesAlertEmails(request):
     responses={200: SuccessResponseSerializer, 404: ErrorResponseSerializer, 500:ErrorResponseSerializer}
 )
 @api_view(["POST"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_email_schedule_settings")])
 def sendScheduledEmailNow(request, email_schedule_id):
     logging.info(f"emailScheduler# request => send email with id: {email_schedule_id}")
     try:

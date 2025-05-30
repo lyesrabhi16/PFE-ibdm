@@ -9,7 +9,7 @@ from siroperie.serializers import SucreSerializer
 from api_v1.serializers import FeedMetaDataSerializer
 from rest_framework.decorators import api_view, permission_classes
 from django.utils.dateparse import parse_datetime
-
+from api_v1.permissions import WithPermission
 
 
 
@@ -21,7 +21,7 @@ from django.utils.dateparse import parse_datetime
 class SucreView(viewsets.ReadOnlyModelViewSet):
     queryset = Sucre.objects.all()
     serializer_class = SucreSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_siroperie_page")]
 
 
 @extend_schema(
@@ -71,7 +71,7 @@ class SucreView(viewsets.ReadOnlyModelViewSet):
     ],
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_siroperie_page")])
 def getSucreAtSpecificTime(request):
     """
     getSucreAtSpecificTime
@@ -109,7 +109,7 @@ def getSucreAtSpecificTime(request):
     },
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_siroperie_page")])
 def getSucreMetaData(request):
     sucreFirst = Sucre.objects.first()
     sucreLast = Sucre.objects.last()
@@ -152,7 +152,7 @@ def getSucreMetaData(request):
 )
 class SucreListView(viewsets.ReadOnlyModelViewSet):
     serializer_class = SucreSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_siroperie_page")]
 
     def get_queryset(self):
 

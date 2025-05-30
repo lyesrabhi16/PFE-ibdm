@@ -11,7 +11,6 @@ import time
 from django.db.models import Q
 from concurrent.futures import ThreadPoolExecutor
 
-
 def ensurePathExists(path:str):
     _path = os.path.split(path)[0]
     if os.path.exists(_path):
@@ -332,3 +331,5 @@ def filter_by_fetch_type(model, start_date, end_date,fetch_type):
         
         return sorted(values, key=lambda x: x.date, reverse=True)
     
+
+
