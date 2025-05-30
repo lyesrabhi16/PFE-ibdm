@@ -339,7 +339,7 @@
     "@me": {
         "description": "Titre de la section moi"
     },
-    "siroperieTitle": "Production de sirop",
+    "siroperieTitle": "Siroperie",
     "@siroperieTitle": {
         "description": "Titre de la section production de sirop"
     },
@@ -1091,9 +1091,9 @@
     "@failedToLoadData": {
         "description": "Message d'échec du chargement des données"
     },
-    "utiliteTitle": "Utilitaires",
+    "utiliteTitle": "Utilité",
     "@utiliteTitle": {
-        "description": "Titre de la section utilitaires"
+        "description": "Titre de la section Utilité"
     },
     "sendingEmail": "Envoi de l'email...",
     "@sendingEmail": {
@@ -1298,9 +1298,9 @@
     "@youDontHavePermissionToAccessThisPage": {
         "description": "Message de permission refusée pour l'accès à la page"
     },
-    "failedToConnectToUtiliteBroadcast": "Échec de la connexion à la diffusion des utilitaires, {retries, plural, zero {aucune tentative} one {1 tentative} other {{retries} tentatives restantes}}",
+    "failedToConnectToUtiliteBroadcast": "Échec de la connexion à la diffusion des Utilité, {retries, plural, zero {aucune tentative} one {1 tentative} other {{retries} tentatives restantes}}",
     "@failedToConnectToUtiliteBroadcast": {
-        "description": "Message d'échec de la connexion à la diffusion des utilitaires",
+        "description": "Message d'échec de la connexion à la diffusion des Utilité",
         "placeholders": {
             "retries": {
                 "type": "int"
@@ -1316,7 +1316,7 @@
             }
         }
     },
-    "failedToConnectToSiroperieBroadcast": "Échec de la connexion à la diffusion de la production de sirop, {retries, plural, zero {aucune tentative} one {1 tentative} other {{retries} tentatives restantes}}",
+    "failedToConnectToSiroperieBroadcast": "Échec de la connexion à la diffusion de siroperie, {retries, plural, zero {aucune tentative} one {1 tentative} other {{retries} tentatives restantes}}",
     "@failedToConnectToSiroperieBroadcast": {
         "description": "Message d'échec de la connexion à la diffusion de la production de sirop",
         "placeholders": {
@@ -1800,9 +1800,9 @@
     "@sucre": {
         "description": "Étiquette de sucre"
     },
-    "utilite": "Utilitaires",
+    "utilite": "Utilité",
     "@utilite": {
-        "description": "Étiquette des utilitaires"
+        "description": "Étiquette des Utilité"
     },
     "co2": "CO2",
     "@co2": {
@@ -1876,19 +1876,19 @@
     "@reports": {
         "description": "Titre de la section rapports"
     },
-    "sucreReports": "Rapports sur le sucre",
+    "sucreReports": "Rapports du sucre",
     "@sucreReports": {
         "description": "Titre de la section rapports sur le sucre"
     },
-    "co2Reports": "Rapports sur le CO2",
+    "co2Reports": "Rapports du CO2",
     "@co2Reports": {
         "description": "Titre de la section rapports sur le CO2"
     },
-    "utiliteReports": "Rapports sur les utilitaires",
+    "utiliteReports": "Rapports d'Utilité",
     "@utiliteReports": {
-        "description": "Titre de la section rapports sur les utilitaires"
+        "description": "Titre de la section rapports sur les Utilité"
     },
-	    "filtrationReports": "Rapports sur la filtration",
+	    "filtrationReports": "Rapports du filtration",
     "@filtrationReports": {
         "description": "Titre de la section rapports sur la filtration"
     },
@@ -2122,5 +2122,55 @@
     "permissionDenied": "Permission refusée",
     "@permissionDenied": {
         "description": "Message de permission refusée"
-    }
+    },
+    "dataStoppedWaitSeconds": "Alerter après N secondes sans données",
+    "@dataStoppedWaitSeconds": {
+        "description": "Alerter après N secondes sans données, libellé en secondes"
+    },
+    "min": "Minimum: {min}",
+    "@min": {
+        "description": "Message de valeur minimale avec placeholder",
+        "placeholders": {
+            "min": {
+                "type": "int"
+            }
+        }
+    },
+    "collapse": "Rétrécir",
+    "@collapse": {
+        "description": "Texte du bouton pour rétrécir"
+    },
+    "expand": "Agrandir",
+    "@expand": {
+        "description": "Expand button text"
+    },
+    "darkMode": "Mode sombre",
+    "@darkMode": {
+        "description": "Libellé du bouton pour activer le mode sombre"
+    },
+    "lightMode": "Mode clair",
+    "@lightMode": {
+        "description": "Libellé du bouton pour activer le mode clair"
+    },
+    "changeLanguage": "Changer de langue",
+    "@changeLanguage": {
+        "description": "Libellé du bouton pour changer la langue"
+    },
+    "holdToResetToSystemTheme": "Appuyez longuement pour réinitialiser au thème du système",
+    "@holdToResetToSystemTheme": {
+        "description": "Message pour appuyer longuement pour réinitialiser au thème du système"
+    },
+    "monitoredValueDescription": "Le champ qui sera surveillé pour les changements",
+    "@monitoredValueDescription": {
+        "description": "Description du champ valeur surveillée"
+    },
+    "monitorTypeDescription": "Les valeurs du champ surveillé sont-elles ascendantes ou descendantes ?",
+    "@monitorTypeDescription": {
+        "description": "Description du champ type de surveillance"
+    },
+    "dangerAlertIntervalDescription": "Le nombre de jours avant de renvoyer l'alerte de type danger si elle n'est pas résolue",
+    "@dangerAlertIntervalDescription": {
+        "description": "Description du champ intervalle d'alerte de danger"
+    },
+    "warningAlertIntervalDescription": "Le nombre de jours avant de renvoyer l'alerte de type avertissement si elle n'est pas résolue"
 }

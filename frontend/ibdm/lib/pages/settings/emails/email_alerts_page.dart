@@ -19,6 +19,7 @@ import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/common_heplers.dart';
+import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/screen.dart';
@@ -175,11 +176,11 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                               controller: _searchController,
                               onSubmitted: (_) =>
                                   _searchController.text != lastSearch
-                                      ? _loadAlerts()
+                                      ? {page = 1, _loadAlerts()}
                                       : null,
                               onTapOutside: (_) =>
                                   _searchController.text != lastSearch
-                                      ? _loadAlerts()
+                                      ? {page = 1, _loadAlerts()}
                                       : null,
                               constraints: BoxConstraints(
                                 maxWidth: AppSizes.lg * 8,
@@ -389,9 +390,9 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               _addAlertDangerAlertInterval = dangerAlertInterval;
               _addAlertDangerPoint = dangerPoint;
               _addAlertEnabled = enabled;
-              print("monitoredValue : $monitoredValue");
+              printMessage("monitoredValue : $monitoredValue");
               _addAlertMonitoredValue = monitoredValue;
-              print("monitorType : $monitorType");
+              printMessage("monitorType : $monitorType");
               _addAlertMonitorType = monitorType;
               _addAlertRoles = roles;
               _addAlertUsers = users;
@@ -835,6 +836,11 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
   Future<void> load() async {
     if (loaded.value) {
       loaded.value = false;
+    }
+    // use stored perPage if it exists
+    int? perPageInStorage = await LocalStorage.getPerPage();
+    if (perPageInStorage != null) {
+      _perPageController.text = perPageInStorage.toString();
     }
     api ??= await ApiClientInstance.getApiClient();
     await _loadAlerts();
@@ -1435,10 +1441,12 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
             if (monitorValueTagFilter == value) {
               tagFilterController.clear();
               monitorValueTagFilter = null;
+              page = 1;
               _loadAlerts();
               return;
             }
             monitorValueTagFilter = value;
+            page = 1;
             _loadAlerts();
           },
           dropdownMenuEntries: [

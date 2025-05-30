@@ -1,8 +1,9 @@
 class ApiConfig {
   ApiConfig._();
 
-  static String address_or_domain = "localhost:8443";
+  static String address_or_domain = "10.202.1.83:8443";# change this to the correct server address
   static String base_url = "https://${address_or_domain}";
+  static String admin_url = "https://${address_or_domain}/admin";
   static String ca_url = "https://${address_or_domain}/ca";
   static String sucre_broadcast_websocket_url =
       'wss://${address_or_domain}/ws/sucre';
@@ -14,4 +15,6 @@ class ApiConfig {
       'wss://${address_or_domain}/ws/utilite';
   static String status_broadcast_websocket_url =
       'wss://${address_or_domain}/ws/status';
+  static String broadcast_websocket_url =
+      'wss://${address_or_domain}/ws/broadcast';
 }

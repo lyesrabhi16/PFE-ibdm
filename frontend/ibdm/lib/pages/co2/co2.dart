@@ -196,7 +196,7 @@ class _CO2PageState extends State<CO2Page> {
           final api = await ApiClientInstance.getApiClient();
           printMessage("CO2 broadcast connected");
           final results = await Future.wait([
-            api.getFiltrationMetaData(),
+            api.getUtiliteMetaData(),
             _loadConsommation(),
             CO2Page.channel!.ready,
           ]);

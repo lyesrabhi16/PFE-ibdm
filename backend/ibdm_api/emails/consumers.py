@@ -1,9 +1,11 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from api_v1.permissions import broadcastConnectionCheck
 class SentEmailsConsumer(AsyncWebsocketConsumer):
     
     connected_count = 0
     async def connect(self):
+        await broadcastConnectionCheck(self.scope, "sent_emails", "can_view_emails_sent")
         self.group_name = "sent_emails"
         await self.accept()
         await self.channel_layer.group_add(self.group_name, self.channel_name)

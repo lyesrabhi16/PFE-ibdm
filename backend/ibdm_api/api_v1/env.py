@@ -15,6 +15,7 @@ class EnvModes:
         return [value for name, value in cls.__dict__.items() if not callable(value) and not name.startswith("__")]
 
 class Env:
+
     def __init__(self):
         print("Loading environment variables...")
         Env.load_settings_json()
@@ -31,6 +32,9 @@ class Env:
     CSRF_TRUSTED_ORIGINS = settings.get('CSRF_TRUSTED_ORIGINS') or config("CSRF_TRUSTED_ORIGINS", default="https://localhost:8443", cast=lambda v: [s.strip() for s in v.split(",")])
     LOG_TO_FILES = settings.get('LOG_TO_FILES') or config("LOG_TO_FILES", default=True, cast=bool)
     SERVER_DB_CONNECTION_CHECK_TIMEOUT = settings.get('SERVER_DB_CONNECTION_CHECK_TIMEOUT') or config("SERVER_DB_CONNECTION_CHECK_TIMEOUT", default=3, cast=int) # IN SECONDS
+    DATA_STOPPED_WAIT_SECONDS = config("DATA_STOPPED_WAIT_SECONDS", default=600, cast=int)  # seconds to wait for data to be inserted before alerting of stop
+    LOG_SIZE_LIMIT = config("LOG_SIZE_LIMIT", default=100, cast=int)  # 100 MB for each log file
+    COUNT_OF_LOGS_TO_KEEP = config("COUNT_OF_LOGS_TO_KEEP", default=10, cast=int)  # 10 Log files for each log type
 
     REDIS_DB : Dict = dict((settings.get('REDIS_DB')) or config("REDIS_DB", default={},cast=dict) or {})
     DATABASES : Dict = dict(settings.get('DATABASES') or config("DATABASES", default={}, cast=dict) or {})

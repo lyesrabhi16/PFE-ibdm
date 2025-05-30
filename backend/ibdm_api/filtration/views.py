@@ -12,7 +12,7 @@ from api_v1.constants import ErrorCodes
 from django.utils.dateparse import parse_datetime
 from filtration.utils import calculate_consommation_filtration
 from filtration.serializers import FiltrationMetaConsommationSerializer, FiltrationMultiMetaConsommationsSerializer
-
+from api_v1.permissions import WithPermission
 # Create your views here.
 @extend_schema(tags=["Filtration"])
 @with_operation_ids(
@@ -23,7 +23,7 @@ from filtration.serializers import FiltrationMetaConsommationSerializer, Filtrat
 class NiveauViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Niveau.objects.all()
     serializer_class = NiveauSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_filtration_page")]
 
 @extend_schema(tags=["Filtration"])
 @with_operation_ids(
@@ -34,7 +34,7 @@ class NiveauViewSet(viewsets.ReadOnlyModelViewSet):
 class DebitViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Debit.objects.all()
     serializer_class = DebitSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_filtration_page")]
 
 @extend_schema(tags=["Filtration"])
 @with_operation_ids(
@@ -45,7 +45,7 @@ class DebitViewSet(viewsets.ReadOnlyModelViewSet):
 class PresCondViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PresCond.objects.all()
     serializer_class = PresCondSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_filtration_page")]
 
 @extend_schema(tags=["Filtration"])
 @with_operation_ids(
@@ -56,7 +56,7 @@ class PresCondViewSet(viewsets.ReadOnlyModelViewSet):
 class VolumeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Volume.objects.all()
     serializer_class = VolumeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_filtration_page")]
 
 
 @extend_schema(
@@ -106,7 +106,7 @@ class VolumeViewSet(viewsets.ReadOnlyModelViewSet):
     ]
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_filtration_page")])
 def getNiveauAtSpecificTime(request):
     """
     getNiveauAtSpecificTime
@@ -182,7 +182,7 @@ def getNiveauAtSpecificTime(request):
     ]
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_filtration_page")])
 def getDebitAtSpecificTime(request):
     """
     getDebitAtSpecificTime
@@ -258,7 +258,7 @@ def getDebitAtSpecificTime(request):
     ]
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_filtration_page")])
 def getVolumeAtSpecificTime(request):
     """
     getVolumeAtSpecificTime
@@ -335,7 +335,7 @@ def getVolumeAtSpecificTime(request):
     ]
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_filtration_page")])
 def getPresCondAtSpecificTime(request):
     """
     getPresCondAtSpecificTime
@@ -372,7 +372,7 @@ def getPresCondAtSpecificTime(request):
     },
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_filtration_page")])
 def getFiltrationMetaData(request):
     niveau_first = Niveau.objects.first()
     niveau_last = Niveau.objects.last()
@@ -431,7 +431,7 @@ class NiveauListView(viewsets.ReadOnlyModelViewSet):
     queryset = Niveau.objects.all()
     serializer_class = NiveauSerializer
     
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_filtration_page")]
 
     def get_queryset(self):
 
@@ -493,7 +493,7 @@ class DebitListView(viewsets.ReadOnlyModelViewSet):
     queryset = Debit.objects.all()
     serializer_class = DebitSerializer
     
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_filtration_page")]
 
     def get_queryset(self):
 
@@ -554,7 +554,7 @@ class VolumeListView(viewsets.ReadOnlyModelViewSet):
     queryset = Volume.objects.all()
     serializer_class = VolumeSerializer
     
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_filtration_page")]
 
     def get_queryset(self):
 
@@ -615,7 +615,7 @@ class PresCondListView(viewsets.ReadOnlyModelViewSet):
     queryset = PresCond.objects.all()
     serializer_class = PresCondSerializer
     
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_filtration_page")]
 
     def get_queryset(self):
 
@@ -692,7 +692,7 @@ class PresCondListView(viewsets.ReadOnlyModelViewSet):
     ]
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_filtration_page")])
 def getFiltrationConsommation(request):
     """
     getFiltrationConsommation
@@ -770,7 +770,7 @@ def get_filtration_consommation(from_date, to_date):
     ]
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, WithPermission("can_view_filtration_page")])
 def getFiltrationConsommationBetweenDates(request):
     """
     getFiltrationConsommationBetweenDates

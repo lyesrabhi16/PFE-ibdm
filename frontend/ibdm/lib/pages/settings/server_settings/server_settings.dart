@@ -37,6 +37,7 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
   final RxBool _showChangeSecretKey = false.obs;
 
   Rx<ServerConfig?> config = Rx<ServerConfig?>(null);
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? secretKey;
 
   static final TextEditingController _addAllowedHostController =
@@ -88,6 +89,15 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                       icon: Icons.save,
                       text: strings.value.save,
                       onTap: () {
+                        if (_formKey.currentState?.validate() != true) {
+                          if (context.mounted) {
+                            Toasts.showErrorToastNotification(
+                                context: context,
+                                message:
+                                    strings.value.pleaseFixErrorsInTheForm);
+                          }
+                          return;
+                        }
                         showShadDialog(
                           context: context,
                           builder: (context) => ShadDialog.alert(
@@ -128,6 +138,8 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                       color: colorScheme.primary,
                     ),
                     Form(
+                      key: _formKey,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       child: Column(
                         children: [
                           Wrap(
@@ -151,6 +163,11 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                           onChanged: (value) {
                                             modifyConfig("VERSION", value);
                                           },
+                                          validator:
+                                              FormBuilderValidators.required(
+                                            errorText:
+                                                strings.value.requiredField,
+                                          ),
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(),
                                             labelText: strings.value.version,
@@ -285,11 +302,16 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                                 int.tryParse(value) ?? 0);
                                           },
                                           validator:
-                                              FormBuilderValidators.integer(
-                                            errorText: strings.value
-                                                .invalidField(strings.value
-                                                    .dbConnectionCheckTimeout),
-                                          ),
+                                              FormBuilderValidators.compose([
+                                            FormBuilderValidators.integer(
+                                                errorText: strings.value
+                                                    .invalidField(strings.value
+                                                        .dbConnectionCheckTimeout)),
+                                            FormBuilderValidators.min(
+                                              1,
+                                              errorText: strings.value.min(1),
+                                            ),
+                                          ]),
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(),
                                             labelText: strings
@@ -313,16 +335,54 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                                 int.tryParse(value) ?? 0);
                                           },
                                           validator:
-                                              FormBuilderValidators.integer(
-                                            errorText: strings.value
-                                                .invalidField(strings.value
-                                                    .systemMonitorDBTimeout),
-                                          ),
+                                              FormBuilderValidators.compose([
+                                            FormBuilderValidators.integer(
+                                                errorText: strings.value
+                                                    .invalidField(strings.value
+                                                        .systemMonitorDBTimeout)),
+                                            FormBuilderValidators.min(
+                                              1,
+                                              errorText: strings.value.min(1),
+                                            ),
+                                          ]),
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(),
                                             labelText: strings
                                                 .value.systemMonitorDBTimeout,
                                             hintText: "10",
+                                            suffix: Text(
+                                              strings.value.seconds,
+                                              style: TextStyle(
+                                                color: colorScheme.onSurface,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: AppSizes.sm),
+                                        TextFormField(
+                                          initialValue:
+                                              "${config.value?.dataStoppedWaitSeconds}",
+                                          onChanged: (value) {
+                                            modifyConfig(
+                                                "DATA_STOPPED_WAIT_SECONDS",
+                                                int.tryParse(value) ?? 0);
+                                          },
+                                          validator:
+                                              FormBuilderValidators.compose([
+                                            FormBuilderValidators.integer(
+                                                errorText: strings.value
+                                                    .invalidField(strings.value
+                                                        .dataStoppedWaitSeconds)),
+                                            FormBuilderValidators.min(
+                                              1,
+                                              errorText: strings.value.min(1),
+                                            ),
+                                          ]),
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText: strings
+                                                .value.dataStoppedWaitSeconds,
+                                            hintText: "600",
                                             suffix: Text(
                                               strings.value.seconds,
                                               style: TextStyle(
@@ -340,11 +400,16 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                                 int.tryParse(value) ?? 0);
                                           },
                                           validator:
-                                              FormBuilderValidators.integer(
-                                            errorText: strings.value
-                                                .invalidField(
-                                                    strings.value.logSizeLimit),
-                                          ),
+                                              FormBuilderValidators.compose([
+                                            FormBuilderValidators.integer(
+                                                errorText: strings.value
+                                                    .invalidField(strings
+                                                        .value.logSizeLimit)),
+                                            FormBuilderValidators.min(
+                                              0,
+                                              errorText: strings.value.min(0),
+                                            ),
+                                          ]),
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(),
                                             labelText:
@@ -368,11 +433,16 @@ class _ServerSettingsPageState extends State<ServerSettingsPage> {
                                                 int.tryParse(value) ?? 0);
                                           },
                                           validator:
-                                              FormBuilderValidators.integer(
-                                            errorText: strings.value
-                                                .invalidField(strings
-                                                    .value.numberOfLogsToKeep),
-                                          ),
+                                              FormBuilderValidators.compose([
+                                            FormBuilderValidators.integer(
+                                                errorText: strings.value
+                                                    .invalidField(strings.value
+                                                        .numberOfLogsToKeep)),
+                                            FormBuilderValidators.min(
+                                              1,
+                                              errorText: strings.value.min(1),
+                                            ),
+                                          ]),
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(),
                                             labelText: strings
@@ -957,12 +1027,14 @@ class DatabaseCard extends StatelessWidget {
     StandardDatabaseConf _database = database ??
         StandardDatabaseConf(
           engine: "mssql",
-          options: {},
-          name: "db_name",
-          host: "localhost",
-          port: "587",
-          user: "username",
-          password: "password",
+          options: {
+            "driver": "ODBC Driver 17 for SQL Server",
+          },
+          name: "",
+          host: "",
+          port: "1433",
+          user: "",
+          password: "",
         );
     final RxMap _data = _database.toJson().obs;
     List<DataRepresentation> data = [
@@ -1044,16 +1116,33 @@ class DatabaseCard extends StatelessWidget {
                 ],
                 if (isAddDatabaseCard) ...[
                   Center(
-                      child: TextField(
+                      child: DropdownMenu(
                     enabled: _editable.value,
                     controller: controllers["identifier"],
-                    onChanged: (v) {
-                      dbIdentifier = v;
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(
+                        value: "ibdm",
+                        label: "ibdm",
+                      ),
+                      DropdownMenuEntry(
+                        value: "siroperie",
+                        label: "siroperie",
+                      ),
+                      DropdownMenuEntry(
+                        value: "filtration",
+                        label: "filtration",
+                      ),
+                      DropdownMenuEntry(
+                        value: "utilite",
+                        label: "utilite",
+                      ),
+                    ],
+                    onSelected: (value) {
+                      dbIdentifier = value;
                     },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: strings.value.dbIdentifier,
-                    ),
+                    initialSelection: dbIdentifier,
+                    label: Text(strings.value.dbIdentifier),
+                    width: 400,
                   )),
                   SizedBox(height: AppSizes.sm),
                   IconWithLabelButton(

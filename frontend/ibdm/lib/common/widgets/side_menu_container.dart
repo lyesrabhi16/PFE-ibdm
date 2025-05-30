@@ -53,23 +53,29 @@ class SideMenuContainer extends StatelessWidget {
                 curve: Curves.easeInOut);
           });
         }
-        return Padding(
-          padding: EdgeInsets.symmetric(
-            vertical: AppSizes.sm / 2,
-            horizontal:
-                displayMode == SideMenuDisplayMode.open ? AppSizes.sm / 2 : 0,
+        return ShadTooltip(
+          builder: (context) => Text(
+            dest.title,
           ),
-          key: key,
-          child: Center(
-              child: IconWithLabelButton(
-            icon: dest.icon,
-            text: displayMode == SideMenuDisplayMode.open ? dest.title : null,
-            active: dest.route == Get.currentRoute ||
-                dest.route == Routes.customRoutes[Get.currentRoute],
-            onTap: () {
-              Get.toNamed(dest.route);
-            },
-          )),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: AppSizes.sm / 2,
+              horizontal:
+                  displayMode == SideMenuDisplayMode.open ? AppSizes.sm / 2 : 0,
+            ),
+            key: key,
+            child: Center(
+                child: IconWithLabelButton(
+              icon: dest.icon,
+              text: displayMode == SideMenuDisplayMode.open ? dest.title : null,
+              active: dest.route == Get.currentRoute ||
+                  dest.route == Routes.customRoutes[Get.currentRoute],
+              onTap: () {
+                // reload the page if it's already open
+                Get.toNamed(dest.route);
+              },
+            )),
+          ),
         );
       }));
     }
@@ -95,20 +101,27 @@ class SideMenuContainer extends StatelessWidget {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              IconButton(
-                                icon: Icon(
+                              ShadTooltip(
+                                builder: (context) => Text(
                                   open
-                                      ? Icons.arrow_back_ios_rounded
-                                      : Icons.arrow_forward_ios_rounded,
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
+                                      ? strings.value.collapse
+                                      : strings.value.expand,
                                 ),
-                                onPressed: () {
-                                  displayMode.value = open
-                                      ? SideMenuDisplayMode.compact
-                                      : SideMenuDisplayMode.open;
-                                  open = !open;
-                                },
+                                child: IconButton(
+                                  icon: Icon(
+                                    open
+                                        ? Icons.arrow_back_ios_rounded
+                                        : Icons.arrow_forward_ios_rounded,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                                  onPressed: () {
+                                    displayMode.value = open
+                                        ? SideMenuDisplayMode.compact
+                                        : SideMenuDisplayMode.open;
+                                    open = !open;
+                                  },
+                                ),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(AppSizes.sm),
@@ -116,14 +129,20 @@ class SideMenuContainer extends StatelessWidget {
                                   wrap: true,
                                 ),
                               ),
-                              ShadButton.destructive(
-                                width: context.width,
-                                icon: Icon(Icons.logout),
-                                onPressed: () {
-                                  Get.find<UserController>().logoutUser();
-                                  Get.offAllNamed(Routes.login);
-                                },
-                                child: open ? Text(strings.value.logout) : null,
+                              ShadTooltip(
+                                builder: (context) => Text(
+                                  strings.value.logout,
+                                ),
+                                child: ShadButton.destructive(
+                                  width: context.width,
+                                  icon: Icon(Icons.logout),
+                                  onPressed: () {
+                                    Get.find<UserController>().logoutUser();
+                                    Get.offAllNamed(Routes.login);
+                                  },
+                                  child:
+                                      open ? Text(strings.value.logout) : null,
+                                ),
                               ),
                               SizedBox(
                                 height: AppSizes.sm,
@@ -140,32 +159,35 @@ class SideMenuContainer extends StatelessWidget {
                   title: Padding(
                     padding: EdgeInsets.all(AppSizes.sm),
                     child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          FittedBox(
-                            child: Image.asset(
-                              "assets/images/logo.png",
-                              width: AppSizes.xl * 5,
-                              height: AppSizes.xl * 5,
-                            ),
-                          ),
-                          FittedBox(
-                            child: Padding(
-                              padding: EdgeInsets.all(AppSizes.sm / 2),
-                              child: Text(
-                                strings.value.ibdm,
-                                style:
-                                    Theme.of(context).textTheme.headlineLarge,
-                                softWrap: false,
+                      child: GestureDetector(
+                        onTap: () => Get.toNamed(Routes.home),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            FittedBox(
+                              child: Image.asset(
+                                "assets/images/logo.png",
+                                width: AppSizes.xl * 5,
+                                height: AppSizes.xl * 5,
                               ),
                             ),
-                          ),
-                          isLargeScreen(context) && open
-                              ? Text(strings.value.ifri_bdd)
-                              : SizedBox.shrink(),
-                        ],
+                            FittedBox(
+                              child: Padding(
+                                padding: EdgeInsets.all(AppSizes.sm / 2),
+                                child: Text(
+                                  strings.value.ibdm,
+                                  style:
+                                      Theme.of(context).textTheme.headlineLarge,
+                                  softWrap: false,
+                                ),
+                              ),
+                            ),
+                            isLargeScreen(context) && open
+                                ? Text(strings.value.ifri_bdd)
+                                : SizedBox.shrink(),
+                          ],
+                        ),
                       ),
                     ),
                   ),

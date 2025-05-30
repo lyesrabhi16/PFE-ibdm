@@ -1,9 +1,11 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from api_v1.permissions import broadcastConnectionCheck
 class UtiliteConsumer(AsyncWebsocketConsumer):
     
     connected_count = 0
     async def connect(self):
+        await broadcastConnectionCheck(self.scope, "utilite", ["can_view_utilite_page", "can_view_co2_page"])
         self.group_name = "utilite"
         await self.accept()
         await self.channel_layer.group_add(self.group_name, self.channel_name)
