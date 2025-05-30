@@ -134,7 +134,7 @@ class _UtilitePageState extends State<UtilitePage> {
           UtilitePage.channel = WebSocketChannel.connect(
               Uri.parse(ApiConfig.utilite_broadcast_websocket_url));
           final res = await (await ApiClientInstance.getApiClient())
-              .getFiltrationMetaData();
+              .getUtiliteMetaData();
           printMessage("utilite broadcast connected");
           feedMetaData = res;
           utiliteStartDate.value = res.startDate;

@@ -244,7 +244,7 @@ class _HomeState extends State<Home> {
                   builder: (_, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircularProgressIndicatorWithText(
-                          text: strings.value.loadingReports);
+                          text: strings.value.loading);
                     }
                     if (snapshot.hasError) {
                       return Center(
@@ -310,7 +310,7 @@ class _HomeState extends State<Home> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicatorWithText(
-                      text: strings.value.loadingReports);
+                      text: strings.value.loading);
                 }
                 if (snapshot.hasError) {
                   return Center(
@@ -324,12 +324,11 @@ class _HomeState extends State<Home> {
                       if (streamSnapshot.connectionState ==
                           ConnectionState.waiting) {
                         return CircularProgressIndicatorWithText(
-                            text: strings.value.loadingReports);
+                            text: strings.value.loading);
                       }
                       if (streamSnapshot.hasError) {
                         return Center(
-                          child: Text(strings.value
-                              .failedToConnectToStatusBroadcast(0)),
+                          child: Text(strings.value.failedToLoadData),
                         );
                       }
                       final data = JsonCodec().decode(streamSnapshot.data);

@@ -1,4 +1,5 @@
 from enum import unique
+from tabnanny import verbose
 from tokenize import group
 from typing import Any, Iterable
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Group, Permission, PermissionsMixin
@@ -7,6 +8,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_field
 from drf_spectacular.types import OpenApiTypes
 from django.core.exceptions import ValidationError
 from colorfield.fields import ColorField
+from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
 class UserManager(BaseUserManager):
@@ -28,9 +30,15 @@ class UserManager(BaseUserManager):
             user.set_password(password)
         user.save()
         user.is_admin = user.role.is_admin
+        
         groups = {*groups, user.role.group}
+        if user.is_superuser:
+            groups.add(Group.objects.get_or_create(name="ADMIN_SYSTEM")[0])
+        else:
+            groups.discard(Group.objects.get_or_create(name="ADMIN_SYSTEM")[0])
         #print("Groups to be set:", groups)
         user.groups.set(groups)
+        
         #print("User permissions to be set:", user_permissions)
         user.user_permissions.set(user_permissions)
         #print("Saving user")
@@ -61,6 +69,8 @@ class UserManager(BaseUserManager):
         user.is_admin = role.is_admin
         #print("set user groups")
         user.groups.add(role.group)
+        if user.is_superuser:
+            user.groups.add(Group.objects.get_or_create(name="ADMIN_SYSTEM")[0])
         user.user_permissions.set(user_permissions)
         user.save()
         #print("User created:", user.email)
@@ -91,10 +101,11 @@ class UserManager(BaseUserManager):
         This method is required for compatibility with forms that handle M2M fields
         """
         # No-op since we handle M2M in create/update methods
-        #print("Saving M2M relationships")
-        #print("Args:", args)
-        #print("Kwargs:", kwargs)
-        pass
+        print("Saving M2M relationships")
+        print("Args:", args)
+        print("Kwargs:", kwargs)
+        #pass
+        return super().save_m2m(*args, **kwargs)
 class Role(models.Model):
     group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name="role", unique=True)
     color = ColorField(max_length=7, default="#000000")
@@ -102,7 +113,9 @@ class Role(models.Model):
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+    class Meta:
+        verbose_name = _("Role")
+        verbose_name_plural = _("Roles")
     def __str__(self):
         return f"{self.group.name}"
 
@@ -153,11 +166,17 @@ class SubordinateAndSuperior(models.Model):
         unique_together = ("superior", "subordinate")
     def __str__(self):
         return f"{self.superior.email} {self.superior.role} is superior to {self.subordinate.email} {self.subordinate.role}"
+    def clean(self):
+        super().clean()
+        self._check()
 
     def _check(self):
 
         if self.superior == self.subordinate:
-            raise ValidationError("A user cannot be their own superior.")
+            raise ValidationError({
+                "superior": "A user cannot be their own superior.",
+                "subordinate": "A user cannot be their own subordinate."
+            })
 
         # Check for circular hierarchy
         current_superior = self.superior
@@ -169,10 +188,12 @@ class SubordinateAndSuperior(models.Model):
             except SubordinateAndSuperior.DoesNotExist:
                 break
     def save(self, *args, **kwargs):
-        #print("Saving SubordinateAndSuperior instance")
-        self._check()
+        print("Saving SubordinateAndSuperior instance superior", self.superior, "subordinate", self.subordinate)
+        self.full_clean()  # This will call clean() and perform validation checks
+        ins = super().save(*args, **kwargs)
         #print("Checks passed")
-        super().save(*args, **kwargs)
+        print("SubordinateAndSuperior instance saved:", self.superior, "is superior to", self.subordinate)
+        return ins 
         #print("SubordinateAndSuperior instance saved")
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -216,6 +237,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     def is_staff(self) -> bool:
         return self.is_admin
     class Meta:
+        verbose_name = _("Utilisateur")
+        verbose_name_plural = _("Utilisateurs")
         permissions = [
             ("can_view_users_page", "Can view users page"),
             ("can_view_filtration_page", "Can view filtration page"),
@@ -232,5 +255,8 @@ class User(AbstractBaseUser, PermissionsMixin):
             ("can_view_filtration_reports_page", "Can view filtration reports page"),
             ("can_view_utilite_reports_page", "Can view utilite reports page"),
             ("can_view_co2_reports_page", "Can view co2 reports page"),
+            ("can_view_documentation_page", "Can view documentation page"),
+            ("can_view_groups_page", "Can view groups page"),
+            ("can_view_roles_page", "Can view roles page"),
         ]
     

@@ -1,9 +1,11 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from api_v1.permissions import broadcastConnectionCheck
 class FiltrationConsumer(AsyncWebsocketConsumer):
     
     connected_count = 0
     async def connect(self):
+        await broadcastConnectionCheck(self.scope, "filtration", "can_view_filtration_page")
         self.group_name = "filtration"
         await self.accept()
         await self.channel_layer.group_add(self.group_name, self.channel_name)
