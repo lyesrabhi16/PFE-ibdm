@@ -23,9 +23,9 @@ class ServerConfigRequest {
     required this.redisDB,
     required this.databases,
     required this.emailProviders,
-    this.dataStoppedWaitSeconds = 600,
     this.logSizeLimit = 100,
     this.countOFLogsTOKeep = 10,
+    this.dataStoppedWaitSeconds = 600,
     this.secretKey,
   });
   
@@ -49,8 +49,6 @@ class ServerConfigRequest {
   final bool? logTOFiles;
   @JsonKey(name: 'SERVER_DB_CONNECTION_CHECK_TIMEOUT')
   final int? serverDBConnectionCheckTimeout;
-  @JsonKey(name: 'DATA_STOPPED_WAIT_SECONDS')
-  final int dataStoppedWaitSeconds;
   @JsonKey(name: 'REDIS_DB')
   final StandardDatabaseConfRequest? redisDB;
   @JsonKey(name: 'DATABASES')
@@ -61,6 +59,8 @@ class ServerConfigRequest {
   final int logSizeLimit;
   @JsonKey(name: 'COUNT_OF_LOGS_TO_KEEP')
   final int countOFLogsTOKeep;
+  @JsonKey(name: 'DATA_STOPPED_WAIT_SECONDS')
+  final int dataStoppedWaitSeconds;
 
   Map<String, Object?> toJson() => _$ServerConfigRequestToJson(this);
 }

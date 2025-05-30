@@ -16,6 +16,7 @@ import 'package:ibdm/common/widgets/language_switch_button.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:cookie_jar/cookie_jar.dart' show FileStorage, PersistCookieJar;
 import 'package:path_provider/path_provider.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -73,18 +74,23 @@ class _SettingsPageState extends State<SettingsPage> {
                       Permissions.viewEmailSchedules,
                       Permissions.viewEmailsSent,
                     ]),
-                    SettingCard(
-                      icon: Get.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                      title: Get.isDarkMode
-                          ? strings.value.lightmode
-                          : strings.value.darkmode,
-                      trailing: ThemeModeSwitchButton(),
-                      onLongPress: () {
-                        LocalStorage.removeDarkThemeMode().then((_) =>
-                            Get.find<ThemeModeController>().loadThemeMode());
-                      },
-                      onTap: () =>
-                          Get.find<ThemeModeController>().toggleTheme(),
+                    ShadTooltip(
+                      builder: (context) =>
+                          Text(strings.value.holdToResetToSystemTheme),
+                      child: SettingCard(
+                        icon:
+                            Get.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                        title: Get.isDarkMode
+                            ? strings.value.lightmode
+                            : strings.value.darkmode,
+                        trailing: ThemeModeSwitchButton(),
+                        onLongPress: () {
+                          LocalStorage.removeDarkThemeMode().then((_) =>
+                              Get.find<ThemeModeController>().loadThemeMode());
+                        },
+                        onTap: () =>
+                            Get.find<ThemeModeController>().toggleTheme(),
+                      ),
                     ),
                     SettingCard(
                       icon: Icons.language,

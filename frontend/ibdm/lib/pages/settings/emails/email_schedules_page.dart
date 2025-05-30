@@ -20,6 +20,7 @@ import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
 import 'package:ibdm/utils/helpers/common_heplers.dart';
+import 'package:ibdm/utils/helpers/local_storage.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
 import 'package:ibdm/utils/helpers/page_index.dart';
@@ -168,11 +169,11 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
                               controller: _searchController,
                               onSubmitted: (_) =>
                                   _searchController.text != lastSearch
-                                      ? _loadSchedules()
+                                      ? {page = 1, _loadSchedules()}
                                       : null,
                               onTapOutside: (_) =>
                                   _searchController.text != lastSearch
-                                      ? _loadSchedules()
+                                      ? {page = 1, _loadSchedules()}
                                       : null,
                               constraints: BoxConstraints(
                                 maxWidth: AppSizes.lg * 8,
@@ -948,6 +949,11 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
     if (loaded.value) {
       loaded.value = false;
     }
+    // use stored perPage if it exists
+    int? perPageInStorage = await LocalStorage.getPerPage();
+    if (perPageInStorage != null) {
+      _perPageController.text = perPageInStorage.toString();
+    }
     api ??= await ApiClientInstance.getApiClient();
     await _loadSchedules();
 
@@ -1582,10 +1588,12 @@ class _EmailSchedulesPageState extends State<EmailSchedulesPage> {
             if (rapportFilter == value) {
               tagFilterController.clear();
               rapportFilter = null;
+              page = 1;
               _loadSchedules();
               return;
             }
             rapportFilter = value;
+            page = 1;
             _loadSchedules();
           },
           dropdownMenuEntries: [

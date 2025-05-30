@@ -101,9 +101,9 @@ class UserManager(BaseUserManager):
         This method is required for compatibility with forms that handle M2M fields
         """
         # No-op since we handle M2M in create/update methods
-        print("Saving M2M relationships")
-        print("Args:", args)
-        print("Kwargs:", kwargs)
+        #print("Saving M2M relationships")
+        #print("Args:", args)
+        #print("Kwargs:", kwargs)
         #pass
         return super().save_m2m(*args, **kwargs)
 class Role(models.Model):
@@ -188,11 +188,11 @@ class SubordinateAndSuperior(models.Model):
             except SubordinateAndSuperior.DoesNotExist:
                 break
     def save(self, *args, **kwargs):
-        print("Saving SubordinateAndSuperior instance superior", self.superior, "subordinate", self.subordinate)
+        #print("Saving SubordinateAndSuperior instance superior", self.superior, "subordinate", self.subordinate)
         self.full_clean()  # This will call clean() and perform validation checks
         ins = super().save(*args, **kwargs)
         #print("Checks passed")
-        print("SubordinateAndSuperior instance saved:", self.superior, "is superior to", self.subordinate)
+        #print("SubordinateAndSuperior instance saved:", self.superior, "is superior to", self.subordinate)
         return ins 
         #print("SubordinateAndSuperior instance saved")
 

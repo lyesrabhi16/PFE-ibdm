@@ -140,14 +140,14 @@ import 'package:json_annotation/json_annotation.dart';
 /// * `chambre_froide.ut_tt_cf14` - chambre_froide.ut_tt_cf14.
 /// * `chambre_froide.ut_tt_sas1` - chambre_froide.ut_tt_sas1.
 /// * `chambre_froide.ut_tt_sas2` - chambre_froide.ut_tt_sas2.
+/// * `utilite.stopped` - utilite.stopped.
+/// * `filtration.stopped` - filtration.stopped.
+/// * `sucre.total.adue` - sucre.total.adue.
 /// * `co2_ifruit.stopped` - co2_ifruit.stopped.
+/// * `sucre.total` - sucre.total.
+/// * `sucre.stopped` - sucre.stopped.
 /// * `sucre.total.tetra` - sucre.total.tetra.
 /// * `chambre_froide.stopped` - chambre_froide.stopped.
-/// * `utilite.stopped` - utilite.stopped.
-/// * `sucre.total.adue` - sucre.total.adue.
-/// * `sucre.stopped` - sucre.stopped.
-/// * `filtration.stopped` - filtration.stopped.
-/// * `sucre.total` - sucre.total.
 @JsonEnum()
 enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `sucre.t_s21`.
@@ -558,30 +558,30 @@ enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_sas2`.
   @JsonValue('chambre_froide.ut_tt_sas2')
   undefined135('chambre_froide.ut_tt_sas2'),
-  /// Incorrect name has been replaced. Original name: `co2_ifruit.stopped`.
-  @JsonValue('co2_ifruit.stopped')
-  undefined136('co2_ifruit.stopped'),
-  /// Incorrect name has been replaced. Original name: `sucre.total.tetra`.
-  @JsonValue('sucre.total.tetra')
-  undefined137('sucre.total.tetra'),
-  /// Incorrect name has been replaced. Original name: `chambre_froide.stopped`.
-  @JsonValue('chambre_froide.stopped')
-  undefined138('chambre_froide.stopped'),
   /// Incorrect name has been replaced. Original name: `utilite.stopped`.
   @JsonValue('utilite.stopped')
-  undefined139('utilite.stopped'),
+  undefined136('utilite.stopped'),
+  /// Incorrect name has been replaced. Original name: `filtration.stopped`.
+  @JsonValue('filtration.stopped')
+  undefined137('filtration.stopped'),
   /// Incorrect name has been replaced. Original name: `sucre.total.adue`.
   @JsonValue('sucre.total.adue')
-  undefined140('sucre.total.adue'),
+  undefined138('sucre.total.adue'),
+  /// Incorrect name has been replaced. Original name: `co2_ifruit.stopped`.
+  @JsonValue('co2_ifruit.stopped')
+  undefined139('co2_ifruit.stopped'),
+  /// Incorrect name has been replaced. Original name: `sucre.total`.
+  @JsonValue('sucre.total')
+  undefined140('sucre.total'),
   /// Incorrect name has been replaced. Original name: `sucre.stopped`.
   @JsonValue('sucre.stopped')
   undefined141('sucre.stopped'),
-  /// Incorrect name has been replaced. Original name: `filtration.stopped`.
-  @JsonValue('filtration.stopped')
-  undefined142('filtration.stopped'),
-  /// Incorrect name has been replaced. Original name: `sucre.total`.
-  @JsonValue('sucre.total')
-  undefined143('sucre.total'),
+  /// Incorrect name has been replaced. Original name: `sucre.total.tetra`.
+  @JsonValue('sucre.total.tetra')
+  undefined142('sucre.total.tetra'),
+  /// Incorrect name has been replaced. Original name: `chambre_froide.stopped`.
+  @JsonValue('chambre_froide.stopped')
+  undefined143('chambre_froide.stopped'),
   /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
   $unknown(null);
 

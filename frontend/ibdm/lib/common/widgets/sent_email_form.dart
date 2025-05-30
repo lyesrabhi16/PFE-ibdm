@@ -7,6 +7,7 @@ import 'package:ibdm/common/widgets/divider_with_text.dart';
 import 'package:ibdm/common/widgets/email_schedule_form.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:ibdm/utils/helpers/logger.dart';
@@ -21,6 +22,7 @@ class SentEmailForm extends StatefulWidget {
     this.sent,
     this.schedule,
     this.alert,
+    this.alertMeta,
   });
 
   final bool editable;
@@ -37,6 +39,7 @@ class SentEmailForm extends StatefulWidget {
   final bool showIdField;
   final EmailSchedule? schedule;
   final AlertEmail? alert;
+  final SentAlertEmail? alertMeta;
 
   @override
   State<SentEmailForm> createState() => _SentEmailFormState();
@@ -164,9 +167,12 @@ class _SentEmailFormState extends State<SentEmailForm> {
               ),
               SizedBox(height: AppSizes.sm),
               DividerWithText(
-                  text: widget.schedule != null
-                      ? strings.value.schedule.toUpperCase()
-                      : strings.value.alert.toUpperCase()),
+                text: widget.schedule != null
+                    ? strings.value.schedule.toUpperCase()
+                    : '${strings.value.alert} ${widget.alertMeta!.alertType == AlertTypeEnum.danger ? strings.value.danger : strings.value.warning} : ${widget.alertMeta!.atValue.toStringAsFixed(2)}'
+                        .toUpperCase(),
+                color: AppColors.getEmailColor(context, widget.sent!),
+              ),
               widget.schedule != null
                   ? EmailScheduleForm(
                       schedule: widget.schedule,

@@ -48,9 +48,9 @@ class SuperiorInline(admin.TabularInline):
     fk_name = 'subordinate'
     autocomplete_fields = ('superior',)
     def get_queryset(self, request: HttpRequest) -> QuerySet:
-        print("SuperiorInline get_queryset called")
+        #print("SuperiorInline get_queryset called")
         qs = super().get_queryset(request)
-        print("SuperiorInline get_queryset qs:", qs)
+        #print("SuperiorInline get_queryset qs:", qs)
         return super().get_queryset(request)
     def get_field_queryset(self, db, db_field, request):
         qs = super().get_field_queryset(db, db_field, request)
@@ -66,7 +66,7 @@ class SubordinateInline(admin.TabularInline):
 
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
-        print("SubordinateInline get_queryset called")
+        #print("SubordinateInline get_queryset called")
         return super().get_queryset(request)
     def get_field_queryset(self, db, db_field, request):
         qs = super().get_field_queryset(db, db_field, request)
@@ -165,19 +165,19 @@ class CustomUserAdmin(UserAdmin):
             return qs
         if db_field.name.lower() == "groups":
             user_groups = request.user.role.managed_roles.all().values_list('group__name', flat=True)
-            print("Filtering groups for user:", request.user, " possible groups:", user_groups)
+            #print("Filtering groups for user:", request.user, " possible groups:", user_groups)
             qs = qs.filter(
                 name__in= user_groups
             )
         
-        print("field:", db_field.name)
+        #print("field:", db_field.name)
         
         if db_field.name.lower() == "user_permissions":
             user_permissions = []
             for role in request.user.role.managed_roles.all():
                 user_permissions.extend(role.group.permissions.all())
             user_permissions = set(user_permissions)
-            print("user_permissions:", user_permissions)
+            #print("user_permissions:", user_permissions)
             
             if qs is None:
                 # If no queryset was returned, get the default
@@ -189,11 +189,11 @@ class CustomUserAdmin(UserAdmin):
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
-        print("get_search_results called with search_term:", search_term)
+        #print("get_search_results called with search_term:", search_term)
         if 'autocomplete' in request.path:
             field_name = request.GET.get('field_name', None)
-            print("Field name for autocomplete:", field_name)
-            print("Queryset before filtering:", queryset)
+            #print("Field name for autocomplete:", field_name)
+            #print("Queryset before filtering:", queryset)
             if field_name == 'superior':
                 if request.user.is_superuser:
                     queryset = User.objects.all()
@@ -217,9 +217,9 @@ class CustomUserAdmin(UserAdmin):
         #print(f"Saving form: {form.cleaned_data}")
         if change:
             # Update an existing user
-            print("updating user")
+            #print("updating user")
             user = form.instance
-            print("form data", form.cleaned_data)
+            #print("form data", form.cleaned_data)
             data = deepcopy(form.cleaned_data)
             del data['password']
             user = UserManager().update_user(
@@ -245,7 +245,7 @@ class CustomUserAdmin(UserAdmin):
 
 class CustomRoleAdmin(admin.ModelAdmin):
     list_display = ('group', 'color', 'is_admin')
-    search_fields = ('group__name')
+    search_fields = ('group__name',)
     list_filter = ('group',)
     ordering = ('group__name',)
     fieldsets = [

@@ -2122,6 +2122,56 @@
     "permissionDenied": "Permission denied",
     "@permissionDenied": {
         "description": "Permission denied message"
-    }
+    },
+    "dataStoppedWaitSeconds": "Alert After N seconds of no data",
+    "@dataStoppedWaitSeconds": {
+        "description": "Alert after N seconds of no data label in seconds"
+    },
+    "min": "Minimum {min}",
+    "@min": {
+        "description": "Minimum value label with placeholder",
+        "placeholders": {
+            "min": {
+                "type": "int"
+            }
+        }
+    },
+    "collapse": "Collapse",
+    "@collapse": {
+        "description": "Collapse button text"
+    },
+    "expand": "Expand",
+    "@expand": {
+        "description": "Expand button text"
+    },
+    "darkMode": "Dark mode",
+    "@darkMode": {
+        "description": "Dark mode toggle label"
+    },
+    "lightMode": "Light mode",
+    "@lightMode": {
+        "description": "Light mode toggle label"
+    },
+    "changeLanguage": "Change language",
+    "@changeLanguage": {
+        "description": "Change language button label"
+    },
+    "holdToResetToSystemTheme": "Hold to reset to system theme",
+    "@holdToResetToSystemTheme": {
+        "description": "Hold to reset to system theme message"
+    },
+    "monitoredValueDescription": "The field that will be monitored for changes",
+    "@monitoredValueDescription": {
+        "description": "Description for monitored value field"
+    },
+    "monitorTypeDescription": "Are the values of the monitored field ascending or descending?",
+    "@monitorTypeDescription": {
+        "description": "Description for monitor type field"
+    },
+    "dangerAlertIntervalDescription": "The number of days before re-sending the alert of type danger if it is not resolved",
+    "@dangerAlertIntervalDescription": {
+        "description": "Description for danger alert interval field"
+    },
+    "warningAlertIntervalDescription": "The number of days before re-sending the alert of type warning if it is not resolved"
 
 }

@@ -88,7 +88,7 @@ class Toasts {
   }) {
     final toast = ElegantNotification.error(
       border: Border.all(color: Theme.of(context).colorScheme.surfaceContainer),
-      width: isLargeScreen(context) ? 400 : null,
+      width: 300,
       background: Theme.of(context).colorScheme.surfaceContainer,
       description: SizedBox(
         height: 50,
@@ -115,7 +115,7 @@ class Toasts {
   }) {
     final toast = ElegantNotification.info(
       border: Border.all(color: Theme.of(context).colorScheme.surfaceContainer),
-      width: isLargeScreen(context) ? 400 : null,
+      width: 300,
       background: Theme.of(context).colorScheme.surfaceContainer,
       description: SizedBox(height: 50, child: AutoSizeText(message)),
       title: title != null
@@ -137,7 +137,7 @@ class Toasts {
   }) {
     final toast = ElegantNotification.success(
       border: Border.all(color: Theme.of(context).colorScheme.surfaceContainer),
-      width: isLargeScreen(context) ? 400 : null,
+      width: 300,
       background: Theme.of(context).colorScheme.surfaceContainer,
       description: SizedBox(height: 50, child: AutoSizeText(message)),
       title: title != null

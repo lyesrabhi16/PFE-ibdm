@@ -132,7 +132,9 @@ class ServerConfigSerializer(serializers.Serializer):
     EMAIL_PROVIDERS = serializers.DictField(child=EmailProviderConfSerializer(), allow_null=True)
     LOG_SIZE_LIMIT = serializers.IntegerField(allow_null=True, required=False, default=100)  # 100 MB default log size limit
     COUNT_OF_LOGS_TO_KEEP = serializers.IntegerField(allow_null=True, required=False, default=10)  # 10 Log files for each log type
-
+    DATA_STOPPED_WAIT_SECONDS = serializers.IntegerField(
+        allow_null=True, required=False, default=600
+    )  # seconds to wait for data to be inserted before alerting of stop
 class StartEndDatesSerializer(serializers.Serializer):
     start_date = serializers.DateTimeField()
     end_date = serializers.DateTimeField()
