@@ -22,6 +22,7 @@ import 'package:ibdm/services/api_django/api_client/models/filtration_meta_conso
 import 'package:ibdm/services/api_django/api_client/models/niveau.dart';
 import 'package:ibdm/services/api_django/api_client/models/pres_cond.dart';
 import 'package:ibdm/services/api_django/api_client/models/volume.dart';
+import 'package:ibdm/services/socket.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
@@ -2885,8 +2886,8 @@ class _FiltrationPageState extends State<FiltrationPage> {
       if (FiltrationPage.stream == null) {
         try {
           printMessage("connecting to filtration broadcast");
-          FiltrationPage.channel = WebSocketChannel.connect(
-              Uri.parse(ApiConfig.filtration_broadcast_websocket_url));
+          FiltrationPage.channel = await getWebSocketChannel(
+              ApiConfig.filtration_broadcast_websocket_url);
           final res = await (await ApiClientInstance.getApiClient())
               .getFiltrationMetaData();
           printMessage("filtration broadcast connected");

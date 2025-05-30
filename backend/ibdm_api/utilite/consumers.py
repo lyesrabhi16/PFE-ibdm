@@ -5,8 +5,8 @@ class UtiliteConsumer(AsyncWebsocketConsumer):
     
     connected_count = 0
     async def connect(self):
-        await broadcastConnectionCheck(self.scope, "utilite", ["can_view_utilite_page", "can_view_co2_page"])
         self.group_name = "utilite"
+        await broadcastConnectionCheck(self.scope, "utilite", ["can_view_utilite_page", "can_view_co2_page"])
         await self.accept()
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         UtiliteConsumer.connected_count+=1
