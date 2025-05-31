@@ -3,33 +3,67 @@ from logs.logging import logger as logging
 from channels.exceptions import DenyConnection
 from asgiref.sync import sync_to_async
 from rest_framework.permissions import SAFE_METHODS
+from django.contrib.auth import get_user_model
 
 def check_permission(user, permission_name):
+    print("check_permission called with user:", user, "permission_name:", permission_name)
     if isinstance(permission_name, list):
         # If permission_name is a list, check if the user has any of the permissions
-        return any(user.has_perm(perm) for perm in permission_name)
-    return user.has_perm(permission_name)
+        has_perm = any(user.has_perm(perm) for perm in permission_name)
+        if not has_perm:
+            logging.info(f"User {user} does not have any of the permissions: {permission_name}")
+            print("User", user, "does not have any of the permissions:", permission_name)
+        return has_perm
+    has_perm = user.has_perm(permission_name)
+    if not has_perm:
+        logging.info(f"User {user} does not have permission: {permission_name}")
+        print("User", user, "does not have permission:", permission_name)
+    return has_perm
 
 
-def WithPermission(permission_name, allow_if_safe_methods=False):
+def WithPermission(permission_name, allow_if_safe_methods=False, allow_unsafe_if_owner=False):
     """
     Factory function to create a permission class that checks for a specific permission.
     :param permission_name: The permission string to check (e.g., 'app.some_perm' or a role name).
     :return: A DRF permission class.
     """
+    
     class PermissionClass(BasePermission):
         message = f"User does not have the required permission: {permission_name}"
 
         def has_permission(self, request, view):
+            print("has_permission called with request.user:", request.user)
             logging.info(f"Checking permission {permission_name} for user: {request.user}")
             if allow_if_safe_methods and request.method in SAFE_METHODS:
                 logging.info("Allowing access for safe methods")
                 return True
+            try:
+                obj = view.get_object() if hasattr(view, 'get_object') else None
+                if obj:
+                    logging.info(f"Checking object-level permission for user: {request.user} on object: {obj}")
+                    is_owner = hasattr(obj, 'pk') and request.user.pk == obj.pk
+                    if allow_unsafe_if_owner and is_owner:
+                        logging.info(f"User {request.user} is the owner of the object {obj}, allowing access")
+                        return True
+            except Exception as e:
+                pass # Ignore errors if get_object fails, get_object might not be applicable for all views
             return check_permission(request.user, permission_name)
 
         def has_object_permission(self, request, view, obj):
             # Apply same logic for object-level permission (customize as needed)
-            return self.has_permission(request, view)
+            print("has_object_permission called with request.user:", request.user)
+            if allow_unsafe_if_owner:
+                print("object:", obj)
+                User = get_user_model()
+                if isinstance(obj, User):
+                    logging.info(f"Checking if user {request.user} is the owner of the object {obj}")
+                    if request.user.pk == obj.pk:
+                        return True
+            if allow_if_safe_methods and request.method in SAFE_METHODS:
+                logging.info("Allowing access for safe methods")
+                return True
+            
+            return check_permission(request.user, permission_name)
 
     return PermissionClass
 

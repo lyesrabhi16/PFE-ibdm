@@ -22,20 +22,20 @@ import 'package:toastification/toastification.dart';
 import 'package:universal_io/io.dart';
 
 class UserForm extends StatefulWidget {
-  const UserForm({
+  UserForm({
     super.key,
     required this.formKeyAddUser,
-    required this.addUserEmailController,
-    required this.addUserNameController,
-    required this.addUserPasswordController,
-    required this.addUserPhoneController,
+    this.addUserEmailController,
+    this.addUserNameController,
+    this.addUserPasswordController,
+    this.addUserPhoneController,
     this.editable = true,
     this.role,
     this.user,
     this.showPlaceHolders = true,
     required this.addUserSuperiorOptions,
-    required this.addFirstNameController,
-    required this.addLastNameController,
+    this.addFirstNameController,
+    this.addLastNameController,
     this.onAddUser,
     this.showRole = true,
     this.showSuperior = true,
@@ -62,12 +62,12 @@ class UserForm extends StatefulWidget {
   final Role? role;
   final bool showPlaceHolders;
   final GlobalKey<FormState> formKeyAddUser;
-  final TextEditingController addUserEmailController;
-  final TextEditingController addUserNameController;
-  final TextEditingController addFirstNameController;
-  final TextEditingController addLastNameController;
-  final TextEditingController addUserPasswordController;
-  final TextEditingController addUserPhoneController;
+  TextEditingController? addUserEmailController;
+  TextEditingController? addUserNameController;
+  TextEditingController? addFirstNameController;
+  TextEditingController? addLastNameController;
+  TextEditingController? addUserPasswordController;
+  TextEditingController? addUserPhoneController;
   final RxList<ShadOption<User>> addUserSuperiorOptions;
 
   @override
@@ -76,6 +76,52 @@ class UserForm extends StatefulWidget {
 
 class _UserFormState extends State<UserForm> {
   final RxBool _showPassword = false.obs;
+
+  late final TextEditingController addUserEmailController;
+  late final TextEditingController addUserNameController;
+  late final TextEditingController addFirstNameController;
+  late final TextEditingController addLastNameController;
+  late final TextEditingController addUserPasswordController;
+  late final TextEditingController addUserPhoneController;
+
+  @override
+  void initState() {
+    super.initState();
+    _loaded = false.obs;
+    _loadedSuperiorInitialValue = false.obs;
+    _searchAddUserSuperior = false.obs;
+    _searchAddUserSuperiorOptions = <ShadOption<User>>[].obs;
+    _addUserAvatarSelected = false.obs;
+    _addUserRole = getInitialRoleValue();
+    userRole = (widget.role ?? _addUserRole).obs;
+    addFirstNameController = widget.addFirstNameController ??
+        TextEditingController(
+          text: widget.user?.firstName ?? "",
+        );
+    addLastNameController = widget.addLastNameController ??
+        TextEditingController(
+          text: widget.user?.lastName ?? "",
+        );
+    addUserEmailController = widget.addUserEmailController ??
+        TextEditingController(
+          text: widget.user?.email ?? "",
+        );
+    addUserNameController = widget.addUserNameController ??
+        TextEditingController(
+          text: widget.user?.username ?? "",
+        );
+    addUserPasswordController = widget.addUserPasswordController ??
+        TextEditingController(
+          text: "",
+        );
+    addUserPhoneController = widget.addUserPhoneController ??
+        TextEditingController(
+          text: widget.user?.phoneNumber ?? "",
+        );
+    logger.e(
+        "UserForm initialized with user: ${widget.addUserEmailController?.text} ");
+    _load(context);
+  }
 
   List<ShadOption<User>> get _addUserSuperiorOptions =>
       widget.addUserSuperiorOptions
@@ -92,23 +138,22 @@ class _UserFormState extends State<UserForm> {
 
   bool get isEditing => widget.user != null && widget.editable == true;
 
-  final Rx<bool> _loaded = false.obs;
+  late final Rx<bool> _loaded;
 
-  final Rx<bool> _loadedSuperiorInitialValue = false.obs;
+  late final Rx<bool> _loadedSuperiorInitialValue;
 
   Role? _addUserRole;
 
-  final Rx<bool> _searchAddUserSuperior = false.obs;
+  late final Rx<bool> _searchAddUserSuperior;
 
-  final RxList<ShadOption<User>> _searchAddUserSuperiorOptions =
-      <ShadOption<User>>[].obs;
+  late final RxList<ShadOption<User>> _searchAddUserSuperiorOptions;
 
   Rx<Icon> get _addUserPlaceHolderAvatar => Icon(
         LucideIcons.circleUserRound,
         size: AppSizes.xl * 3,
       ).obs;
 
-  final Rx<bool> _addUserAvatarSelected = false.obs;
+  late final Rx<bool> _addUserAvatarSelected;
 
   File? _addUserAvatarFile;
 
@@ -116,12 +161,13 @@ class _UserFormState extends State<UserForm> {
   Uint8List? _addUserAvatarBytes;
 
   Role? getInitialRoleValue() {
-    logger.e(
+    /* logger.e(
         "initial Role: ${UserForm.userController.user?.role} ${UserForm.userController.roles.map((r) => r.name)}");
+     */
     final user_managed_roles = UserForm.userController.roles
         .firstWhereOrNull((e) => e.name == UserForm.userController.user!.role)
         ?.managedRoles;
-    logger.e("user_managed_roles: $user_managed_roles");
+    //logger.e("user_managed_roles: $user_managed_roles");
     return user_managed_roles == null || user_managed_roles.isEmpty
         ? null
         : UserForm.userController.roles
@@ -150,8 +196,10 @@ class _UserFormState extends State<UserForm> {
   final Rx<bool> _showUserAvatar = true.obs;
 
   User? _addUserSuperior;
+  late final Rx<Role?> userRole;
 
   Future<void> _load(context) async {
+    print("loading user form");
     _loaded.value = false;
     final List<Role> localRoles =
         await UserForm.userController.getRoles(context);
@@ -161,19 +209,27 @@ class _UserFormState extends State<UserForm> {
   }
 
   _valuesChanged() {
-    logger.e("values changed: ${widget.addUserEmailController.text}");
+    logger.e("values changed: ${addUserEmailController?.text}");
     if (_addUserRole == null) {
       return;
     }
+    logger.e('email: ${addUserEmailController?.text}, '
+        'username: ${addUserNameController?.text}, '
+        'password: ${addUserPasswordController?.text}, '
+        'phone: ${addUserPhoneController?.text}, '
+        'role: ${_addUserRole?.name}, '
+        'superior: ${_addUserSuperior?.userId}'
+        'firstName: ${addFirstNameController?.text}, '
+        'lastName: ${addLastNameController?.text}, ');
     widget.onAddUser?.call(
-      widget.addUserEmailController.text,
-      widget.addUserNameController.text,
-      widget.addUserPasswordController.text,
-      widget.addUserPhoneController.text,
+      addUserEmailController!.text,
+      addUserNameController!.text,
+      addUserPasswordController!.text,
+      addUserPhoneController!.text,
       _addUserRole!,
       _addUserSuperior,
-      widget.addFirstNameController.text,
-      widget.addLastNameController.text,
+      addFirstNameController!.text,
+      addLastNameController!.text,
       _addUserAvatarBytes,
       _addUserAvatarFile,
     );
@@ -181,11 +237,8 @@ class _UserFormState extends State<UserForm> {
 
   @override
   Widget build(BuildContext context) {
+    logger.e("building user form");
     final strings = getTranslations(context).obs;
-    logger.d("building user form");
-    _addUserRole = getInitialRoleValue();
-    final userRole = (widget.role ?? _addUserRole).obs;
-    _load(context);
     return Obx(() {
       _addUserRole = userRole.value;
       if (!_loaded.value) {
@@ -193,14 +246,16 @@ class _UserFormState extends State<UserForm> {
           text: strings.value.loading,
         );
       }
-      logger.e(
+      /* logger.e(
           "User: ${widget.user} ${widget.user?.avatarUrl} ${_addUserAvatarSelected.value}");
-
+      */
+      logger.e("triggering values changed");
       _valuesChanged();
+      logger.e("user role: ${userRole.value?.name}");
       return Form(
         key: widget.formKeyAddUser,
         onChanged: () {
-          logger.e("form changed: $_addUserSuperior");
+          //logger.e("form changed: $_addUserSuperior");
           if (userRole.value == null) {
             logger.e("role is null in user form on changed");
             return;
@@ -331,7 +386,10 @@ class _UserFormState extends State<UserForm> {
               // email
               ShadInputFormField(
                 enabled: widget.editable,
-                controller: widget.addUserEmailController,
+                controller: addUserEmailController,
+                onChanged: (v) {
+                  _valuesChanged();
+                },
                 keyboardType: TextInputType.emailAddress,
                 validator: FormBuilderValidators.email(
                   errorText: strings.value.invalidEmail,
@@ -343,7 +401,7 @@ class _UserFormState extends State<UserForm> {
               // password
               ShadInputFormField(
                 enabled: widget.editable,
-                controller: widget.addUserPasswordController,
+                controller: addUserPasswordController,
                 onChanged: (v) {
                   _valuesChanged();
                 },
@@ -372,7 +430,10 @@ class _UserFormState extends State<UserForm> {
               // first_name
               ShadInputFormField(
                 enabled: widget.editable,
-                controller: widget.addFirstNameController,
+                controller: addFirstNameController,
+                onChanged: (v) {
+                  _valuesChanged();
+                },
                 keyboardType: TextInputType.name,
                 validator: FormBuilderValidators.firstName(
                     regex: RegExp("^[a-zA-Z]+( [a-zA-Z]+)*\$"),
@@ -394,7 +455,10 @@ class _UserFormState extends State<UserForm> {
               // last_name
               ShadInputFormField(
                 enabled: widget.editable,
-                controller: widget.addLastNameController,
+                controller: addLastNameController,
+                onChanged: (v) {
+                  _valuesChanged();
+                },
                 keyboardType: TextInputType.name,
                 validator: FormBuilderValidators.lastName(
                     regex: RegExp("^[a-zA-Z]+( [a-zA-Z]+)*\$"),
@@ -416,7 +480,10 @@ class _UserFormState extends State<UserForm> {
               // username
               ShadInputFormField(
                 enabled: widget.editable,
-                controller: widget.addUserNameController,
+                controller: addUserNameController,
+                onChanged: (v) {
+                  _valuesChanged();
+                },
                 keyboardType: TextInputType.name,
                 validator: FormBuilderValidators.username(
                   allowDash: true,
@@ -446,17 +513,19 @@ class _UserFormState extends State<UserForm> {
                     options: getRoleOptions(context),
                     label: Text(strings.value.role),
                     onChanged: (value) {
-                      logger.e(
+                      /* logger.e(
                           "before value: ${value?.name} __userRole: ${userRole.value?.name}");
+                       */
                       userRole.value = value;
                       _addUserRole = value;
                       _valuesChanged();
 
-                      logger.e(
+                      /* logger.e(
                           "after value: ${value?.name} __userRole: ${userRole.value?.name}");
+                     */
                     },
                     selectedOptionBuilder: (context, value) {
-                      logger.e("selected role: ${value.name}");
+                      //logger.e("selected role: ${value.name}");
                       return Container(
                         constraints: BoxConstraints(
                           minWidth: context.width,
@@ -481,7 +550,7 @@ class _UserFormState extends State<UserForm> {
               // phone number
               ShadInputFormField(
                 enabled: widget.editable,
-                controller: widget.addUserPhoneController,
+                controller: addUserPhoneController,
                 keyboardType: TextInputType.phone,
                 validator: (v) => AppValidators.phoneNumberValidator(v),
                 label: Text(strings.value.phoneNumber),
@@ -521,7 +590,7 @@ class _UserFormState extends State<UserForm> {
                       preferBelow: false,
                     ),
                     onChanged: (value) {
-                      logger.d("superior value: ${value?.email}");
+                      //logger.d("superior value: ${value?.email}");
                       _addUserSuperior = value;
                       _valuesChanged();
                     },
@@ -604,7 +673,7 @@ class _UserFormState extends State<UserForm> {
       }
     }
 
-    logger.e("superior: ${_addUserSuperior?.userId}");
+    //logger.e("superior: ${_addUserSuperior?.userId}");
     _loadedSuperiorInitialValue.value = true;
   }
 

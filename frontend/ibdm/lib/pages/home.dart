@@ -1556,165 +1556,186 @@ class _HomeState extends State<Home> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
                     children: [
-                      Text(
-                        strings.value.welcomeBack,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ).marginAll(AppSizes.sm),
-                      Text(
-                        getUserName(userController.user!),
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                      ).marginAll(AppSizes.sm),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          strings.value.welcome,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ).marginAll(AppSizes.sm),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          getUserName(userController.user!),
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                        ).marginAll(AppSizes.sm),
+                      ),
                     ],
                   ),
-                  Wrap(
-                    spacing: AppSizes.md,
-                    runSpacing: AppSizes.md,
-                    children: [
-                      for (var item in items)
-                        if (item is LinkedHomePageItemBuilders)
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ConstrainedBox(
-                                constraints: item.item1.constraints,
-                                child: Card(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainerLow,
-                                  elevation: 3,
-                                  child: Padding(
-                                      padding:
-                                          const EdgeInsets.all(AppSizes.sm),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                item.item1.icon,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                              ),
-                                              const SizedBox(
-                                                  width: AppSizes.sm),
-                                              Text(
-                                                item.item1.title,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleMedium
-                                                    ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                              ),
-                                            ],
-                                          ),
-                                          item.item1.child,
-                                        ],
-                                      )),
-                                ),
-                              ),
-                              const SizedBox(width: AppSizes.md),
-                              ConstrainedBox(
-                                constraints: item.item2.constraints,
-                                child: Card(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainerLow,
-                                  elevation: 3,
-                                  child: Padding(
-                                      padding:
-                                          const EdgeInsets.all(AppSizes.sm),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                item.item2.icon,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                              ),
-                                              const SizedBox(
-                                                  width: AppSizes.sm),
-                                              Text(
-                                                item.item2.title,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleMedium
-                                                    ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                              ),
-                                            ],
-                                          ),
-                                          item.item2.child,
-                                        ],
-                                      )),
-                                ),
-                              ),
-                            ],
-                          )
-                        else if (item is HomePageItemBuilder)
-                          ConstrainedBox(
-                            constraints: item.constraints,
-                            child: Card(
+                  const SizedBox(height: AppSizes.md),
+                  if (items.isEmpty)
+                    Center(
+                      child: Text(
+                        strings.value.nothingToDisplay,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .surfaceContainerLow,
-                              elevation: 3,
-                              child: Padding(
-                                  padding: const EdgeInsets.all(AppSizes.sm),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            item.icon,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                          ),
-                                          const SizedBox(width: AppSizes.sm),
-                                          Text(
-                                            item.title,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: AppSizes.md,
-                                      ),
-                                      item.child,
-                                    ],
-                                  )),
+                                  .onSurfaceVariant,
                             ),
-                          )
-                    ],
-                  )
+                      ),
+                    ),
+                  if (items.isNotEmpty)
+                    Wrap(
+                      spacing: AppSizes.md,
+                      runSpacing: AppSizes.md,
+                      children: [
+                        for (var item in items)
+                          if (item is LinkedHomePageItemBuilders)
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ConstrainedBox(
+                                  constraints: item.item1.constraints,
+                                  child: Card(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerLow,
+                                    elevation: 3,
+                                    child: Padding(
+                                        padding:
+                                            const EdgeInsets.all(AppSizes.sm),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  item.item1.icon,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
+                                                const SizedBox(
+                                                    width: AppSizes.sm),
+                                                Text(
+                                                  item.item1.title,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleMedium
+                                                      ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                            item.item1.child,
+                                          ],
+                                        )),
+                                  ),
+                                ),
+                                const SizedBox(width: AppSizes.md),
+                                ConstrainedBox(
+                                  constraints: item.item2.constraints,
+                                  child: Card(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerLow,
+                                    elevation: 3,
+                                    child: Padding(
+                                        padding:
+                                            const EdgeInsets.all(AppSizes.sm),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  item.item2.icon,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
+                                                const SizedBox(
+                                                    width: AppSizes.sm),
+                                                Text(
+                                                  item.item2.title,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleMedium
+                                                      ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                            item.item2.child,
+                                          ],
+                                        )),
+                                  ),
+                                ),
+                              ],
+                            )
+                          else if (item is HomePageItemBuilder)
+                            ConstrainedBox(
+                              constraints: item.constraints,
+                              child: Card(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerLow,
+                                elevation: 3,
+                                child: Padding(
+                                    padding: const EdgeInsets.all(AppSizes.sm),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              item.icon,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                            ),
+                                            const SizedBox(width: AppSizes.sm),
+                                            Text(
+                                              item.title,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: AppSizes.md,
+                                        ),
+                                        item.child,
+                                      ],
+                                    )),
+                              ),
+                            )
+                      ],
+                    )
                 ],
               ),
             ),

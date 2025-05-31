@@ -76,9 +76,10 @@ class UserViewSet(viewsets.ModelViewSet):
     filterset_fields = ["role"]
     search_fields = ["username", "email", "first_name", "last_name"]
     ordering_fields = ["id","username", "email", "first_name", "last_name", "role"]
-    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_users_page", allow_if_safe_methods=True)]
+    permission_classes = [permissions.IsAuthenticated, WithPermission("can_view_users_page", allow_if_safe_methods=True, allow_unsafe_if_owner=True)]
 
     def get_queryset(self):
+        print("Getting UserViewSet queryset for user", self.request.user)
         return getUsersQueryset(self.request.user)
     
     
@@ -228,6 +229,7 @@ def getUsersQueryset(user, inlcude_inactive=False):
     qs = User.objects.all().order_by("id") if inlcude_inactive else User.objects.filter(is_active=True).order_by("id")
 
     if (user.is_superuser):
+        print("User is superuser, returning all users")
         return qs
 
     # traverse the subordinate and superior relationship to get all subordinates of the user
@@ -244,6 +246,9 @@ def getUsersQueryset(user, inlcude_inactive=False):
 
     subordinates = traverse_tree(user)
     if len(subordinates) > 0:
-        qs = qs.filter(id__in=[u.id for u in subordinates])
+        ids = [u.id for u in subordinates]
+        ids.append(user.id)
+        print("ids:", ids)
+        qs = qs.filter(id__in=ids)
         return qs
-    return qs.none()
+    return qs.filter(id=user.id)
