@@ -284,20 +284,24 @@ class _UsersPageState extends State<UsersPage> {
     _loaded.value = false;
     UsersPage.roles.clear();
     UsersPage.roles.addAll(await UsersPage.userController.getRoles(context));
-    logger.e("Roles ${UsersPage.roles}");
+    //logger.e("Roles ${UsersPage.roles}");
     await _loadUsers(context);
     _loaded.value = true;
 
-    logger.e(
+    /* logger.e(
       "Loaded users page $usersData",
-    );
+    ); */
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // load required data
+    _load(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    // load required data
-    _load(context);
-
     final colorScheme = Theme.of(context).colorScheme;
     final strings = getTranslations(context).obs;
 
@@ -973,15 +977,17 @@ class _UsersPageState extends State<UsersPage> {
               _loadUsers(context);
               return;
             }
-            logger.e(
+            /* logger.e(
                 "${strings.value.role} :${UsersPage.roleFilter?.name} $value");
+             */
             if (value != null) {
               UsersPage.roleFilter = value;
               UsersPage.roleFilterSelected.value = true;
               _loadUsers(context);
             }
-            logger.e(
+            /* logger.e(
                 "${strings.value.role} :${UsersPage.roleFilter?.name} $value");
+           */
           },
           dropdownMenuEntries: [
             for (var role in UsersPage.roles)
@@ -1199,24 +1205,34 @@ class _UsersPageState extends State<UsersPage> {
                 text: strings.value.loadingSuperiors,
               );
             }
-            logger.e("superior options: $_addUserSuperiorOptions");
+            //logger.e("superior options: $_addUserSuperiorOptions");
             return UserForm(
-              addUserEmailController: UsersPage.addUserEmailController,
-              addUserNameController: UsersPage.addUserNameController,
-              addFirstNameController: UsersPage.addFirstNameController,
-              addLastNameController: UsersPage.addLastNameController,
-              addUserPasswordController: UsersPage.addUserPasswordController,
-              addUserPhoneController: UsersPage.addUserPhoneController,
               formKeyAddUser: UsersPage.formKeyAddUser,
               addUserSuperiorOptions: _addUserSuperiorOptions,
               onAddUser: (email, username, password, phone, role, superior,
                   firstName, lastName, avatarBytes, avatarFile) {
-                logger.e("setRole: ${role.name}");
+                //logger.e("setRole: ${role.name}");
                 UsersPage.addUserRole = role;
                 UsersPage.addUserSuperior = superior;
                 UsersPage.addUserAvatarBytes = avatarBytes;
                 UsersPage.addUserAvatarBytesFileName = "avatar.jpg";
                 UsersPage.addUserAvatarFile = avatarFile;
+                UsersPage.addFirstNameController.text = firstName;
+                UsersPage.addLastNameController.text = lastName;
+                UsersPage.addUserEmailController.text = email;
+                UsersPage.addUserNameController.text = username;
+                UsersPage.addUserPasswordController.text = password;
+                UsersPage.addUserPhoneController.text = phone;
+
+                logger.e("ValuesChanged: "
+                    "email ${UsersPage.addUserEmailController.text}, "
+                    "username ${UsersPage.addUserNameController.text}, "
+                    "password ${UsersPage.addUserPasswordController.text}, "
+                    "phone ${UsersPage.addUserPhoneController.text}, "
+                    "role ${UsersPage.addUserRole?.name}, "
+                    "superior ${UsersPage.addUserSuperior?.userId}, "
+                    "first name ${UsersPage.addFirstNameController.text}, "
+                    "last name ${UsersPage.addLastNameController.text}");
               },
             );
           },
@@ -1406,10 +1422,10 @@ class _UsersPageState extends State<UsersPage> {
             selected: UsersPage.selectedUsers.contains(user),
             onSelectChanged: (value) {
               if (UsersPage.selectedUsers.contains(user)) {
-                logger.d("unselected ${user.userId}: $value");
+                //logger.d("unselected ${user.userId}: $value");
                 UsersPage.selectedUsers.remove(user);
               } else {
-                logger.d("selected ${user.userId}: $value");
+                //logger.d("selected ${user.userId}: $value");
                 UsersPage.selectedUsers.add(user);
               }
             },
@@ -1424,7 +1440,7 @@ class _UsersPageState extends State<UsersPage> {
     loadSuperiorsOptions(context,
         ResultSuperiorOptions: _addUserSuperiorOptions,
         loadedUserSuperiorOptions: _loadedAddUserSuperiorOptions);
-    logger.d("showing edit dialog");
+    //logger.d("showing edit dialog");
     User newUser = User(
       isAdmin: false,
       userId: user.userId,
@@ -1442,7 +1458,7 @@ class _UsersPageState extends State<UsersPage> {
     Uint8List? editUserAvatarBytes;
     File? editUserAvatarFile;
     String? password;
-    logger.d("showing edit dialog 2");
+    //logger.d("showing edit dialog 2");
     final loadedUserDetails = false.obs;
     User? userDetails;
     final Rx<bool> loadedRoles = false.obs;
@@ -1454,15 +1470,15 @@ class _UsersPageState extends State<UsersPage> {
       final res = await api.getUser(id: user.userId);
       userDetails = res;
       loadedUserDetails.value = true;
-      logger.d("user details fetched");
+      //logger.d("user details fetched");
     }).catchError((e) {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
           context: context, message: strings.value.failedToGetUser);
       loadedUserDetails.value = true;
     });
-
-    return showShadDialog(
+    logger.e("rebuilding edit dialog");
+    showShadDialog(
       context: context,
       builder: (context) => ShadDialog(
         title:
@@ -1608,17 +1624,6 @@ class _UsersPageState extends State<UsersPage> {
                     isAdmin: false,
                   )
                 },
-                addUserEmailController:
-                    TextEditingController(text: userDetails!.email),
-                addUserNameController:
-                    TextEditingController(text: userDetails!.username),
-                addFirstNameController:
-                    TextEditingController(text: userDetails!.firstName),
-                addLastNameController:
-                    TextEditingController(text: userDetails!.lastName),
-                addUserPasswordController: TextEditingController(),
-                addUserPhoneController:
-                    TextEditingController(text: userDetails!.phoneNumber),
                 formKeyAddUser: UsersPage.formKeyAddUser,
                 addUserSuperiorOptions: _addUserSuperiorOptions,
               );
@@ -1632,7 +1637,7 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   Future _showViewUserDialog(BuildContext context, User user) async {
-    logger.e("showing view dialog");
+    //logger.e("showing view dialog");
     final loadedUserDetails = false.obs;
     User? userDetails;
     final Rx<bool> loadedRoles = false.obs;
@@ -1646,7 +1651,7 @@ class _UsersPageState extends State<UsersPage> {
       final res = await api.getUser(id: user.userId);
       userDetails = res;
       loadedUserDetails.value = true;
-      logger.d("user details fetched");
+      //logger.d("user details fetched");
     }).catchError((e) {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
@@ -1804,7 +1809,7 @@ class _UsersPageState extends State<UsersPage> {
     // add user request
     try {
       final api = await ApiClientInstance.getApiClient();
-      logger.e("addUserRole: ${UsersPage.addUserRole!.name}");
+      //logger.e("addUserRole: ${UsersPage.addUserRole!.name}");
       late final User res;
       if (kIsWeb) {
         res = await api.addUsersOnWeb(
@@ -1826,9 +1831,11 @@ class _UsersPageState extends State<UsersPage> {
           role: UsersPage.addUserRole!.name,
           phoneNumber: UsersPage.addUserPhoneController.text,
           username: UsersPage.addUserNameController.text,
+          firstName: UsersPage.addFirstNameController.text,
+          lastName: UsersPage.addLastNameController.text,
         );
       }
-      logger.e("passed the add user");
+      //logger.e("passed the add user");
       if (UsersPage.addUserSuperior != null) {
         await api.addSubordinateAndSuperior(
           body: SubordinateAndSuperiorRequest(
@@ -1919,8 +1926,9 @@ class _UsersPageState extends State<UsersPage> {
     try {
       final api = await ApiClientInstance.getApiClient();
       //logger.e("addUserRole: ${_addUserRole!.name}");
-      logger.e(
+      /* logger.e(
           "${strings.value.avatar} : ${userAvatarBytes != null} ${UsersPage.addUserAvatarBytesFileName} ${userAvatarFile != null}");
+       */
       late final User res;
       if (kIsWeb) {
         res = await api.partialUpdateUserOnWeb(
@@ -1948,7 +1956,7 @@ class _UsersPageState extends State<UsersPage> {
           lastName: user.lastName,
         );
       }
-      logger.e("superior: ${UsersPage.addUserSuperior?.userId}");
+      //logger.e("superior: ${UsersPage.addUserSuperior?.userId}");
       if (UsersPage.addUserSuperior != null) {
         if (user.superiors.isEmpty) {
           await api.addSubordinateAndSuperior(

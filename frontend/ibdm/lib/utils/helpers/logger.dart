@@ -6,7 +6,8 @@ Logger logger = Logger();
 printMessage(String message) {
   if (kReleaseMode) {
     return;
-  }else{
+  } else {
+    return;
     print(message);
   }
 }
