@@ -1,5 +1,6 @@
 # status file
 settings.json
+settings.*.json
 settings.old.json
 status_data.json
 # Logs

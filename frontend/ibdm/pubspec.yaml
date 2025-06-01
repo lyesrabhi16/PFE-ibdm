@@ -105,6 +105,7 @@
     # package. See that file for information about deactivating specific lint
     # rules and activating additional ones.
     flutter_lints: ^5.0.0
+    msix: ^3.16.9
 
   # For information on the generic Dart part of this file, see the
   # following page: https://dart.dev/tools/pub/pubspec
@@ -161,4 +162,12 @@
           - asset: assets/google_fonts/Roboto-Bold.ttf
           - asset: assets/google_fonts/Roboto-Italic.ttf
           - asset: assets/google_fonts/Roboto-BoldItalic.ttf
-    
+  msix_config:
+    display_name: IBDM
+    publisher_display_name: IFRUIT
+    identity_name: com.ifruit.ibdm
+    msix_version: 1.0.0.0
+    logo_path: D:\studies\projects\PFE-ibdm\frontend\ibdm\assets\images\logo.png
+    certificate_path: D:\studies\projects\PFE-ibdm\backend\ibdm_api\certs\ibdm.pfx
+    certificate_password: 2018
+    capabilities: internetClient
