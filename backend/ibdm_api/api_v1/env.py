@@ -40,6 +40,50 @@ class Env:
     DATABASES : Dict = dict(settings.get('DATABASES') or config("DATABASES", default={}, cast=dict) or {})
     EMAIL_PROVIDERS : Dict = dict(settings.get('EMAIL_PROVIDERS') or config("EMAIL_PROVIDERS", default={}, cast=dict) or {})
 
+    ENV_DEFAULT_TEMPLATE = {
+        "VERSION": "1.0.0",
+        "SECRET_KEY": "your-secret-key",
+        "ENV_MODE": EnvModes.DEVELOPMENT,
+        "DEBUG": True,
+        "SYSTEM_MONITOR_DB_TIMEOUT": 5,
+        "ALLOWED_HOSTS": ["localhost"],
+        "CSRF_TRUSTED_ORIGINS": ["localhost", "https://localhost:8443"],
+        "LOG_TO_FILES": False,
+        "SERVER_DB_CONNECTION_CHECK_TIMEOUT": 5,
+        "REDIS_DB": {
+            "ENGINE": None,
+            "NAME": None,
+            "USER": "",
+            "PASSWORD": "",
+            "HOST": "192.168.144.1",
+            "PORT": "6379",
+            "OPTIONS": None
+        },
+        "DATABASES": {
+            "default": {
+                "ENGINE": "mssql",
+                "NAME": "",
+                "USER": "",
+                "PASSWORD": "",
+                "HOST": "",
+                "PORT": "1433",
+                "OPTIONS": {
+                    "driver": "ODBC Driver 17 for SQL Server",
+                },
+            }
+        },
+        "EMAIL_PROVIDERS": {
+            "default": {
+                "HOST": "172.16.10.29",
+                "PORT": 587,
+                "USE_TLS": True,
+                "USER": "example@ifri-dz.local",
+                "PASSWORD": "PASS",
+                "EMAIL_OF_SENDER": "example@ifri-dz.com"
+            }
+        },
+    }
+
     @classmethod
     def load_settings_json(cls):
         print("Loading settings...")

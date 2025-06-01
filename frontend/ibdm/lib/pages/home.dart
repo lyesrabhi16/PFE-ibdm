@@ -1598,6 +1598,7 @@ class _HomeState extends State<Home> {
                     ),
                   if (items.isNotEmpty)
                     Wrap(
+                      alignment: WrapAlignment.spaceEvenly,
                       spacing: AppSizes.md,
                       runSpacing: AppSizes.md,
                       children: [

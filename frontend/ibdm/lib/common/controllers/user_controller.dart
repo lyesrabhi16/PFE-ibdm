@@ -71,7 +71,7 @@ class UserController extends GetxController {
     fetchUserFromApi();
   }
 
-  void fetchUserFromApi({Function(dynamic e)? onFail}) async {
+  Future<void> fetchUserFromApi({Function(dynamic e)? onFail}) async {
     // fetch user from api
     final apiClient = await ApiClientInstance.getApiClient();
     try {

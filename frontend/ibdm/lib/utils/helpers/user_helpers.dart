@@ -34,7 +34,7 @@ bool searchRoles(Role role, String value) {
   return role.name.toLowerCase().contains(value.toLowerCase());
 }
 
-void loadSuperiorsOptions(
+Future<void> loadSuperiorsOptions(
   BuildContext context, {
   required Rx<bool> loadedUserSuperiorOptions,
   required RxList<ShadOption<User>> ResultSuperiorOptions,
@@ -43,6 +43,7 @@ void loadSuperiorsOptions(
   loadedUserSuperiorOptions.value = false;
   final strings = getTranslations(Get.context!).obs;
   final UserController userController = Get.find();
+  await userController.fetchUserFromApi();
   final me =
       "${userController.user!.username.isEmpty ? userController.user!.email : userController.user!.username}(${strings.value.me})";
   logger.f("loading superiors options for user: ${userController.user}");
