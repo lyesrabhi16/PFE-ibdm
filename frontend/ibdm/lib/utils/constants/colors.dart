@@ -82,7 +82,7 @@ class AppColors {
     Role? roleObj = userController.roles.firstWhereOrNull(
       (element) => element.name == role,
     );
-    logger.e("Role: $role, Role Object: $roleObj");
+    //logger.e("Role: $role, Role Object: $roleObj");
     return invertColorIfNeeded(
         roleObj != null ? getRoleColorWithRole(roleObj) : Colors.grey);
   }

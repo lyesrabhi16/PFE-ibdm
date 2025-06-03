@@ -34,16 +34,19 @@ bool searchRoles(Role role, String value) {
   return role.name.toLowerCase().contains(value.toLowerCase());
 }
 
-void loadSuperiorsOptions(
+Future<void> loadSuperiorsOptions(
   BuildContext context, {
   required Rx<bool> loadedUserSuperiorOptions,
   required RxList<ShadOption<User>> ResultSuperiorOptions,
 }) async {
+  logger.f("loading superiors options");
   loadedUserSuperiorOptions.value = false;
-  final strings = getTranslations(context).obs;
+  final strings = getTranslations(Get.context!).obs;
   final UserController userController = Get.find();
+  await userController.fetchUserFromApi();
   final me =
       "${userController.user!.username.isEmpty ? userController.user!.email : userController.user!.username}(${strings.value.me})";
+  logger.f("loading superiors options for user: ${userController.user}");
   List<ShadOption<User>> options = [
     ShadOption(
       value: userController.user!,
@@ -56,7 +59,7 @@ void loadSuperiorsOptions(
       ),
     ),
   ];
-
+  logger.f("initial options: $options");
   try {
     logger.f("user in loadSuperiorsOptions: ${userController.user}");
     if (userController.user!.role == "ADMIN_SYSTEM") {
@@ -101,12 +104,17 @@ void loadSuperiorsOptions(
       loadedUserSuperiorOptions.value = true;
       return;
     }
+    logger.f("user is not admin system, traversing subordinates tree");
     traverseSubordinatesTree(User user, Function(User user) onUserFound) async {
+      logger.f("traversing subordinates tree for user: ${user.userId}");
+      final api = await ApiClientInstance.getApiClient();
       if (user.subordinates.isNotEmpty) {
+        logger.f("user has subordinates: ${user.subordinates.length}");
         for (var user in user.subordinates) {
-          final subUser = await (await ApiClientInstance.getApiClient())
-              .getUser(id: user.userId);
+          logger.f("subordinate user id: ${user.userId}");
+          final subUser = await api.getUser(id: user.userId);
           onUserFound(subUser);
+          logger.f("found subordinate user: ${subUser.userId}");
           traverseSubordinatesTree(subUser, onUserFound);
         }
       }
@@ -125,7 +133,10 @@ void loadSuperiorsOptions(
                       SizedBox(width: AppSizes.md),
                       Text(
                         user.role,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: Theme.of(Get.context!)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(
                               color: AppColors.getRoleColorWithRoleValue(
                                   user.role),
                             ),
@@ -135,9 +146,10 @@ void loadSuperiorsOptions(
             )
           : {},
     );
-
+    logger.e("found superior options: $options");
     ResultSuperiorOptions.value = options;
     loadedUserSuperiorOptions.value = true;
+    logger.e("loaded superior options: $ResultSuperiorOptions");
     return;
   } catch (e) {
     logger.e("failed to get users: $e");

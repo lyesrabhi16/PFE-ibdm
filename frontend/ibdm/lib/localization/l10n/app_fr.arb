@@ -2172,5 +2172,12 @@
     "@dangerAlertIntervalDescription": {
         "description": "Description du champ intervalle d'alerte de danger"
     },
-    "warningAlertIntervalDescription": "Le nombre de jours avant de renvoyer l'alerte de type avertissement si elle n'est pas résolue"
+    "warningAlertIntervalDescription": "Le nombre de jours avant de renvoyer l'alerte de type avertissement si elle n'est pas résolue",
+    "@warningAlertIntervalDescription": {
+        "description": "Description du champ intervalle d'alerte d'avertissement"
+    },
+    "nothingToDisplay": "Rien à afficher",
+    "@nothingToDisplay": {
+        "description": "Message indiquant qu'il n'y a rien à afficher"
+    }
 }

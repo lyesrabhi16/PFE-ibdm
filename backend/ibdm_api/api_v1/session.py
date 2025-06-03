@@ -1,9 +1,12 @@
 from rest_framework.authentication import SessionAuthentication
-from api_v1.env import Env, EnvModes
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.extensions import OpenApiAuthenticationExtension
 class MySessionAuthentication(SessionAuthentication):
+    def authenticate(self, request):
+        print("Authenticating with MySessionAuthentication", request)
+        return super().authenticate(request)
     def enforce_csrf(self, request):
+        print("Enforcing CSRF for MySessionAuthentication")
         if (Env.ENV_MODE == EnvModes.DEVELOPMENT):
             # dev purposes
             return None 
@@ -31,3 +34,4 @@ class MySessionAuthenticationScheme(OpenApiAuthenticationExtension):
                 'Session based authentication. Use the sessionid cookie to authenticate.'
             )
         }
+    

@@ -10,8 +10,6 @@ Future<void> main() async {
   // remove the # from the url
   setPathUrlStrategy();
 
-  
-  
   GoogleFonts.config.allowRuntimeFetching = false;
   // TODO: add google fonts
   /* LicenseRegistry.addLicense(() async* {
@@ -20,9 +18,7 @@ Future<void> main() async {
   }); */
   runApp(MyApp());
 
-
   ByteData caCert = await rootBundle.load('assets/certificates/CA.pem');
   SecurityContext.defaultContext
       .setTrustedCertificatesBytes(caCert.buffer.asUint8List());
-
 }

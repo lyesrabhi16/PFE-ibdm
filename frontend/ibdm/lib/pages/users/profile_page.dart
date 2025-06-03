@@ -22,11 +22,25 @@ import 'package:toastification/toastification.dart';
 
 class ProfilePage extends StatelessWidget {
   Function? _getContext;
-  BuildContext get getContext => _getContext!.call()!;
+
+  BuildContext get context => _getContext!.call()!;
+
+  @override
+  void initState() {
+    super.initState();
+    logger.f("initializing profile page");
+
+    addUserEmailController.text = userController.user?.email ?? "";
+    addUserNameController.text = userController.user?.username ?? "";
+    addUserPhoneController.text = userController.user?.phoneNumber ?? "";
+    addFirstNameController.text = userController.user?.firstName ?? "";
+    addLastNameController.text = userController.user?.lastName ?? "";
+  }
 
   @override
   Widget build(BuildContext context) {
     _getContext = () => context;
+    print("building profile container page");
     return AppCustomContainer(
         child: Padding(
             padding: const EdgeInsets.all(AppSizes.sm),
@@ -34,42 +48,62 @@ class ProfilePage extends StatelessWidget {
   }
 
   final formKeyAddUser = GlobalKey<FormState>();
+
   final addUserEmailController = TextEditingController();
+
   final addUserNameController = TextEditingController();
+
   final addUserPasswordController = TextEditingController();
+
   final addUserPhoneController = TextEditingController();
+
   final addUserSuperiorOptions = <ShadOption<User>>[].obs;
+
   final addFirstNameController = TextEditingController();
+
   final addLastNameController = TextEditingController();
 
   final UserController userController = Get.find<UserController>();
+
   final _loadedUserSuperiorOptions = false.obs;
+
   final _editable = false.obs;
 
   String? email;
+
   String? username;
+
   String? password;
+
   String? phone;
+
   Role? role;
+
   User? superior;
+
   String? firstName;
+
   String? lastName;
+
   Uint8List? avatarBytes;
+
   File? avatarFile;
+
+  bool initiallized = false;
 
   _buildBody() {
     final strings = getTranslations(context).obs;
-    addUserEmailController.text = userController.user?.email ?? "";
-    addUserNameController.text = userController.user?.username ?? "";
-    addUserPhoneController.text = userController.user?.phoneNumber ?? "";
-    addFirstNameController.text = userController.user?.firstName ?? "";
-    addLastNameController.text = userController.user?.lastName ?? "";
+    logger.f("building profile page, user: ${userController.user}");
     return Container(
+      key: ValueKey("profile_page_container"),
       constraints: BoxConstraints(
         minHeight: 600,
       ),
       child: Obx(() {
+        logger.f(
+            "building profile page inside obx, user: ${userController.user}");
         return Column(
+          key: ValueKey("profile_page"),
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -109,8 +143,10 @@ class ProfilePage extends StatelessWidget {
                         logger.f(
                             "superior options: ${addUserSuperiorOptions.length}");
                         return Column(
+                          key: ValueKey("profile_user_form_column"),
                           children: [
                             UserForm(
+                              key: ValueKey("profile_user_form"),
                               editable: _editable.value,
                               showPlaceHolders: false,
                               showRole:
@@ -281,38 +317,44 @@ class ProfilePage extends StatelessWidget {
           lastName: user.lastName,
         );
       }
-      if (superior != null) {
-        if (user.superiors.isEmpty) {
-          await api.addSubordinateAndSuperior(
-              body: SubordinateAndSuperiorRequest(
-                  superior: superior!.userId, subordinate: res.userId));
+      if (user.role == "ADMIN_SYSTEM") {
+        if (superior != null) {
+          if (user.superiors.isEmpty) {
+            await api.addSubordinateAndSuperior(
+                body: SubordinateAndSuperiorRequest(
+                    superior: superior!.userId, subordinate: res.userId));
+          } else {
+            final res = await api.getSubordinateAndSuperiorId(
+                superior: user.superiors.first.userId,
+                subordinate: user.userId);
+            await api.partialUpdateSubordinateAndSuperior(
+              id: res.id,
+              body: PatchedSubordinateAndSuperiorRequest(
+                  superior: superior!.userId, subordinate: user.userId),
+            );
+          }
         } else {
-          final res = await api.getSubordinateAndSuperiorId(
-              superior: user.superiors.first.userId, subordinate: user.userId);
-          await api.partialUpdateSubordinateAndSuperior(
-            id: res.id,
-            body: PatchedSubordinateAndSuperiorRequest(
-                superior: superior!.userId, subordinate: user.userId),
-          );
-        }
-      } else {
-        logger.e("superior is null");
-        if (user.superiors.isNotEmpty) {
-          final res = await api.getSubordinateAndSuperiorId(
-              superior: user.superiors.first.userId, subordinate: user.userId);
-          await api.removeSubordinateAndSuperior(
-            id: res.id,
-          );
+          logger.e("superior is null");
+          if (user.superiors.isNotEmpty) {
+            final res = await api.getSubordinateAndSuperiorId(
+                superior: user.superiors.first.userId,
+                subordinate: user.userId);
+            await api.removeSubordinateAndSuperior(
+              id: res.id,
+            );
+          }
         }
       }
 
+      // update user in user controller
+      userController.fetchUserFromApi();
       // show success toast
       loadingToastState.value = FutureState.success;
       // close toast after a short duration
       Future.delayed(
           Duration(seconds: 1), () => toastification.dismissById(toast.id));
     } catch (e) {
-      logger.e("failed to add user: $e");
+      logger.e("failed to save user: $e");
       // show error toast
       loadingToastState.value = FutureState.error;
       // close toast after a duration

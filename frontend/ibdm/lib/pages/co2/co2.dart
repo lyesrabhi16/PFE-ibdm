@@ -15,6 +15,7 @@ import 'package:ibdm/common/widgets/radial_meter.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+import 'package:ibdm/services/socket.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
@@ -191,8 +192,8 @@ class _CO2PageState extends State<CO2Page> {
       if (CO2Page.stream == null) {
         try {
           printMessage("connecting to CO2 broadcast");
-          CO2Page.channel = WebSocketChannel.connect(
-              Uri.parse(ApiConfig.utilite_broadcast_websocket_url));
+          CO2Page.channel = await getWebSocketChannel(
+              ApiConfig.utilite_broadcast_websocket_url);
           final api = await ApiClientInstance.getApiClient();
           printMessage("CO2 broadcast connected");
           final results = await Future.wait([

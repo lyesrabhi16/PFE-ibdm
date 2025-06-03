@@ -13,6 +13,7 @@ import 'package:ibdm/common/widgets/temp_gauge.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+import 'package:ibdm/services/socket.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/constants/types.dart';
@@ -131,8 +132,8 @@ class _UtilitePageState extends State<UtilitePage> {
       if (UtilitePage.stream == null) {
         try {
           printMessage("connecting to utilite broadcast");
-          UtilitePage.channel = WebSocketChannel.connect(
-              Uri.parse(ApiConfig.utilite_broadcast_websocket_url));
+          UtilitePage.channel = await getWebSocketChannel(
+              ApiConfig.utilite_broadcast_websocket_url);
           final res = await (await ApiClientInstance.getApiClient())
               .getUtiliteMetaData();
           printMessage("utilite broadcast connected");
