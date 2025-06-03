@@ -14,7 +14,7 @@ import 'package:ibdm/utils/helpers/user_helpers.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class AlertEmailForm extends StatefulWidget {
-  AlertEmailForm({
+  const AlertEmailForm({
     super.key,
     this.showIdField = false,
     this.onValuesChanged,

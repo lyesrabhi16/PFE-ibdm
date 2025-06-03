@@ -2172,6 +2172,10 @@
     "@dangerAlertIntervalDescription": {
         "description": "Description for danger alert interval field"
     },
-    "warningAlertIntervalDescription": "The number of days before re-sending the alert of type warning if it is not resolved"
+    "warningAlertIntervalDescription": "The number of days before re-sending the alert of type warning if it is not resolved",
+    "nothingToDisplay": "Nothing to display",
+    "@nothingToDisplay": {
+        "description": "Message when there is nothing to display"
+    }
 
 }

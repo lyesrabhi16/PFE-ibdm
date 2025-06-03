@@ -19,6 +19,7 @@ import 'package:ibdm/common/widgets/multiple_data_lists.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+import 'package:ibdm/services/socket.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/colors.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
@@ -497,8 +498,9 @@ class _SiroperiePageState extends State<SiroperiePage> {
     if (SiroperiePage.stream == null) {
       try {
         printMessage("connecting to sucre broadcast");
-        SiroperiePage.channel = WebSocketChannel.connect(
-            Uri.parse(ApiConfig.sucre_broadcast_websocket_url));
+        SiroperiePage.channel = await getWebSocketChannel(
+          ApiConfig.sucre_broadcast_websocket_url,
+        );
         final res =
             await (await ApiClientInstance.getApiClient()).getSucreMetaData();
         printMessage("sucre broadcast connected");

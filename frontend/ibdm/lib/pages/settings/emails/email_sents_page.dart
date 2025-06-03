@@ -12,6 +12,7 @@ import 'package:ibdm/common/widgets/scrollable_shad_sheet_container.dart';
 import 'package:ibdm/config/api.config.dart';
 import 'package:ibdm/services/api/api_client.dart';
 import 'package:ibdm/services/api_django/api_client/export.dart';
+import 'package:ibdm/services/socket.dart';
 import 'package:ibdm/services/toasts.dart';
 import 'package:ibdm/utils/constants/sizes.dart';
 import 'package:ibdm/utils/helpers/local_storage.dart';
@@ -1127,9 +1128,8 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
         EmailSentsPage.channel = null;
       }
 
-      EmailSentsPage.channel ??= WebSocketChannel.connect(
-        Uri.parse(ApiConfig.sent_emails_broadcast_websocket_url),
-      );
+      EmailSentsPage.channel ??= await getWebSocketChannel(
+          ApiConfig.sent_emails_broadcast_websocket_url);
       await EmailSentsPage.channel!.ready;
       EmailSentsPage.stream ??=
           EmailSentsPage.channel!.stream.asBroadcastStream();
@@ -1140,7 +1140,13 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
         }
 
         final data = JsonCodec().decode(event);
-        SentEmail sentEmail = SentEmail.fromJson(data["data"]);
+        print("Received data: $data");
+        SentEmail? sentEmail;
+        try {
+          sentEmail = SentEmail.fromJson(data["data"]);
+        } catch (e) {
+          return;
+        }
         if (seen.contains(sentEmail.id)) {
           logger.e("email seen already, aborting...");
           return;

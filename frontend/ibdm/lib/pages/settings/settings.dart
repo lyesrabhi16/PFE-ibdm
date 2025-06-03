@@ -45,22 +45,13 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: 20),
             Expanded(
               child: Obx(() {
-                getApplicationDocumentsDirectory().then((dir) async {
-                  // Ensure the directory exists
-                  final persistentCookieJar = PersistCookieJar(
-                    storage: FileStorage(
-                      "${dir.path}/.cookies/",
-                    ),
-                  );
-                  logger.e(
-                      "cookies: ${persistentCookieJar.hostCookies} ${persistentCookieJar.domainCookies}");
-                });
-                logger.e(
+                /* logger.e(
                     "EmailSettingsPage show Email settings: ${Container().withAnyPermissionOf([
                               Permissions.viewEmailAlerts,
                               Permissions.viewEmailSchedules,
                               Permissions.viewEmailsSent,
                             ]) != null ? true : false} ");
+                 */
                 return ListView(
                   children: [
                     SettingCard(
