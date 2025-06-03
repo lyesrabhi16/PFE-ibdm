@@ -2,7 +2,6 @@ from rest_framework.authentication import SessionAuthentication
 from api_v1.env import Env, EnvModes
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.extensions import OpenApiAuthenticationExtension
-
 class MySessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         if (Env.ENV_MODE == EnvModes.DEVELOPMENT):
@@ -10,7 +9,7 @@ class MySessionAuthentication(SessionAuthentication):
             return None 
         #raise ValueError("CSRF Failed: %s" % request.headers)
         if "HTTP_REFERER" not in request.META:
-            request.META["HTTP_REFERER"] = "https://server.ibdm.local.ifri"
+            request.META["HTTP_REFERER"] = Env.CSRF_TRUSTED_ORIGINS[0] if len(Env.CSRF_TRUSTED_ORIGINS) > 0 else None
         try:
             super().enforce_csrf(request)
         except Exception as e:

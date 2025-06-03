@@ -1,0 +1,2 @@
+D:/studies/projects/PFE-IBDM-DEPLOY/PFE-ibdm-1/frontend/ibdm/android/app/.cxx/Debug/x7416o40/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/studies/projects/PFE-IBDM-DEPLOY/PFE-ibdm-1/frontend/ibdm/android/app/.cxx/Debug/x7416o40/armeabi-v7a/CMakeFiles/rebuild_cache.dir
