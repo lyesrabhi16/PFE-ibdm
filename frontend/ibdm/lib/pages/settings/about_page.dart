@@ -150,11 +150,17 @@ class _AboutPageState extends State<AboutPage> {
           contentWidget: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _ContactItem(icon: Icons.phone, text: "+213 123 456 789"),
-              const _ContactItem(icon: Icons.email, text: "ifri@ifri.dz"),
-              const _ContactItem(icon: Icons.web, text: "www.ifri.dz"),
-              _ContactItem(
-                  icon: Icons.location_on, text: strings.value.adresse),
+              const _ContactItem(icon: Icons.person, text: "RABHI Lyes"),
+              const _ContactItem(icon: Icons.phone, text: "+213(0)549267381"),
+              const _ContactItem(icon: Icons.email, text: "lyes.rabhi.020@gmail.com"),
+              const _ContactItem(
+                  icon: Icons.location_on, text: "Ighzer Amokran, Ouzellaguen, Béjaia, Algérie"),
+              const SizedBox(height: 10),
+              const _ContactItem(icon: Icons.person, text: "KHELOUFI Mounir"),
+              const _ContactItem(icon: Icons.phone, text: "+213(0)783965492"),
+              const _ContactItem(icon: Icons.email, text: "mounirkheloufi2002@gmail.com"),
+              const _ContactItem(
+                  icon: Icons.location_on, text: "Beni Maouche, Béjaia, Algérie"),
             ],
           ),
           isDarkMode: isDarkMode,

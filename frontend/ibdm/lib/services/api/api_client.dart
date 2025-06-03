@@ -150,7 +150,7 @@ class CsrfInterceptor extends Interceptor {
       }
 
       // Print the cookies map
-      //printMessage(cookies);
+      printMessage(cookies.toString());
       return cookies;
     }
 
