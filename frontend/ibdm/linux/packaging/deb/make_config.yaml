@@ -1,0 +1,30 @@
+display_name: IBDM
+package_name: ibdm
+maintainer:
+  name: lyesrabhi16
+  email: lyes.rabhi.020@gmail.com
+
+priority: optional
+section: x11
+installed_size: 6604
+essential: false
+icon: assets/images/logo.png
+
+postinstall_scripts:
+  - echo "IBDM Installed"
+postuninstall_scripts:
+  - echo "IBDM Uninstalled"
+
+keywords:
+  - IBDM
+  - Work
+
+generic_name: IBDM
+
+categories:
+  - Work
+
+startup_notify: false
+# You can also specify [metainfo](https://freedesktop.org/software/appstream/docs/chap-Quickstart.html) file
+# which contains metadata of the app.
+# metainfo: linux/packaging/myappid.appdata.xml
