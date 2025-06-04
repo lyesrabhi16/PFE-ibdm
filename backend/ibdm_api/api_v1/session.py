@@ -1,6 +1,7 @@
 from rest_framework.authentication import SessionAuthentication
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.extensions import OpenApiAuthenticationExtension
+from api_v1.env import Env, EnvModes
 class MySessionAuthentication(SessionAuthentication):
     def authenticate(self, request):
         print("Authenticating with MySessionAuthentication", request)
