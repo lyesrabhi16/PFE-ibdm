@@ -147,7 +147,7 @@ data
 *.pem
 *.csr
 *.srl
-
+*.pfx
 
 # Node.js dependencies
 node_modules/
