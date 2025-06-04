@@ -19,8 +19,14 @@ import 'package:ibdm/utils/helpers/user_helpers.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:toastification/toastification.dart';
 
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
-class ProfilePage extends StatelessWidget {
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   Function? _getContext;
 
   BuildContext get context => _getContext!.call()!;
