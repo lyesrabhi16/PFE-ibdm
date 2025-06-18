@@ -302,7 +302,7 @@ class _FiltrationReportsPageState extends State<FiltrationReportsPage> {
           _dataLoaded.value = true;
           Toasts.showErrorToast(
             context: getContext,
-            message: strings.value.failedToGetInventory,
+            message: strings.value.failedToLoadData,
           );
         }
       }

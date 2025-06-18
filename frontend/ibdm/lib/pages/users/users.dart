@@ -1656,7 +1656,7 @@ class _UsersPageState extends State<UsersPage> {
       logger.e("failed to get user details: $e");
       Toasts.showErrorToastNotification(
         context: context,
-        message: strings.value.errorFailedToGetUsers,
+        message: strings.value.failedToLoadData,
       );
       loadedUserDetails.value = true;
     });
