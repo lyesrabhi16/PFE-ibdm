@@ -3,7 +3,10 @@ from django.utils.translation import gettext_lazy as _
 
 CUSTOM_MONITORED_VALUES = {
     "sucre.stopped": (),
-    "filtration.stopped": (),
+    "niveau.stopped": (),
+    "debit.stopped": (),
+    "Pres_Cond.stopped": (),
+    "volume.stopped": (),
     "co2_ifruit.stopped": (),
     "utilite.stopped": (),
     "chambre_froide.stopped": (),
@@ -242,8 +245,8 @@ class AlertEmail(models.Model):
     warning_reminder_interval = models.IntegerField(default=7)
 
     custom_alert_message = models.TextField(blank=True, null=True)
-    send_to_users = models.ManyToManyField("users.User", related_name="users", blank=True, null=True)
-    send_to_roles = models.ManyToManyField("users.Role", related_name="roles", blank=True, null=True)
+    send_to_users = models.ManyToManyField("users.User", related_name="users", blank=True)
+    send_to_roles = models.ManyToManyField("users.Role", related_name="roles", blank=True)
     enabled = models.BooleanField(default=True, blank=True)
 
     class Meta:

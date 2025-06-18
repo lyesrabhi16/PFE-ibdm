@@ -302,7 +302,7 @@ class _UtiliteReportsPageState extends State<UtiliteReportsPage> {
           _dataLoaded.value = true;
           Toasts.showErrorToast(
             context: getContext,
-            message: strings.value.failedToGetInventory,
+            message: strings.value.failedToLoadData,
           );
         }
       }

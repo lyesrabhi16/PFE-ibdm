@@ -29,7 +29,7 @@ class LoginActions {
     if (!loginFormKey.currentState!.validate()) {
       Toasts.showErrorToastNotification(
         context: context,
-        message: strings.pleaseFillInAllFields,
+        message: strings.pleaseFixErrorsInTheForm,
       );
       return;
     }
@@ -67,7 +67,7 @@ class LoginActions {
       });
       // save user
       UserController userController = Get.find<UserController>();
-      userController.setUser(response.user);
+      userController.setUser(response.user, rememberMe: rememberMe);
 
       // show success toast
       if (Get.overlayContext != null && Get.overlayContext!.mounted) {

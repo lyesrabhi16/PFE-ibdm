@@ -87,6 +87,7 @@ def sendEmail(email: EmailSchedule, schedule_next=True):
     logging.info(f"emailScheduler# send email to: {send_to}")
     message, file, subject = getHtmlMessage(email)
     threading.Thread(
+        name=f"emailScheduler#sendEmailWithFile {email} {datetime.now()}",
         target=sendEmailWithFile,kwargs={
         "file": file,
         "users": send_to,
@@ -125,12 +126,19 @@ def send_scheduled_emails():
     }
 
     logging.info(f'emailScheduler# emails to send: {emails_to_be_sent}')
+    email_threads = []
     for email in emails_to_be_sent:
-       threading.Thread(target=sendEmail, args=(email,)).start()
+       thread = threading.Thread(
+           name=f"emailScheduler#sendEmail {email} {datetime.now()}",
+           target=sendEmail, args=(email,))
+       email_threads.append(thread)
+       thread.start()
+    for thread in email_threads:
+        thread.join()
 
 def reschedule_emails():
     now = datetime.now()
-    reschedule_emails  = EmailSchedule.objects.filter(next_run_time__lt=now)
+    reschedule_emails  = EmailSchedule.objects.filter(next_run_time__lt=now-timedelta(minutes=10))
     logging.info(f"emailScheduler# emails to reschedule: {reschedule_emails}")
     for email in reschedule_emails:
         if email.next_run_time is None:

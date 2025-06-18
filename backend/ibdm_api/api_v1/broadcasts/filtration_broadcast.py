@@ -21,7 +21,7 @@ def broadcast_filtration():
         logging.info(f"broadcast_filtration# broadcast_filtration: No Niveau data found in {time.time() - start} seconds")
         return
     #logging.info(f"latest niveau: {str(niveau_latest)}")
-    NiveauMonitor(niveau_latest)
+    #NiveauMonitor(niveau_latest)
 
 
     debit_latest = get_or_none( Debit, Debit.objects.latest, args=("date",))
@@ -29,21 +29,21 @@ def broadcast_filtration():
         logging.info(f"broadcast_filtration# No Debit data found in {time.time() - start} seconds")
         return 
     #logging.info(f"latest debit_latest: {str(debit_latest)}")
-    DebitMonitor(debit_latest)
+    #DebitMonitor(debit_latest)
 
     volume_latest = get_or_none( Volume, Volume.objects.latest, args=("date",))
     if volume_latest is None:
         logging.info(f"broadcast_filtration# No Volume data found in {time.time() - start} seconds")
         return 
     #logging.info(f"latest volume_latest: {str(volume_latest)}")
-    VolumeMonitor(volume_latest)
+    #VolumeMonitor(volume_latest)
 
     pres_cond_latest = get_or_none( PresCond, PresCond.objects.latest, args=("date",))
     if pres_cond_latest is None:
         logging.info(f"broadcast_filtration# No PresCond data found in {time.time() - start} seconds")
         return 
     #logging.info(f"latest pres_cond_latest: {str(pres_cond_latest)}")
-    PresCondMonitor(pres_cond_latest)
+    #PresCondMonitor(pres_cond_latest)
 
     logging.info(f"broadcast_filtration# {niveau_latest.date} retrieved in {time.time() - start}")
 

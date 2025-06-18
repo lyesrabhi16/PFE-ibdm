@@ -17,13 +17,13 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> {
+  UserController userController = Get.find<UserController>();
+
   PermissionsController permissionsController =
       Get.find<PermissionsController>();
 
   LoadingPageController loadingPageController =
       Get.find<LoadingPageController>();
-
-  UserController userController = Get.find<UserController>();
 
   bool _permissions_loaded = false;
   bool _roles_loaded = false;
@@ -50,6 +50,12 @@ class _LoadingPageState extends State<LoadingPage> {
 
   @override
   Widget build(BuildContext context) {
+    return RequiredInitializedUserController(
+      child: _buildLoadingPage(context),
+    );
+  }
+
+  _buildLoadingPage(BuildContext context) {
     final strings = getTranslations(context).obs;
     logger.e("load: ${widget.load}");
     if (widget.load) {
@@ -122,5 +128,27 @@ class _LoadingPageState extends State<LoadingPage> {
         );
       },
     );
+  }
+}
+
+class RequiredInitializedUserController extends StatelessWidget {
+  final Widget child;
+
+  const RequiredInitializedUserController({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    UserController userController = Get.find<UserController>();
+    logger.d("Checking if userController is ready");
+    return Obx(() {
+      if (userController.isReady.value) {
+        logger.d(
+            "RequiredInitializedUserController: userController.isReady: ${userController.isReady.value}");
+        return child;
+      } else {
+        return CircularProgressIndicatorWithText(
+            text: getTranslations(context).obs.value.loading);
+      }
+    });
   }
 }

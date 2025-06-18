@@ -7,6 +7,7 @@ from api_v1.broadcasts.utilite_broadcast import broadcast_utilite
 from api_v1.emails.emails_scheduler import email_scheduler
 from api_v1.monitors.system_monitor import system_monitor
 from api_v1.broadcasts.status_broadcast import broadcast_status
+from api_v1.monitors.monitor import monitor
 
 scheduler = BackgroundScheduler()
 
@@ -18,6 +19,12 @@ scheduler.add_job(
     id="system_monitoring",
 )
 
+scheduler.add_job(
+    monitor,
+    "cron",
+    second="*/1",
+    id="data_monitor",
+)
 
 scheduler.add_job(
     broadcast_sucre,
