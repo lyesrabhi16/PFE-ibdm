@@ -6,9 +6,3 @@ subjectAltName = @alt_names
 
 [alt_names]
 IP.1  = 172.20.101.145
-IP.2  = 10.202.1.83
-IP.3  = 127.0.0.1
-IP.4  = 10.2.60.6
-DNS.1 = ibdm.local.ifri
-DNS.2 = localhost
-DNS.3 = server.ibdm.local.ifri

@@ -16,6 +16,7 @@
 		"dev:linux": "cd frontend/ibdm && flutter run -d linux",
 		"dev:build:android": "cd frontend/ibdm/android && ./gradlew clean build && echo 'Build Done' && echo 'You can start the app now'",
 		"build:windows": "cd frontend/ibdm && flutter build windows",
+		"build:windows:installer": "cd frontend/ibdm && dart run msix:create",
 		"build:android": "cd frontend/ibdm && flutter build apk",
 		"build:web": "cd frontend/ibdm && flutter build web",
 		"build:ios": "cd frontend/ibdm && flutter build ios",

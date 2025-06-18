@@ -167,7 +167,8 @@
     publisher_display_name: IFRUIT
     identity_name: com.ifruit.ibdm
     msix_version: 1.0.0.0
-    logo_path: D:\studies\projects\PFE-ibdm\frontend\ibdm\assets\images\logo.png
-    certificate_path: D:\studies\projects\PFE-ibdm\backend\ibdm_api\certs\ibdm.pfx
-    certificate_password: 2018
+    publisher: CN=IBDM IFRUIT , O=IFRUIT, L=OUZELLAGUEN, S=BEJAIA, C=DZ
+    logo_path: assets\images\logo.png
+    certificate_path: ..\..\backend\ibdm_api\certs\ibdm.pfx
+    certificate_password: 2025
     capabilities: internetClient
