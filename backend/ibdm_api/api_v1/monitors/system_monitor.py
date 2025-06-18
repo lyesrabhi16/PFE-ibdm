@@ -86,7 +86,9 @@ def timeout_wrapper(func, args=None, kwargs=None, timeout=3):
     if not callable(func):
         raise TypeError("func must be callable")
     
-    thread = threading.Thread(target=lambda: func(*args, **kwargs))
+    thread = threading.Thread(
+        name=f"timeout_wrapper# {func.__name__} {datetime.now()}",
+        target=lambda: func(*args, **kwargs))
     thread.start()
     thread.join(timeout=timeout)
     if thread.is_alive():
@@ -171,10 +173,14 @@ def check_db_connections():
     results = {}
     # Check database connections
     dbs_cons = {
-        db_key: threading.Thread(target=check_db_connection, args=(results, db_key,))
+        db_key: threading.Thread(
+            name=f"check_db_connection#{db_key} {datetime.now()}"
+            ,target=check_db_connection, args=(results, db_key,))
         for db_key in connections.databases.keys()
     }
-    dbs_cons["ibdm_redis"] = threading.Thread(target=check_redis_connection, args=(results,))
+    dbs_cons["ibdm_redis"] = threading.Thread(
+        name=f"check_redis_connection# {datetime.now()}",
+        target=check_redis_connection, args=(results,))
     del dbs_cons["default"]
 
     for db_name in dbs_cons:
@@ -204,6 +210,8 @@ def system_monitor():
         
     try:
         # Collect all monitoring data
+        import inspect
+
         status_data = {
             "status": "on",
             "version": settings.VERSION,
@@ -216,6 +224,11 @@ def system_monitor():
             "databases_elapsed_time": f"{db_elapased_time}s",
             "system_info": system_info,
             "databases": db_connections,
+            "threads": {
+                "thread_count": threading.active_count(),
+                "daemon": threading.enumerate(),
+                "alive": [f"{thread.name} target: {thread}" for thread in threading.enumerate() if thread.is_alive()],
+            }
         }
 
         status_data["elapsed_time"] = f"{(datetime.now() - start_time).total_seconds()}s"
