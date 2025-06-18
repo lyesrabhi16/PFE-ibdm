@@ -202,7 +202,7 @@ def filter_by_fetch_type(model, start_date, end_date,fetch_type):
             current_chunk = 0
             all_chunks = len(chunked_dates)
             
-            with ThreadPoolExecutor() as executor:
+            with ThreadPoolExecutor(thread_name_prefix="get_all_possible_dates_from_chunks") as executor:
                 def process_chunk(chunk, chunk_index):
                     query = Q()
                     #print("chunk", len(chunk), chunk_index, "/", all_chunks)

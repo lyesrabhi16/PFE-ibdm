@@ -20,7 +20,7 @@ def broadcast_sucre():
         return
     logging.info(f"broadcast_sucre# {data} retrieved in {time.time() - start} seconds")
     start_monitor= time.time()
-    sucreMonitor(data)
+    #sucreMonitor(data)
     logging.info(f"broadcast_sucre# starting SucreMonitor {time.time() - start_monitor}")
     send_data=SucreSerializer(data, context={ "request": None }).data
     async_to_sync(channel_layer.group_send)(

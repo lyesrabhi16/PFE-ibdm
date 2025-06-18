@@ -15,7 +15,9 @@ def calculate_consommation_filtration(from_date, to_date):
     d = from_date
     while d <= to_date:
         date = datetime(d.year, d.month, d.day)
-        thread = threading.Thread(target=loadVolume, args=(date, volume_list))
+        thread = threading.Thread(
+            name=f"volume#calculate_consommation_filtration thread {date} {datetime.now()}",
+            target=loadVolume, args=(date, volume_list))
         threads.append(thread)
         thread.start()
 

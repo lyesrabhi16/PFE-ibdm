@@ -48,10 +48,18 @@ def rapport_filtration(interval = None, render_to_HTML_string=True, date=None, f
     now = datetime.now()
     _date = now if date is None else date
     
-    thread_n = threading.Thread(target=loadNiveau, args=(_date,))
-    thread_v = threading.Thread(target=loadVolume, args=(_date,))
-    thread_d = threading.Thread(target=loadDebit, args=(_date,))
-    thread_p = threading.Thread(target=loadPresCond, args=(_date,))
+    thread_n = threading.Thread(
+        name=f"filtration#rapport_filtration thread n {datetime.now()}",
+        target=loadNiveau, args=(_date,))
+    thread_v = threading.Thread(
+        name=f"filtration#rapport_filtration thread v {datetime.now()}",
+        target=loadVolume, args=(_date,))
+    thread_d = threading.Thread(
+        name=f"filtration#rapport_filtration thread d {datetime.now()}",
+        target=loadDebit, args=(_date,))
+    thread_p = threading.Thread(
+        name=f"filtration#rapport_filtration thread p {datetime.now()}",
+        target=loadPresCond, args=(_date,))
     
     thread_n.start()
     thread_v.start()
