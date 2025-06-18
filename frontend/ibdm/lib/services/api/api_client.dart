@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:get/get.dart' as g;
-import 'package:ibdm/services/cookies.dart';
+import 'package:ibdm/services/cookies.dart' as cookiesService;
 import 'package:ibdm/utils/helpers/localization.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:super_clipboard/super_clipboard.dart';
@@ -74,7 +74,7 @@ class ApiClientInstance {
     if (kIsWeb) {
       (dio.httpClientAdapter as dynamic).withCredentials = true;
     } else {
-      final persistentCookieJar = await getCookieJar();
+      final persistentCookieJar = await cookiesService.getCookieJar();
       interceptors.add(CookieManager(persistentCookieJar));
 
       // trust CA on Android app (android only)
@@ -120,15 +120,15 @@ class CsrfInterceptor extends Interceptor {
   final headerName = "X-CSRFToken";
   final cookieName = "csrftoken";
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     printMessage("CsrfInterceptor: Start");
 
-    Map<String, String> getCookies() {
+    Future<Map<String, String>> getCookies() async {
       String cookieStr = "";
       if (kIsWeb) {
         cookieStr = uhtml.document.cookie ?? "";
       } else {
-        cookieStr = options.headers['cookie'] ?? "";
+        cookieStr = await cookiesService.getCookies();
       }
 
       //logger.d("Cookies: $cookieStr");
@@ -148,13 +148,15 @@ class CsrfInterceptor extends Interceptor {
       return cookies;
     }
 
-    final cookies = getCookies();
+    final cookies = await getCookies();
+    print("CsrfInterceptor: Cookies: $cookies");
     if (cookies.containsKey(cookieName) && cookies[cookieName] != null) {
       options.headers[headerName] = cookies[cookieName];
-      printMessage("CsrfInterceptor: Added Header '$headerName'");
+      print("CsrfInterceptor: Added Header '$headerName'");
     }
-    printMessage("CsrfInterceptor: End");
     super.onRequest(options, handler);
+    print("CsrfInterceptor: End");
+
   }
 }
 
