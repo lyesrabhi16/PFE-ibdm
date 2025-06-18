@@ -18,6 +18,7 @@ def getValueForCustomExpression(action:str, attrs: list, obj: object) -> float:
         return sum((getattr(obj, attr) or 0)  for attr in attrs)
     if action == "stopped":
         #print("current obj date", getattr(obj, "date"), "last record", last_records)
+        print("last records", last_records)
         if obj.__class__.__name__ in last_records:
             current_obj_data = getattr(obj, "date")
             last_record = last_records[obj.__class__.__name__]

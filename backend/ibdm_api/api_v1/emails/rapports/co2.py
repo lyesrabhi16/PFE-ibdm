@@ -24,7 +24,9 @@ def rapport_co2(interval=None, render_to_HTML_string=True, date=None, force_recr
     threads = []
     
     for i in range(1, today.day):
-        thread = threading.Thread(target=loadCo2, args=(datetime(year=today.year, month=today.month, day=i),))
+        thread = threading.Thread(
+            name=f"co2#rapport_co2 thread {i} {datetime.now()}",
+            target=loadCo2, args=(datetime(year=today.year, month=today.month, day=i),))
         threads.append(thread)
         thread.start()
     for thread in threads:
