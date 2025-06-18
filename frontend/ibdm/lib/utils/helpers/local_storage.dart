@@ -54,10 +54,13 @@ class LocalStorage {
 
   static Future<User?> getUser() async {
     try {
+      logger.d("attempting to get user from local storage");
       final String? userStr = await perfs.getString(StorageKeys.user.name);
       if (userStr == null) {
+        logger.d("No user found in local storage");
         return null;
       }
+      logger.d("User found in local storage: $userStr");
       return User.fromJson(JsonCodec().decode(userStr));
     } catch (e) {
       logger.e("Error getting user from local storage: $e");

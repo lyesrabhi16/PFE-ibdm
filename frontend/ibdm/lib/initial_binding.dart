@@ -10,7 +10,7 @@ class InitialBinding implements Bindings {
   InitialBinding();
 
   @override
-  void dependencies() {
+  void dependencies() async {
     Get.put(LocaleController());
     Get.put(ThemeModeController());
     Get.put(UserController());

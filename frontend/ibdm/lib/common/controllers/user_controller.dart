@@ -41,10 +41,15 @@ class UserController extends GetxController {
         return user != null;
       }();
 
+  RxBool isReady = false.obs;
+
   @override
-  void onInit() {
+  void onInit() async {
+    isReady.value = false;
+    await fetchUser();
+    logger.d("UserController initialized with user: ${_user.value}");
     super.onInit();
-    fetchUser();
+    isReady.value = true;
   }
 
   void logoutUser() {
@@ -60,14 +65,16 @@ class UserController extends GetxController {
     });
   }
 
-  void setUser(User user) {
-    LocalStorage.setUser(user);
+  void setUser(User user, {bool rememberMe = true}) {
+    if (rememberMe) {
+      LocalStorage.setUser(user);
+    }
     _user.value = user;
   }
 
-  void fetchUser() async {
+  Future<void> fetchUser() async {
     User? user = await LocalStorage.getUser();
-    this.user = user;
+    _user.value = user;
     fetchUserFromApi();
   }
 

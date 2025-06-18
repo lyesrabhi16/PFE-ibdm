@@ -302,7 +302,7 @@ class _Co2ReportsPageState extends State<Co2ReportsPage> {
           _dataLoaded.value = true;
           Toasts.showErrorToast(
             context: getContext,
-            message: strings.value.failedToGetInventory,
+            message: strings.value.failedToLoadData,
           );
         }
       }
