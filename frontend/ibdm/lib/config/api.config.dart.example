@@ -1,7 +1,7 @@
 class ApiConfig {
   ApiConfig._();
 
-  static String address_or_domain = "10.202.1.83:8443";# change this to the correct server address
+  static String address_or_domain = "10.202.1.83:8443";//! change this to the correct server address
   static String base_url = "https://${address_or_domain}";
   static String admin_url = "https://${address_or_domain}/admin";
   static String ca_url = "https://${address_or_domain}/ca";
