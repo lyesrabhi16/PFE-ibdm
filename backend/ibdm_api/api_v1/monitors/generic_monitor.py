@@ -67,7 +67,7 @@ def GenericMonitor(monitored_value_tag: str, monitored_object_value: object, nam
                     User.objects.filter(role__in=alert.send_to_roles.all())
                 )
                 for user in recipients:
-                    sent_alerts = sentEmail.objects.filter(alert__alert=alert, alert__alert_type="danger", receptionist=user, temps_envoi__gte=datetime.now() - timedelta(days=alert.danger_reminder_interval))
+                    sent_alerts = sentEmail.objects.filter(alert__alert=alert, alert__alert_type="danger", receptionist=user, temps_envoi__gte=datetime.now() - alert.getDangerTimedelta())
                     logging.info(f"{name}# {alert.monitored_value} found sent danger alerts to '{user.email}' : {sent_alerts}")
                     if sent_alerts.count() == 0:
                         sendDangerAlertEmail(alert, value, user, name)
@@ -77,7 +77,7 @@ def GenericMonitor(monitored_value_tag: str, monitored_object_value: object, nam
                     User.objects.filter(role__in=alert.send_to_roles.all())
                 )
                 for user in recipients:
-                    sent_alerts = sentEmail.objects.filter(alert__alert=alert, alert__alert_type="warning",receptionist=user, temps_envoi__gte=datetime.now() - timedelta(days=alert.warning_reminder_interval))
+                    sent_alerts = sentEmail.objects.filter(alert__alert=alert, alert__alert_type="warning",receptionist=user, temps_envoi__gte=datetime.now() - alert.getWarningTimedelta())
                     logging.info(f"{name}# {alert.monitored_value} found sent warning alerts to '{user.email}' : {sent_alerts}")
                     if sent_alerts.count() == 0:
                         sendWarningAlertEmail(name, alert, user, value)

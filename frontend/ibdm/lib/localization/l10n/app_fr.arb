@@ -1147,13 +1147,13 @@
     "@warningPoint": {
         "description": "Étiquette du point d'avertissement"
     },
-    "dangerAlertIntervalInDays": "Intervalle d'alerte de danger (en jours)",
-    "@dangerAlertIntervalInDays": {
-        "description": "Étiquette de l'intervalle d'alerte de danger en jours"
+    "dangerAlertInterval": "Intervalle d'alerte de danger",
+    "@dangerAlertInterval": {
+        "description": "Étiquette de l'intervalle d'alerte de danger"
     },
-    "warningAlertIntervalInDays": "Intervalle d'alerte d'avertissement (en jours)",
-    "@warningAlertIntervalInDays": {
-        "description": "Étiquette de l'intervalle d'alerte d'avertissement en jours"
+    "warningAlertInterval": "Intervalle d'alerte d'avertissement",
+    "@warningAlertInterval": {
+        "description": "Étiquette de l'intervalle d'alerte d'avertissement"
     },
     "customMessage": "Message personnalisé",
     "@customMessage": {
@@ -2179,5 +2179,13 @@
     "nothingToDisplay": "Rien à afficher",
     "@nothingToDisplay": {
         "description": "Message indiquant qu'il n'y a rien à afficher"
+    },
+    "reminderIntervalUnit": "Unité de l'intervalle de rappel",
+    "@reminderIntervalUnit": {
+        "description": "Étiquette du champ d'unité de l'intervalle de rappel"
+    },
+    "reminderIntervalUnitDescription": "L'unité de temps pour l'intervalle de rappel",
+    "@reminderIntervalUnitDescription": {
+        "description": "Description du champ d'unité de l'intervalle de rappel"
     }
 }
