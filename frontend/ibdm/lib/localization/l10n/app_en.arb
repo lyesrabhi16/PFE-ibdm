@@ -1147,13 +1147,13 @@
     "@warningPoint": {
         "description": "Warning point label"
     },
-    "dangerAlertIntervalInDays": "Danger alert interval (in days)",
-    "@dangerAlertIntervalInDays": {
-        "description": "Danger alert interval label in days"
+    "dangerAlertInterval": "Danger alert interval",
+    "@dangerAlertInterval": {
+        "description": "Danger alert interval label"
     },
-    "warningAlertIntervalInDays": "Warning alert interval (in days)",
-    "@warningAlertIntervalInDays": {
-        "description": "Warning alert interval label in days"
+    "warningAlertInterval": "Warning alert interval",
+    "@warningAlertInterval": {
+        "description": "Warning alert interval label"
     },
     "customMessage": "Custom message",
     "@customMessage": {
@@ -2176,6 +2176,14 @@
     "nothingToDisplay": "Nothing to display",
     "@nothingToDisplay": {
         "description": "Message when there is nothing to display"
+    },
+    "reminderIntervalUnit": "Reminder interval unit",
+    "@reminderIntervalUnit": {
+        "description": "Label for reminder interval unit field"
+    },
+    "reminderIntervalUnitDescription": "The unit of time for the reminder interval",
+    "@reminderIntervalUnitDescription": {
+        "description": "Description for reminder interval unit field"
     }
 
 }

@@ -331,6 +331,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     List<User>? _addAlertUsers;
     String? _addAlertWarningAlertInterval;
     String? _addAlertWarningPoint;
+    ReminderIntervalUnitEnum? _addAlertReminderIntervalUnit;
 
     return showShadDialog(
       context: context,
@@ -364,6 +365,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                   users: _addAlertUsers,
                   warningAlertInterval: _addAlertWarningAlertInterval,
                   warningPoint: _addAlertWarningPoint,
+                  reminderIntervalUnit: _addAlertReminderIntervalUnit,
                   onSuccess: () {
                     _loadAlerts();
                     Navigator.of(context).pop();
@@ -375,17 +377,19 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
           ],
           child: AlertEmailForm(
             formKey: _formKey,
-            onValuesChanged: (
-                {customMessage,
-                dangerAlertInterval,
-                dangerPoint,
-                enabled,
-                monitoredValue,
-                monitorType,
-                roles,
-                users,
-                warningAlertInterval,
-                warningPoint}) {
+            onValuesChanged: ({
+              customMessage,
+              dangerAlertInterval,
+              dangerPoint,
+              enabled,
+              monitoredValue,
+              monitorType,
+              roles,
+              users,
+              warningAlertInterval,
+              warningPoint,
+              reminderIntervalUnit,
+            }) {
               _addAlertCustomMessage = customMessage;
               _addAlertDangerAlertInterval = dangerAlertInterval;
               _addAlertDangerPoint = dangerPoint;
@@ -399,6 +403,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               _formKey.currentState?.validate();
               _addAlertWarningAlertInterval = warningAlertInterval;
               _addAlertWarningPoint = warningPoint;
+              _addAlertReminderIntervalUnit = reminderIntervalUnit;
             },
           ),
         ).marginOnly(
@@ -521,6 +526,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
     List<User>? _saveAlertUsers;
     String? _saveAlertWarningAlertInterval;
     String? _saveAlertWarningPoint;
+    ReminderIntervalUnitEnum? _saveAlertReminderIntervalUnit;
     return showShadDialog(
       context: context,
       builder: (context) {
@@ -573,6 +579,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                           users: _saveAlertUsers,
                           warningAlertInterval: _saveAlertWarningAlertInterval,
                           warningPoint: _saveAlertWarningPoint,
+                          reminderIntervalUnit: _saveAlertReminderIntervalUnit,
                           onSuccess: () {
                             _loadAlerts();
                             Navigator.of(context).pop();
@@ -624,6 +631,8 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
                                   warningAlertInterval:
                                       _saveAlertWarningAlertInterval,
                                   warningPoint: _saveAlertWarningPoint,
+                                  reminderIntervalUnit:
+                                      _saveAlertReminderIntervalUnit,
                                   onSuccess: () {
                                     _loadAlerts();
                                     Navigator.of(context).pop();
@@ -660,6 +669,7 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               users,
               warningAlertInterval,
               warningPoint,
+              reminderIntervalUnit,
             }) {
               if (customMessage != null) {
                 _saveAlertCustomMessage =
@@ -693,6 +703,9 @@ class _EmailAlertsPageState extends State<EmailAlertsPage> {
               if (warningPoint != null) {
                 _saveAlertWarningPoint =
                     warningPoint.isNotEmpty ? warningPoint : null;
+              }
+              if (reminderIntervalUnit != null) {
+                _saveAlertReminderIntervalUnit = reminderIntervalUnit;
               }
             },
           ),
