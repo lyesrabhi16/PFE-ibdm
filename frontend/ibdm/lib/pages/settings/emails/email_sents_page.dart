@@ -1140,7 +1140,7 @@ class _EmailSentsPageState extends State<EmailSentsPage> {
         }
 
         final data = JsonCodec().decode(event);
-        print("Received data: $data");
+        printMessage("Received data: $data");
         SentEmail? sentEmail;
         try {
           sentEmail = SentEmail.fromJson(data["data"]);
