@@ -2168,11 +2168,24 @@
     "@monitorTypeDescription": {
         "description": "Description for monitor type field"
     },
-    "dangerAlertIntervalDescription": "The number of days before re-sending the alert of type danger if it is not resolved",
+    "dangerAlertIntervalDescription": "The number of {unit} before re-sending the alert of type danger if it is not resolved",
     "@dangerAlertIntervalDescription": {
-        "description": "Description for danger alert interval field"
+        "description": "Description for danger alert interval field",
+        "placeholders": {
+            "unit": {
+                "type": "String"
+            }
+        }
     },
-    "warningAlertIntervalDescription": "The number of days before re-sending the alert of type warning if it is not resolved",
+    "warningAlertIntervalDescription": "The number of {unit} before re-sending the alert of type warning if it is not resolved",
+    "@warningAlertIntervalDescription": {
+        "description": "Description for warning alert interval field",
+        "placeholders": {
+            "unit": {
+                "type": "String"
+            }
+        }
+    },
     "nothingToDisplay": "Nothing to display",
     "@nothingToDisplay": {
         "description": "Message when there is nothing to display"

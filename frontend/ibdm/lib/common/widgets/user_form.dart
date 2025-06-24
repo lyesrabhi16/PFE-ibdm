@@ -199,7 +199,7 @@ class _UserFormState extends State<UserForm> {
   late final Rx<Role?> userRole;
 
   Future<void> _load(context) async {
-    print("loading user form");
+    printMessage("loading user form");
     _loaded.value = false;
     final List<Role> localRoles =
         await UserForm.userController.getRoles(context);

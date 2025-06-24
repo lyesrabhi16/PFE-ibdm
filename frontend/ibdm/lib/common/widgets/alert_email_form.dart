@@ -363,8 +363,9 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
               ),
               SizedBox(height: AppSizes.sm),
               ShadTooltip(
-                builder: (context) =>
-                    Text(strings.value.dangerAlertIntervalDescription),
+                builder: (context) => Text(strings.value
+                    .dangerAlertIntervalDescription(
+                        reminderIntervalUnit.json!)),
                 child: ShadInputFormField(
                   enabled: widget.editable,
                   controller: dangerAlertIntervalController,
@@ -387,8 +388,9 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
               ),
               SizedBox(height: AppSizes.sm),
               ShadTooltip(
-                builder: (context) =>
-                    Text(strings.value.warningAlertIntervalDescription),
+                builder: (context) => Text(strings.value
+                    .warningAlertIntervalDescription(
+                        reminderIntervalUnit.json!)),
                 child: ShadInputFormField(
                   enabled: widget.editable,
                   controller: warningAlertIntervalController,
