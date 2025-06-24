@@ -22,6 +22,7 @@ class AlertEmailSerializer(serializers.ModelSerializer):
             "warning_point",
             "danger_reminder_interval",
             "warning_reminder_interval",
+            "reminder_interval_unit",
             "custom_alert_message",
             "send_to_users",
             "send_to_roles",

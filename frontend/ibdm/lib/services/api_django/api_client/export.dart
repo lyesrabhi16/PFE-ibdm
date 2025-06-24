@@ -65,6 +65,7 @@ export 'models/pres_cond.dart';
 export 'models/rapport_enum.dart';
 export 'models/redis_database.dart';
 export 'models/redis_info.dart';
+export 'models/reminder_interval_unit_enum.dart';
 export 'models/report.dart';
 export 'models/role.dart';
 export 'models/role_request.dart';

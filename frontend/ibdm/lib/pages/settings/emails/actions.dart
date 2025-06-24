@@ -27,6 +27,7 @@ class EmailActions {
     List<User>? users,
     String? warningAlertInterval,
     String? warningPoint,
+    ReminderIntervalUnitEnum? reminderIntervalUnit,
     Function? onSuccess,
     Function? onFail,
     ShadFormState? formState,
@@ -74,6 +75,8 @@ class EmailActions {
           enabled: enabled,
           sendToUsers: users?.map((e) => e.email).toList(),
           sendToRoles: roles?.map((e) => e.roleId).toList(),
+          reminderIntervalUnit:
+              reminderIntervalUnit ?? ReminderIntervalUnitEnum.jours,
         ),
       );
       state.value = FutureState.success;
@@ -109,6 +112,7 @@ class EmailActions {
     List<User>? users,
     String? warningAlertInterval,
     String? warningPoint,
+    ReminderIntervalUnitEnum? reminderIntervalUnit,
     Function? onSuccess,
     Function? onFail,
     ShadFormState? formState,
@@ -162,6 +166,8 @@ class EmailActions {
             enabled: enabled,
             sendToUsers: users?.map((e) => e.email).toList(),
             sendToRoles: roles?.map((e) => e.roleId).toList(),
+            reminderIntervalUnit:
+                reminderIntervalUnit ?? ReminderIntervalUnitEnum.jours,
           ));
       state.value = FutureState.success;
       executionId = null;
@@ -219,6 +225,7 @@ class EmailActions {
             sendToUsers: alert.sendToUsers,
             sendToRoles: alert.sendToRoles,
             enabled: enabled,
+            reminderIntervalUnit: alert.reminderIntervalUnit,
           ));
       state.value = FutureState.success;
       onSuccess?.call();

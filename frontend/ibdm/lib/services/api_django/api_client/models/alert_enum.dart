@@ -140,17 +140,17 @@ import 'package:json_annotation/json_annotation.dart';
 /// * `chambre_froide.ut_tt_cf14` - chambre_froide.ut_tt_cf14.
 /// * `chambre_froide.ut_tt_sas1` - chambre_froide.ut_tt_sas1.
 /// * `chambre_froide.ut_tt_sas2` - chambre_froide.ut_tt_sas2.
-/// * `sucre.total.tetra` - sucre.total.tetra.
 /// * `Pres_Cond.stopped` - Pres_Cond.stopped.
-/// * `sucre.total` - sucre.total.
 /// * `niveau.stopped` - niveau.stopped.
-/// * `co2_ifruit.stopped` - co2_ifruit.stopped.
+/// * `sucre.total.adue` - sucre.total.adue.
+/// * `sucre.total.tetra` - sucre.total.tetra.
+/// * `sucre.total` - sucre.total.
 /// * `utilite.stopped` - utilite.stopped.
-/// * `volume.stopped` - volume.stopped.
-/// * `sucre.stopped` - sucre.stopped.
+/// * `co2_ifruit.stopped` - co2_ifruit.stopped.
 /// * `chambre_froide.stopped` - chambre_froide.stopped.
 /// * `debit.stopped` - debit.stopped.
-/// * `sucre.total.adue` - sucre.total.adue.
+/// * `volume.stopped` - volume.stopped.
+/// * `sucre.stopped` - sucre.stopped.
 @JsonEnum()
 enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `sucre.t_s21`.
@@ -561,39 +561,39 @@ enum AlertEnum {
   /// Incorrect name has been replaced. Original name: `chambre_froide.ut_tt_sas2`.
   @JsonValue('chambre_froide.ut_tt_sas2')
   undefined135('chambre_froide.ut_tt_sas2'),
-  /// Incorrect name has been replaced. Original name: `sucre.total.tetra`.
-  @JsonValue('sucre.total.tetra')
-  undefined136('sucre.total.tetra'),
   /// Incorrect name has been replaced. Original name: `Pres_Cond.stopped`.
   @JsonValue('Pres_Cond.stopped')
-  undefined137('Pres_Cond.stopped'),
-  /// Incorrect name has been replaced. Original name: `sucre.total`.
-  @JsonValue('sucre.total')
-  undefined138('sucre.total'),
+  undefined136('Pres_Cond.stopped'),
   /// Incorrect name has been replaced. Original name: `niveau.stopped`.
   @JsonValue('niveau.stopped')
-  undefined139('niveau.stopped'),
-  /// Incorrect name has been replaced. Original name: `co2_ifruit.stopped`.
-  @JsonValue('co2_ifruit.stopped')
-  undefined140('co2_ifruit.stopped'),
+  undefined137('niveau.stopped'),
+  /// Incorrect name has been replaced. Original name: `sucre.total.adue`.
+  @JsonValue('sucre.total.adue')
+  undefined138('sucre.total.adue'),
+  /// Incorrect name has been replaced. Original name: `sucre.total.tetra`.
+  @JsonValue('sucre.total.tetra')
+  undefined139('sucre.total.tetra'),
+  /// Incorrect name has been replaced. Original name: `sucre.total`.
+  @JsonValue('sucre.total')
+  undefined140('sucre.total'),
   /// Incorrect name has been replaced. Original name: `utilite.stopped`.
   @JsonValue('utilite.stopped')
   undefined141('utilite.stopped'),
-  /// Incorrect name has been replaced. Original name: `volume.stopped`.
-  @JsonValue('volume.stopped')
-  undefined142('volume.stopped'),
-  /// Incorrect name has been replaced. Original name: `sucre.stopped`.
-  @JsonValue('sucre.stopped')
-  undefined143('sucre.stopped'),
+  /// Incorrect name has been replaced. Original name: `co2_ifruit.stopped`.
+  @JsonValue('co2_ifruit.stopped')
+  undefined142('co2_ifruit.stopped'),
   /// Incorrect name has been replaced. Original name: `chambre_froide.stopped`.
   @JsonValue('chambre_froide.stopped')
-  undefined144('chambre_froide.stopped'),
+  undefined143('chambre_froide.stopped'),
   /// Incorrect name has been replaced. Original name: `debit.stopped`.
   @JsonValue('debit.stopped')
-  undefined145('debit.stopped'),
-  /// Incorrect name has been replaced. Original name: `sucre.total.adue`.
-  @JsonValue('sucre.total.adue')
-  undefined146('sucre.total.adue'),
+  undefined144('debit.stopped'),
+  /// Incorrect name has been replaced. Original name: `volume.stopped`.
+  @JsonValue('volume.stopped')
+  undefined145('volume.stopped'),
+  /// Incorrect name has been replaced. Original name: `sucre.stopped`.
+  @JsonValue('sucre.stopped')
+  undefined146('sucre.stopped'),
   /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
   $unknown(null);
 

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from datetime import timedelta
 
 CUSTOM_MONITORED_VALUES = {
     "sucre.stopped": (),
@@ -243,11 +244,13 @@ class AlertEmail(models.Model):
     
     danger_reminder_interval = models.IntegerField(default=1)
     warning_reminder_interval = models.IntegerField(default=7)
+    reminder_interval_unit = models.CharField(max_length=255, choices=[('JOURS', 'JOURS'), ('MINUTES','MINUTES')], default='JOURS')
 
     custom_alert_message = models.TextField(blank=True, null=True)
     send_to_users = models.ManyToManyField("users.User", related_name="users", blank=True)
     send_to_roles = models.ManyToManyField("users.Role", related_name="roles", blank=True)
     enabled = models.BooleanField(default=True, blank=True)
+
 
     class Meta:
         verbose_name = _("Alerte")
@@ -255,6 +258,22 @@ class AlertEmail(models.Model):
     def __str__(self) -> str:
         return f"ALERT: {self.monitored_value} - danger: {self.danger_point} - warning: {self.warning_point}"
 
+    def getDangerTimedelta(self):
+        match self.reminder_interval_unit.upper():
+            case "JOURS":
+                return timedelta(days=self.danger_reminder_interval)
+            case "MINUTES":
+                return timedelta(minutes=self.danger_reminder_interval)
+            case _:
+                raise ValueError(f"AlertEmail#getDangerTimedelta Unknown reminder interval unit: {self.reminder_interval_unit}")
+    def getWarningTimedelta(self):
+        match self.reminder_interval_unit:
+            case "JOURS":
+                return timedelta(days=self.warning_reminder_interval)
+            case "MINUTES":
+                return timedelta(minutes=self.warning_reminder_interval)
+            case _:
+                raise ValueError(f"AlertEmail#getWarningTimedelta Unknown reminder interval unit: {self.reminder_interval_unit}")
 
 class SentAlertEmail(models.Model):
     alert = models.ForeignKey(AlertEmail, on_delete=models.CASCADE, related_name="sent_alert_email_alert")
