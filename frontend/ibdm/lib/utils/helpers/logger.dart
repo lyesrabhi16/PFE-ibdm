@@ -7,7 +7,6 @@ printMessage(String message) {
   if (kReleaseMode) {
     return;
   } else {
-    return;
     print(message);
   }
 }

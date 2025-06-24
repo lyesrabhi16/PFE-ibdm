@@ -9,6 +9,8 @@ part of 'alert_email_request.dart';
 AlertEmailRequest _$AlertEmailRequestFromJson(Map<String, dynamic> json) =>
     AlertEmailRequest(
       monitoredValue: AlertEnum.fromJson(json['monitored_value'] as String),
+      reminderIntervalUnit: ReminderIntervalUnitEnum.fromJson(
+          json['reminder_interval_unit'] as String),
       monitorType: json['monitor_type'] == null
           ? null
           : MonitorTypeEnum.fromJson(json['monitor_type'] as String),
@@ -36,6 +38,8 @@ Map<String, dynamic> _$AlertEmailRequestToJson(AlertEmailRequest instance) =>
       'warning_point': instance.warningPoint,
       'danger_reminder_interval': instance.dangerReminderInterval,
       'warning_reminder_interval': instance.warningReminderInterval,
+      'reminder_interval_unit':
+          _$ReminderIntervalUnitEnumEnumMap[instance.reminderIntervalUnit]!,
       'custom_alert_message': instance.customAlertMessage,
       'send_to_users': instance.sendToUsers,
       'send_to_roles': instance.sendToRoles,
@@ -179,17 +183,17 @@ const _$AlertEnumEnumMap = {
   AlertEnum.undefined133: 'chambre_froide.ut_tt_cf14',
   AlertEnum.undefined134: 'chambre_froide.ut_tt_sas1',
   AlertEnum.undefined135: 'chambre_froide.ut_tt_sas2',
-  AlertEnum.undefined136: 'sucre.total.tetra',
-  AlertEnum.undefined137: 'Pres_Cond.stopped',
-  AlertEnum.undefined138: 'sucre.total',
-  AlertEnum.undefined139: 'niveau.stopped',
-  AlertEnum.undefined140: 'co2_ifruit.stopped',
+  AlertEnum.undefined136: 'Pres_Cond.stopped',
+  AlertEnum.undefined137: 'niveau.stopped',
+  AlertEnum.undefined138: 'sucre.total.adue',
+  AlertEnum.undefined139: 'sucre.total.tetra',
+  AlertEnum.undefined140: 'sucre.total',
   AlertEnum.undefined141: 'utilite.stopped',
-  AlertEnum.undefined142: 'volume.stopped',
-  AlertEnum.undefined143: 'sucre.stopped',
-  AlertEnum.undefined144: 'chambre_froide.stopped',
-  AlertEnum.undefined145: 'debit.stopped',
-  AlertEnum.undefined146: 'sucre.total.adue',
+  AlertEnum.undefined142: 'co2_ifruit.stopped',
+  AlertEnum.undefined143: 'chambre_froide.stopped',
+  AlertEnum.undefined144: 'debit.stopped',
+  AlertEnum.undefined145: 'volume.stopped',
+  AlertEnum.undefined146: 'sucre.stopped',
   AlertEnum.$unknown: r'$unknown',
 };
 
@@ -197,4 +201,10 @@ const _$MonitorTypeEnumEnumMap = {
   MonitorTypeEnum.asc: 'ASC',
   MonitorTypeEnum.desc: 'DESC',
   MonitorTypeEnum.$unknown: r'$unknown',
+};
+
+const _$ReminderIntervalUnitEnumEnumMap = {
+  ReminderIntervalUnitEnum.jours: 'JOURS',
+  ReminderIntervalUnitEnum.minutes: 'MINUTES',
+  ReminderIntervalUnitEnum.$unknown: r'$unknown',
 };

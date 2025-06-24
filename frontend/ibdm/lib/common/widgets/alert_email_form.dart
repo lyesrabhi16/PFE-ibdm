@@ -37,6 +37,7 @@ class AlertEmailForm extends StatefulWidget {
     List<User>? users,
     String? customMessage,
     bool? enabled,
+    ReminderIntervalUnitEnum? reminderIntervalUnit,
   })? onValuesChanged;
 
   final GlobalKey<ShadFormState> formKey;
@@ -69,6 +70,7 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
     printMessage("sendToRoles ${sendToRoles.map((e) => e.name).join(', ')}");
     printMessage("sendToUsers ${sendToUsers.map((e) => e.email).join(', ')}");
     printMessage("enabled $enabled");
+    printMessage("reminderIntervalUnit ${reminderIntervalUnit.json}");
     widget.onValuesChanged?.call(
       monitoredValue: monitoredValueController.text,
       monitorType: monitorTypeController.text,
@@ -80,6 +82,7 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
       users: sendToUsers.toList(),
       customMessage: customMessageController.text,
       enabled: enabled,
+      reminderIntervalUnit: reminderIntervalUnit,
     );
   }
 
@@ -89,13 +92,16 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
 
   final monitorTypeController = TextEditingController();
 
-  final dangerPointController = TextEditingController(text: "1000");
+  final dangerPointController = TextEditingController(text: "10");
 
-  final warningPointController = TextEditingController(text: "2500");
+  final warningPointController = TextEditingController(text: "25");
 
   final dangerAlertIntervalController = TextEditingController(text: "1");
 
   final warningAlertIntervalController = TextEditingController(text: "7");
+
+  ReminderIntervalUnitEnum reminderIntervalUnit =
+      ReminderIntervalUnitEnum.jours;
 
   final customMessageController = TextEditingController(text: "");
 
@@ -159,6 +165,9 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
       enabled = widget.alert!.enabled!;
       monitoredValueController.text = widget.alert!.monitoredValue.json!;
       monitorTypeController.text = widget.alert!.monitorType!.json!;
+      logger.e(
+          "reminderIntervalUnit: ${widget.alert!.reminderIntervalUnit.name}");
+      reminderIntervalUnit = widget.alert!.reminderIntervalUnit;
       sendToRoles.addAll(
         userController.roles
             .where((role) => widget.alert!.sendToRoles.contains(role.roleId)),
@@ -323,7 +332,40 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
               SizedBox(height: AppSizes.sm),
               ShadTooltip(
                 builder: (context) =>
-                    Text(strings.value.dangerAlertIntervalDescription),
+                    Text(strings.value.reminderIntervalUnitDescription),
+                child: ShadSelectFormField<ReminderIntervalUnitEnum>(
+                  enabled: widget.editable,
+                  validator: FormBuilderValidators.required(
+                    errorText: strings.value.requiredField,
+                  ),
+                  label: Text(strings.value.reminderIntervalUnit),
+                  options: ReminderIntervalUnitEnum.values
+                      .where(
+                          (unit) => unit != ReminderIntervalUnitEnum.$unknown)
+                      .map(
+                        (value) => ShadOption(
+                          value: value,
+                          child: Text(value.json!),
+                        ),
+                      ),
+                  selectedOptionBuilder: (context, value) => Container(
+                      constraints: BoxConstraints(
+                        minWidth: context.width,
+                      ),
+                      child: Text(value.json!)),
+                  initialValue: reminderIntervalUnit,
+                  onChanged: (v) {
+                    logger.e("reminderIntervalUnit changed to ${v!.json}");
+                    reminderIntervalUnit = v!;
+                    _valuesChanged();
+                  },
+                ),
+              ),
+              SizedBox(height: AppSizes.sm),
+              ShadTooltip(
+                builder: (context) => Text(strings.value
+                    .dangerAlertIntervalDescription(
+                        reminderIntervalUnit.json!)),
                 child: ShadInputFormField(
                   enabled: widget.editable,
                   controller: dangerAlertIntervalController,
@@ -336,7 +378,7 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                       errorText: strings.value.min(0),
                     ),
                   ]),
-                  label: Text(strings.value.dangerAlertIntervalInDays),
+                  label: Text(strings.value.dangerAlertInterval),
                   keyboardType: TextInputType.number,
                   initialValue: "1",
                   onChanged: (v) => {
@@ -346,8 +388,9 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
               ),
               SizedBox(height: AppSizes.sm),
               ShadTooltip(
-                builder: (context) =>
-                    Text(strings.value.warningAlertIntervalDescription),
+                builder: (context) => Text(strings.value
+                    .warningAlertIntervalDescription(
+                        reminderIntervalUnit.json!)),
                 child: ShadInputFormField(
                   enabled: widget.editable,
                   controller: warningAlertIntervalController,
@@ -360,7 +403,7 @@ class _AlertEmailFormState extends State<AlertEmailForm> {
                       errorText: strings.value.min(0),
                     ),
                   ]),
-                  label: Text(strings.value.warningAlertIntervalInDays),
+                  label: Text(strings.value.warningAlertInterval),
                   keyboardType: TextInputType.number,
                   initialValue: "7",
                   onChanged: (v) => {

@@ -6,6 +6,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'alert_enum.dart';
 import 'monitor_type_enum.dart';
+import 'reminder_interval_unit_enum.dart';
 
 part 'alert_email.g.dart';
 
@@ -14,6 +15,7 @@ class AlertEmail {
   const AlertEmail({
     required this.id,
     required this.monitoredValue,
+    required this.reminderIntervalUnit,
     required this.sendToUsers,
     required this.sendToRoles,
     this.monitorType,
@@ -40,6 +42,8 @@ class AlertEmail {
   final int? dangerReminderInterval;
   @JsonKey(name: 'warning_reminder_interval')
   final int? warningReminderInterval;
+  @JsonKey(name: 'reminder_interval_unit')
+  final ReminderIntervalUnitEnum reminderIntervalUnit;
   @JsonKey(name: 'custom_alert_message')
   final String? customAlertMessage;
   @JsonKey(name: 'send_to_users')

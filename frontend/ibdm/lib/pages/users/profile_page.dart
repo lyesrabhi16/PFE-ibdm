@@ -46,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     _getContext = () => context;
-    print("building profile container page");
+    printMessage("building profile container page");
     return AppCustomContainer(
         child: Padding(
             padding: const EdgeInsets.all(AppSizes.sm),
