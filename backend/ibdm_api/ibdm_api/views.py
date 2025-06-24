@@ -29,7 +29,7 @@ def index(request):
 )
 @api_view(["GET"])
 def getCA(request):
-    ca = os.path.join(BASE_DIR,"certs","ifruit_CA.crt")
+    ca = os.path.join(BASE_DIR,"certs","CA.pem")
     if not os.path.exists(ca):
         print(f"CA file not found: {ca}")
         logging.critical(f"CA file not found: {ca}")

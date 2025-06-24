@@ -167,8 +167,9 @@
     publisher_display_name: IFRUIT
     identity_name: com.ifruit.ibdm
     msix_version: 1.0.0.0
-    publisher: CN=IBDM IFRUIT , O=IFRUIT, L=OUZELLAGUEN, S=BEJAIA, C=DZ
+    publisher: CN=IBDM, OU=IFRUIT, O=IFRI, L=OUZELLAGUEN, S=BEJAIA, C=DZ
     logo_path: assets\images\logo.png
     certificate_path: ..\..\backend\ibdm_api\certs\ibdm.pfx
-    certificate_password: 2025
+    # password of the pfx file is required to sign the msix package
+    certificate_password: 25IBDMpfx25 #PASSWORD
     capabilities: internetClient
