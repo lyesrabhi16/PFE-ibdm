@@ -11,7 +11,7 @@ Flutter app (web, Android, Windows, Linux, macOS, iOS)
 Django / DRF API  ──── Channels + Redis (live updates)
         │
         ├── SQL Server (one database per business domain)
-        └── PLC / automation data (automate app)
+        └── existing plant databases (automate, siroperie, filtration, utilité)
 ```
 
 | Part | Path | Stack |
@@ -26,7 +26,7 @@ Django / DRF API  ──── Channels + Redis (live updates)
 | --- | --- |
 | `users`, `app_auth` | Users, permissions and authentication |
 | `siroperie`, `filtration`, `utilite` | Plant units: models, REST endpoints and WebSocket consumers for live data |
-| `automate` | Automation / PLC-related data |
+| `automate` | Unmanaged models mapped onto the existing `automate` plant database |
 | `documentation` | Serves the API docs |
 
 ## Features
@@ -85,7 +85,7 @@ This exports the OpenAPI schema, copies it to the Flutter project, fixes it for 
 
 ## API documentation
 
-With the server running, open the interactive docs at `https://localhost:8443/api/documentation`, or read the committed spec at [backend/ibdm_api/openapi/openapi.json](backend/ibdm_api/openapi/openapi.json).
+With the server running, open the interactive docs at `https://localhost:8443/api/documentation/` (Swagger UI; the exact route is set in the Django URL config), or read the committed spec at [backend/ibdm_api/openapi/openapi.spec.json](backend/ibdm_api/openapi/openapi.spec.json).
 
 ## Known issues
 
