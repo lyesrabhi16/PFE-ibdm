@@ -29,3 +29,22 @@ class IsAdminOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         return is_system_admin(request.user)
+
+
+def admin_or_permission(codename: str):
+    """Administrators, or users who were granted the given permission (e.g. via their role in the app)."""
+
+    class AdminOrHasPermission(permissions.BasePermission):
+        def has_permission(self, request, view):
+            user = request.user
+            if is_system_admin(user):
+                return True
+            if not (user and user.is_authenticated):
+                return False
+            try:
+                return bool(user.has_perm(codename))
+            except AttributeError:  # a user without a role
+                return False
+
+    AdminOrHasPermission.__name__ = f"AdminOr_{codename}"
+    return AdminOrHasPermission
