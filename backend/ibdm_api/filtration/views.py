@@ -125,6 +125,7 @@ def getNiveauAtSpecificTime(request):
         hour=hour,
         minute=minute,
         second=second,
+        microsecond=0,
     )
 
     record = get_value_at(Niveau, date)
@@ -201,6 +202,7 @@ def getDebitAtSpecificTime(request):
         hour=hour,
         minute=minute,
         second=second,
+        microsecond=0,
     )
 
     record = get_value_at(Debit, date)
@@ -277,6 +279,7 @@ def getVolumeAtSpecificTime(request):
         hour=hour,
         minute=minute,
         second=second,
+        microsecond=0,
     )
 
     record = get_value_at(Volume, date)
@@ -354,6 +357,7 @@ def getPresCondAtSpecificTime(request):
         hour=hour,
         minute=minute,
         second=second,
+        microsecond=0,
     )
 
     record = get_value_at(PresCond, date)
