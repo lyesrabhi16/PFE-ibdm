@@ -1,14 +1,15 @@
 """Seed demo data: users with avatars, 30 days of sensor history, email schedules/alerts, and sent reports."""
 import os
 import random
+import socket
 import sys
-import threading
 import time
 from datetime import datetime, timedelta
 
 from django.apps import apps
 from django.contrib.auth.models import Group
 from django.core.files import File
+from tenacity import stop_after_attempt, wait_fixed
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import profiles  # noqa: E402
@@ -43,15 +44,15 @@ for email, first, last, group_name, avatar, phone in PEOPLE:
             group = Group.objects.get_or_create(name=group_name)[0]
             role = Role.objects.get_or_create(group=group, defaults={"is_admin": False})[0]
             user = User.objects.create_user(email, PASSWORD, role)
-        user.first_name, user.last_name, user.phone_number = first, last, phone
-        user.username = f"{first}.{last}".lower().replace(" ", "")
+        print("created user", email)
+    # The profile is (re)applied on every start, so a run interrupted after the account was created still ends up complete.
+    for field, value in (("first_name", first), ("last_name", last), ("phone_number", phone),
+                         ("username", f"{first}.{last}".lower().replace(" ", ""))):
+        setattr(user, field, value)
+    if not user.avatar or not user.avatar.storage.exists(user.avatar.name):  # also covers a file lost with the container
         with open(os.path.join(DEMO_DIR, "avatars", avatar + ".png"), "rb") as f:
             user.avatar.save(avatar + ".png", File(f), save=False)
-        user.save()
-        print("created user", email)
-    if not user.avatar or not user.avatar.storage.exists(user.avatar.name):  # file lost with the container
-        with open(os.path.join(DEMO_DIR, "avatars", avatar + ".png"), "rb") as f:
-            user.avatar.save(avatar + ".png", File(f), save=True)
+    user.save()
     users[email] = user
 
 # ---- sensor history --------------------------------------------------------------------------------------
@@ -89,31 +90,70 @@ for model in apps.get_models():
 
 # ---- email schedules, alerts and sent reports -----------------------------------------------------------
 recipients = [users["admin@ibdm.demo"], users["amel.haddad@ibdm.demo"], users["nadia.cherif@ibdm.demo"]]
-if not EmailSchedule.objects.exists():
-    tomorrow_7 = (now + timedelta(days=1)).replace(hour=7, minute=0)
-    for rapport, interval in (("inventaire-sucre", "jour"), ("filtration", "jour"), ("co2_ifruit", "semaine"), ("utilite", "mois")):
-        schedule = EmailSchedule.objects.create(rapport=rapport, temps_envoi=tomorrow_7.time(), interval=interval,
-                                                interval_manual={"jour": 1, "semaine": 7, "mois": 30}[interval],
-                                                next_run_time=tomorrow_7)
-        schedule.scheduled_users.set(recipients)
-    print("created email schedules")
+tomorrow_7 = (now + timedelta(days=1)).replace(hour=7, minute=0)
+# Each schedule / alert is created or completed on its own, so a restart repairs whatever an interrupted run left behind.
+schedules = []
+for rapport, interval in (("inventaire-sucre", "jour"), ("filtration", "jour"), ("co2_ifruit", "semaine"), ("utilite", "mois")):
+    schedule, created = EmailSchedule.objects.get_or_create(
+        rapport=rapport,
+        defaults=dict(temps_envoi=tomorrow_7.time(), interval=interval,
+                      interval_manual={"jour": 1, "semaine": 7, "mois": 30}[interval], next_run_time=tomorrow_7),
+    )
+    schedule.scheduled_users.set(recipients)
+    schedules.append(schedule)
+    if created:
+        print("created email schedule", rapport)
 
-if not AlertEmail.objects.exists():
-    sucre = AlertEmail.objects.create(monitored_value="sucre.total", monitor_type="DESC", danger_point=100000,
-                                      warning_point=650000, danger_reminder_interval=1, warning_reminder_interval=7,
-                                      custom_alert_message="Le stock total de sucre passe sous le seuil d'avertissement : planifier une commande de citernes.")
-    sucre.send_to_users.set([users["admin@ibdm.demo"], users["lina.boudiaf@ibdm.demo"]])
-    niveau = AlertEmail.objects.create(monitored_value="niveau.niv_os7", monitor_type="DESC", danger_point=9.5,
-                                       warning_point=9.8, danger_reminder_interval=1, warning_reminder_interval=7,
-                                       custom_alert_message="Niveau OS7 bas : intervention de maintenance requise.")
-    niveau.send_to_roles.set([Role.objects.get(group__name="MAINTENANCE")])
-    print("created alerts")
+sucre, _ = AlertEmail.objects.get_or_create(
+    monitored_value="sucre.total",
+    defaults=dict(monitor_type="DESC", danger_point=100000, warning_point=650000,
+                  danger_reminder_interval=1, warning_reminder_interval=7,
+                  custom_alert_message="Le stock total de sucre passe sous le seuil d'avertissement : planifier une commande de citernes."))
+sucre.send_to_users.set([users["admin@ibdm.demo"], users["lina.boudiaf@ibdm.demo"]])
+niveau, _ = AlertEmail.objects.get_or_create(
+    monitored_value="niveau.niv_os7",
+    defaults=dict(monitor_type="DESC", danger_point=9.5, warning_point=9.8,
+                  danger_reminder_interval=1, warning_reminder_interval=7,
+                  custom_alert_message="Niveau OS7 bas : intervention de maintenance requise."))
+niveau.send_to_roles.set([Role.objects.get(group__name="MAINTENANCE")])
 
-if os.environ.get("DEMO_SEND_REPORTS", "1") == "1" and not sentEmail.objects.filter(schedule__isnull=False).exists():
-    from api_v1.emails.emails_scheduler import sendEmail  # noqa: E402
-    for schedule in EmailSchedule.objects.all():
-        sendEmail(schedule, schedule_next=False)
-    deadline = time.time() + 90  # wait for the sending threads, but never block the start-up for long
-    while time.time() < deadline and any(t.name.startswith("Thread-") and t is not threading.current_thread() and t.is_alive() for t in threading.enumerate()):
-        time.sleep(1)
-    print("reports sent")
+
+def wait_for_smtp(timeout=90):
+    """The mail server may start a little after the API container."""
+    from django.conf import settings
+    for provider in settings.EMAIL_PROVIDERS:
+        deadline = time.time() + timeout
+        while True:
+            try:
+                socket.create_connection((provider.host, provider.port), timeout=3).close()
+                break
+            except OSError:
+                if time.time() > deadline:
+                    raise
+                time.sleep(2)
+
+
+def send_report(schedule):
+    """Send one schedule's report synchronously, so it is delivered and recorded before the start-up continues."""
+    from api_v1.emails.emails_scheduler import getHtmlMessage, sendEmailWithFile
+    people = set(schedule.scheduled_users.all())
+    for role in schedule.scheduled_roles.all():
+        people.update(User.objects.filter(role=role))
+    built = getHtmlMessage(schedule)
+    if not isinstance(built, tuple):  # the report builder returns a plain message when there is no data
+        print("no data for report", schedule.rapport, "-", built)
+        return
+    message, file, subject = built
+    # a few quick retries instead of the app's hour-long retry loop, which must not block the start-up
+    sendEmailWithFile.retry_with(stop=stop_after_attempt(5), wait=wait_fixed(3))(
+        file=file, users=people, email=schedule,
+        subject=f"IBDM {subject}", body=message, to=sorted(u.email for u in people))
+
+
+if os.environ.get("DEMO_SEND_REPORTS", "1") == "1":
+    pending = [s for s in schedules if not sentEmail.objects.filter(schedule=s).exists()]
+    if pending:
+        wait_for_smtp()
+        for schedule in pending:
+            send_report(schedule)
+            print("report sent:", schedule.rapport)

@@ -101,6 +101,8 @@ def next_value(sp, ts, prev, step, row, rng):
             else:  # feeding flow lives in another table: evaluate its (stateless) profile
                 flow += next_value(spec(sp["table_feed"], f), ts, None, step, row, rng)
         base = sp["start"] if prev is None else prev
+        # Daily totals: the app reads each day's value at 00:00:00 (get_value_at), i.e. the final total of the day that
+        # just ended; the counter restarts at 00:00:30. So a "consumption on day D" figure is the total of the previous day.
         if sp.get("daily") and prev is not None:
             cut = timedelta(seconds=30)
             if (ts - cut).date() != (ts - timedelta(minutes=step) - cut).date():

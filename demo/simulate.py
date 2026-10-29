@@ -11,6 +11,13 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ibdm_api.settings")
 import django  # noqa: E402
 
 django.setup()
+
+# The API process runs the scheduler (monitors, alert e-mails); a second copy here would send everything twice.
+try:
+    from api_v1.scheduler import scheduler as _scheduler
+    _scheduler.shutdown(wait=False)
+except Exception:
+    pass
 from django.apps import apps  # noqa: E402
 from ibdm_api.db_routers import DB_Router  # noqa: E402
 import profiles  # noqa: E402
