@@ -75,6 +75,8 @@ All captured from the demo stack below (synthetic data, 30 days of history, live
 | ![Excel export](docs/screenshots/export-excel.png) | ![Swagger UI](docs/screenshots/swagger.png) |
 | The attached Excel export | Interactive OpenAPI documentation |
 
+**Viewing the e-mails.** The demo does not send real mail: every message goes to [Mailpit](http://localhost:8025), which shows the rendered HTML (logo, tables, colours), the plain-text version, the headers and the attachments, so you can check the reports and alerts without an SMTP account. Mailpit renders with a standard browser engine, so it shows how the HTML looks, not how a particular mail client will treat it; its "HTML Check" tab estimates client compatibility (about 48% for the sugar report, 88% for the alert). The IBDM logo is embedded in each message as an inline image, so it displays without internet access. To send real e-mail, add an SMTP provider to `EMAIL_PROVIDERS` in `demo/settings.json`.
+
 ## Try it with Docker (demo)
 
 One command starts SQL Server, Redis, Mailpit and the API, creates the five databases, migrates them and creates the plant tables. It then seeds:
