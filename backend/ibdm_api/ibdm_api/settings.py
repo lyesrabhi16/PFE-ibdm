@@ -42,7 +42,9 @@ SECURE_SSL_REDIRECT = True
 
 ALLOWED_HOSTS = Env.ALLOWED_HOSTS
 
-CORS_ALLOW_ALL_ORIGINS = True
+# Any origin is only accepted in debug; otherwise only the configured trusted origins
+CORS_ALLOW_ALL_ORIGINS = DEBUG
+CORS_ALLOWED_ORIGINS = Env.CSRF_TRUSTED_ORIGINS
 CORS_ALLOW_HEADERS = [
     *default_headers,
     "X-CSRFToken",

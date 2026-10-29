@@ -3,6 +3,7 @@ from api_v1.utils import getServerStatusFromFile
 from api_v1.constants import ErrorCodes
 from logs.logging import logger as logging
 import os
+import subprocess
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
@@ -14,6 +15,7 @@ from rest_framework import permissions
 
 from django.conf import settings
 
+from api_v1.permissions import IsSystemAdmin, admin_or_permission
 from api_v1.serializers import ErrorResponseSerializer, SuccessResponseSerializer, SystemStatusSerializer
 from api_v1.serializers import ServerConfigSerializer
 
@@ -82,6 +84,13 @@ def getServerStatus(request):
             "error": str(e)
         }, status=200)
 
+# the settings page is shown to users holding this permission, so the API accepts the same people (and admins)
+ServerSettingsAccess = admin_or_permission("can_view_server_settings_page")
+
+SERVICE_EXE = os.path.abspath(os.path.join(BASE_DIR, "..", "ibdm_service.exe"))  # constant: built from BASE_DIR only
+SERVICE_RESTART_COMMAND = [SERVICE_EXE, "restart"]
+
+
 @extend_schema(
     tags=["api"],
     summary="restart the server",
@@ -90,15 +99,15 @@ def getServerStatus(request):
     responses=None,
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsSystemAdmin])
 def restartServer(request):
-    os.system("echo 'Restarting server...'")
-    os.system("'..\\ibdm_service.exe' restart")
-    return JsonResponse(
-        {
-            "message": "OK"
-        }
-    )
+    if not os.path.exists(SERVICE_EXE):
+        return JsonResponse({"message": "Restart is only available when running as the Windows service"}, status=501)
+    logging.info("Restarting server")
+    # nosemgrep: python.lang.security.audit.dangerous-subprocess-use-audit
+    # The command is a module constant (no request data), runs without a shell, and the view is admin-only.
+    subprocess.Popen(SERVICE_RESTART_COMMAND, shell=False)
+    return JsonResponse({"message": "OK"})
 
 
 @extend_schema(
@@ -112,7 +121,7 @@ def restartServer(request):
     },
 )
 @api_view(["POST"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([ServerSettingsAccess])
 def setServerConfig(request):
     try:
         secret_key = request.data.get("SECRET_KEY", None)
@@ -163,7 +172,7 @@ def setServerConfig(request):
     }
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([ServerSettingsAccess])
 def getServerConfig(request):
     try:
         with open(settings.SETTINGS_JSON_FILE_PATH, "r") as f:

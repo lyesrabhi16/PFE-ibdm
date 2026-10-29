@@ -1932,9 +1932,11 @@ class _UsersPageState extends State<UsersPage> {
       _loadUsers(context);
     } catch (e) {
       logger.e("failed to add user: $e");
-      if (e is dio.DioException) {
-        for (var item in (e.response?.data as Map).entries) {
-          final errors = item.value as List;
+      final responseData = e is dio.DioException ? e.response?.data : null;
+      // field errors are {"field": ["message", ...]}; other errors (e.g. a 403) are {"detail": "message"}
+      if (responseData is Map) {
+        for (var item in responseData.entries) {
+          final errors = item.value is List ? item.value as List : [item.value];
           final translatedErrors = [];
           for (var error in errors) {
             final tErr = switch (error) {
@@ -1946,7 +1948,7 @@ class _UsersPageState extends State<UsersPage> {
           }
           String message = translatedErrors.join(", ");
 
-          String key = item.key;
+          String key = item.key.toString();
           Toasts.showErrorToastNotification(
             context: Get.context!,
             title: key,

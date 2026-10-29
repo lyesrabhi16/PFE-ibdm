@@ -6,6 +6,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from api_v1.constants import ErrorCodes
+from api_v1.permissions import IsAdminOrReadOnly, is_system_admin
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 from rest_framework.request import Request
 from users.models import SubordinateAndSuperior
@@ -23,6 +24,21 @@ from .serializers import (
 from rest_framework.decorators import api_view, permission_classes
 from logs.logging import logger as logging
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
+
+
+def subtree_ids(user):
+    """Ids of everyone below `user` in the supervisor hierarchy (cycle-safe, one query per level)."""
+    found, frontier = set(), {user.pk}
+    while frontier:
+        children = set(
+            SubordinateAndSuperior.objects.filter(superior_id__in=frontier).values_list("subordinate_id", flat=True)
+        ) - found - {user.pk}
+        found |= children
+        frontier = children
+    return found
+
+
 @with_operation_ids(
     on_list="getUsers",
     on_create="addUser",
@@ -76,47 +92,35 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
 
-        if (self.request.user.is_superuser or self.request.user.is_admin):
+        if is_system_admin(self.request.user):
             return qs
 
-        # traverse the subordinate and superior relationship to get all subordinates of the user
-        # and their subordinates
-        # if the user has no subordinates, return an empty queryset
-        def traverse_tree(user):
-            sub_sup = SubordinateAndSuperior.objects.filter(superior=user)
-            if sub_sup.exists():
-                subordinates = {s.subordinate for s in sub_sup}
-                for s in sub_sup:    
-                  subordinates = subordinates.union(traverse_tree(s.subordinate))
-                return subordinates
-            return set()
-
-        subordinates = traverse_tree(self.request.user)
-        if len(subordinates) > 0:
-            qs = qs.filter(id__in=[u.id for u in subordinates])
-            return qs
+        # a manager sees (and can edit) their whole team, never an administrator account
+        team = subtree_ids(self.request.user)
+        if team:
+            return qs.filter(id__in=team).exclude(is_admin=True).exclude(is_superuser=True)
         return qs.none()
     
     def check(self, serializer):
-        if self.request.user.is_superuser or self.request.user.is_admin:
+        if is_system_admin(self.request.user):
             return
-        # check if the user can add a user with requested role
-        managed_roles = self.request.user.role.managed_roles.all()
-        can_add = any(
-            serializer.validated_data['role'] == role.group.name
-            for role in managed_roles
-        )
-        if not can_add :
+        # a non-admin may only give a user a role they manage
+        requested = serializer.validated_data["role"]  # a Role instance (the field is a SlugRelatedField)
+        own_role = self.request.user.role
+        can_assign = own_role is not None and own_role.managed_roles.filter(pk=requested.pk).exists()
+        if not can_assign:
             raise serializers.ValidationError({
-                "role": f"You do not have permission to add with this role {serializer.validated_data['role']}."
+                "role": f"You do not have permission to assign the role {requested}."
             })
         
     def perform_create(self, serializer):
         self.check(serializer)
         return super().perform_create(serializer)
-    def preform_save(self, serializer):
-        self.check(serializer)
-        return super().perform_create(serializer)
+    def perform_update(self, serializer):
+        # a role change is subject to the same rule as a creation (previously this hook was misspelled and never ran)
+        if "role" in serializer.validated_data:
+            self.check(serializer)
+        return super().perform_update(serializer)
 
 @with_operation_ids(
     on_list="getGroups",
@@ -134,7 +138,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     queryset = Group.objects.all().order_by("name")
     serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
 @with_operation_ids(
     on_list="getRoles",
@@ -152,7 +156,7 @@ class RoleViewSet(viewsets.ModelViewSet):
     """
     queryset = Role.objects.all().order_by("group__name")
     serializer_class = RoleSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
     def get_extra_action_url_map(self):
         logging.info("Extra action url map", super().get_extra_action_url_map())
@@ -174,7 +178,7 @@ class PermissionViewSet(viewsets.ModelViewSet):
 
     queryset = Permission.objects.all().order_by("name")
     serializer_class = PermissionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
 @with_operation_ids(
     on_list="getSubordinatesAndSuperiors",
@@ -186,10 +190,53 @@ class PermissionViewSet(viewsets.ModelViewSet):
 )
 @extend_schema(tags=["Users"])
 class SubordinateAndSuperiorViewSet(viewsets.ModelViewSet):
+    """
+    Administrators can manage any link. A manager can only attach, move or detach users inside their own
+    team, and only users with a role they manage who are not administrators (the "add user" flow of the app
+    creates the user and then links it under a superior).
+    """
 
     queryset = SubordinateAndSuperior.objects.all()
     serializer_class = SubordinateAndSuperiorSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def _ensure_allowed(self, superior, subordinate):
+        user = self.request.user
+        if is_system_admin(user):
+            return
+        team = subtree_ids(user) | {user.pk}
+        own_role = user.role
+        # whoever supervises the subordinate today must also be part of the team (no taking over other teams)
+        current_superiors = set(
+            SubordinateAndSuperior.objects.filter(subordinate=subordinate).values_list("superior_id", flat=True)
+        )
+        allowed = (
+            superior.pk in team
+            and subordinate.pk != user.pk
+            and not is_system_admin(subordinate)
+            and own_role is not None
+            and own_role.managed_roles.filter(pk=subordinate.role_id).exists()
+            and current_superiors <= team
+        )
+        if not allowed:
+            raise PermissionDenied("You can only manage users of the roles you manage inside your own team.")
+
+    def perform_create(self, serializer):
+        self._ensure_allowed(serializer.validated_data["superior"], serializer.validated_data["subordinate"])
+        serializer.save()
+
+    def perform_update(self, serializer):
+        link = serializer.instance
+        self._ensure_allowed(link.superior, link.subordinate)  # the link as it is today
+        self._ensure_allowed(
+            serializer.validated_data.get("superior", link.superior),
+            serializer.validated_data.get("subordinate", link.subordinate),
+        )  # and as it would become
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        self._ensure_allowed(instance.superior, instance.subordinate)
+        instance.delete()
 
 @extend_schema(tags=["Users"], operation_id="getSubordinateAndSuperiorId", responses={
     200: GetSubordinateAndSuperiorIdResponseSerializer,

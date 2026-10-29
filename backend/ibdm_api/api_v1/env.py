@@ -17,7 +17,7 @@ class EnvModes:
 class Env:
     SECRET_KEY = config("SECRET_KEY")
     ENV_MODE = config("ENV_MODE", default="development", cast=Choices(EnvModes.getValues()))
-    DEBUG = config("DEBUG", default=True, cast=bool)
+    DEBUG = config("DEBUG", default=False, cast=bool)
     VERSION = config("VERSION", default="1.0.0")
     SYSTEM_MONITOR_DB_TIMEOUT = config("SYSTEM_MONITOR_DB_TIMEOUT", default=3, cast=int)
     ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=lambda v: [s.strip() for s in v.split(",")])
@@ -80,7 +80,7 @@ class Env:
     settings_encrypted : Dict = {}
     SECRET_KEY = settings.get('SECRET_KEY') or config("SECRET_KEY")
     ENV_MODE = settings.get('ENV_MODE') or config("ENV_MODE", default="development", cast=Choices(EnvModes.getValues()))
-    DEBUG = settings.get('DEBUG') or config("DEBUG", default=True, cast=bool)
+    DEBUG = settings.get("DEBUG") or config("DEBUG", default=False, cast=bool)
     VERSION = settings.get('VERSION') or config("VERSION", default="1.0.0")
     SYSTEM_MONITOR_DB_TIMEOUT = settings.get('SYSTEM_MONITOR_DB_TIMEOUT') or config("SYSTEM_MONITOR_DB_TIMEOUT", default=3, cast=int)
     ALLOWED_HOSTS = settings.get('ALLOWED_HOSTS') or config("ALLOWED_HOSTS", default="*", cast=lambda v: [s.strip() for s in v.split(",")])
@@ -138,7 +138,7 @@ class Env:
                 
                 #print("PATH_VALUES:",path_values)
                 for path, value in path_values:
-                    if not value.startswith("gAAAAAB"):
+                    if not isinstance(value, str) or not value.startswith("gAAAAAB"):
                         #print(f"valueOf({path}) not encrypted: {value}")
                         pass
                     else:
