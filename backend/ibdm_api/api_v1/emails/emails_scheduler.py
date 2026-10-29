@@ -5,6 +5,7 @@ from django.conf import settings
 from logs.logging import logger as logging
 import threading
 from emails.models import EmailSchedule, sentEmail
+from api_v1.emails.inline_logo import attach_logo
 from api_v1.emails.rapports.inventaire_sucre import rapport_inventaire_sucre
 from api_v1.emails.rapports.utilite import rapport_utilite
 from api_v1.emails.rapports.filtration import rapport_filtration
@@ -42,6 +43,7 @@ def after_retry_log(*args):
 )
 def sendEmailWithFile(file, users, email, **kwargs):
     email_message = EmailMessage(**kwargs)
+    attach_logo(email_message)
     try:
         p_n = 1
         for provider in settings.EMAIL_PROVIDERS:
@@ -92,7 +94,7 @@ def sendEmail(email: EmailSchedule, schedule_next=True):
         "email": email,
         "subject":f"IBDM {subject}",
         "body": message,
-        "to": send_to,
+        "to": sorted(u.email for u in send_to),  # plain addresses, not User objects
     }).start()
     if email.next_run_time is None:
         raise ValueError("emailScheduler# next_run_time is None, how did this happen?")

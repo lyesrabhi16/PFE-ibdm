@@ -106,6 +106,7 @@ def getCo2IfruitAtSpecificTime(request):
         hour=hour,
         minute=minute,
         second=second,
+        microsecond=0,
     )
         
 
@@ -186,6 +187,7 @@ def getUtiliteAtSpecificTime(request):
         hour=hour,
         minute=minute,
         second=second,
+        microsecond=0,
     )
 
     record = get_value_at(Utilite, date)

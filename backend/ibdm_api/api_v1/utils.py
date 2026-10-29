@@ -60,7 +60,7 @@ def get_value_at(model, date):
 def get_midnight_value(model):
     now = datetime.now()
     # Get today at midnight
-    today_midnight = now.replace(hour=0, minute=0, second=0)
+    today_midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
     # Get today at 00:01
     next_minute = today_midnight.replace(minute=1)
 

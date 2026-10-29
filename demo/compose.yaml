@@ -1,0 +1,55 @@
+# Self-contained demo: SQL Server + Redis + Mailpit (captures e-mails) + the Django/Daphne API (HTTPS on 8443)
+#   docker compose -f demo/compose.yaml up --build
+name: ibdm-demo
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Express
+      MSSQL_SA_PASSWORD: Demo_Passw0rd!
+    ports:
+      - "14330:1433"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/1433'"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "16379:6379"
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"   # web UI: every e-mail sent by the app lands here
+      - "1025:1025"
+  api:
+    image: ibdm-demo:latest
+    build:
+      context: ..
+      dockerfile: demo/Dockerfile
+    env_file: demo.env
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      mailpit:
+        condition: service_started
+    volumes:
+      - media:/app/ibdm_api/images   # uploaded avatars survive container rebuilds
+      - certs:/app/ibdm_api/certs     # the local CA and server certificate stay stable across rebuilds
+    ports:
+      - "8443:8443"
+  simulator:
+    # keeps the dashboards live by appending a new reading every 10 s
+    image: ibdm-demo:latest
+    env_file: demo.env
+    entrypoint: ["bash", "-c", "cd /app/ibdm_api && mkdir -p data/logs && cp /app/demo/settings.json settings.json && python /app/demo/simulate.py"]
+    depends_on:
+      - api
+volumes:
+  media:
+  certs:
+
