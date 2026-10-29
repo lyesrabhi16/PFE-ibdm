@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd /app/ibdm_api
-export PYTHONPATH=/app/demo:/app/ibdm_api
-export DJANGO_SETTINGS_MODULE=demo_settings
 mkdir -p certs data/logs
 
 # Self-signed certificate for the HTTPS-only API (the app redirects HTTP to HTTPS)

@@ -28,7 +28,7 @@ def wait_and_create_databases():
 
 wait_and_create_databases()
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "demo_settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ibdm_api.settings")
 sys.path.insert(0, os.getcwd())
 import django  # noqa: E402
 
