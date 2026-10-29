@@ -15,7 +15,7 @@ from rest_framework import permissions
 
 from django.conf import settings
 
-from api_v1.permissions import IsSystemAdmin
+from api_v1.permissions import IsSystemAdmin, admin_or_permission
 from api_v1.serializers import ErrorResponseSerializer, SuccessResponseSerializer, SystemStatusSerializer
 from api_v1.serializers import ServerConfigSerializer
 
@@ -84,6 +84,9 @@ def getServerStatus(request):
             "error": str(e)
         }, status=200)
 
+# the settings page is shown to users holding this permission, so the API accepts the same people (and admins)
+ServerSettingsAccess = admin_or_permission("can_view_server_settings_page")
+
 SERVICE_EXE = os.path.abspath(os.path.join(BASE_DIR, "..", "ibdm_service.exe"))  # constant: built from BASE_DIR only
 SERVICE_RESTART_COMMAND = [SERVICE_EXE, "restart"]
 
@@ -118,7 +121,7 @@ def restartServer(request):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsSystemAdmin])
+@permission_classes([ServerSettingsAccess])
 def setServerConfig(request):
     try:
         secret_key = request.data.get("SECRET_KEY", None)
@@ -169,7 +172,7 @@ def setServerConfig(request):
     }
 )
 @api_view(["GET"])
-@permission_classes([IsSystemAdmin])
+@permission_classes([ServerSettingsAccess])
 def getServerConfig(request):
     try:
         with open(settings.SETTINGS_JSON_FILE_PATH, "r") as f:
