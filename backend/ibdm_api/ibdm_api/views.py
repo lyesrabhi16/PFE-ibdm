@@ -15,16 +15,9 @@ from rest_framework import permissions
 
 from django.conf import settings
 
+from api_v1.permissions import IsSystemAdmin
 from api_v1.serializers import ErrorResponseSerializer, SuccessResponseSerializer, SystemStatusSerializer
 from api_v1.serializers import ServerConfigSerializer
-
-class IsSystemAdmin(permissions.BasePermission):
-    """Only authenticated users whose role is an admin role (or Django superusers)."""
-
-    def has_permission(self, request, view):
-        user = request.user
-        return bool(user and user.is_authenticated and (getattr(user, "is_admin", False) or user.is_superuser))
-
 
 def index(request):
     return render(request, "web/index.html")
@@ -91,6 +84,10 @@ def getServerStatus(request):
             "error": str(e)
         }, status=200)
 
+SERVICE_EXE = os.path.abspath(os.path.join(BASE_DIR, "..", "ibdm_service.exe"))  # constant: built from BASE_DIR only
+SERVICE_RESTART_COMMAND = [SERVICE_EXE, "restart"]
+
+
 @extend_schema(
     tags=["api"],
     summary="restart the server",
@@ -101,11 +98,12 @@ def getServerStatus(request):
 @api_view(["GET"])
 @permission_classes([IsSystemAdmin])
 def restartServer(request):
-    service_exe = os.path.abspath(os.path.join(BASE_DIR, "..", "ibdm_service.exe"))
-    if not os.path.exists(service_exe):
+    if not os.path.exists(SERVICE_EXE):
         return JsonResponse({"message": "Restart is only available when running as the Windows service"}, status=501)
     logging.info("Restarting server")
-    subprocess.Popen([service_exe, "restart"])  # fixed path, no shell, no user input
+    # nosemgrep: python.lang.security.audit.dangerous-subprocess-use-audit
+    # The command is a module constant (no request data), runs without a shell, and the view is admin-only.
+    subprocess.Popen(SERVICE_RESTART_COMMAND, shell=False)
     return JsonResponse({"message": "OK"})
 
 

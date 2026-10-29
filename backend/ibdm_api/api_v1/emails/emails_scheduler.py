@@ -94,7 +94,7 @@ def sendEmail(email: EmailSchedule, schedule_next=True):
         "email": email,
         "subject":f"IBDM {subject}",
         "body": message,
-        "to": send_to,
+        "to": sorted(u.email for u in send_to),  # plain addresses, not User objects
     }).start()
     if email.next_run_time is None:
         raise ValueError("emailScheduler# next_run_time is None, how did this happen?")
