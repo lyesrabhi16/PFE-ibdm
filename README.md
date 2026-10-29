@@ -127,13 +127,6 @@ This exports the OpenAPI schema, copies it to the Flutter project, fixes it for 
 
 With the server running, open the interactive docs at `https://localhost:8443/api/documentation/` (Swagger UI; the exact route is set in the Django URL config), or read the committed spec at [backend/ibdm_api/openapi/openapi.spec.json](backend/ibdm_api/openapi/openapi.spec.json).
 
-## Known issues
-
-- `backend/ibdm_service.exe` (a Windows service wrapper, 18 MB) is committed; it should be downloaded at deploy time instead.
-- `backend/service_start.bat` contains machine-specific paths.
-- `GET /restart` has side effects (it should be a POST); changing it requires regenerating the Flutter API client.
-- Test coverage is minimal.
-
 ## License
 
 Apache License 2.0 — see [LICENSE](LICENSE).
