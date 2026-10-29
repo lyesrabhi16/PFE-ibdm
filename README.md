@@ -38,6 +38,46 @@ Django / DRF API  ──── Channels + Redis (live updates)
 - Auto-generated OpenAPI documentation and Dart API client
 - HTTPS-only deployment (Hypercorn + local certificate authority)
 
+## Screenshots
+
+Captured from the demo stack below (synthetic data).
+
+| | |
+| --- | --- |
+| ![Login](docs/screenshots/login.png) | ![Siroperie](docs/screenshots/siroperie.png) |
+| Login | Siroperie: live sugar tank levels |
+| ![Filtration](docs/screenshots/filtration.png) | ![CO2](docs/screenshots/co2.png) |
+| Filtration: flow, volume and pressure per line | CO₂ / N₂ levels and pressure gauges |
+| ![Users](docs/screenshots/users.png) | ![Server status](docs/screenshots/server-status.png) |
+| User management | Server status: databases, Redis, memory |
+
+The OpenAPI documentation is served by Swagger UI: ![Swagger UI](docs/screenshots/swagger.png)
+
+## Try it with Docker (demo)
+
+One command starts SQL Server, Redis and the API, creates the five databases, migrates them, creates the plant tables and seeds 20 hours of synthetic sensor readings. The API also serves the pre-built Flutter web app.
+
+```bash
+docker compose -f demo/compose.yaml up --build
+```
+
+Wait for `Databases ready` in the logs, then open <https://localhost:8443/app/> (accept the self-signed certificate) and log in with `admin@ibdm.demo` / `Demo_Passw0rd!`.
+
+| URL | What |
+| --- | --- |
+| https://localhost:8443/app/ | Flutter web app (dashboards, user management, server status) |
+| https://localhost:8443/api/v1/docs/ | Swagger UI |
+| https://localhost:8443/admin | Django admin |
+
+Everything under [demo](demo) is for local demonstration only: credentials are public and the TLS certificate is self-signed. `demo/demo_settings.py` works around the router issue described under *Known issues*.
+
+### Nix dev shell
+
+```bash
+nix develop          # Python 3.12, pipenv, ODBC Driver 18, docker compose, Node/pnpm
+nix develop .#app    # Flutter toolchain for frontend/ibdm
+```
+
 ## Getting started
 
 ### Prerequisites
@@ -91,6 +131,9 @@ With the server running, open the interactive docs at `https://localhost:8443/ap
 
 - `backend/ibdm_service.exe` (a Windows service wrapper, 18 MB) is committed; it should be downloaded at deploy time instead.
 - `backend/service_start.bat` contains machine-specific paths.
+- The DB router (`ibdm_api/db_routers.py`) never migrates `auth`, `contenttypes`, `sessions` or `admin`, so `users` (foreign key to `auth.Group`) cannot be migrated on a fresh database.
+- A `null` Redis password in `settings.json` crashes startup (`Env.load_settings_json`).
+- `GET /restart` and `POST /server-config/set` only require authentication, not an admin role; restart is a GET with side effects and calls a Windows-only path.
 - Test coverage is minimal.
 
 ## License

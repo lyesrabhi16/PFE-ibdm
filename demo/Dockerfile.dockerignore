@@ -1,0 +1,6 @@
+frontend
+.git
+**/node_modules
+**/__pycache__
+backend/.venv
+backend/ibdm_service.exe
