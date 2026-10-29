@@ -1,0 +1,13 @@
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = localhost
+DNS.2 = host.docker.internal
+DNS.3 = ibdm.local.ifri
+IP.1  = 127.0.0.1
+IP.2  = ::1
+IP.3  = 10.0.2.2
