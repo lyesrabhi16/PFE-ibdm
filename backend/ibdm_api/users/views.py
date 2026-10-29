@@ -6,6 +6,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from api_v1.constants import ErrorCodes
+from api_v1.permissions import IsAdminOrReadOnly, is_system_admin
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 from rest_framework.request import Request
 from users.models import SubordinateAndSuperior
@@ -98,25 +99,25 @@ class UserViewSet(viewsets.ModelViewSet):
         return qs.none()
     
     def check(self, serializer):
-        if self.request.user.is_superuser or self.request.user.is_admin:
+        if is_system_admin(self.request.user):
             return
-        # check if the user can add a user with requested role
-        managed_roles = self.request.user.role.managed_roles.all()
-        can_add = any(
-            serializer.validated_data['role'] == role.group.name
-            for role in managed_roles
-        )
-        if not can_add :
+        # a non-admin may only give a user a role they manage
+        requested = serializer.validated_data["role"]  # a Role instance (the field is a SlugRelatedField)
+        own_role = self.request.user.role
+        can_assign = own_role is not None and own_role.managed_roles.filter(pk=requested.pk).exists()
+        if not can_assign:
             raise serializers.ValidationError({
-                "role": f"You do not have permission to add with this role {serializer.validated_data['role']}."
+                "role": f"You do not have permission to assign the role {requested}."
             })
         
     def perform_create(self, serializer):
         self.check(serializer)
         return super().perform_create(serializer)
-    def preform_save(self, serializer):
-        self.check(serializer)
-        return super().perform_create(serializer)
+    def perform_update(self, serializer):
+        # a role change is subject to the same rule as a creation (previously this hook was misspelled and never ran)
+        if "role" in serializer.validated_data:
+            self.check(serializer)
+        return super().perform_update(serializer)
 
 @with_operation_ids(
     on_list="getGroups",
@@ -134,7 +135,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     queryset = Group.objects.all().order_by("name")
     serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
 @with_operation_ids(
     on_list="getRoles",
@@ -152,7 +153,7 @@ class RoleViewSet(viewsets.ModelViewSet):
     """
     queryset = Role.objects.all().order_by("group__name")
     serializer_class = RoleSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
     def get_extra_action_url_map(self):
         logging.info("Extra action url map", super().get_extra_action_url_map())
@@ -174,7 +175,7 @@ class PermissionViewSet(viewsets.ModelViewSet):
 
     queryset = Permission.objects.all().order_by("name")
     serializer_class = PermissionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
 @with_operation_ids(
     on_list="getSubordinatesAndSuperiors",
@@ -189,7 +190,7 @@ class SubordinateAndSuperiorViewSet(viewsets.ModelViewSet):
 
     queryset = SubordinateAndSuperior.objects.all()
     serializer_class = SubordinateAndSuperiorSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
 @extend_schema(tags=["Users"], operation_id="getSubordinateAndSuperiorId", responses={
     200: GetSubordinateAndSuperiorIdResponseSerializer,

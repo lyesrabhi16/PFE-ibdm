@@ -22,7 +22,12 @@ def wait_and_create_databases():
         sys.exit("SQL Server not reachable")
     cur = conn.cursor()
     for name in DBS:
-        cur.execute(f"IF DB_ID('{name}') IS NULL CREATE DATABASE [{name}]")
+        # Parameterised: the name is bound as a value and quoted server-side with QUOTENAME (DDL cannot take parameters).
+        cur.execute(
+            "IF DB_ID(?) IS NULL BEGIN "
+            "DECLARE @sql nvarchar(400) = N'CREATE DATABASE ' + QUOTENAME(?); EXEC(@sql); END",
+            name, name,
+        )
     conn.close()
 
 
@@ -67,4 +72,6 @@ if os.path.exists(seed):
     exec(open(seed).read(), {"__name__": "__seed__", "__file__": seed})
 print("Databases ready", flush=True)
 sys.stdout.flush()
-os._exit(0)  # do not wait for e-mail retry threads
+# Every e-mail is sent synchronously and recorded before we get here (see seed_data.py), so nothing is left to
+# finish. Exit immediately so leftover library threads cannot delay the start of the API.
+os._exit(0)
