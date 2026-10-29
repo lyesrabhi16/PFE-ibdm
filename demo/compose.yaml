@@ -39,6 +39,7 @@ services:
         condition: service_started
     volumes:
       - media:/app/ibdm_api/images   # uploaded avatars survive container rebuilds
+      - certs:/app/ibdm_api/certs     # the local CA and server certificate stay stable across rebuilds
     ports:
       - "8443:8443"
   simulator:
@@ -50,4 +51,5 @@ services:
       - api
 volumes:
   media:
+  certs:
 
