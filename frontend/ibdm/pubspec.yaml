@@ -120,7 +120,6 @@
       - assets/
       - assets/images/
       - assets/certificates/
-      - assets/certificates/ifruit_CA.pem
       - assets/google_fonts/
     #   - images/a_dot_burr.jpeg
     #   - images/a_dot_ham.jpeg

@@ -1,12 +1,15 @@
 ## Before the first build
 
-Two git-ignored files must exist (a fresh clone fails with "unable to find directory entry in pubspec.yaml" or "Undefined name 'ApiConfig'" otherwise):
+Two git-ignored files are needed. With the demo running, one command creates both:
 
 ```bash
-cp lib/config/api.config.dart.example lib/config/api.config.dart   # then set the API address
-# the CA certificate that signed the server's TLS certificate; any (even empty) file lets web builds bundle
-touch assets/certificates/ifruit_CA.pem
+demo/configure-frontend.sh            # run from the repository root; API address -> localhost:8443 (Android emulator: 10.0.2.2:8443)
 ```
+
+- `lib/config/api.config.dart` is copied from `api.config.dart.example` and given the API address.
+- `assets/certificates/myCA.pem` is the certificate authority that issued the server's TLS certificate (the demo creates it and serves it at `/ca`). Only the Android app loads it, to trust the server; web and desktop builds do not need it. For your own deployment, put your CA there (see `backend/ibdm_api/certs/create_certificates.readme.md`).
+
+The script checks that the server really presents a certificate issued by the CA it just downloaded.
 
 The project is locked to Flutter 3.29 (Dart 3.7). `nix develop .#app` from the repository root provides exactly that.
 

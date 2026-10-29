@@ -100,6 +100,8 @@ Wait for `Databases ready` in the logs (about 3 minutes the first time), then op
 | https://localhost:8443/admin | Django admin |
 | http://localhost:8025 | Mailpit: every e-mail the app sends |
 
+The server certificate is issued by a local certificate authority created on first start (kept in a Docker volume and served at <https://localhost:8443/ca>). To avoid the browser warning, import that CA into your browser or system, or run `demo/configure-frontend.sh` to use it with the Flutter app.
+
 Everything under [demo](demo) is for local demonstration only: credentials are public and the TLS certificate is self-signed. Avatars are generated with DiceBear "Notionists" (CC0).
 
 ### Nix dev shell
@@ -136,9 +138,9 @@ pnpm run install:deps                       # pipenv sync
 ### Flutter app
 
 ```bash
+demo/configure-frontend.sh                  # creates lib/config/api.config.dart and downloads the CA (demo running)
 cd frontend/ibdm
-cp lib/config/api.config.dart.example lib/config/api.config.dart   # set the API URL
-flutter pub get
+flutter pub get                              # Flutter 3.29: `nix develop .#app` provides it
 flutter run -d chrome                       # or: android, windows, linux, macos
 ```
 
