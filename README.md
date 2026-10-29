@@ -125,7 +125,7 @@ This exports the OpenAPI schema, copies it to the Flutter project, fixes it for 
 
 ## API documentation
 
-With the server running, open the interactive docs at `https://localhost:8443/api/documentation/` (Swagger UI; the exact route is set in the Django URL config), or read the committed spec at [backend/ibdm_api/openapi/openapi.spec.json](backend/ibdm_api/openapi/openapi.spec.json).
+With the server running, open the interactive docs at `https://localhost:8443/api/v1/docs/` (Swagger UI, with ReDoc at `/api/v1/docs/redoc/`), or read the committed spec at [backend/ibdm_api/openapi/openapi.spec.json](backend/ibdm_api/openapi/openapi.spec.json).
 
 ## License
 
