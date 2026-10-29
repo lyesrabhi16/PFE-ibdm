@@ -34,7 +34,7 @@
 
         # nix develop .#app    -> Flutter toolchain for frontend/ibdm (large download)
         app = pkgs.mkShell {
-          packages = [ pkgs.flutter pkgs.chromium ];
+          packages = [ pkgs.flutter329 pkgs.chromium ];  # the version the project was built and locked with (Dart 3.7, intl 0.19)
           CHROME_EXECUTABLE = "${pkgs.chromium}/bin/chromium";
         };
       };
