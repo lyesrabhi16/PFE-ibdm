@@ -1,55 +1,98 @@
-# PFE-ibdm
+# IBDM — Industrial Data Monitoring Platform
 
-# START BACKEND:
-1. Make sure you have python 3.12.9 and pipenv installed:
-    ```sh
-    python --version # should be 3.12.9
-    pipenv --version # should be installed preferably version 2024.4.1
-    ```
+End-of-studies project (PFE) developed during an internship at IFRI (Algeria): a cross-platform application that collects, stores and displays **industrial production data in real time** for several plant units (syrup room, filtration, utilities, CO₂).
 
-2. Install dependencies:
-    ```sh
-    pnpm install:deps
-    ```
+## Architecture
 
-3. Configure and run databases as stated in [`backend/config/config/db/README.md`](backend/config/config/db/README.md).
+```
+Flutter app (web, Android, Windows, Linux, macOS, iOS)
+        │  REST + WebSockets (typed client generated from OpenAPI)
+        ▼
+Django / DRF API  ──── Channels + Redis (live updates)
+        │
+        ├── SQL Server (one database per business domain)
+        └── PLC / automation data (automate app)
+```
 
-4. Copy [`backend/ibdm_api/api_v1/.env.example`](backend/.env.example) to `backend/ibdm_api/api_v1/.env`:
-    ```sh
-    copy backend/ibdm_api/api_v1/.env.example backend/ibdm_api/api_v1/.env
-    ```
+| Part | Path | Stack |
+| --- | --- | --- |
+| API | [backend/ibdm_api](backend/ibdm_api) | Python 3.12, Django 5, Django REST Framework, Channels (Daphne), drf-spectacular, `mssql-django` |
+| App | [frontend/ibdm](frontend/ibdm) | Flutter / Dart, Retrofit client generated from the OpenAPI spec |
+| Infrastructure | [backend/config](backend/config) | Docker Compose files for SQL Server, Redis, a MongoDB sharded cluster, and a local DNS/proxy |
 
-5. preform migration:
-    ```sh
-    cd backend/ibdm_api
-    python manage.py makemigrations
-    python manage.py migrate
-    ```
+### Django apps
 
-6. Start the application:
-    ```sh
-    pnpm run dev:server
-    ```
+| App | Role |
+| --- | --- |
+| `users`, `app_auth` | Users, permissions and authentication |
+| `siroperie`, `filtration`, `utilite` | Plant units: models, REST endpoints and WebSocket consumers for live data |
+| `automate` | Automation / PLC-related data |
+| `documentation` | Serves the API docs |
 
-# Generate Api Client
-1. run this command to recreate the frontend api client:
+## Features
+
+- Real-time dashboards through WebSockets (Django Channels with a Redis channel layer)
+- Role-based permissions and an admin back office (Jazzmin)
+- Separate SQL Server databases per business domain
+- Email reports with HTML templates (e.g. sugar inventory)
+- Auto-generated OpenAPI documentation and Dart API client
+- HTTPS-only deployment (Hypercorn + local certificate authority)
+
+## Getting started
+
+### Prerequisites
+
+Python 3.12, [pipenv](https://pipenv.pypa.io), pnpm, Docker, the [Flutter SDK](https://flutter.dev), and the Microsoft ODBC driver for SQL Server.
+
+### Backend
+
 ```bash
-pnpm run generate:api-client 
-# will copy file to frontend/ibdm/lib/api/openapi.spec.json,
-# must be modified to work with swagger_parser
+pnpm run install:deps                       # pipenv sync
+```
+
+1. Start the databases and Redis from [backend/config/config/db](backend/config/config/db) (see its [README](backend/config/config/db/setup-README.md)); `pnpm run sql_server_db:up` starts SQL Server.
+2. Create the environment file and fill in the real credentials:
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+3. Generate the HTTPS certificates ([instructions](backend/ibdm_api/certs/create_certificates.readme.md)).
+4. Migrate and run:
+   ```bash
+   cd backend && pipenv run migrate
+   pnpm run dev:server                      # https://localhost:8443
+   ```
+
+### Flutter app
+
+```bash
 cd frontend/ibdm
-dart run swagger_parser
-dart run build_runner build
+cp lib/config/api.config.dart.example lib/config/api.config.dart   # set the API URL
+flutter pub get
+flutter run -d chrome                       # or: android, windows, linux, macos
 ```
 
+See [frontend/ibdm/README.md](frontend/ibdm/README.md) for Android certificate setup and release builds.
 
-# Api Documentation
-### see the documentation
-1. run the backend server
+### Regenerate the API client
+
+When the backend API changes:
+
 ```bash
-pnpm run dev:server
+pnpm run generate:api-client
 ```
 
-2. open your browser and navigate to: [`Docs`](https://localhost/api/v1/docs). url: https://localhost:8443/api/documentation
+This exports the OpenAPI schema, copies it to the Flutter project, fixes it for `swagger_parser`, and rebuilds the generated Dart client.
 
-3. you can checkout the [`openapi.json`](./backend/ibdm_api/openapi/openapi.json) file.
+## API documentation
+
+With the server running, open the interactive docs at `https://localhost:8443/api/documentation`, or read the committed spec at [backend/ibdm_api/openapi/openapi.json](backend/ibdm_api/openapi/openapi.json).
+
+## Known issues
+
+- `backend/ibdm_service.exe` (a Windows service wrapper, 18 MB) is committed; it should be downloaded at deploy time instead.
+- `backend/service_start.bat` contains machine-specific paths.
+- Test coverage is minimal.
+
+## License
+
+Apache License 2.0 — see [LICENSE](LICENSE).
