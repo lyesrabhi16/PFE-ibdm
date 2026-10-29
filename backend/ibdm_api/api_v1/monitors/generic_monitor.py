@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime
 import threading
-from django.core.mail import send_mail
+from api_v1.emails.inline_logo import send_mail_with_logo as send_mail
 from django.conf import settings
 from emails.models import CUSTOM_MONITORED_VALUES, AlertEmail, SentAlertEmail, sentEmail
 from users.models import User
