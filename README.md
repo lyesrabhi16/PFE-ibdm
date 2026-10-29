@@ -69,7 +69,7 @@ Wait for `Databases ready` in the logs, then open <https://localhost:8443/app/> 
 | https://localhost:8443/api/v1/docs/ | Swagger UI |
 | https://localhost:8443/admin | Django admin |
 
-Everything under [demo](demo) is for local demonstration only: credentials are public and the TLS certificate is self-signed. `demo/demo_settings.py` works around the router issue described under *Known issues*.
+Everything under [demo](demo) is for local demonstration only: credentials are public and the TLS certificate is self-signed.
 
 ### Nix dev shell
 
@@ -131,9 +131,7 @@ With the server running, open the interactive docs at `https://localhost:8443/ap
 
 - `backend/ibdm_service.exe` (a Windows service wrapper, 18 MB) is committed; it should be downloaded at deploy time instead.
 - `backend/service_start.bat` contains machine-specific paths.
-- The DB router (`ibdm_api/db_routers.py`) never migrates `auth`, `contenttypes`, `sessions` or `admin`, so `users` (foreign key to `auth.Group`) cannot be migrated on a fresh database.
-- A `null` Redis password in `settings.json` crashes startup (`Env.load_settings_json`).
-- `GET /restart` and `POST /server-config/set` only require authentication, not an admin role; restart is a GET with side effects and calls a Windows-only path.
+- `GET /restart` has side effects (it should be a POST); changing it requires regenerating the Flutter API client.
 - Test coverage is minimal.
 
 ## License

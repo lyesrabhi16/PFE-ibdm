@@ -3,6 +3,7 @@ from api_v1.utils import getServerStatusFromFile
 from api_v1.constants import ErrorCodes
 from logs.logging import logger as logging
 import os
+import subprocess
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
@@ -16,6 +17,14 @@ from django.conf import settings
 
 from api_v1.serializers import ErrorResponseSerializer, SuccessResponseSerializer, SystemStatusSerializer
 from api_v1.serializers import ServerConfigSerializer
+
+class IsSystemAdmin(permissions.BasePermission):
+    """Only authenticated users whose role is an admin role (or Django superusers)."""
+
+    def has_permission(self, request, view):
+        user = request.user
+        return bool(user and user.is_authenticated and (getattr(user, "is_admin", False) or user.is_superuser))
+
 
 def index(request):
     return render(request, "web/index.html")
@@ -90,15 +99,14 @@ def getServerStatus(request):
     responses=None,
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsSystemAdmin])
 def restartServer(request):
-    os.system("echo 'Restarting server...'")
-    os.system("'..\\ibdm_service.exe' restart")
-    return JsonResponse(
-        {
-            "message": "OK"
-        }
-    )
+    service_exe = os.path.abspath(os.path.join(BASE_DIR, "..", "ibdm_service.exe"))
+    if not os.path.exists(service_exe):
+        return JsonResponse({"message": "Restart is only available when running as the Windows service"}, status=501)
+    logging.info("Restarting server")
+    subprocess.Popen([service_exe, "restart"])  # fixed path, no shell, no user input
+    return JsonResponse({"message": "OK"})
 
 
 @extend_schema(
@@ -112,7 +120,7 @@ def restartServer(request):
     },
 )
 @api_view(["POST"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsSystemAdmin])
 def setServerConfig(request):
     try:
         secret_key = request.data.get("SECRET_KEY", None)
@@ -163,7 +171,7 @@ def setServerConfig(request):
     }
 )
 @api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsSystemAdmin])
 def getServerConfig(request):
     try:
         with open(settings.SETTINGS_JSON_FILE_PATH, "r") as f:

@@ -34,20 +34,20 @@ RUN adduser \
 # Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
 # Leverage a bind mount to requirements.txt to avoid having to copy them into
 # into this layer.
-RUN apt-get update && apt-get install -y \ 
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     gnupg2 \
-    #unixodbc \
-    #unixodbc-dev \
+    ca-certificates \
+    unixodbc \
     && rm -rf /var/lib/apt/lists/*
 
-# Add Microsoft's GPG key and repository for the ODBC driver
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list
+# Add Microsoft's signing key and repository (Debian 12) for the ODBC driver
+RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft.gpg && \
+    echo "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" > /etc/apt/sources.list.d/mssql-release.list
 
 # Install the ODBC Driver for SQL Server
 RUN apt-get update && \
-    ACCEPT_EULA=Y apt-get install -y --force-yes --no-install-recommends \
+    ACCEPT_EULA=Y apt-get install -y --no-install-recommends \
     msodbcsql17 \
     && rm -rf /var/lib/apt/lists/*
 
