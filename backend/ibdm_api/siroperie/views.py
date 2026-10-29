@@ -90,6 +90,7 @@ def getSucreAtSpecificTime(request):
         hour=hour,
         minute=minute,
         second=second,
+        microsecond=0,
     )
 
     record = get_value_at(Sucre, date)
