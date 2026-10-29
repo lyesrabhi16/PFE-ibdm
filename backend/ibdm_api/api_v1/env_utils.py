@@ -7,7 +7,7 @@ from copy import deepcopy
 
 def encrypt(value):
     from api_v1.env import Env
-    if str(value).startswith("gAAAAAB"):
+    if not isinstance(value, str) or value.startswith("gAAAAAB"):  # leave None / non-strings untouched
         #print("value is encrypted")
         return value
     #print("ENCRYPT", value)
