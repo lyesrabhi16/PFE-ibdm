@@ -1,4 +1,4 @@
-# IBDM — Industrial Data Monitoring Platform
+# IBDM: Industrial Data Monitoring Platform
 
 End-of-studies project (PFE) developed during an internship at IFRI (Algeria): a cross-platform application that collects, stores and displays **industrial production data in real time** for several plant units (syrup room, filtration, utilities, CO₂).
 
@@ -162,4 +162,4 @@ With the server running, open the interactive docs at `https://localhost:8443/ap
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE).
+Apache License 2.0 - see [LICENSE](LICENSE).
