@@ -7,7 +7,7 @@ demo/configure-frontend.sh            # run from the repository root; API addres
 ```
 
 - `lib/config/api.config.dart` is copied from `api.config.dart.example` and given the API address.
-- `assets/certificates/myCA.pem` is the certificate authority that issued the server's TLS certificate (the demo creates it and serves it at `/ca`). Only the Android app loads it, to trust the server; web and desktop builds do not need it. For your own deployment, put your CA there (see `backend/ibdm_api/certs/create_certificates.readme.md`).
+- `assets/certificates/myCA.pem` is the certificate authority that issued the server's TLS certificate (the demo creates it and serves it at `/ca`). Only the Android app loads it, to trust the server. Web and desktop builds do not need it. For your own deployment, put your CA there (see `backend/ibdm_api/certs/create_certificates.readme.md`).
 
 The script checks that the server really presents a certificate issued by the CA it just downloaded.
 

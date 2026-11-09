@@ -75,7 +75,7 @@ All captured from the demo stack below (synthetic data, 30 days of history, live
 | ![Excel export](docs/screenshots/export-excel.png) | ![Swagger UI](docs/screenshots/swagger.png) |
 | The attached Excel export | Interactive OpenAPI documentation |
 
-**Viewing the e-mails.** The demo does not send real mail: every message goes to [Mailpit](http://localhost:8025), which shows the rendered HTML (logo, tables, colours), the plain-text version, the headers and the attachments, so you can check the reports and alerts without an SMTP account. Mailpit renders with a standard browser engine, so it shows how the HTML looks, not how a particular mail client will treat it; its "HTML Check" tab estimates client compatibility (about 48% for the sugar report, 88% for the alert). The IBDM logo is embedded in each message as an inline image, so it displays without internet access. To send real e-mail, add an SMTP provider to `EMAIL_PROVIDERS` in `demo/settings.json`.
+**Viewing the e-mails.** The demo does not send real mail: every message goes to [Mailpit](http://localhost:8025), which shows the rendered HTML (logo, tables, colours), the plain-text version, the headers and the attachments, so you can check the reports and alerts without an SMTP account. Mailpit renders with a standard browser engine, so it shows how the HTML looks, not how a particular mail client will treat it. Its "HTML Check" tab estimates client compatibility (about 48% for the sugar report, 88% for the alert). The IBDM logo is embedded in each message as an inline image, so it displays without internet access. To send real e-mail, add an SMTP provider to `EMAIL_PROVIDERS` in `demo/settings.json`.
 
 ## Try it with Docker (demo)
 
@@ -83,7 +83,7 @@ One command starts SQL Server, Redis, Mailpit and the API, creates the five data
 
 - **30 days of sensor history** for every table (about 5,200 readings each), shaped like the real plant: tanks that drain and get refilled, daily production cycles, counters that reset daily. Values stay inside the healthy ranges used by the dashboards.
 - **8 users** across five roles, with illustrated avatars.
-- **4 e-mail schedules** (sugar inventory, filtration, CO₂, utilities) and **2 alert rules**; the reports and alerts are sent at start-up so the history and the mailbox are populated.
+- **4 e-mail schedules** (sugar inventory, filtration, CO₂, utilities) and **2 alert rules**. The reports and alerts are sent at start-up so the history and the mailbox are populated.
 
 A `simulator` service then appends a new reading every 10 seconds, so the "live data" views keep moving. The API also serves the pre-built Flutter web app.
 
@@ -123,7 +123,7 @@ Python 3.12, [pipenv](https://pipenv.pypa.io), pnpm, Docker, the [Flutter SDK](h
 pnpm run install:deps                       # pipenv sync
 ```
 
-1. Start the databases and Redis from [backend/config/config/db](backend/config/config/db) (see its [README](backend/config/config/db/setup-README.md)); `pnpm run sql_server_db:up` starts SQL Server.
+1. Start the databases and Redis from [backend/config/config/db](backend/config/config/db) (see its [README](backend/config/config/db/setup-README.md)). `pnpm run sql_server_db:up` starts SQL Server.
 2. Create the environment file and fill in the real credentials:
    ```bash
    cp backend/.env.example backend/.env
